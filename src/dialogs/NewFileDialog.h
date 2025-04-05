@@ -65,6 +65,8 @@ private:
 
     void updateLoadProjectButton();
 
+    size_t getIOPluginIndexByScheme(const QString &scheme);
+
     void loadFile(const QString &filename);
     void loadProject(const QString &project);
     void loadShellcode(const QString &shellcode, const int size);
