@@ -51,24 +51,6 @@ static QIcon getIconFor(const QString &str, int pos)
     return QIcon(pixmap);
 }
 
-/*
- * @brief Get the ioPlugin index from scheme name.
- * @return ioPlugin index. SIZE_MAX if not found.
- */
-size_t NewFileDialog::getIOPluginIndexByScheme(const QString &scheme)
-{
-    QString fullScheme = scheme + "://";
-    int count = ui->ioPlugin->count();
-
-    for (int i = 0; i < count; ++i) {
-        if (ui->ioPlugin->itemText(i) == fullScheme) {
-            return i;
-        }
-    }
-
-    return SIZE_MAX;
-}
-
 NewFileDialog::NewFileDialog(MainWindow *main)
     : QDialog(nullptr), // no parent on purpose, using main causes weird positioning
       ui(new Ui::NewFileDialog),
@@ -154,15 +136,20 @@ void NewFileDialog::on_shellcodeButton_clicked()
 void NewFileDialog::on_recentsListWidget_itemClicked(QListWidgetItem *item)
 {
     QVariant data = item->data(Qt::UserRole);
-    QUrl url(data.toString());
+    QString sitem = data.toString();
 
-    ui->newFileEdit->setText(url.path());
-    ui->ioPlugin->setCurrentIndex(getIOPluginIndexByScheme(url.scheme()));
+    const size_t index = sitem.indexOf("//");
+    const QString ioMode = sitem.left(index + 2);
+    const QString path = sitem.mid(index + 2);
+
+    ui->newFileEdit->setText(path);
+    ui->ioPlugin->setCurrentIndex(getIOPluginIndexByName(ioMode));
 }
 
 void NewFileDialog::on_recentsListWidget_itemDoubleClicked(QListWidgetItem *item)
 {
-    loadFile(item->data(Qt::UserRole).toString());
+    const QString path = item->data(Qt::UserRole).toString();
+    loadFile(path.mid(path.indexOf("//") + 2)); // Remove ioMode
 }
 
 void NewFileDialog::on_projectFileEdit_textChanged()
@@ -263,21 +250,14 @@ static QStringList fillFilesList(QListWidget *widget, const QStringList &files)
     while (it.hasNext()) {
         // Get the file name
         const QString &fullpath = QDir::toNativeSeparators(it.next());
-        const QUrl url(fullpath);
-        const QString path = url.path();
+        const QString path = fullpath.mid(fullpath.indexOf("//") + 2); // Remove ioMode
         const QString homepath = QDir::homePath();
-        const QString basename = fullpath.section(QDir::separator(), -1);
+        const QString basename = path.section(QDir::separator(), -1);
+
         QString filenameHome = path;
         filenameHome.replace(homepath, "~");
         filenameHome.replace(basename, "");
         filenameHome.chop(1); // Remove last character that will be a path separator
-
-        // file:// is hidden by default
-        const QString scheme = url.scheme();
-        if (scheme != "file") {
-            filenameHome = scheme + "://" + filenameHome;
-        }
-
         // Get file info
         QFileInfo info(path);
         if (!info.exists()) {
@@ -338,6 +318,23 @@ void NewFileDialog::fillIOPluginsList()
     }
 }
 
+/*
+ * @brief Get the ioPlugin index from its name.
+ * @return ioPlugin index. SIZE_MAX if not found.
+ */
+size_t NewFileDialog::getIOPluginIndexByName(const QString &name)
+{
+    int count = ui->ioPlugin->count();
+
+    for (int i = 0; i < count; ++i) {
+        if (ui->ioPlugin->itemText(i) == name) {
+            return i;
+        }
+    }
+
+    return SIZE_MAX;
+}
+
 void NewFileDialog::updateLoadProjectButton()
 {
     ui->loadProjectButton->setEnabled(!ui->projectFileEdit->text().trimmed().isEmpty());
@@ -346,9 +343,6 @@ void NewFileDialog::updateLoadProjectButton()
 void NewFileDialog::loadFile(const QString &filename)
 {
     const QString &nativeFn = QDir::toNativeSeparators(filename);
-    const QString scheme = ui->ioPlugin->currentText();
-    const QString fullUri = scheme + nativeFn;
-
     if (ui->ioPlugin->currentIndex() == 0 && !Core()->tryFile(nativeFn, false)
         && !ui->checkBox_FilelessOpen->isChecked()) {
         QMessageBox msgBox(this);
@@ -357,21 +351,19 @@ void NewFileDialog::loadFile(const QString &filename)
         return;
     }
 
+    QString ioFile = ui->ioPlugin->currentText();
+    ioFile += nativeFn;
+
     // Add file to recent file list
     QSettings settings;
     QStringList files = Config()->getRecentFiles();
-    files.removeAll(fullUri);
-    files.prepend(fullUri);
+    files.removeAll(ioFile);
+    files.prepend(ioFile);
     while (files.size() > MaxRecentFiles)
         files.removeLast();
     Config()->setRecentFiles(files);
 
     // Close dialog and open MainWindow/InitialOptionsDialog
-    QString ioFile = "";
-    if (ui->ioPlugin->currentIndex()) {
-        ioFile = scheme;
-    }
-    ioFile += nativeFn;
     InitialOptions options;
     options.filename = ioFile;
     main->openNewFile(options, ui->checkBox_FilelessOpen->isChecked());
