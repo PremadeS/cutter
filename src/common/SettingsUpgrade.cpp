@@ -30,7 +30,7 @@ static bool migrateSettingsPre18(QSettings &newSettings)
     return true;
 }
 
-#define CUTTER_SETTINGS_VERSION_CURRENT 6
+#define CUTTER_SETTINGS_VERSION_CURRENT 7
 #define CUTTER_SETTINGS_VERSION_KEY "version"
 
 /*
@@ -132,6 +132,15 @@ static void migrateSettingsTo6(QSettings &settings)
     settings.remove("dir.projects");
 }
 
+static void migrateSettingsTo7(QSettings &settings)
+{
+    auto list = settings.value("recentFileList").toStringList();
+    for (auto &file : list) {
+        file.prepend("file://");
+    }
+    settings.setValue("recentFileList", list);
+}
+
 void Cutter::initializeSettings()
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
@@ -166,6 +175,9 @@ void Cutter::initializeSettings()
                     break;
                 case 6:
                     migrateSettingsTo6(settings);
+                    break;
+                case 7:
+                    migrateSettingsTo7(settings);
                     break;
                 default:
                     break;
@@ -215,6 +227,7 @@ bool Cutter::shouldOfferSettingImport()
 {
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings settings;
+
     if (settings.contains("firstExecution")) {
         return false;
     }
@@ -225,7 +238,7 @@ bool Cutter::shouldOfferSettingImport()
         return false; // no Cutter <= 1.12 settings to import
     }
     int version = r2CutterSettings.value("version", -1).toInt();
-    if (version < 1 || version > 6) {
+    if (version < 1 || version > 7) {
         return false; // version too new maybe it's from r2Cutter fork instead of pre-rizin Cutter.
     }
     return true;
