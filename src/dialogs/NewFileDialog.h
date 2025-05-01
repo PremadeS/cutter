@@ -63,8 +63,6 @@ private:
     bool fillProjectsList();
     void fillIOPluginsList();
 
-    size_t getIOPluginIndexByName(const QString &name);
-
     void updateLoadProjectButton();
 
     void loadFile(const QString &filename);
