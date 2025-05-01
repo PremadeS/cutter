@@ -222,6 +222,7 @@ void Cutter::migrateThemes()
 
 static const char PRE_RIZIN_ORG[] = "RadareOrg";
 static const char PRE_RIZIN_APP[] = "Cutter";
+const int LAST_R2_CUTTER_SETTING_VERSION = 6;
 
 bool Cutter::shouldOfferSettingImport()
 {
@@ -238,7 +239,7 @@ bool Cutter::shouldOfferSettingImport()
         return false; // no Cutter <= 1.12 settings to import
     }
     int version = r2CutterSettings.value("version", -1).toInt();
-    if (version < 1 || version > 7) {
+    if (version < 1 || version > LAST_R2_CUTTER_SETTING_VERSION) {
         return false; // version too new maybe it's from r2Cutter fork instead of pre-rizin Cutter.
     }
     return true;
