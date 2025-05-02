@@ -812,7 +812,7 @@ QList<RecentFileEntry> Configuration::getRecentFiles() const
 {
     QList<RecentFileEntry> recentFiles;
 
-    const QStringList list = s.value("recentFiles").toStringList();
+    const QStringList list = s.value("recentFileList").toStringList();
     for (const QString &file : list) {
         int sep = file.indexOf("://");
         if (sep != -1) {
@@ -833,7 +833,7 @@ void Configuration::setRecentFiles(const QList<RecentFileEntry> &list)
     for (const RecentFileEntry &file : list) {
         recentFiles.append(file.ioMode + file.path);
     }
-    s.setValue("recentFiles", recentFiles);
+    s.setValue("recentFileList", recentFiles);
 }
 
 QList<RecentFileEntry> Configuration::getRecentProjects() const
