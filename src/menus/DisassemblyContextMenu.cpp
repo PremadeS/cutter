@@ -24,6 +24,7 @@ DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *main
     : QMenu(parent),
       offset(0),
       canCopy(false),
+      singleLineSelect(false),
       mainWindow(mainWindow),
       ioModesController(this),
       actionEditInstruction(this),
@@ -377,6 +378,11 @@ void DisassemblyContextMenu::setCanCopy(bool enabled)
     this->canCopy = enabled;
 }
 
+void DisassemblyContextMenu::setSingleLineSelect(bool enabled)
+{
+    this->singleLineSelect = enabled;
+}
+
 void DisassemblyContextMenu::setCurHighlightedWord(const QString &text)
 {
     this->curHighlightedWord = text;
@@ -582,6 +588,10 @@ void DisassemblyContextMenu::aboutToShowSlot()
 
     actionCopy.setVisible(canCopy);
     copySeparator->setVisible(canCopy);
+
+    // Only enable if single line is selected
+    actionCopyAddr.setEnabled(singleLineSelect);
+    actionCopyInstrBytes.setEnabled(singleLineSelect);
 
     // Handle renaming of variable, function, flag, ...
     // Note: This might be useless if we consider setCurrentHighlightedWord is always called before

@@ -549,7 +549,24 @@ void DisassemblyWidget::cursorPositionChanged()
     seekFromCursor = false;
     highlightCurrentLine();
     highlightPCLine();
-    mCtxMenu->setCanCopy(mDisasTextEdit->textCursor().hasSelection());
+
+    QTextCursor cursor = mDisasTextEdit->textCursor();
+    if (cursor.hasSelection()) {
+        mCtxMenu->setCanCopy(true);
+
+        int startLine = cursor.blockNumber();
+        QTextCursor endCursor = cursor;
+
+        endCursor.setPosition(cursor.selectionEnd());
+        int endLine = endCursor.blockNumber();
+
+        if (endLine == startLine) {
+            mCtxMenu->setSingleLineSelect(true);
+        } else {
+            mCtxMenu->setSingleLineSelect(false);
+        }
+    }
+
     if (mDisasTextEdit->textCursor().hasSelection()) {
         // A word is selected so use it
         mCtxMenu->setCurHighlightedWord(mDisasTextEdit->textCursor().selectedText());

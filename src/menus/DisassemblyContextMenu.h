@@ -22,6 +22,7 @@ signals:
 public slots:
     void setOffset(RVA offset);
     void setCanCopy(bool enabled);
+    void setSingleLineSelect(bool enabled);
 
     /**
      * @brief Sets the value of curHighlightedWord
@@ -98,6 +99,7 @@ private:
 
     RVA offset;
     bool canCopy;
+    bool singleLineSelect;
     QString curHighlightedWord; // The current highlighted word
     MainWindow *mainWindow;
     IOModesController ioModesController;
