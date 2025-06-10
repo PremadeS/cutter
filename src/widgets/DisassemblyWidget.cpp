@@ -554,9 +554,8 @@ void DisassemblyWidget::cursorPositionChanged()
     if (c.hasSelection()) {
         mCtxMenu->setCanCopy(true);
 
-        int start = c.blockNumber();
-        c.setPosition(c.selectionEnd());
-        int end = c.blockNumber();
+        int start = mDisasTextEdit->document()->findBlock(c.selectionStart()).blockNumber();
+        int end = mDisasTextEdit->document()->findBlock(c.selectionEnd()).blockNumber();
 
         if (end == start) {
             mCtxMenu->setSingleLineSelect(true);
