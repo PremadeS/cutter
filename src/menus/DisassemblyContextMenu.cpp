@@ -811,14 +811,18 @@ void DisassemblyContextMenu::on_actionCopy_triggered()
 
 void DisassemblyContextMenu::on_actionCopyAddr_triggered()
 {
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(RzAddressString(offset));
+    if (singleLineSelect) {
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(RzAddressString(offset));
+    }
 }
 
 void DisassemblyContextMenu::on_actionCopyInstrBytes_triggered()
 {
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(Core()->getInstructionBytes(offset));
+    if (singleLineSelect) {
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(Core()->getInstructionBytes(offset));
+    }
 }
 
 void DisassemblyContextMenu::on_actionAddBreakpoint_triggered()

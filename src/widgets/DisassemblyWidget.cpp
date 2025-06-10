@@ -550,21 +550,21 @@ void DisassemblyWidget::cursorPositionChanged()
     highlightCurrentLine();
     highlightPCLine();
 
-    QTextCursor cursor = mDisasTextEdit->textCursor();
-    if (cursor.hasSelection()) {
+    c = mDisasTextEdit->textCursor();
+    if (c.hasSelection()) {
         mCtxMenu->setCanCopy(true);
 
-        int startLine = cursor.blockNumber();
-        QTextCursor endCursor = cursor;
+        int start = c.blockNumber();
+        c.setPosition(c.selectionEnd());
+        int end = c.blockNumber();
 
-        endCursor.setPosition(cursor.selectionEnd());
-        int endLine = endCursor.blockNumber();
-
-        if (endLine == startLine) {
+        if (end == start) {
             mCtxMenu->setSingleLineSelect(true);
         } else {
             mCtxMenu->setSingleLineSelect(false);
         }
+    } else {
+        mCtxMenu->setSingleLineSelect(true);
     }
 
     if (mDisasTextEdit->textCursor().hasSelection()) {
