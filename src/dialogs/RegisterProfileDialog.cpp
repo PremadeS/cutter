@@ -55,21 +55,12 @@ void RegisterProfileDialog::removeItem()
     QString serializedData = item->data(Qt::UserRole).toString();
     Config()->removeRecentRegProfile(serializedData);
     delete ui->recentProfilesList->takeItem(ui->recentProfilesList->currentRow());
-    checkIfEmpty();
 }
 
 void RegisterProfileDialog::clearAll()
 {
     ui->recentProfilesList->clear();
     Config()->setRecentRegProfiles(QStringList());
-    checkIfEmpty();
-}
-
-void RegisterProfileDialog::checkIfEmpty()
-{
-    bool hasItems = ui->recentProfilesList->count() > 0;
-    ui->recentProfilesLabel->setVisible(hasItems);
-    ui->recentProfilesList->setVisible(hasItems);
 }
 
 void RegisterProfileDialog::fillProfilePaths(const QStringList &profilePaths)
@@ -89,7 +80,6 @@ void RegisterProfileDialog::fillProfilePaths(const QStringList &profilePaths)
         item->setData(Qt::UserRole, p);
         ui->recentProfilesList->addItem(item);
     }
-    checkIfEmpty();
 }
 
 void RegisterProfileDialog::loadProfileBtnClicked()

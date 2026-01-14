@@ -97,11 +97,6 @@ private:
     QString profileData;
     RegisterProfile loadedProfile = RegisterProfile::Default;
 
-    /**
-     * @brief Updates visibility of the recent list based on item count.
-     */
-    void checkIfEmpty();
-
     void showWarning(const QString &filePath);
     void updateProfile(const QString &path, const QString &data);
 };
