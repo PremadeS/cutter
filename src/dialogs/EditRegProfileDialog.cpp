@@ -1,8 +1,10 @@
 #include "EditRegProfileDialog.h"
 #include "ui_EditRegProfileDialog.h"
+
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QMenu>
 
 EditRegProfileDialog::EditRegProfileDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::EditRegProfileDialog)
@@ -26,6 +28,13 @@ EditRegProfileDialog::EditRegProfileDialog(QWidget *parent)
     connect(ui->addRowBtn, &QPushButton::clicked, this, &EditRegProfileDialog::onAddRow);
     connect(ui->removeRowBtn, &QPushButton::clicked, this, &EditRegProfileDialog::onRemoveRow);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &EditRegProfileDialog::onTabChanged);
+
+    ui->aliasTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->regTable->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->aliasTable, &QTableView::customContextMenuRequested, this,
+            &EditRegProfileDialog::showContextMenu);
+    connect(ui->regTable, &QTableView::customContextMenuRequested, this,
+            &EditRegProfileDialog::showContextMenu);
 }
 
 EditRegProfileDialog::~EditRegProfileDialog() {}
@@ -97,14 +106,14 @@ void EditRegProfileDialog::parseToTables(const QString &data)
         }
 
         if (trimmed.startsWith('=')) {
-            QStringList parts = trimmed.mid(1).split(re, Qt::SkipEmptyParts);
+            QStringList parts = trimmed.mid(1).split(re);
             QList<QStandardItem *> items;
             for (int i = 0; i < ALIAS_MAX_COL; ++i) {
                 items << new QStandardItem(i < parts.size() ? parts[i] : "");
             }
             aliasModel->appendRow(items);
         } else {
-            QStringList parts = trimmed.split(re, Qt::SkipEmptyParts);
+            QStringList parts = trimmed.split(re);
             QList<QStandardItem *> items;
             for (int i = 0; i < REG_MAX_COL; ++i) {
                 items << new QStandardItem(i < parts.size() ? parts[i] : "");
@@ -156,7 +165,9 @@ QString EditRegProfileDialog::tablesToText() const
 
 void EditRegProfileDialog::onAddRow()
 {
-    auto [view, model] = getActiveTab();
+    TabContext tabCtx = getActiveTab();
+    auto model = tabCtx.model;
+    auto view = tabCtx.view;
     QModelIndex current = view->currentIndex();
     int row = current.isValid() ? current.row() + 1 : model->rowCount();
     model->insertRow(row);
@@ -168,7 +179,9 @@ void EditRegProfileDialog::onAddRow()
 
 void EditRegProfileDialog::onRemoveRow()
 {
-    auto [view, model] = getActiveTab();
+    TabContext tabCtx = getActiveTab();
+    auto model = tabCtx.model;
+    auto view = tabCtx.view;
     QModelIndex current = view->currentIndex();
     if (current.isValid()) {
         model->removeRow(current.row());
@@ -185,4 +198,36 @@ void EditRegProfileDialog::onTabChanged(int index)
     }
     ui->addRowBtn->setVisible(!raw);
     ui->removeRowBtn->setVisible(!raw);
+}
+
+void EditRegProfileDialog::showContextMenu(const QPoint &pos)
+{
+    TabContext tabCtx = getActiveTab();
+    auto view = tabCtx.view;
+    auto model = tabCtx.model;
+
+    QModelIndex index = view->indexAt(pos);
+    int row = index.isValid() ? index.row() : model->rowCount();
+
+    QMenu menu(this);
+    QAction *addAbove = menu.addAction(tr("Add Row Above"));
+    QAction *addBelow = menu.addAction(tr("Add Row Below"));
+    menu.addSeparator();
+    QAction *remove = menu.addAction(tr("Remove Row"));
+
+    remove->setEnabled(index.isValid());
+    QAction *selected = menu.exec(view->viewport()->mapToGlobal(pos));
+
+    if (!selected) {
+        return;
+    }
+    if (selected == addAbove) {
+        model->insertRow(row);
+        view->setCurrentIndex(model->index(row, 0));
+    } else if (selected == addBelow) {
+        model->insertRow(row + 1);
+        view->setCurrentIndex(model->index(row + 1, 0));
+    } else if (selected == remove) {
+        model->removeRow(row);
+    }
 }

@@ -50,6 +50,12 @@ private slots:
      */
     void onTabChanged(int index);
 
+    /**
+     * @brief Shows a custom context menu for adding or removing rows at the clicked position
+     * @param pos The position where the context menu was requested, relative to the table viewport
+     */
+    void showContextMenu(const QPoint &pos);
+
 private:
     enum CustomRole { CommentRole = Qt::UserRole + 1 };
     enum TabIndex { TAB_ALIASES, TAB_REGISTERS, TAB_RAW };
