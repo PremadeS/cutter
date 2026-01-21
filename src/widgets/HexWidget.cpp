@@ -5,6 +5,7 @@
 #include "dialogs/WriteCommandsDialogs.h"
 #include "dialogs/CommentsDialog.h"
 #include "dialogs/FlagDialog.h"
+#include "widgets/AddressRangeScrollBar.h"
 #include "shortcuts/ShortcutManager.h"
 
 #include <QPainter>
@@ -52,12 +53,25 @@ HexWidget::HexWidget(QWidget *parent)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::FocusPolicy::StrongFocus);
-    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this,
-            [this]() { viewport()->update(); });
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &HexWidget::updateViewport);
 
     connect(Config(), &Configuration::colorsUpdated, this, &HexWidget::updateColors);
     connect(Config(), &Configuration::fontsUpdated, this,
             [this]() { setMonospaceFont(Config()->getFont()); });
+
+    vScrollBar = new AddressRangeScrollBar(this);
+    setVerticalScrollBar(vScrollBar);
+    vScrollBar->setPageStep(10);
+    vScrollBar->setSingleStep(1);
+    connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
+            [this](int lines) { scrollLines(lines, true); });
+    connect(vScrollBar, &QScrollBar::valueChanged, this,
+            [this](int) { showPosition(vScrollBar->address()); });
+    connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
+            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
+    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
+            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
+    vScrollBar->refreshRange();
 
     auto sizeActionGroup = new QActionGroup(this);
     for (int i = 1; i <= 8; i *= 2) {
@@ -246,7 +260,7 @@ void HexWidget::setMonospaceFont(const QFont &font)
     fetchData();
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::setItemSize(int nbytes)
@@ -275,7 +289,7 @@ void HexWidget::setItemSize(int nbytes)
     fetchData();
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::setItemFormat(ItemFormat format)
@@ -296,7 +310,7 @@ void HexWidget::setItemFormat(ItemFormat format)
     fetchData();
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::setItemGroupSize(int size)
@@ -307,7 +321,7 @@ void HexWidget::setItemGroupSize(int size)
     fetchData();
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 /**
@@ -395,7 +409,7 @@ void HexWidget::setFixedLineSize(int lineSize)
     fetchData();
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::setColumnMode(ColumnMode mode)
@@ -406,7 +420,7 @@ void HexWidget::setColumnMode(ColumnMode mode)
     fetchData();
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::selectRange(RVA start, RVA end)
@@ -447,7 +461,7 @@ void HexWidget::seek(uint64_t address)
 void HexWidget::refresh()
 {
     fetchData();
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::setItemEndianness(bool bigEndian)
@@ -457,7 +471,7 @@ void HexWidget::setItemEndianness(bool bigEndian)
 
     updateCursorMeta(); // Update cached item character
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::updateColors()
@@ -474,7 +488,7 @@ void HexWidget::updateColors()
     warningColor = QColor("red");
 
     updateCursorMeta();
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::paintEvent(QPaintEvent *event)
@@ -539,7 +553,7 @@ void HexWidget::resizeEvent(QResizeEvent *event)
     fetchData(); // rowCount was changed
     updateCursorMeta();
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::mouseMoveEvent(QMouseEvent *event)
@@ -604,7 +618,7 @@ void HexWidget::mouseMoveEvent(QMouseEvent *event)
     /* Stop blinking */
     cursorEnabled = false;
 
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::mousePressEvent(QMouseEvent *event)
@@ -640,7 +654,7 @@ void HexWidget::mousePressEvent(QMouseEvent *event)
                         selection.init(selectionCursor);
                     }
 
-                    viewport()->update();
+                    updateViewport();
                     return;
                 }
             }
@@ -667,7 +681,7 @@ void HexWidget::mousePressEvent(QMouseEvent *event)
                 startEditWord();
                 editWordPos = std::min<int>(wordOffset, editWord.length() - 1);
             }
-            viewport()->update();
+            updateViewport();
             return;
         }
 
@@ -678,7 +692,7 @@ void HexWidget::mousePressEvent(QMouseEvent *event)
             setCursorOnAscii(!selectingData);
             auto cursorPosition = currentAreaPosToAddr(pos, true);
             setCursorAddr(cursorPosition, holdingShift);
-            viewport()->update();
+            updateViewport();
         }
     }
 }
@@ -706,7 +720,7 @@ void HexWidget::mouseReleaseEvent(QMouseEvent *event)
         if (selection.isEmpty()) {
             selection.init(BasicCursor(cursor.address));
             cursorEnabled = true;
-            viewport()->update();
+            updateViewport();
         }
         updatingSelection = false;
     }
@@ -716,31 +730,7 @@ void HexWidget::wheelEvent(QWheelEvent *event)
 {
     // according to Qt doc 1 row per 5 degrees, angle measured in 1/8 of degree
     int dy = event->angleDelta().y() / (8 * 5);
-    int64_t delta = -dy * itemRowByteLen();
-
-    if (dy == 0)
-        return;
-
-    if (delta < 0 && startAddress < static_cast<uint64_t>(-delta)) {
-        startAddress = 0;
-    } else if (delta > 0 && data->maxIndex() < static_cast<uint64_t>(bytesPerScreen())) {
-        startAddress = 0;
-    } else if ((data->maxIndex() - startAddress)
-               <= static_cast<uint64_t>(bytesPerScreen() + delta - 1)) {
-        startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
-    } else {
-        startAddress += delta;
-    }
-
-    fetchData();
-    if (cursor.address >= startAddress && cursor.address <= lastVisibleAddr()) {
-        /* Don't enable cursor blinking if selection isn't empty */
-        cursorEnabled = selection.isEmpty();
-        updateCursorMeta();
-    } else {
-        cursorEnabled = false;
-    }
-    viewport()->update();
+    scrollLines(dy);
 }
 
 bool HexWidget::validCharForEdit(QChar digit)
@@ -785,7 +775,7 @@ void HexWidget::movePrevEditCharAny()
             editWordPos = editWord.length() - 1;
         }
     }
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::typeOverwriteModeChar(QChar c)
@@ -870,7 +860,7 @@ bool HexWidget::handleAsciiWrite(QKeyEvent *event)
     clearSelection();
     data->write(reinterpret_cast<const uint8_t *>(bytes.data()), address, bytes.length());
     seek(address + bytes.length());
-    viewport()->update();
+    updateViewport();
     return true;
 }
 
@@ -1058,12 +1048,12 @@ void HexWidget::keyPressEvent(QKeyEvent *event)
 
     if (canKeyboardEdit()) {
         if (handleAsciiWrite(event)) {
-            viewport()->update();
+            updateViewport();
             return;
         }
         if (editWordState >= EditWordState::WriteNotStarted && !cursorOnAscii) {
             if (handleNumberWrite(event)) {
-                viewport()->update();
+                updateViewport();
                 return;
             }
         }
@@ -1126,7 +1116,7 @@ void HexWidget::keyPressEvent(QKeyEvent *event)
                     }
                 }
             }
-            viewport()->update();
+            updateViewport();
         } else if (event->matches(QKeySequence::MoveToPreviousChar)) {
             movePrevEditCharAny();
         } else if (event->matches(QKeySequence::SelectPreviousChar)) {
@@ -1136,7 +1126,7 @@ void HexWidget::keyPressEvent(QKeyEvent *event)
         } else if (event->matches(QKeySequence::MoveToPreviousWord)) {
             if (editWordPos > 0) {
                 editWordPos = 0;
-                viewport()->update();
+                updateViewport();
             } else {
                 moveCursor(-itemByteLen, false);
             }
@@ -1146,16 +1136,16 @@ void HexWidget::keyPressEvent(QKeyEvent *event)
     } else if (navigationMode == HexNavigationMode::WordChar) {
         if (event->matches(QKeySequence::MoveToNextChar)) {
             editWordPos = std::min<int>(editWord.length(), editWordPos + 1);
-            viewport()->update();
+            updateViewport();
         } else if (event->matches(QKeySequence::MoveToPreviousChar)) {
             editWordPos = std::max(0, editWordPos - 1);
-            viewport()->update();
+            updateViewport();
         } else if (event->matches(QKeySequence::MoveToStartOfLine)) {
             editWordPos = 0;
-            viewport()->update();
+            updateViewport();
         } else if (event->matches(QKeySequence::MoveToEndOfLine)) {
             editWordPos = editWord.length();
-            viewport()->update();
+            updateViewport();
         } else if (event->matches(QKeySequence::MoveToPreviousWord)) {
             if (editWordPos > 0) {
                 editWordPos = 0;
@@ -1163,7 +1153,7 @@ void HexWidget::keyPressEvent(QKeyEvent *event)
                 moveCursor(-itemByteLen, select);
                 startEditWord();
             }
-            viewport()->update();
+            updateViewport();
         } else if (event->matches(QKeySequence::MoveToNextWord)) {
             if (editWordPos < editWord.length()) {
                 editWordPos = editWord.length();
@@ -1172,7 +1162,7 @@ void HexWidget::keyPressEvent(QKeyEvent *event)
                 startEditWord();
                 editWordPos = editWord.length();
             }
-            viewport()->update();
+            updateViewport();
         }
     }
 }
@@ -1641,7 +1631,7 @@ void HexWidget::onKeyboardEditChanged(bool enabled)
         navigationMode = defaultNavigationMode();
     }
     updateCursorMeta();
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::updateItemLength()
@@ -2172,44 +2162,12 @@ void HexWidget::setCursorAddr(BasicCursor addr, bool select)
         cursor.address -= cursor.address % itemByteLen;
     }
 
-    /* Pause cursor repainting */
-    cursorEnabled = false;
-
     if (select) {
         selection.update(addr);
         emit selectionChanged(getSelection());
     }
 
-    uint64_t addressValue = cursor.address;
-    /* Update data cache if necessary */
-    if (!(addressValue >= startAddress && addressValue <= lastVisibleAddr())) {
-        /* Align start address */
-        addressValue -= (addressValue % itemRowByteLen());
-
-        /* FIXME: handling Page Up/Down */
-        uint64_t rowAfterVisibleAddress = startAddress + bytesPerScreen();
-        if (addressValue == rowAfterVisibleAddress && addressValue > startAddress) {
-            // when pressing down add only one new row
-            startAddress += itemRowByteLen();
-        } else {
-            startAddress = addressValue;
-        }
-
-        fetchData();
-
-        if (startAddress > (data->maxIndex() - bytesPerScreen()) + 1) {
-            startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
-        }
-    }
-
-    updateCursorMeta();
-
-    /* Draw cursor */
-    cursor.isVisible = !select;
-    viewport()->update();
-
-    /* Resume cursor repainting */
-    cursorEnabled = selection.isEmpty();
+    showPosition(cursor.address, select);
 }
 
 void HexWidget::updateCursorMeta()
@@ -2562,7 +2520,7 @@ void HexWidget::cancelEditedWord()
     editWord.clear();
     navigationMode = defaultNavigationMode();
     updateCursorMeta();
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::maybeFlushCharEdit()
@@ -2577,7 +2535,7 @@ void HexWidget::maybeFlushCharEdit()
             showWarningRect(itemRectangle(cursor.address - startAddress).adjusted(-1, -1, 1, 1));
         }
     }
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::startEditWord()
@@ -2595,7 +2553,7 @@ void HexWidget::startEditWord()
     if (itemPrefixLen > 0) {
         editWord = editWord.mid(itemPrefixLen);
     }
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::fetchData()
@@ -2705,7 +2663,7 @@ RVA HexWidget::getLocationAddress()
 void HexWidget::hideWarningRect()
 {
     warningRectVisible = false;
-    viewport()->update();
+    updateViewport();
 }
 
 void HexWidget::showWarningRect(QRectF rect)
@@ -2713,5 +2671,81 @@ void HexWidget::showWarningRect(QRectF rect)
     warningRect = rect;
     warningRectVisible = true;
     warningTimer.start(WARNING_TIME_MS);
+    updateViewport();
+}
+
+void HexWidget::updateViewport()
+{
+    vScrollBar->setPosition(startAddress);
     viewport()->update();
+}
+
+void HexWidget::scrollLines(int lines, bool clampToScrollBarRange)
+{
+    int64_t delta = -lines * itemRowByteLen();
+
+    if (lines == 0) {
+        return;
+    }
+
+    if (delta < 0 && startAddress < static_cast<uint64_t>(-delta)) {
+        startAddress = 0;
+    } else if (delta > 0 && data->maxIndex() < static_cast<uint64_t>(bytesPerScreen())) {
+        startAddress = 0;
+    } else if ((data->maxIndex() - startAddress)
+               <= static_cast<uint64_t>(bytesPerScreen() + delta - 1)) {
+        startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
+    } else {
+        startAddress += delta;
+    }
+
+    if (clampToScrollBarRange) {
+        startAddress = vScrollBar->clampAddressToRange(startAddress);
+    }
+
+    fetchData();
+    if (cursor.address >= startAddress && cursor.address <= lastVisibleAddr()) {
+        /* Don't enable cursor blinking if selection isn't empty */
+        cursorEnabled = selection.isEmpty();
+        updateCursorMeta();
+    } else {
+        cursorEnabled = false;
+    }
+    updateViewport();
+}
+
+void HexWidget::showPosition(RVA address, bool select)
+{
+    /* Pause cursor repainting */
+    cursorEnabled = false;
+
+    /* Update data cache if necessary */
+    if (!(address >= startAddress && address <= lastVisibleAddr())) {
+        /* Align start address */
+        address -= (address % itemRowByteLen());
+
+        /* FIXME: handling Page Up/Down */
+        uint64_t rowAfterVisibleAddress = startAddress + bytesPerScreen();
+        if (address == rowAfterVisibleAddress && address > startAddress) {
+            // when pressing down add only one new row
+            startAddress += itemRowByteLen();
+        } else {
+            startAddress = address;
+        }
+
+        fetchData();
+
+        if (startAddress > (data->maxIndex() - bytesPerScreen()) + 1) {
+            startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
+        }
+    }
+
+    updateCursorMeta();
+
+    /* Draw cursor */
+    cursor.isVisible = !select;
+    updateViewport();
+
+    /* Resume cursor repainting */
+    cursorEnabled = selection.isEmpty();
 }

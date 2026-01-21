@@ -304,6 +304,8 @@ private:
     bool m_empty;
 };
 
+class AddressRangeScrollBar;
+
 class HexWidget : public QScrollArea
 {
     Q_OBJECT
@@ -516,6 +518,10 @@ private:
     void hideWarningRect();
     void showWarningRect(QRectF rect);
 
+    void updateViewport();
+    void scrollLines(int lines, bool clampToScrollBarRange = false);
+    void showPosition(RVA address, bool select = false);
+
     bool cursorEnabled;
     bool cursorOnAscii;
     HexCursor cursor;
@@ -608,6 +614,8 @@ private:
     bool warningRectVisible = false;
     QRectF warningRect;
     QTimer warningTimer;
+
+    AddressRangeScrollBar *vScrollBar;
 };
 
 #endif // HEXWIDGET_H
