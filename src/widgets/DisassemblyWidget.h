@@ -18,6 +18,7 @@ class DisassemblyTextEdit;
 class DisassemblyScrollArea;
 class DisassemblyContextMenu;
 class DisassemblyLeftPanel;
+class AddressRangeScrollBar;
 
 class DisassemblyWidget : public MemoryDockWidget
 {
@@ -44,7 +45,7 @@ public slots:
     void showDisasContextMenu(const QPoint &pt);
     void fontsUpdatedSlot();
     void colorsUpdatedSlot();
-    void scrollInstructions(int count);
+    void scrollInstructions(int count, bool clampToScrollBarRange = false);
     void seekPrev();
     void setPreviewMode(bool previewMode);
     QFontMetricsF getFontMetrics();
@@ -111,11 +112,10 @@ class DisassemblyScrollArea : public QAbstractScrollArea
 
 public:
     explicit DisassemblyScrollArea(QWidget *parent = nullptr);
-    RVA currentVScrollAddr();
-    void setVScrollPos(RVA address);
+    AddressRangeScrollBar *verticalScrollBar();
 
 signals:
-    void scrollLines(int lines);
+    void scrollLines(int lines, bool clampToScrollBarRange = false);
     void disassemblyResized();
 
 protected:
@@ -123,9 +123,7 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    void refreshVScrollbarRange();
-    RVA binSize();
-    RVA beginOffset, endOffset;
+    AddressRangeScrollBar *vScrollBar;
     int accumScrollWheelDeltaY;
 };
 

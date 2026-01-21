@@ -156,6 +156,7 @@ set(SOURCES
     tools/basefind/BaseFindDialog.cpp
     tools/basefind/BaseFindSearchDialog.cpp
     tools/basefind/BaseFindResultsDialog.cpp
+    widgets/AddressRangeScrollBar.cpp
     dialogs/preferences/ShortcutOptionsWidget.cpp
     shortcuts/ShortcutManager.cpp
     shortcuts/DefaultShortcuts.cpp
@@ -326,6 +327,7 @@ set(HEADER_FILES
     tools/basefind/BaseFindDialog.h
     tools/basefind/BaseFindSearchDialog.h
     tools/basefind/BaseFindResultsDialog.h
+    widgets/AddressRangeScrollBar.h
     dialogs/preferences/ShortcutOptionsWidget.h
     shortcuts/ShortcutManager.h
     shortcuts/DefaultShortcuts.h
@@ -517,6 +519,23 @@ endif()
 target_link_libraries(Cutter PUBLIC ${RIZIN_TARGET})
 if(CUTTER_ENABLE_PYTHON)
     target_link_libraries(Cutter PRIVATE Python3::Python)
+    if(CMAKE_VERSION VERSION_LESS "3.12.0")
+        # On windows some of the Python STABLE API functions are in seperate library
+        # which isn't added by CMake.
+        if (WIN32)
+            foreach(_PYTHON_LIBRARY ${PYTHON_LIBRARIES})
+                # Skip extra "optimized" and "debug" values that are only meant for passing to target_link_libraries()
+                if((NOT _PYTHON_LIBRARY STREQUAL "optimized") AND (NOT _PYTHON_LIBRARY STREQUAL "debug"))
+                    get_filename_component(_PYTHON_LIB_DIR ${_PYTHON_LIBRARY} DIRECTORY)
+                    message(STATUS "Add extra library dir for Python: ${_PYTHON_LIB_DIR}")
+                    target_link_directories(Cutter PRIVATE ${_PYTHON_LIB_DIR})
+                endif()
+            endforeach()
+        endif()
+        target_link_libraries(Cutter PRIVATE ${PYTHON_LIBRARIES})
+    else()
+        target_link_libraries(Cutter PRIVATE Python3::Python)
+    endif()
 
     if(CUTTER_ENABLE_PYTHON_BINDINGS)
         target_link_libraries(Cutter PRIVATE ${CUTTER_PYSIDE_LIBS})
