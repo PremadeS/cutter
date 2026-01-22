@@ -520,7 +520,13 @@ private:
 
     void updateViewport();
     void scrollLines(int lines, bool clampToScrollBarRange = false);
-    void showPosition(RVA address, bool select = false);
+    /**
+     * @brief Scrolls the view to the given address
+     * Aligns the address to the first row of the viewport. No action is taken if the address is
+     * already at the top
+     * @param address Target RVA to display at the top
+     */
+    void scrollToAddress(RVA address);
 
     bool cursorEnabled;
     bool cursorOnAscii;
