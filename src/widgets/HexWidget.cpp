@@ -66,7 +66,7 @@ HexWidget::HexWidget(QWidget *parent)
     connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
             [this](int lines) { scrollLines(lines, true); });
     connect(vScrollBar, &QScrollBar::valueChanged, this,
-            [this](int) { showPosition(vScrollBar->address()); });
+            [this](int) { scrollToAddress(vScrollBar->address()); });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
     connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
@@ -2162,12 +2162,44 @@ void HexWidget::setCursorAddr(BasicCursor addr, bool select)
         cursor.address -= cursor.address % itemByteLen;
     }
 
+    /* Pause cursor repainting */
+    cursorEnabled = false;
+
     if (select) {
         selection.update(addr);
         emit selectionChanged(getSelection());
     }
 
-    showPosition(cursor.address, select);
+    uint64_t addressValue = cursor.address;
+    /* Update data cache if necessary */
+    if (!(addressValue >= startAddress && addressValue <= lastVisibleAddr())) {
+        /* Align start address */
+        addressValue -= (addressValue % itemRowByteLen());
+
+        /* FIXME: handling Page Up/Down */
+        uint64_t rowAfterVisibleAddress = startAddress + bytesPerScreen();
+        if (addressValue == rowAfterVisibleAddress && addressValue > startAddress) {
+            // when pressing down add only one new row
+            startAddress += itemRowByteLen();
+        } else {
+            startAddress = addressValue;
+        }
+
+        fetchData();
+
+        if (startAddress > (data->maxIndex() - bytesPerScreen()) + 1) {
+            startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
+        }
+    }
+
+    updateCursorMeta();
+
+    /* Draw cursor */
+    cursor.isVisible = !select;
+    viewport()->update();
+
+    /* Resume cursor repainting */
+    cursorEnabled = selection.isEmpty();
 }
 
 void HexWidget::updateCursorMeta()
@@ -2714,38 +2746,24 @@ void HexWidget::scrollLines(int lines, bool clampToScrollBarRange)
     updateViewport();
 }
 
-void HexWidget::showPosition(RVA address, bool select)
+void HexWidget::scrollToAddress(RVA address)
 {
-    /* Pause cursor repainting */
-    cursorEnabled = false;
+    RVA alignedTarget = address - (address % itemRowByteLen());
 
-    /* Update data cache if necessary */
-    if (!(address >= startAddress && address <= lastVisibleAddr())) {
-        /* Align start address */
-        address -= (address % itemRowByteLen());
+    if (alignedTarget != startAddress) {
+        startAddress = alignedTarget;
 
-        /* FIXME: handling Page Up/Down */
-        uint64_t rowAfterVisibleAddress = startAddress + bytesPerScreen();
-        if (address == rowAfterVisibleAddress && address > startAddress) {
-            // when pressing down add only one new row
-            startAddress += itemRowByteLen();
-        } else {
-            startAddress = address;
+        uint64_t maxIdx = data->maxIndex();
+        uint64_t screenBytes = bytesPerScreen();
+        if (maxIdx > screenBytes) {
+            RVA maxStart = maxIdx - screenBytes + 1;
+            maxStart -= (maxStart % itemRowByteLen());
+            if (startAddress > maxStart) {
+                startAddress = maxStart;
+            }
         }
-
         fetchData();
-
-        if (startAddress > (data->maxIndex() - bytesPerScreen()) + 1) {
-            startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
-        }
+        updateCursorMeta();
+        updateViewport();
     }
-
-    updateCursorMeta();
-
-    /* Draw cursor */
-    cursor.isVisible = !select;
-    updateViewport();
-
-    /* Resume cursor repainting */
-    cursorEnabled = selection.isEmpty();
 }
