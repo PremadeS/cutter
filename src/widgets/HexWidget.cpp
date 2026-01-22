@@ -66,7 +66,7 @@ HexWidget::HexWidget(QWidget *parent)
     connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
             [this](int lines) { scrollLines(lines, true); });
     connect(vScrollBar, &QScrollBar::valueChanged, this,
-            [this](int) { scrollToAddress(vScrollBar->address()); });
+            [this](int) { setStartAddress(vScrollBar->address()); });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
     connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
@@ -2714,26 +2714,43 @@ void HexWidget::updateViewport()
 
 void HexWidget::scrollLines(int lines, bool clampToScrollBarRange)
 {
-    int64_t delta = -lines * itemRowByteLen();
-
     if (lines == 0) {
         return;
     }
 
+    int64_t delta = -lines * itemRowByteLen();
+    RVA target = startAddress + delta;
+
     if (delta < 0 && startAddress < static_cast<uint64_t>(-delta)) {
-        startAddress = 0;
-    } else if (delta > 0 && data->maxIndex() < static_cast<uint64_t>(bytesPerScreen())) {
-        startAddress = 0;
-    } else if ((data->maxIndex() - startAddress)
-               <= static_cast<uint64_t>(bytesPerScreen() + delta - 1)) {
-        startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
-    } else {
-        startAddress += delta;
+        target = 0;
     }
 
     if (clampToScrollBarRange) {
-        startAddress = vScrollBar->clampAddressToRange(startAddress);
+        target = vScrollBar->clampAddressToRange(target);
     }
+
+    setStartAddress(target);
+}
+
+void HexWidget::setStartAddress(RVA address)
+{
+    RVA aligned = address - (address % itemRowByteLen());
+
+    uint64_t maxIdx = data->maxIndex();
+    uint64_t screenBytes = bytesPerScreen();
+    if (maxIdx > screenBytes) {
+        RVA maxStart = (maxIdx - screenBytes + 1);
+        maxStart -= (maxStart % itemRowByteLen());
+        aligned = std::min(aligned, maxStart);
+    } else {
+        aligned = 0;
+    }
+
+    if (aligned == startAddress) {
+        return;
+    }
+
+    startAddress = aligned;
 
     fetchData();
     if (cursor.address >= startAddress && cursor.address <= lastVisibleAddr()) {
@@ -2744,26 +2761,4 @@ void HexWidget::scrollLines(int lines, bool clampToScrollBarRange)
         cursorEnabled = false;
     }
     updateViewport();
-}
-
-void HexWidget::scrollToAddress(RVA address)
-{
-    RVA alignedTarget = address - (address % itemRowByteLen());
-
-    if (alignedTarget != startAddress) {
-        startAddress = alignedTarget;
-
-        uint64_t maxIdx = data->maxIndex();
-        uint64_t screenBytes = bytesPerScreen();
-        if (maxIdx > screenBytes) {
-            RVA maxStart = maxIdx - screenBytes + 1;
-            maxStart -= (maxStart % itemRowByteLen());
-            if (startAddress > maxStart) {
-                startAddress = maxStart;
-            }
-        }
-        fetchData();
-        updateCursorMeta();
-        updateViewport();
-    }
 }
