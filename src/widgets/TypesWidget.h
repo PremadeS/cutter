@@ -74,6 +74,13 @@ public:
     explicit TypesWidget(MainWindow *main);
     ~TypesWidget();
 
+    /**
+     * @brief Highlight and scroll to a specific type in the list
+     * Clears the filter if the type is not visible in the filtered list
+     * @param typeName Name of the type to select
+     */
+    void selectTypeByName(const QString &typeName);
+
 private slots:
     void refreshTypes();
 
@@ -116,6 +123,12 @@ private slots:
      */
     void typeItemDoubleClicked(const QModelIndex &index);
 
+    /**
+     * @brief Opens a dialog that displays all global and local variables associated
+     * with the selected type
+     */
+    void showVariables();
+
 private:
     std::unique_ptr<Ui::TypesWidget> ui;
 
@@ -124,6 +137,7 @@ private:
     CutterTreeWidget *tree;
     QAction *actionViewType;
     QAction *actionEditType;
+    QAction *actionShowVariables;
 
     void setScrollMode();
 
