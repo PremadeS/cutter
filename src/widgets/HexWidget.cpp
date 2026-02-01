@@ -2196,7 +2196,7 @@ void HexWidget::setCursorAddr(BasicCursor addr, bool select)
 
     /* Draw cursor */
     cursor.isVisible = !select;
-    viewport()->update();
+    updateViewport();
 
     /* Resume cursor repainting */
     cursorEnabled = selection.isEmpty();
