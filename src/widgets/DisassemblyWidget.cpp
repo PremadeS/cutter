@@ -757,8 +757,10 @@ DisassemblyScrollArea::DisassemblyScrollArea(QWidget *parent) : QAbstractScrollA
     accumScrollWheelDeltaY = 0;
     vScrollBar->setPageStep(40);
     vScrollBar->setSingleStep(1);
-    connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
-            [this](int lines) { emit scrollLines(-lines, true); });
+    connect(vScrollBar, &AddressRangeScrollBar::scrolled, this, [this](int lines) {
+        emit scrollLines(-lines, true);
+        vScrollBar->update();
+    });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
     connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
