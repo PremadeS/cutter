@@ -527,6 +527,12 @@ private:
      */
     void setStartAddress(RVA address);
 
+    /**
+     * @brief Updates cursor visibility and metadata
+     * The cursor is only visible if it is within the visible address range and selection is empty
+     */
+    void updateCursorStatus();
+
     bool cursorEnabled;
     bool cursorOnAscii;
     HexCursor cursor;

@@ -2734,15 +2734,9 @@ void HexWidget::scrollLines(int lines, bool clampToScrollBarRange)
     if (clampToScrollBarRange) {
         startAddress = vScrollBar->clampAddressToRange(startAddress);
     }
-
     fetchData();
-    if (cursor.address >= startAddress && cursor.address <= lastVisibleAddr()) {
-        /* Don't enable cursor blinking if selection isn't empty */
-        cursorEnabled = selection.isEmpty();
-        updateCursorMeta();
-    } else {
-        cursorEnabled = false;
-    }
+
+    updateCursorStatus();
     updateViewport();
 }
 
@@ -2763,10 +2757,15 @@ void HexWidget::setStartAddress(RVA address)
     if (aligned == startAddress) {
         return;
     }
-
     startAddress = aligned;
-
     fetchData();
+
+    updateCursorStatus();
+    updateViewport();
+}
+
+void HexWidget::updateCursorStatus()
+{
     if (cursor.address >= startAddress && cursor.address <= lastVisibleAddr()) {
         /* Don't enable cursor blinking if selection isn't empty */
         cursorEnabled = selection.isEmpty();
@@ -2774,5 +2773,4 @@ void HexWidget::setStartAddress(RVA address)
     } else {
         cursorEnabled = false;
     }
-    updateViewport();
 }
