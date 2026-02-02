@@ -106,6 +106,11 @@ void AddressRangeScrollBar::refreshRange()
     }
     if (rangeSize()) {
         emit showScrollBar();
+#ifdef Q_OS_MAC
+        // Force macOS to re-evaluate the scrollbar's existence
+        this->setHidden(false);
+        this->update();
+#endif
         return;
     }
     emit hideScrollBar();
