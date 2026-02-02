@@ -307,7 +307,6 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
 
     // Refresh the left panel (trigger paintEvent)
     leftPanel->update();
-    mDisasScrollArea->verticalScrollBar()->update();
 }
 
 void DisassemblyWidget::scrollInstructions(int count, bool clampToScrollBarRange)
@@ -797,6 +796,7 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         emit scrollLines(-lineCount);
     }
+    vScrollBar->update();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
