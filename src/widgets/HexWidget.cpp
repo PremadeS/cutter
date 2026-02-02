@@ -26,6 +26,8 @@
 #include <QRegularExpression>
 #include <QToolTip>
 #include <QActionGroup>
+#include <QStyleFactory>
+#include <QStyle>
 
 static constexpr uint64_t MAX_COPY_SIZE = 128 * 1024 * 1024;
 static constexpr int MAX_LINE_WIDTH_PRESET = 32;
@@ -65,10 +67,11 @@ HexWidget::HexWidget(QWidget *parent)
     vScrollBar->setSingleStep(1);
 
 #ifdef Q_OS_MAC
-#    include <QStyleFactory>
+
     // Force the 'Fusion' style only on the scrollbar.
     // This bypasses the macOS 'Overlay' logic that is hiding your bar.
-    vScrollBar->setStyle(QStyleFactory::create("Fusion"));
+    QStyle *fStyle = QStyleFactory::create("Fusion");
+    vScrollBar->setStyle(fStyle);
 #endif
 
     connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
