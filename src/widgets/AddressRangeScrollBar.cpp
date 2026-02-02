@@ -154,6 +154,7 @@ void AddressRangeScrollBar::setPosition(RVA address)
     }
     setValue(scrollBarPos);
     emit showScrollBar();
+    update();
     return;
 }
 
@@ -202,5 +203,6 @@ void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
             return;
         }
         emit scrolled(lineCount);
+        update();
     }
 }
