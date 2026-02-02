@@ -307,6 +307,7 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
 
     // Refresh the left panel (trigger paintEvent)
     leftPanel->update();
+    mDisasScrollArea->verticalScrollBar()->update();
 }
 
 void DisassemblyWidget::scrollInstructions(int count, bool clampToScrollBarRange)
@@ -757,10 +758,8 @@ DisassemblyScrollArea::DisassemblyScrollArea(QWidget *parent) : QAbstractScrollA
     accumScrollWheelDeltaY = 0;
     vScrollBar->setPageStep(40);
     vScrollBar->setSingleStep(1);
-    connect(vScrollBar, &AddressRangeScrollBar::scrolled, this, [this](int lines) {
-        emit scrollLines(-lines, true);
-        vScrollBar->update();
-    });
+    connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
+            [this](int lines) { emit scrollLines(-lines, true); });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
     connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
