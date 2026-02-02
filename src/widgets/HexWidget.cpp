@@ -66,13 +66,13 @@ HexWidget::HexWidget(QWidget *parent)
     vScrollBar->setPageStep(10);
     vScrollBar->setSingleStep(1);
 
-#ifdef Q_OS_MAC
+    // #ifdef Q_OS_MAC
 
     // Force the 'Fusion' style only on the scrollbar.
     // This bypasses the macOS 'Overlay' logic that is hiding your bar.
-    QStyle *fStyle = QStyleFactory::create("Fusion");
-    vScrollBar->setStyle(fStyle);
-#endif
+    // QStyle *fStyle = QStyleFactory::create("Fusion");
+    // vScrollBar->setStyle(fStyle);
+    // #endif
 
     connect(vScrollBar, &AddressRangeScrollBar::scrolled, this,
             [this](int lines) { scrollLines(lines, true); });
