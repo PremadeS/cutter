@@ -67,21 +67,11 @@ HexWidget::HexWidget(QWidget *parent)
             [this](int lines) { scrollLines(lines, true); });
     connect(vScrollBar, &QScrollBar::valueChanged, this,
             [this](int) { setStartAddress(vScrollBar->address()); });
-    connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
-            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
-#ifdef Q_OS_MAC
-    // 1. Set policy to AsNeeded so layout space is allocated
-    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-    // 2. This is the "Magic" fix for macOS:
-    // It disables the transient (disappearing) behavior for this specific widget.
-    vScrollBar->setAttribute(Qt::WA_MacAlwaysShowUpperGradient, true);
-
-    // 3. Force the style to realize it's an active scrollable area
-    vScrollBar->setStyle(QApplication::style());
-#else
+    // connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
+    // [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
+    // connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
+    // [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-#endif
     vScrollBar->refreshRange();
 
     auto sizeActionGroup = new QActionGroup(this);
