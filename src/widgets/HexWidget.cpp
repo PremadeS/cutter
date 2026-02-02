@@ -2714,22 +2714,36 @@ void HexWidget::updateViewport()
 
 void HexWidget::scrollLines(int lines, bool clampToScrollBarRange)
 {
+    int64_t delta = -lines * itemRowByteLen();
+
     if (lines == 0) {
         return;
     }
 
-    int64_t delta = -lines * itemRowByteLen();
-    RVA target = startAddress + delta;
-
     if (delta < 0 && startAddress < static_cast<uint64_t>(-delta)) {
-        target = 0;
+        startAddress = 0;
+    } else if (delta > 0 && data->maxIndex() < static_cast<uint64_t>(bytesPerScreen())) {
+        startAddress = 0;
+    } else if ((data->maxIndex() - startAddress)
+               <= static_cast<uint64_t>(bytesPerScreen() + delta - 1)) {
+        startAddress = (data->maxIndex() - bytesPerScreen()) + 1;
+    } else {
+        startAddress += delta;
     }
 
     if (clampToScrollBarRange) {
-        target = vScrollBar->clampAddressToRange(target);
+        startAddress = vScrollBar->clampAddressToRange(startAddress);
     }
 
-    setStartAddress(target);
+    fetchData();
+    if (cursor.address >= startAddress && cursor.address <= lastVisibleAddr()) {
+        /* Don't enable cursor blinking if selection isn't empty */
+        cursorEnabled = selection.isEmpty();
+        updateCursorMeta();
+    } else {
+        cursorEnabled = false;
+    }
+    updateViewport();
 }
 
 void HexWidget::setStartAddress(RVA address)
