@@ -69,16 +69,19 @@ HexWidget::HexWidget(QWidget *parent)
             [this](int) { setStartAddress(vScrollBar->address()); });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
-
-    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this, [this]() {
 #ifdef Q_OS_MAC
-        // This is required to fix the scrollbar not showing on macOS
-        // This issue only happens if the "Show scroll bars" is set to "When Scrolling" on macOS
-        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    // 1. Set policy to AsNeeded so layout space is allocated
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    // 2. This is the "Magic" fix for macOS:
+    // It disables the transient (disappearing) behavior for this specific widget.
+    vScrollBar->setAttribute(Qt::WA_MacAlwaysShowUpperGradient, true);
+
+    // 3. Force the style to realize it's an active scrollable area
+    vScrollBar->setStyle(QApplication::style());
 #else
-        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 #endif
-    });
     vScrollBar->refreshRange();
 
     auto sizeActionGroup = new QActionGroup(this);
