@@ -782,6 +782,9 @@ bool DisassemblyScrollArea::viewportEvent(QEvent *event)
 
 void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
 {
+    if (vScrollBar) {
+        QCoreApplication::sendEvent(vScrollBar, event);
+    }
     if (event->angleDelta().isNull() || !event->angleDelta().y()) {
         QAbstractScrollArea::wheelEvent(event);
         return;

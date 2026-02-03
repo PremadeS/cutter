@@ -2723,7 +2723,6 @@ void HexWidget::showWarningRect(QRectF rect)
 void HexWidget::updateViewport()
 {
     vScrollBar->setPosition(startAddress);
-    // vScrollBar->update();
     viewport()->update();
 }
 
