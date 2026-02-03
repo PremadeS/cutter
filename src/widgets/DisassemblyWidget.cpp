@@ -149,7 +149,6 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     mCtxMenu->addAction(&syncAction);
     connect(seekable, &CutterSeekable::seekableSeekChanged, this,
             &DisassemblyWidget::on_seekChanged);
-
     addActions(mCtxMenu->actions());
 
 #define ADD_ACTION(id, ctx, slot)                                                                  \
@@ -202,6 +201,11 @@ QWidget *DisassemblyWidget::getTextWidget()
 QString DisassemblyWidget::getWidgetType()
 {
     return "Disassembly";
+}
+
+AddressRangeScrollBar *DisassemblyWidget::verticalScrollBar() const
+{
+    return mDisasScrollArea->verticalScrollBar();
 }
 
 QFontMetricsF DisassemblyWidget::getFontMetrics()
@@ -782,9 +786,6 @@ bool DisassemblyScrollArea::viewportEvent(QEvent *event)
 
 void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
 {
-    if (vScrollBar) {
-        QCoreApplication::sendEvent(vScrollBar, event);
-    }
     if (event->angleDelta().isNull() || !event->angleDelta().y()) {
         QAbstractScrollArea::wheelEvent(event);
         return;
@@ -799,7 +800,9 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         emit scrollLines(-lineCount);
     }
+    vScrollBar->triggerNativeWheel(event);
     vScrollBar->update();
+    emit scrolled();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
@@ -860,6 +863,8 @@ void DisassemblyLeftPanel::wheelEvent(QWheelEvent *event)
     count -= (count > 0 ? 5 : -5);
 
     this->disas->scrollInstructions(count);
+    this->disas->verticalScrollBar()->triggerNativeWheel(event);
+    this->disas->verticalScrollBar()->update();
 }
 
 void DisassemblyLeftPanel::paintEvent(QPaintEvent *event)

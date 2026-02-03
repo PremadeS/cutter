@@ -16,6 +16,10 @@ public:
     RVA clampAddressToRange(RVA address);
     RVA rangeSize();
 
+    // This is requried for the scrollbar to appear on macOS when show scroll bars option is
+    // set to "When Scrolling"
+    void triggerNativeWheel(QWheelEvent *event);
+
 signals:
     void hideScrollBar();
     void showScrollBar();

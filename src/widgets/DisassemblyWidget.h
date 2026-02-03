@@ -28,6 +28,7 @@ public:
     QWidget *getTextWidget();
 
     static QString getWidgetType();
+    AddressRangeScrollBar *verticalScrollBar() const;
 
 public slots:
     /**
@@ -115,6 +116,7 @@ public:
     AddressRangeScrollBar *verticalScrollBar();
 
 signals:
+    void scrolled();
     void scrollLines(int lines, bool clampToScrollBarRange = false);
     void disassemblyResized();
 
@@ -157,11 +159,15 @@ private:
  */
 class DisassemblyLeftPanel : public QFrame
 {
+
 public:
     DisassemblyLeftPanel(DisassemblyWidget *disas);
     void paintEvent(QPaintEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void clearArrowFrom(RVA offset);
+
+signals:
+    void scrolled();
 
 private:
     DisassemblyWidget *disas;

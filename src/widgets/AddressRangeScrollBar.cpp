@@ -181,9 +181,14 @@ RVA AddressRangeScrollBar::rangeSize()
     return endOffset - beginOffset;
 }
 
-void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
+void AddressRangeScrollBar::triggerNativeWheel(QWheelEvent *event)
 {
     QScrollBar::wheelEvent(event);
+}
+
+void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
+{
+    triggerNativeWheel(event);
 
     accumScrollWheelDeltaY += event->angleDelta().y();
     // Delta is reported in 1/8 of a degree
