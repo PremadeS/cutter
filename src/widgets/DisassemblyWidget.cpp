@@ -53,8 +53,10 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     layout->setContentsMargins(0, 0, 0, 0);
     mDisasScrollArea->viewport()->setLayout(layout);
     splitter->addWidget(mDisasScrollArea);
-    connect(mDisasScrollArea->verticalScrollBar(), &QScrollBar::valueChanged, this,
-            [this](int) { refreshDisasm(mDisasScrollArea->verticalScrollBar()->address()); });
+    connect(mDisasScrollArea->verticalScrollBar(), &QScrollBar::valueChanged, this, [this](int) {
+        refreshDisasm(mDisasScrollArea->verticalScrollBar()->address());
+        mDisasScrollArea->verticalScrollBar()->update();
+    });
     // Use stylesheet instead of QWidget::setFrameShape(QFrame::NoShape) to avoid
     // issues with dark and light interface themes
     mDisasScrollArea->setStyleSheet("QAbstractScrollArea { border: 0px transparent black; }");
@@ -334,6 +336,7 @@ void DisassemblyWidget::scrollInstructions(int count, bool clampToScrollBarRange
 
     refreshDisasm(offset);
     topOffsetHistory[topOffsetHistoryPos] = offset;
+    mDisasScrollArea->verticalScrollBar()->update();
 }
 
 bool DisassemblyWidget::updateMaxLines()
@@ -345,7 +348,7 @@ bool DisassemblyWidget::updateMaxLines()
         refreshDisasm();
         return true;
     }
-
+    mDisasScrollArea->verticalScrollBar()->update();
     return false;
 }
 
@@ -775,6 +778,7 @@ bool DisassemblyScrollArea::viewportEvent(QEvent *event)
 {
     if (event->type() == QEvent::Resize) {
         emit disassemblyResized();
+        verticalScrollBar()->update();
     }
 
     return QAbstractScrollArea::viewportEvent(event);
@@ -796,6 +800,7 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         emit scrollLines(-lineCount);
     }
+    verticalScrollBar()->update();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
@@ -809,7 +814,9 @@ bool DisassemblyTextEdit::viewportEvent(QEvent *event)
     case QEvent::Type::Wheel:
         return false;
     default:
-        return QAbstractScrollArea::viewportEvent(event);
+        bool ok = QAbstractScrollArea::viewportEvent(event);
+        verticalScrollBar()->update();
+        return ok;
     }
 }
 
@@ -817,6 +824,7 @@ void DisassemblyTextEdit::scrollContentsBy(int dx, int dy)
 {
     if (!lockScroll) {
         QPlainTextEdit::scrollContentsBy(dx, dy);
+        verticalScrollBar()->update();
     }
 }
 
