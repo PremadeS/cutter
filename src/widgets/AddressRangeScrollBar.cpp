@@ -106,11 +106,6 @@ void AddressRangeScrollBar::refreshRange()
     }
     if (rangeSize()) {
         emit showScrollBar();
-        // #ifdef Q_OS_MAC
-        //         // Force macOS to re-evaluate the scrollbar's existence
-        //         this->setHidden(false);
-        //         this->update();
-        // #endif
         return;
     }
     emit hideScrollBar();
@@ -154,7 +149,7 @@ void AddressRangeScrollBar::setPosition(RVA address)
     }
     setValue(scrollBarPos);
     emit showScrollBar();
-    update();
+    // update();
     return;
 }
 
@@ -203,6 +198,6 @@ void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
             return;
         }
         emit scrolled(lineCount);
-        update();
+        // update();
     }
 }

@@ -80,14 +80,8 @@ HexWidget::HexWidget(QWidget *parent)
             [this](int) { setStartAddress(vScrollBar->address()); });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
-    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this, [this]() {
-        // #ifdef Q_OS_MAC
-        // This is the only policy that allows the native macOS overlay to "wake up"
-        // setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-        // #else
-        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        // #endif
-    });
+    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
+            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
     vScrollBar->refreshRange();
 
     auto sizeActionGroup = new QActionGroup(this);
@@ -2729,6 +2723,7 @@ void HexWidget::showWarningRect(QRectF rect)
 void HexWidget::updateViewport()
 {
     vScrollBar->setPosition(startAddress);
+    vScrollBar->update();
     viewport()->update();
 }
 
