@@ -802,7 +802,6 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
     }
     vScrollBar->triggerNativeWheel(event);
     vScrollBar->update();
-    emit scrolled();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
