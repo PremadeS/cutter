@@ -672,6 +672,10 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
                     this, helpEvent->globalPos(), cursorForWord.selectedText(), offsetFrom)) {
             return true;
         }
+    } else if (event->type() == QEvent::Wheel) {
+        mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(
+                static_cast<QWheelEvent *>(event));
+        mDisasScrollArea->verticalScrollBar()->update();
     }
 
     return MemoryDockWidget::eventFilter(obj, event);
@@ -800,8 +804,8 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         emit scrollLines(-lineCount);
     }
-    vScrollBar->triggerNativeWheel(event);
-    vScrollBar->update();
+    // vScrollBar->triggerNativeWheel(event);
+    // vScrollBar->update();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
@@ -862,8 +866,8 @@ void DisassemblyLeftPanel::wheelEvent(QWheelEvent *event)
     count -= (count > 0 ? 5 : -5);
 
     this->disas->scrollInstructions(count);
-    this->disas->verticalScrollBar()->triggerNativeWheel(event);
-    this->disas->verticalScrollBar()->update();
+    // this->disas->verticalScrollBar()->triggerNativeWheel(event);
+    // this->disas->verticalScrollBar()->update();
 }
 
 void DisassemblyLeftPanel::paintEvent(QPaintEvent *event)
