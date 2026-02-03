@@ -810,14 +810,19 @@ qreal DisassemblyTextEdit::textOffset() const
 
 bool DisassemblyTextEdit::viewportEvent(QEvent *event)
 {
-    switch (event->type()) {
-    case QEvent::Type::Wheel:
+    if (event->type() == QEvent::Wheel) {
+        // - Find the parent scroll area's scrollbar
+        auto *scrollArea = qobject_cast<QAbstractScrollArea *>(parentWidget());
+        if (scrollArea && scrollArea->verticalScrollBar()) {
+            // Forward event to trigger macOS native overlay
+            QApplication::sendEvent(scrollArea->verticalScrollBar(), event);
+        }
         return false;
-    default:
-        bool ok = QAbstractScrollArea::viewportEvent(event);
-        verticalScrollBar()->update();
-        return ok;
     }
+
+    bool ok = QAbstractScrollArea::viewportEvent(event);
+    verticalScrollBar()->update();
+    return ok;
 }
 
 void DisassemblyTextEdit::scrollContentsBy(int dx, int dy)
