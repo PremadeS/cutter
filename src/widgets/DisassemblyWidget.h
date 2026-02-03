@@ -124,8 +124,6 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    bool eventFilter(QObject *watched, QEvent *event) override;
-
     AddressRangeScrollBar *vScrollBar;
     int accumScrollWheelDeltaY;
 

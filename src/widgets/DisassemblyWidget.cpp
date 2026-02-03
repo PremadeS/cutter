@@ -46,7 +46,7 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     // Setup the left frame that contains breakpoints and jumps
     leftPanel = new DisassemblyLeftPanel(this);
     splitter->addWidget(leftPanel);
-    leftPanel->installEventFilter(mDisasScrollArea);
+    leftPanel->installEventFilter(this);
 
     // Setup the disassembly content
     auto *layout = new QHBoxLayout;
@@ -673,6 +673,10 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
                     this, helpEvent->globalPos(), cursorForWord.selectedText(), offsetFrom)) {
             return true;
         }
+    } else if (event->type() == QEvent::Wheel) {
+        mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(
+                static_cast<QWheelEvent *>(event));
+        mDisasScrollArea->verticalScrollBar()->update();
     }
 
     return MemoryDockWidget::eventFilter(obj, event);
@@ -769,22 +773,11 @@ DisassemblyScrollArea::DisassemblyScrollArea(QWidget *parent) : QAbstractScrollA
     connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
     vScrollBar->refreshRange();
-    installEventFilter(this);
 }
 
 AddressRangeScrollBar *DisassemblyScrollArea::verticalScrollBar()
 {
     return vScrollBar;
-}
-
-bool DisassemblyScrollArea::eventFilter(QObject *watched, QEvent *event)
-{
-    if (event->type() == QEvent::Wheel) {
-        vScrollBar->triggerNativeWheel(static_cast<QWheelEvent *>(event));
-        vScrollBar->update();
-    }
-
-    return QAbstractScrollArea::eventFilter(watched, event);
 }
 
 bool DisassemblyScrollArea::viewportEvent(QEvent *event)
