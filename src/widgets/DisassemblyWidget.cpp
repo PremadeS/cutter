@@ -46,8 +46,6 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     // Setup the left frame that contains breakpoints and jumps
     leftPanel = new DisassemblyLeftPanel(this);
     splitter->addWidget(leftPanel);
-    connect(leftPanel, &DisassemblyLeftPanel::scrolled, this,
-            [this] { this->mDisasScrollArea->verticalScrollBar()->update(); });
 
     // Setup the disassembly content
     auto *layout = new QHBoxLayout;
@@ -124,6 +122,8 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
             &DisassemblyWidget::scrollInstructions);
     connect(mDisasScrollArea, &DisassemblyScrollArea::disassemblyResized, this,
             &DisassemblyWidget::updateMaxLines);
+    connect(mDisasScrollArea, &DisassemblyScrollArea::wheelEventTriggered, this,
+            &DisassemblyWidget::propagateWheelToScrollBar);
 
     connectCursorPositionChanged(false);
 
@@ -218,6 +218,12 @@ QFontMetricsF DisassemblyWidget::getFontMetrics()
 QList<DisassemblyLine> DisassemblyWidget::getLines()
 {
     return lines;
+}
+
+void DisassemblyWidget::propagateWheelToScrollBar(QWheelEvent *event)
+{
+    mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(event);
+    mDisasScrollArea->verticalScrollBar()->update();
 }
 
 void DisassemblyWidget::refreshIfInRange(RVA offset)
@@ -675,12 +681,6 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
             return true;
         }
     }
-    // else if (event->type() == QEvent::Wheel) {
-    //     mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(
-    //             static_cast<QWheelEvent *>(event));
-    //     mDisasScrollArea->verticalScrollBar()->update();
-    // }
-
     return MemoryDockWidget::eventFilter(obj, event);
 }
 
@@ -807,6 +807,7 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         emit scrollLines(-lineCount);
     }
+    emit wheelEventTriggered(event);
 }
 
 qreal DisassemblyTextEdit::textOffset() const
@@ -867,6 +868,7 @@ void DisassemblyLeftPanel::wheelEvent(QWheelEvent *event)
     count -= (count > 0 ? 5 : -5);
 
     this->disas->scrollInstructions(count);
+    this->disas->propagateWheelToScrollBar(event);
 }
 
 void DisassemblyLeftPanel::paintEvent(QPaintEvent *event)

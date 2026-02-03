@@ -51,6 +51,8 @@ public slots:
     void setPreviewMode(bool previewMode);
     QFontMetricsF getFontMetrics();
     QList<DisassemblyLine> getLines();
+    // TODO: DOCSSSSSSSSSSSSSSS
+    void propagateWheelToScrollBar(QWheelEvent *event);
 
 protected slots:
     void on_seekChanged(RVA offset, CutterCore::SeekHistoryType type);
@@ -118,6 +120,7 @@ public:
 signals:
     void scrollLines(int lines, bool clampToScrollBarRange = false);
     void disassemblyResized();
+    void wheelEventTriggered(QWheelEvent *event);
 
 protected:
     bool viewportEvent(QEvent *event) override;
