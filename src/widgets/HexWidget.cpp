@@ -73,13 +73,8 @@ HexWidget::HexWidget(QWidget *parent)
     });
     connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
-    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this, [this]() {
-#ifdef Q_MAC_OS
-        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-#else
-        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-#endif
-    });
+    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
+            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
     vScrollBar->refreshRange();
 
     auto sizeActionGroup = new QActionGroup(this);

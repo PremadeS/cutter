@@ -183,6 +183,8 @@ RVA AddressRangeScrollBar::rangeSize()
 
 void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
 {
+    QScrollBar::wheelEvent(event);
+
     accumScrollWheelDeltaY += event->angleDelta().y();
     // Delta is reported in 1/8 of a degree
     // eg. 120 units * 1/8 = 15 degrees
