@@ -46,6 +46,7 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     // Setup the left frame that contains breakpoints and jumps
     leftPanel = new DisassemblyLeftPanel(this);
     splitter->addWidget(leftPanel);
+    leftPanel->installEventFilter(mDisasScrollArea);
 
     // Setup the disassembly content
     auto *layout = new QHBoxLayout;
@@ -672,10 +673,6 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
                     this, helpEvent->globalPos(), cursorForWord.selectedText(), offsetFrom)) {
             return true;
         }
-    } else if (event->type() == QEvent::Wheel) {
-        mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(
-                static_cast<QWheelEvent *>(event));
-        mDisasScrollArea->verticalScrollBar()->update();
     }
 
     return MemoryDockWidget::eventFilter(obj, event);
@@ -772,11 +769,22 @@ DisassemblyScrollArea::DisassemblyScrollArea(QWidget *parent) : QAbstractScrollA
     connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
             [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
     vScrollBar->refreshRange();
+    installEventFilter(this);
 }
 
 AddressRangeScrollBar *DisassemblyScrollArea::verticalScrollBar()
 {
     return vScrollBar;
+}
+
+bool DisassemblyScrollArea::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::Wheel) {
+        vScrollBar->triggerNativeWheel(static_cast<QWheelEvent *>(event));
+        vScrollBar->update();
+    }
+
+    return QAbstractScrollArea::eventFilter(watched, event);
 }
 
 bool DisassemblyScrollArea::viewportEvent(QEvent *event)
@@ -804,8 +812,6 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         emit scrollLines(-lineCount);
     }
-    // vScrollBar->triggerNativeWheel(event);
-    // vScrollBar->update();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
@@ -866,8 +872,6 @@ void DisassemblyLeftPanel::wheelEvent(QWheelEvent *event)
     count -= (count > 0 ? 5 : -5);
 
     this->disas->scrollInstructions(count);
-    // this->disas->verticalScrollBar()->triggerNativeWheel(event);
-    // this->disas->verticalScrollBar()->update();
 }
 
 void DisassemblyLeftPanel::paintEvent(QPaintEvent *event)
