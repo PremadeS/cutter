@@ -16,6 +16,16 @@ public:
     RVA clampAddressToRange(RVA address);
     RVA rangeSize();
 
+    /**
+     * @brief Reposts a wheel event to this scrollbar to synchronize its visual state
+     *
+     * This allows external widgets (like side panels or text edits) to notify the
+     * scrollbar of wheel activity. It is needed for systems which have the option to show the
+     * scrollbar only while scrolling (when using Cutter's "Native" theme)
+     *
+     * @param event The original QWheelEvent to be processed by the scrollbar
+     */
+    void repostWheelEvent(QWheelEvent *event);
 signals:
     void hideScrollBar();
     void showScrollBar();

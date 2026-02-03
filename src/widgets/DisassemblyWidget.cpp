@@ -122,6 +122,8 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
             &DisassemblyWidget::scrollInstructions);
     connect(mDisasScrollArea, &DisassemblyScrollArea::disassemblyResized, this,
             &DisassemblyWidget::updateMaxLines);
+    connect(mDisasScrollArea, &DisassemblyScrollArea::wheelEventTriggered, this,
+            &DisassemblyWidget::repostWheelEvent);
 
     connectCursorPositionChanged(false);
 
@@ -212,6 +214,11 @@ QFontMetricsF DisassemblyWidget::getFontMetrics()
 QList<DisassemblyLine> DisassemblyWidget::getLines()
 {
     return lines;
+}
+
+void DisassemblyWidget::repostWheelEvent(QWheelEvent *event)
+{
+    mDisasScrollArea->verticalScrollBar()->repostWheelEvent(event);
 }
 
 void DisassemblyWidget::refreshIfInRange(RVA offset)
@@ -786,6 +793,8 @@ void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
         QAbstractScrollArea::wheelEvent(event);
         return;
     }
+
+    emit wheelEventTriggered(event);
     accumScrollWheelDeltaY += event->angleDelta().y();
     // Delta is reported in 1/8 of a degree
     // eg. 120 units * 1/8 = 15 degrees
@@ -852,6 +861,8 @@ DisassemblyLeftPanel::DisassemblyLeftPanel(DisassemblyWidget *disas)
 
 void DisassemblyLeftPanel::wheelEvent(QWheelEvent *event)
 {
+    this->disas->repostWheelEvent(event);
+
     int count = -(event->angleDelta() / 15).y();
     count -= (count > 0 ? 5 : -5);
 

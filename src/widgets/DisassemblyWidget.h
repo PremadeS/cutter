@@ -51,6 +51,12 @@ public slots:
     QFontMetricsF getFontMetrics();
     QList<DisassemblyLine> getLines();
 
+    /**
+     * @brief Reposts a wheel event to vertical scrollbar
+     *
+     * @param event The original QWheelEvent to be processed by the scrollbar
+     */
+    void repostWheelEvent(QWheelEvent *event);
 protected slots:
     void on_seekChanged(RVA offset, CutterCore::SeekHistoryType type);
     void refreshIfInRange(RVA offset);
@@ -117,6 +123,7 @@ public:
 signals:
     void scrollLines(int lines, bool clampToScrollBarRange = false);
     void disassemblyResized();
+    void wheelEventTriggered(QWheelEvent *event);
 
 protected:
     bool viewportEvent(QEvent *event) override;
