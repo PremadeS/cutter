@@ -71,10 +71,14 @@ HexWidget::HexWidget(QWidget *parent)
         setStartAddress(vScrollBar->address());
         vScrollBar->update();
     });
-    connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this,
-            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); });
-    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this,
-            [this]() { setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); });
+    connect(vScrollBar, &AddressRangeScrollBar::hideScrollBar, this, [this]() {
+        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        vScrollBar->update();
+    });
+    connect(vScrollBar, &AddressRangeScrollBar::showScrollBar, this, [this]() {
+        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        vScrollBar->update();
+    });
     vScrollBar->refreshRange();
 
     auto sizeActionGroup = new QActionGroup(this);
