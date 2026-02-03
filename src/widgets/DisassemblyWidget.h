@@ -161,12 +161,16 @@ private:
  */
 class DisassemblyLeftPanel : public QFrame
 {
+    Q_OBJECT
 
 public:
     DisassemblyLeftPanel(DisassemblyWidget *disas);
     void paintEvent(QPaintEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void clearArrowFrom(RVA offset);
+
+signals:
+    void scrolled();
 
 private:
     DisassemblyWidget *disas;

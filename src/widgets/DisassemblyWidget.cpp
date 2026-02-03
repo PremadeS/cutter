@@ -46,7 +46,8 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     // Setup the left frame that contains breakpoints and jumps
     leftPanel = new DisassemblyLeftPanel(this);
     splitter->addWidget(leftPanel);
-    leftPanel->installEventFilter(this);
+    connect(leftPanel, &DisassemblyLeftPanel::scrolled, this,
+            [this] { this->mDisasScrollArea->verticalScrollBar()->update(); });
 
     // Setup the disassembly content
     auto *layout = new QHBoxLayout;
@@ -673,11 +674,12 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
                     this, helpEvent->globalPos(), cursorForWord.selectedText(), offsetFrom)) {
             return true;
         }
-    } else if (event->type() == QEvent::Wheel) {
-        mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(
-                static_cast<QWheelEvent *>(event));
-        mDisasScrollArea->verticalScrollBar()->update();
     }
+    // else if (event->type() == QEvent::Wheel) {
+    //     mDisasScrollArea->verticalScrollBar()->triggerNativeWheel(
+    //             static_cast<QWheelEvent *>(event));
+    //     mDisasScrollArea->verticalScrollBar()->update();
+    // }
 
     return MemoryDockWidget::eventFilter(obj, event);
 }
