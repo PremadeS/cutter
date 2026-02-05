@@ -692,10 +692,7 @@ void DisassemblyWidget::keyPressEvent(QKeyEvent *event)
 
 void DisassemblyWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-    // Consume event to prevent it from bubbling up to AddressableDockWidget
-    // This ensures the "Menu" key triggers the disassembly-specific menu
-    QWidget *child = childAt(event->pos());
-    if (child == mDisasTextEdit->viewport()) {
+    if (event->reason() == QContextMenuEvent::Keyboard) {
         showDisasContextMenu(event->pos());
         event->accept();
         return;
