@@ -690,6 +690,20 @@ void DisassemblyWidget::keyPressEvent(QKeyEvent *event)
     MemoryDockWidget::keyPressEvent(event);
 }
 
+void DisassemblyWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    // Consume event to prevent it from bubbling up to AddressableDockWidget
+    // This ensures the "Menu" key triggers the disassembly-specific menu
+    QWidget *child = childAt(event->pos());
+    if (child == mDisasTextEdit->viewport()) {
+        showDisasContextMenu(event->pos());
+        event->accept();
+        return;
+    }
+
+    MemoryDockWidget::contextMenuEvent(event);
+}
+
 QString DisassemblyWidget::getWindowTitle() const
 {
     return tr("Disassembly");
