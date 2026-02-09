@@ -569,6 +569,9 @@ bool DisassemblerGraphView::eventFilter(QObject *obj, QEvent *event)
                 bool hasPreview = Config()->getGraphPreview();
                 if (hasPreview
                     && DisassemblyPreview::isXRefFromComment(offsetFrom, inst->plainText)) {
+                    if (!token) {
+                        return true;
+                    }
                     RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offsetFrom, token->content);
                     if (xrefFrom != RVA_INVALID) {
                         DisassemblyPreview::showDisasPreviewAt(this, pointOfEvent, xrefFrom);
