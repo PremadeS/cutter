@@ -49,28 +49,49 @@ bool DisassemblyPreview::showDisasPreview(QWidget *parent, const QPoint &pointOf
          * on *and* the former is a valid offset, we are allowed to get a preview of offsetTo
          */
         if (offsetTo != offsetFrom && offsetTo != RVA_INVALID) {
-            QStringList disasmPreview = Core()->getDisassemblyPreview(offsetTo, 10);
-
-            // Last check to make sure the returned preview isn't an empty text (QStringList)
-            if (!disasmPreview.isEmpty()) {
-                const QFont &fnt = Config()->getFont();
-
-                QFontMetrics fm { fnt };
-
-                QString tooltip =
-                        QString { "<html><div style=\"font-family: %1; font-size: %2pt; "
-                                  "white-space: nowrap;\"><div style=\"margin-bottom: "
-                                  "10px;\"><strong>Disassembly Preview</strong>:<br>%3<div>" }
-                                .arg(fnt.family())
-                                .arg(qMax(8, fnt.pointSize() - 1))
-                                .arg(disasmPreview.join("<br>"));
-
-                QToolTip::showText(pointOfEvent, tooltip, parent, QRect {}, 3500);
-                return true;
-            }
+            return showDisasPreviewAt(parent, pointOfEvent, offsetTo);
         }
     }
     return false;
+}
+
+bool DisassemblyPreview::showDisasPreviewAt(QWidget *parent, const QPoint &pointOfEvent,
+                                            const RVA offset)
+{
+    QStringList disasmPreview = Core()->getDisassemblyPreview(offset, 10);
+    if (!disasmPreview.isEmpty()) {
+        const QFont &fnt = Config()->getFont();
+        QString tooltip = QString { "<html><div style=\"font-family: %1; font-size: %2pt; "
+                                    "white-space: nowrap;\"><div style=\"margin-bottom: "
+                                    "10px;\"><strong>Disassembly Preview</strong>:<br>%3<div>" }
+                                  .arg(fnt.family())
+                                  .arg(qMax(8, fnt.pointSize() - 1))
+                                  .arg(disasmPreview.join("<br>"));
+
+        QToolTip::showText(pointOfEvent, tooltip, parent, QRect {}, 3500);
+        return true;
+    }
+
+    return false;
+}
+
+RVA DisassemblyPreview::getXRefFromWord(RVA offset, const QString &selectedWord)
+{
+    auto xrefsTo = Core()->getXRefs(offset, true, false);
+    for (const auto &xref : xrefsTo) {
+        if (xref.from_str == selectedWord) {
+            return xref.from;
+        }
+    }
+    return RVA_INVALID;
+}
+
+bool DisassemblyPreview::isXRefFromComment(RVA offset, const QString &line)
+{
+    // return true if the line starts with ';' - contains the word "XREF" and is not a user comment
+    // e.g: ; CODE XREF from sym.USER32.dll_OpenClipboard @ 0x77cbc7e3
+    return (line.startsWith(";") && line.contains("XREF")
+            && !Core()->getCommentAt(offset).contains(line.mid(1).simplified()));
 }
 
 RVA DisassemblyPreview::readDisassemblyOffset(QTextCursor tc)

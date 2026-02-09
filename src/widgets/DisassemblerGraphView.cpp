@@ -565,12 +565,21 @@ bool DisassemblerGraphView::eventFilter(QObject *obj, QEvent *event)
 
             // Don't preview anything for a small scale
             if (getViewScale() >= 0.8) {
-                if (Config()->getGraphPreview()
+                auto token = getToken(inst, pos.x());
+                bool hasPreview = Config()->getGraphPreview();
+                if (hasPreview
+                    && DisassemblyPreview::isXRefFromComment(offsetFrom, inst->plainText)) {
+                    RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offsetFrom, token->content);
+                    if (xrefFrom != RVA_INVALID) {
+                        DisassemblyPreview::showDisasPreviewAt(this, pointOfEvent, xrefFrom);
+                    }
+                    return true;
+                }
+                if (hasPreview
                     && DisassemblyPreview::showDisasPreview(this, pointOfEvent, offsetFrom)) {
                     return true;
                 }
                 if (Config()->getShowVarTooltips() && inst) {
-                    auto token = getToken(inst, pos.x());
                     if (token
                         && DisassemblyPreview::showDebugValueTooltip(this, pointOfEvent,
                                                                      token->content, offsetFrom)) {
@@ -955,13 +964,23 @@ void DisassemblerGraphView::blockDoubleClicked(GraphView::GraphBlock &block, QMo
         return;
     }
 
+    RVA offset = getAddrForMouseEvent(block, &pos);
+
+    if (DisassemblyPreview::isXRefFromComment(offset, instr->plainText)) {
+        RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offset, selectedText);
+        if (xrefFrom != RVA_INVALID) {
+            seekable->seek(xrefFrom);
+        }
+        return;
+    }
+
     XrefDescription firstXref = Core()->getFirstXRefForVariable(selectedText, instr->addr);
     if (!firstXref.from_str.isEmpty() || !firstXref.to_str.isEmpty()) {
         seekable->seek(firstXref.from);
         return;
     }
 
-    seekable->seekToReference(getAddrForMouseEvent(block, &pos));
+    seekable->seekToReference(offset);
 }
 
 void DisassemblerGraphView::blockHelpEvent(GraphView::GraphBlock &block, QHelpEvent *event,

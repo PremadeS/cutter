@@ -649,6 +649,18 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
             }
 
             RVA offset = DisassemblyPreview::readDisassemblyOffset(cursor);
+
+            if (DisassemblyPreview::isXRefFromComment(offset, cursor.block().text().trimmed())) {
+                RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offset, selectedText);
+                if (xrefFrom != RVA_INVALID) {
+                    seekable->seek(xrefFrom);
+                }
+                // consume the event even if the text under cursor is not an address, this prevents
+                // jumping to incorrect offset (offset pointed to by the next instruction line)
+                // when double clicking on auto generated XREF comment
+                return true;
+            }
+
             XrefDescription firstXref = Core()->getFirstXRefForVariable(selectedText, offset);
             if (!firstXref.from_str.isEmpty() || !firstXref.to_str.isEmpty()) {
                 seekable->seek(firstXref.from);
@@ -666,13 +678,25 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
 
         RVA offsetFrom = DisassemblyPreview::readDisassemblyOffset(cursorForWord);
 
-        if (Config()->getPreviewValue()
-            && DisassemblyPreview::showDisasPreview(this, helpEvent->globalPos(), offsetFrom)) {
+        const QPoint pointOfEvent = helpEvent->globalPos();
+        const QString word = cursorForWord.selectedText();
+        const QString line = cursorForWord.block().text().trimmed();
+
+        bool hasPreview = Config()->getPreviewValue();
+        if (hasPreview && DisassemblyPreview::isXRefFromComment(offsetFrom, line)) {
+            // Only show the tooltip if the text under cursor is an address when hovering over auto
+            // generated XRef comment
+            RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offsetFrom, word);
+            if (xrefFrom != RVA_INVALID) {
+                DisassemblyPreview::showDisasPreviewAt(this, pointOfEvent, xrefFrom);
+            }
+            return true;
+        }
+        if (hasPreview && DisassemblyPreview::showDisasPreview(this, pointOfEvent, offsetFrom)) {
             return true;
         }
         if (Config()->getShowVarTooltips()
-            && DisassemblyPreview::showDebugValueTooltip(
-                    this, helpEvent->globalPos(), cursorForWord.selectedText(), offsetFrom)) {
+            && DisassemblyPreview::showDebugValueTooltip(this, pointOfEvent, word, offsetFrom)) {
             return true;
         }
     }
