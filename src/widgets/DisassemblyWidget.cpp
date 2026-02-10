@@ -685,7 +685,8 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
         bool hasPreview = Config()->getPreviewValue();
         if (hasPreview && DisassemblyPreview::isXRefFromComment(offsetFrom, line)) {
             // Only show the tooltip if the text under cursor is an address when hovering over auto
-            // generated XRef comment
+            // generated XRef comment, this will show the preview of the caller where this offset is
+            // called
             RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offsetFrom, word);
             if (xrefFrom != RVA_INVALID) {
                 DisassemblyPreview::showDisasPreviewAt(this, pointOfEvent, xrefFrom);
