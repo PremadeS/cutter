@@ -9,6 +9,7 @@
 #include "core/MainWindow.h"
 #include "widgets/AddressRangeScrollBar.h"
 #include "shortcuts/ShortcutManager.h"
+#include "DisassemblyHelper.h"
 
 #include <QApplication>
 #include <QScrollBar>
@@ -385,7 +386,7 @@ void DisassemblyWidget::highlightCurrentLine()
     highlightSelection.cursor = cursor;
     highlightSelection.cursor.movePosition(QTextCursor::Start);
     while (true) {
-        RVA lineOffset = DisassemblyPreview::readDisassemblyOffset(highlightSelection.cursor);
+        RVA lineOffset = DisassemblyHelper::readDisassemblyOffset(highlightSelection.cursor);
         if (lineOffset == seekable->getOffset()) {
             highlightSelection.format.setBackground(highlightColor);
             highlightSelection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -420,7 +421,7 @@ void DisassemblyWidget::highlightPCLine()
     highlightSelection.cursor.movePosition(QTextCursor::Start);
     if (PCAddr != RVA_INVALID) {
         while (true) {
-            RVA lineOffset = DisassemblyPreview::readDisassemblyOffset(highlightSelection.cursor);
+            RVA lineOffset = DisassemblyHelper::readDisassemblyOffset(highlightSelection.cursor);
             if (lineOffset == PCAddr) {
                 highlightSelection.format.setBackground(highlightPCColor);
                 highlightSelection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -453,7 +454,7 @@ void DisassemblyWidget::showDisasContextMenu(const QPoint &pt)
 RVA DisassemblyWidget::readCurrentDisassemblyOffset()
 {
     QTextCursor tc = mDisasTextEdit->textCursor();
-    return DisassemblyPreview::readDisassemblyOffset(tc);
+    return DisassemblyHelper::readDisassemblyOffset(tc);
 }
 
 void DisassemblyWidget::updateCursorPosition()
@@ -480,7 +481,7 @@ void DisassemblyWidget::updateCursorPosition()
         cursor.movePosition(QTextCursor::Start);
 
         while (true) {
-            RVA lineOffset = DisassemblyPreview::readDisassemblyOffset(cursor);
+            RVA lineOffset = DisassemblyHelper::readDisassemblyOffset(cursor);
             if (lineOffset == offset) {
                 if (cursorLineOffset > 0) {
                     cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor,
@@ -541,7 +542,7 @@ void DisassemblyWidget::cursorPositionChanged()
     cursorCharOffset = c.positionInBlock();
     while (c.blockNumber() > 0) {
         c.movePosition(QTextCursor::PreviousBlock);
-        if (DisassemblyPreview::readDisassemblyOffset(c) != offset) {
+        if (DisassemblyHelper::readDisassemblyOffset(c) != offset) {
             break;
         }
         cursorLineOffset++;
@@ -627,7 +628,7 @@ void DisassemblyWidget::moveCursorRelative(bool up, bool page)
 
 void DisassemblyWidget::jumpToOffsetUnderCursor(const QTextCursor &cursor)
 {
-    RVA offset = DisassemblyPreview::readDisassemblyOffset(cursor);
+    RVA offset = DisassemblyHelper::readDisassemblyOffset(cursor);
     seekable->seekToReference(offset);
 }
 
@@ -648,10 +649,10 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
                 return true;
             }
 
-            RVA offset = DisassemblyPreview::readDisassemblyOffset(cursor);
+            RVA offset = DisassemblyHelper::readDisassemblyOffset(cursor);
 
-            if (DisassemblyPreview::isXRefFromComment(offset, cursor.block().text().trimmed())) {
-                RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offset, selectedText);
+            if (DisassemblyHelper::isXRefFromComment(offset, cursor.block().text().trimmed())) {
+                RVA xrefFrom = DisassemblyHelper::getXRefFromWord(offset, selectedText);
                 if (xrefFrom != RVA_INVALID) {
                     seekable->seek(xrefFrom);
                 }
@@ -676,18 +677,18 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
         auto cursorForWord = mDisasTextEdit->cursorForPosition(helpEvent->pos());
         cursorForWord.select(QTextCursor::WordUnderCursor);
 
-        RVA offsetFrom = DisassemblyPreview::readDisassemblyOffset(cursorForWord);
+        RVA offsetFrom = DisassemblyHelper::readDisassemblyOffset(cursorForWord);
 
         const QPoint pointOfEvent = helpEvent->globalPos();
         const QString word = cursorForWord.selectedText();
         const QString line = cursorForWord.block().text().trimmed();
 
         bool hasPreview = Config()->getPreviewValue();
-        if (hasPreview && DisassemblyPreview::isXRefFromComment(offsetFrom, line)) {
+        if (hasPreview && DisassemblyHelper::isXRefFromComment(offsetFrom, line)) {
             // Only show the tooltip if the text under cursor is an address when hovering over auto
             // generated XRef comment, this will show the preview of the caller where this offset is
             // called
-            RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offsetFrom, word);
+            RVA xrefFrom = DisassemblyHelper::getXRefFromWord(offsetFrom, word);
             if (xrefFrom != RVA_INVALID) {
                 DisassemblyPreview::showDisasPreviewAt(this, pointOfEvent, xrefFrom);
             }

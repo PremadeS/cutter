@@ -7,21 +7,6 @@
 #include <QToolTip>
 #include <QProcessEnvironment>
 
-DisassemblyTextBlockUserData::DisassemblyTextBlockUserData(const DisassemblyLine &line)
-    : line { line }
-{
-}
-
-DisassemblyTextBlockUserData *getUserData(const QTextBlock &block)
-{
-    QTextBlockUserData *userData = block.userData();
-    if (!userData) {
-        return nullptr;
-    }
-
-    return static_cast<DisassemblyTextBlockUserData *>(userData);
-}
-
 QString DisassemblyPreview::getToolTipStyleSheet()
 {
     return QString { "QToolTip { border-width: 1px; max-width: %1px;"
@@ -73,36 +58,6 @@ bool DisassemblyPreview::showDisasPreviewAt(QWidget *parent, const QPoint &point
     }
 
     return false;
-}
-
-RVA DisassemblyPreview::getXRefFromWord(RVA offset, const QString &selectedWord)
-{
-    auto xrefsTo = Core()->getXRefs(offset, true, false);
-    for (const auto &xref : xrefsTo) {
-        if (xref.from_str == selectedWord) {
-            return xref.from;
-        }
-    }
-    return RVA_INVALID;
-}
-
-bool DisassemblyPreview::isXRefFromComment(RVA offset, const QString &line)
-{
-    // return true if the line starts with ';' - contains the word "XREF" and is not a user comment
-    // OR a FLAG
-    // e.g: ; CODE XREF from sym.USER32.dll_OpenClipboard @ 0x77cbc7e3
-    return (line.startsWith(";") && !line.startsWith(";--") && line.contains("XREF")
-            && !Core()->getCommentAt(offset).contains(line.mid(1).simplified()));
-}
-
-RVA DisassemblyPreview::readDisassemblyOffset(QTextCursor tc)
-{
-    auto userData = getUserData(tc.block());
-    if (!userData) {
-        return RVA_INVALID;
-    }
-
-    return userData->line.offset;
 }
 
 typedef struct mmio_lookup_context

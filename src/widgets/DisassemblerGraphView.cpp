@@ -12,6 +12,7 @@
 #include "common/BasicInstructionHighlighter.h"
 #include "common/Helpers.h"
 #include "shortcuts/ShortcutManager.h"
+#include "common/DisassemblyHelper.h"
 
 #include <QColorDialog>
 #include <QPainter>
@@ -568,12 +569,12 @@ bool DisassemblerGraphView::eventFilter(QObject *obj, QEvent *event)
                 auto token = getToken(inst, pos.x());
                 bool hasPreview = Config()->getGraphPreview();
                 if (hasPreview
-                    && DisassemblyPreview::isXRefFromComment(offsetFrom,
-                                                             inst->plainText.trimmed())) {
+                    && DisassemblyHelper::isXRefFromComment(offsetFrom,
+                                                            inst->plainText.trimmed())) {
                     if (!token) {
                         return true;
                     }
-                    RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offsetFrom, token->content);
+                    RVA xrefFrom = DisassemblyHelper::getXRefFromWord(offsetFrom, token->content);
                     if (xrefFrom != RVA_INVALID) {
                         DisassemblyPreview::showDisasPreviewAt(this, pointOfEvent, xrefFrom);
                     }
@@ -970,8 +971,8 @@ void DisassemblerGraphView::blockDoubleClicked(GraphView::GraphBlock &block, QMo
 
     RVA offset = getAddrForMouseEvent(block, &pos);
 
-    if (DisassemblyPreview::isXRefFromComment(offset, instr->plainText.trimmed())) {
-        RVA xrefFrom = DisassemblyPreview::getXRefFromWord(offset, selectedText);
+    if (DisassemblyHelper::isXRefFromComment(offset, instr->plainText.trimmed())) {
+        RVA xrefFrom = DisassemblyHelper::getXRefFromWord(offset, selectedText);
         if (xrefFrom != RVA_INVALID) {
             seekable->seek(xrefFrom);
         }
