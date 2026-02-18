@@ -119,6 +119,8 @@ public:
 
     const QStringList &getRizinSpecificOptions();
 
+    QColor mergeColors(const QColor &upper, const QColor &lower) const;
+
 private:
     /**
      * @brief list of all available Rizin-only color options.
@@ -132,7 +134,6 @@ private:
     ColorThemeWorker(const ColorThemeWorker &root) = delete;
     ColorThemeWorker &operator=(const ColorThemeWorker &) = delete;
 
-    QColor mergeColors(const QColor &upper, const QColor &lower) const;
 };
 
 #endif // COLORTHEMEWORKER_H
