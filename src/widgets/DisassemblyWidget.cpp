@@ -651,7 +651,8 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
 
             RVA offset = DisassemblyHelper::readDisassemblyOffset(cursor);
 
-            if (DisassemblyHelper::isXRefFromComment(offset, cursor.block().text().trimmed())) {
+            if (Core()->getConfigb("asm.xrefs")
+                && DisassemblyHelper::isXRefFromComment(offset, cursor.block().text())) {
                 RVA xrefFrom = DisassemblyHelper::getXRefFromWord(offset, selectedText);
                 if (xrefFrom != RVA_INVALID) {
                     seekable->seek(xrefFrom);
@@ -684,7 +685,8 @@ bool DisassemblyWidget::eventFilter(QObject *obj, QEvent *event)
         const QString line = cursorForWord.block().text().trimmed();
 
         bool hasPreview = Config()->getPreviewValue();
-        if (hasPreview && DisassemblyHelper::isXRefFromComment(offsetFrom, line)) {
+        if (hasPreview && Core()->getConfigb("asm.xrefs")
+            && DisassemblyHelper::isXRefFromComment(offsetFrom, line)) {
             // Only show the tooltip if the text under cursor is an address when hovering over auto
             // generated XRef comment, this will show the preview of the caller where this offset is
             // called

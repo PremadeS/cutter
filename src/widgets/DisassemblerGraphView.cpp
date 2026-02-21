@@ -568,9 +568,8 @@ bool DisassemblerGraphView::eventFilter(QObject *obj, QEvent *event)
             if (getViewScale() >= 0.8) {
                 auto token = getToken(inst, pos.x());
                 bool hasPreview = Config()->getGraphPreview();
-                if (hasPreview
-                    && DisassemblyHelper::isXRefFromComment(offsetFrom,
-                                                            inst->plainText.trimmed())) {
+                if (hasPreview && Core()->getConfigb("asm.xrefs")
+                    && DisassemblyHelper::isXRefFromComment(offsetFrom, inst->plainText)) {
                     if (!token) {
                         return true;
                     }
@@ -971,7 +970,8 @@ void DisassemblerGraphView::blockDoubleClicked(GraphView::GraphBlock &block, QMo
 
     RVA offset = getAddrForMouseEvent(block, &pos);
 
-    if (DisassemblyHelper::isXRefFromComment(offset, instr->plainText.trimmed())) {
+    if (Core()->getConfigb("asm.xrefs")
+        && DisassemblyHelper::isXRefFromComment(offset, instr->plainText)) {
         RVA xrefFrom = DisassemblyHelper::getXRefFromWord(offset, selectedText);
         if (xrefFrom != RVA_INVALID) {
             seekable->seek(xrefFrom);

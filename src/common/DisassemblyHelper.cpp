@@ -18,9 +18,10 @@ DisassemblyTextBlockUserData *DisassemblyHelper::getUserData(const QTextBlock &b
 
 RVA DisassemblyHelper::getXRefFromWord(RVA offset, const QString &selectedWord)
 {
+    RVA selectedOffset = Core()->num(selectedWord);
     auto xrefsTo = Core()->getXRefs(offset, true, false);
     for (const auto &xref : xrefsTo) {
-        if (xref.from_str == selectedWord) {
+        if (xref.from == selectedOffset) {
             return xref.from;
         }
     }
