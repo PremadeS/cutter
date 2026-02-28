@@ -45,4 +45,10 @@ QTextEdit::ExtraSelection createLineHighlightPC(const QTextCursor &cursor);
  */
 QTextEdit::ExtraSelection createLineHighlightBP(const QTextCursor &cursor);
 
+// TOOD: DOCSSSSSSSSs
+QList<QTextEdit::ExtraSelection> createMatchSelections(QTextDocument *doc, const QString &word,
+                                                       const QColor &color,
+                                                       QTextDocument::FindFlags flags,
+                                                       bool regex = false);
+
 #endif // CUTTER_SELECTIONHIGHLIGHT_H

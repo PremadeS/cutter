@@ -2,6 +2,7 @@
 #include "SelectionHighlight.h"
 #include "Configuration.h"
 #include "Colors.h"
+#include "CutterSearchable.h"
 
 #include <QList>
 #include <QTextEdit>
@@ -67,18 +68,8 @@ QList<QTextEdit::ExtraSelection> createSameWordsSelections(QPlainTextEdit *textE
         return selections;
     }
 
-    highlightSelection.cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-
-    while (!highlightSelection.cursor.isNull() && !highlightSelection.cursor.atEnd()) {
-        highlightSelection.cursor =
-                document->find(word, highlightSelection.cursor, QTextDocument::FindWholeWords);
-
-        if (!highlightSelection.cursor.isNull()) {
-            applyHighlight();
-            selections.append(highlightSelection);
-        }
-    }
-    return selections;
+    return createMatchSelections(document, word, highlightWordBgColor,
+                                 QTextDocument::FindWholeWords);
 }
 
 QTextEdit::ExtraSelection createLineHighlight(const QTextCursor &cursor, QColor highlightColor)
@@ -107,4 +98,32 @@ QTextEdit::ExtraSelection createLineHighlightBP(const QTextCursor &cursor)
 {
     QColor highlightColor = ConfigColor("gui.breakpoint_background");
     return createLineHighlight(cursor, highlightColor);
+}
+
+QList<QTextEdit::ExtraSelection> createMatchSelections(QTextDocument *document, const QString &word,
+                                                       const QColor &color,
+                                                       QTextDocument::FindFlags flags, bool regex)
+{
+    QList<QTextEdit::ExtraSelection> selections;
+    if (!document || word.isEmpty()) {
+        return selections;
+    }
+
+    QTextCursor cursor(document);
+    QTextEdit::ExtraSelection highlightSelection;
+    if (color.isValid()) {
+        highlightSelection.format.setBackground(color);
+    }
+
+    while (!cursor.isNull() && !cursor.atEnd()) {
+        cursor = regex ? document->find(QRegularExpression(word), cursor, flags)
+                       : document->find(word, cursor, flags);
+
+        if (!cursor.isNull()) {
+            highlightSelection.cursor = cursor;
+            selections.append(highlightSelection);
+        }
+    }
+
+    return selections;
 }
