@@ -152,6 +152,21 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     if (Config()->getOutputRedirectionEnabled()) {
         redirectOutput();
     }
+
+    connect(ui->outputTextEdit, &SearchableTextEdit::textChanged, this, [this] {
+        if (searchBar && searchBar->isVisible()) {
+            QPair<int, int> range = ui->outputTextEdit->search(
+                    searchBar->text(), searchBar->documentFlags(), searchBar->isRegex());
+            searchBar->setRange(range.first, range.second);
+        }
+    });
+
+    connect(ui->outputTextEdit, &SearchableTextEdit::updateRequest, this,
+            [this](const QRect &, int dy) {
+                if (searchBar && searchBar->isVisible() && dy != 0) {
+                    ui->outputTextEdit->highlightSearches();
+                }
+            });
 }
 
 ConsoleWidget::~ConsoleWidget()
@@ -205,7 +220,6 @@ void ConsoleWidget::addOutput(const QString &msg)
 {
     ui->outputTextEdit->appendPlainText(msg);
     scrollOutputToEnd();
-    refreshSearchHighlights();
 }
 
 void ConsoleWidget::addDebugOutput(const QString &msg)
@@ -213,7 +227,6 @@ void ConsoleWidget::addDebugOutput(const QString &msg)
     if (debugOutputEnabled) {
         ui->outputTextEdit->appendHtml("<font color=\"red\"> [DEBUG]:\t" + msg + "</font>");
         scrollOutputToEnd();
-        refreshSearchHighlights();
     }
 }
 
@@ -232,8 +245,6 @@ void ConsoleWidget::removeLastLine()
     ui->outputTextEdit->textCursor().removeSelectedText();
     ui->outputTextEdit->textCursor().deletePreviousChar();
     ui->outputTextEdit->setTextCursor(cur);
-
-    refreshSearchHighlights();
 }
 
 void ConsoleWidget::executeCommand(const QString &command)
@@ -520,68 +531,35 @@ QWidget *ConsoleWidget::searchableArea() const
 
 void ConsoleWidget::searchBarHidden()
 {
-    ui->outputTextEdit->setExtraSelections({});
+    ui->outputTextEdit->clearSearch();
 }
 
 void ConsoleWidget::searchBarShown()
 {
-    int count = SearchHighlight::updateSearchHighlights(ui->outputTextEdit, searchBar->text(),
-                                                        searchBar->searchOptions());
-
-    // note we can do this in console widget because the text can only be appended or cleared in the
-    // outputTextEdit, previous text can't be modified
-    int index = searchBar->currentIndex();
-    searchBar->setRange(index, count);
-    SearchHighlight::moveFocus(ui->outputTextEdit, index);
+    ui->outputTextEdit->search(searchBar->text(), searchBar->documentFlags(), searchBar->isRegex());
 }
 
 void ConsoleWidget::findNext()
 {
-    navigateSearch(1);
+    int index = ui->outputTextEdit->findNext();
+    searchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::findPrev()
 {
-    navigateSearch(-1);
+    int index = ui->outputTextEdit->findPrev();
+    searchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::findLast()
 {
-    navigateSearch(searchBar->totalCount() - searchBar->currentIndex() - 1);
+    int index = ui->outputTextEdit->findLast();
+    searchBar->setCurrentIndex(index);
 }
 
-void ConsoleWidget::navigateSearch(int steps)
+void ConsoleWidget::textChanged(const QString &text)
 {
-    int total = searchBar->totalCount();
-    if (total <= 0) {
-        return;
-    }
-
-    int oldIdx = searchBar->currentIndex();
-    int newIdx = (oldIdx + steps + total) % total;
-
-    SearchHighlight::moveFocus(ui->outputTextEdit, newIdx, oldIdx,
-                               (searchBar->searchOptions() & SearchOption::HighlightMatches));
-    searchBar->setCurrentIndex(newIdx);
-}
-
-void ConsoleWidget::searchChanged(const QString &text, int options)
-{
-    int count = SearchHighlight::updateSearchHighlights(ui->outputTextEdit, text, options);
-    searchBar->setRange(count - 1, count);
-    SearchHighlight::moveFocus(ui->outputTextEdit, count - 1);
-}
-
-void ConsoleWidget::refreshSearchHighlights()
-{
-    if (!searchBar || !searchBar->isVisible() || searchBar->text().isEmpty()) {
-        return;
-    }
-
-    QTimer::singleShot(50, this, [this]() {
-        int count = SearchHighlight::updateSearchHighlights(ui->outputTextEdit, searchBar->text(),
-                                                            searchBar->searchOptions());
-        searchBar->setTotalCount(count);
-        SearchHighlight::moveFocus(ui->outputTextEdit, searchBar->currentIndex(), -1, false);
-    });
+    QPair<int, int> range =
+            ui->outputTextEdit->search(text, searchBar->documentFlags(), searchBar->isRegex());
+    searchBar->setRange(range.first, range.second);
 }

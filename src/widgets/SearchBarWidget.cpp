@@ -2,6 +2,7 @@
 #include "ui_SearchBarWidget.h"
 #include "CutterSearchable.h"
 #include "shortcuts/ShortcutManager.h"
+#include "Configuration.h"
 
 #include <QStyle>
 #include <QStyleOption>
@@ -50,11 +51,11 @@ SearchBarWidget::SearchBarWidget(QWidget *parent) : QWidget(parent), ui(new Ui::
     ui->findLastButton->setAutoRaise(true);
     ui->hideButton->setAutoRaise(true);
 
-    ui->menuButton->setIcon(QIcon(":/img/icons/cog.svg")); // too dark IMO
+    ui->menuButton->setIcon(QIcon(":/img/icons/cog_light.svg")); // too dark IMO
     ui->findNextButton->setIcon(QIcon(":/img/icons/arrow_right.svg"));
     ui->findPrevButton->setIcon(QIcon(":/img/icons/arrow_left.svg"));
-    ui->findLastButton->setIcon(QIcon(":/img/icons/down.svg"));
-    ui->hideButton->setIcon(QIcon(":/img/icons/delete.svg")); // too dark IMO
+    ui->findLastButton->setIcon(QIcon(":/img/icons/down_light.svg"));
+    ui->hideButton->setIcon(QIcon(":/img/icons/delete_light.svg")); // too dark IMO
 
     // removing this makes the buttons too close together in light theme
     const QString toolButtonPadding = "QToolButton { padding: 5px; }";
@@ -84,31 +85,30 @@ SearchBarWidget::SearchBarWidget(QWidget *parent) : QWidget(parent), ui(new Ui::
     QMenu *optionsMenu = new QMenu(this);
     ui->menuButton->setMenu(optionsMenu);
 
-    auto emitSearchChanged = [this] { emit searchChanged(this->text(), this->searchOptions()); };
+    auto emitTextChanged = [this] { emit textChanged(this->text()); };
 
     m_caseSensitiveAction = optionsMenu->addAction(tr("&Case Sensitive"));
     m_caseSensitiveAction->setCheckable(true);
-    connect(m_caseSensitiveAction, &QAction::triggered, this, emitSearchChanged);
+    connect(m_caseSensitiveAction, &QAction::triggered, this, emitTextChanged);
 
     m_wholeWordsAction = optionsMenu->addAction(tr("Match &Whole Words"));
     m_wholeWordsAction->setCheckable(true);
-    connect(m_wholeWordsAction, &QAction::triggered, this, emitSearchChanged);
+    connect(m_wholeWordsAction, &QAction::triggered, this, emitTextChanged);
 
     m_regExpAction = optionsMenu->addAction(tr("Match &Regular Expression"));
     m_regExpAction->setCheckable(true);
-    connect(m_regExpAction, &QAction::triggered, this, emitSearchChanged);
+    connect(m_regExpAction, &QAction::triggered, this, emitTextChanged);
 
     m_highlightMatchesAction = optionsMenu->addAction(tr("&Highlight All Matches"));
     m_highlightMatchesAction->setCheckable(true);
     m_highlightMatchesAction->setChecked(true);
-    connect(m_highlightMatchesAction, &QAction::triggered, this, emitSearchChanged);
+    connect(m_highlightMatchesAction, &QAction::triggered, this, emitTextChanged);
 
     // debounce timer
     QTimer *debounceTimer = new QTimer(this);
     debounceTimer->setSingleShot(true);
     debounceTimer->setInterval(200);
-    connect(debounceTimer, &QTimer::timeout, this,
-            [this] { emit searchChanged(this->text(), this->searchOptions()); });
+    connect(debounceTimer, &QTimer::timeout, this, [this] { emit textChanged(this->text()); });
     connect(ui->searchEdit, &QLineEdit::textChanged, debounceTimer,
             static_cast<void (QTimer::*)()>(&QTimer::start));
 
@@ -122,6 +122,10 @@ SearchBarWidget::SearchBarWidget(QWidget *parent) : QWidget(parent), ui(new Ui::
 
     // fixes the outline not showing around the widget where the label is present
     ui->searchLabel->setStyleSheet("QLabel { background: transparent; }");
+
+    // connect(Config(), &Configuration::interfaceThemeChanged, this,
+    //         &SearchBarWidget::chooseThemeIcons);
+    // chooseThemeIcons();
 }
 
 SearchBarWidget::~SearchBarWidget() {}
@@ -173,6 +177,11 @@ void SearchBarWidget::hideSearchBar()
     emit hideTriggered();
 }
 
+void SearchBarWidget::selectText()
+{
+    ui->searchEdit->selectAll();
+}
+
 int SearchBarWidget::totalCount() const
 {
     return m_count;
@@ -183,12 +192,28 @@ int SearchBarWidget::currentIndex() const
     return m_index;
 }
 
+QTextDocument::FindFlags SearchBarWidget::documentFlags() const
+{
+    QTextDocument::FindFlags flags = {};
+
+    flags = m_caseSensitiveAction->isChecked() ? (flags | QTextDocument::FindCaseSensitively)
+                                               : flags;
+    flags = m_wholeWordsAction->isChecked() ? (flags | QTextDocument::FindWholeWords) : flags;
+
+    return flags;
+}
+
+bool SearchBarWidget::isRegex() const
+{
+    return m_regExpAction->isChecked();
+}
+
 QString SearchBarWidget::text() const
 {
     return ui->searchEdit->text();
 }
 
-int SearchBarWidget::searchOptions()
+int SearchBarWidget::searchOptions() const
 {
     int options = 0;
     options = m_caseSensitiveAction->isChecked() ? (options | CaseSensitive) : options;
@@ -207,4 +232,28 @@ void SearchBarWidget::paintEvent(QPaintEvent *event)
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 
     QWidget::paintEvent(event);
+}
+
+void SearchBarWidget::chooseThemeIcons()
+{
+    struct IconThemePair
+    {
+        QAbstractButton *button;
+        QString lightName;
+        QString darkName;
+    };
+
+    bool isDark = Config()->windowColorIsDark();
+    const QList<IconThemePair> iconList {
+        { ui->menuButton, "cog.svg", "cog_light.svg" },
+        { ui->findNextButton, "dark/arrow_right.svg", "arrow_right.svg" },
+        { ui->findPrevButton, "dark/arrow_left.svg", "arrow_left.svg" },
+        { ui->findLastButton, "down_light.svg", "down.svg" },
+        { ui->hideButton, "delete.svg", "delete.svg" } // TODO: dark
+    };
+
+    for (const auto &item : iconList) {
+        QString iconPath = QString(":/img/icons/%1").arg(isDark ? item.darkName : item.lightName);
+        item.button->setIcon(QIcon(iconPath));
+    }
 }

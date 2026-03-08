@@ -21,7 +21,7 @@ public:
     virtual int searchHPadding() const = 0;
     virtual int searchVPadding() const = 0;
 
-    virtual void searchChanged(const QString &text, int options) = 0;
+    virtual void textChanged(const QString &text) = 0;
     virtual void findNext() = 0;
     virtual void findPrev() = 0;
     virtual void findLast() = 0;

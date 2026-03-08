@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QSizeGrip>
+#include <QTextDocument>
 
 namespace Ui {
 class SearchBarWidget;
@@ -39,7 +40,10 @@ public:
 
     int totalCount() const;
     int currentIndex() const;
-    int searchOptions();
+    int searchOptions() const;
+    QTextDocument::FindFlags documentFlags() const;
+    bool isRegex() const;
+
     QString text() const;
 
     void updateLabel();
@@ -48,12 +52,13 @@ public:
 public slots:
     void showSearchBar();
     void hideSearchBar();
+    void selectText();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 signals:
-    void searchChanged(const QString &text, int options);
+    void textChanged(const QString &text);
     void findNextTriggered();
     void findPrevTriggered();
     void findLastTriggered();
@@ -69,6 +74,8 @@ private:
     QAction *m_wholeWordsAction;
     QAction *m_regExpAction;
     QAction *m_highlightMatchesAction;
+
+    void chooseThemeIcons();
 };
 
 #endif // SEARCHBARWIDGET_H

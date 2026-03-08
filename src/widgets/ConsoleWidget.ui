@@ -31,7 +31,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QPlainTextEdit" name="outputTextEdit">
+     <widget class="SearchableTextEdit" name="outputTextEdit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -44,7 +44,7 @@
        </font>
       </property>
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="lineWidth">
        <number>0</number>
@@ -59,15 +59,12 @@
        <string/>
       </property>
       <property name="textInteractionFlags">
-       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
       </property>
      </widget>
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="spacing">
-       <number>5</number>
-      </property>
       <property name="leftMargin">
        <number>4</number>
       </property>
@@ -80,13 +77,16 @@
       <property name="bottomMargin">
        <number>2</number>
       </property>
+      <property name="spacing">
+       <number>5</number>
+      </property>
       <item row="0" column="0">
        <widget class="DirectionalComboBox" name="inputCombo">
-        <property name="sizeAdjustPolicy">
-         <enum>QComboBox::AdjustToContents</enum>
-        </property>
         <property name="visible">
-            <bool>false</bool>
+         <bool>false</bool>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
         </property>
         <item>
          <property name="text">
@@ -121,14 +121,14 @@
       </item>
       <item row="0" column="1">
        <widget class="QLineEdit" name="debugeeInputLineEdit">
-        <property name="visible">
-            <bool>false</bool>
-        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="visible">
+         <bool>false</bool>
         </property>
         <property name="frame">
          <bool>false</bool>
@@ -182,10 +182,14 @@
    <header>common/DirectionalComboBox.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>SearchableTextEdit</class>
+   <extends>QPlainTextEdit</extends>
+   <header>widgets/SearchableTextEdit.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
-

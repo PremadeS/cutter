@@ -39,13 +39,13 @@ protected:
     QWidget *widgetToFocusOnRaise() override;
 
     // search related
-    void searchChanged(const QString &text, int options) override;
+    void textChanged(const QString &text) override;
     void findNext() override;
     void findPrev() override;
     void findLast() override;
-    QWidget *searchableArea() const override;
     void searchBarShown() override;
     void searchBarHidden() override;
+    QWidget *searchableArea() const override;
 
 public slots:
     void focusInputLineEdit();
@@ -92,9 +92,6 @@ private:
      *        processQueuedOutput
      */
     void redirectOutput();
-
-    void navigateSearch(int steps);
-    void refreshSearchHighlights();
 
     QSharedPointer<CommandTask> commandTask;
 

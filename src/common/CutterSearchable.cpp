@@ -15,10 +15,8 @@ void CutterSearchableUtil::setupConnections(QWidget *parent, SearchBarWidget *ba
 
     bar->hide();
 
-    QObject::connect(bar, &SearchBarWidget::searchChanged, parent,
-                     [searchable](const QString &text, int options) {
-                         searchable->searchChanged(text, options);
-                     });
+    QObject::connect(bar, &SearchBarWidget::textChanged, parent,
+                     [searchable](const QString &text) { searchable->textChanged(text); });
 
     QObject::connect(bar, &SearchBarWidget::findNextTriggered, parent,
                      [searchable]() { searchable->findNext(); });
@@ -38,7 +36,12 @@ void CutterSearchableUtil::setupConnections(QWidget *parent, SearchBarWidget *ba
     QShortcut *shortcut = Shortcuts()->makeQShortcut("Search.toggle", parent);
     QObject::connect(shortcut, &QShortcut::activated, parent, [=]() {
         if (bar->isVisible()) {
-            bar->hideSearchBar();
+            if (bar->hasFocus()) {
+                bar->hideSearchBar();
+            } else {
+                bar->setFocus();
+                bar->selectText();
+            }
         } else {
             bar->showSearchBar();
 
