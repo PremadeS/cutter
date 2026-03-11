@@ -186,6 +186,9 @@ void AddressRangeScrollBar::showTransientScrollBar()
     QWheelEvent event(QPointF(0, 0), QPointF(0, 0), QPoint(0, 0), QPoint(0, 0), Qt::NoButton,
                       Qt::NoModifier, Qt::ScrollBegin, false);
     QScrollBar::wheelEvent(&event);
+    QWheelEvent eventEnd(QPointF(0, 0), QPointF(0, 0), QPoint(0, 0), QPoint(0, 0), Qt::NoButton,
+                         Qt::NoModifier, Qt::ScrollEnd, false);
+    QScrollBar::wheelEvent(&eventEnd);
 }
 
 void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
