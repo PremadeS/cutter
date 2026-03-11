@@ -17,15 +17,16 @@ public:
     RVA rangeSize();
 
     /**
-     * @brief Reposts a wheel event to this scrollbar to synchronize its visual state
+     * @brief Sends a fake wheelEvent to the parent QScrollBar
      *
      * This allows external widgets (like side panels or text edits) to notify the
-     * scrollbar of wheel activity. It is needed for systems which have the option to show the
-     * scrollbar only while scrolling (when using Cutter's "Native" theme)
+     * scrollbar of wheel activity. It is needed for systems (like MacOS) which have the option to
+     * enable transient scrollbars meaning the ability to show the scrollbar only while scrolling
+     * and hiding it later (when using Cutter's "Native" theme)
      *
      * @param event The original QWheelEvent to be processed by the scrollbar
      */
-    void repostWheelEvent(QWheelEvent *event);
+    void showTransientScrollBar();
 signals:
     void hideScrollBar();
     void showScrollBar();
