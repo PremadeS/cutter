@@ -272,12 +272,12 @@ look like:
    
    // Good - If a copy of each element is required
    for (auto import : importsArray) {
-       doSomething(import;
+       doSomething(import);
    }
    
    // Good - If copy is not required
    for (auto &import : importsArray) {
-       doSomething(import;
+       doSomething(import);
    }
 
    // Good - If no modification is required
