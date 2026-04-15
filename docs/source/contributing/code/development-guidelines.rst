@@ -51,6 +51,9 @@ so your widget refreshes its output when Rizin seek is modified
 Coding Style
 ------------
 
+clang-format
+~~~~~~~~~~~~
+
 In general, we follow a slightly customized version of `the official Qt guidelines <https://wiki.qt.io/Qt_Coding_Style>`__ 
 to format the code. Before sending a pull request, you will need to use `clang-format <https://clang.llvm.org/docs/ClangFormat.html>`__ (version 8 or newer)
 to format the code. The command line for formatting the code according
@@ -65,6 +68,9 @@ If your changes were done on many files across the codebase, you can use this on
 .. code:: bash
 
    find ./src -regex '.*\.\(cpp\|h\)' -exec clang-format -style=file -i {} \;
+
+clang-tidy
+~~~~~~~~~~
 
 Beyond formatting, we use `clang-tidy <https://clang.llvm.org/extra/clang-tidy/>`__ (version 13 or newer) to catch potential style violations.
 
@@ -88,11 +94,48 @@ Similar to ``clang-format``, If your changes were done on many files across the 
 
     run-clang-tidy -p build "src/(?!(themes|bindings|fonts|img|translations|build|.*_autogen)).*\.(cpp|h)$"
 
-``clang-tidy`` can also attempt to fix style violations using the ``-fix`` flag, however these may not always be perfect. Make sure to verify the fixes before opening a pull request:
+``clang-tidy`` can also attempt to fix style violations using the ``-fix`` flag. However these may not always be perfect, as an example ``clang-tidy`` puts the const qualifier on the right side of type name whereas it is preferred to be on the left in cutter. Make sure to verify the fixes before opening a pull request:
 
 .. code:: bash
 
     git diff -U0 --no-color HEAD~1 | clang-tidy-diff.py -fix -p1 -path build/
+
+Python scripts
+~~~~~~~~~~~~~~
+
+If you don't want to run manual commands, cutter also provides scripts for running ``clang-format`` and ``clang-tidy`` in the ``scripts`` directory
+
+.. code:: bash
+
+    python scripts/clang-format.py -h
+    usage: clang-format.py [-h] [-C CLANG_FORMAT] [-c] [-v] [-f FILE] [-d DIFF]
+
+    Clang format the cutter project
+
+    options:
+      -h, --help            show this help message and exit
+      -C, --clang-format CLANG_FORMAT
+                            path of clang-format
+      -c, --check           enable the check mode
+      -v, --verbose         use verbose output
+      -f, --file FILE       formats (or checks) only the given file
+      -d, --diff DIFF       format all modified file related to branch
+
+.. code:: bash
+    
+    python scripts/clang-tidy.py -h               
+    usage: clang-tidy.py [-h] [-T RUN_CLANG_TIDY] [-p BUILD_PATH] [-f FILE] [-i]
+
+    clang-tidy wrapper
+
+    options:
+      -h, --help            show this help message and exit
+      -T, --run-clang-tidy RUN_CLANG_TIDY
+                            Path of run-clang-tidy binary
+      -p, --build-path BUILD_PATH
+                            Path to the build directory
+      -f, --file FILE       Check a specific file only
+      -i, --fix             Apply fixes automatically
 
 
 Below are some of the low level coding conventions that we follow
