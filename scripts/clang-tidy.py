@@ -31,7 +31,7 @@ def run_tidy(args):
     # Add header filter if a specific file is targeted
     # This prevents seeing errors from included headers/other files
     if args.file:
-        cmd.append("-header-filter='^$'")   
+        cmd.append("-header-filter=''")   
     
     if args.fix:
         cmd.append("-fix")
