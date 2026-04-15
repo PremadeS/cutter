@@ -63,7 +63,7 @@ to the style is:
 
    clang-format -style=file -i src/filename.cpp
 
-If your changes were done on many files across the codebase, you can use this oneliner to run ``clang-format`` on the entire 'src' directory:
+If your changes were done on many files across the codebase, you can use this oneliner to run ``clang-format`` on the entire ``src`` directory:
 
 .. code:: bash
 
@@ -94,7 +94,7 @@ Similar to ``clang-format``, If your changes were done on many files across the 
 
     run-clang-tidy -p build "src/(?!(themes|bindings|fonts|img|translations|build|.*_autogen)).*\.(cpp|h)$"
 
-``clang-tidy`` can also attempt to fix style violations using the ``-fix`` flag. However these may not always be perfect, as an example ``clang-tidy`` puts the const qualifier on the right side of type name whereas it is preferred to be on the left in cutter. Make sure to verify the fixes before opening a pull request:
+``clang-tidy`` can also attempt to fix style violations using the ``-fix`` flag. However these may not always be perfect. Make sure to verify the fixes before opening a pull request:
 
 .. code:: bash
 
