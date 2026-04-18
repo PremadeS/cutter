@@ -1226,6 +1226,11 @@ void CutterCore::triggerGraphOptionsChanged()
     emit graphOptionsChanged();
 }
 
+void CutterCore::triggerInterfaceOptionsChanged(InterfaceCategory category)
+{
+    emit interfaceOptionsChanged(category);
+}
+
 void CutterCore::message(const QString &msg, bool debug)
 {
     if (msg.isEmpty())
@@ -3996,6 +4001,27 @@ QList<VTableDescription> CutterCore::getAllVTables()
     }
     rz_list_free(vtables);
     return vtableDescs;
+}
+
+QList<BacktraceDescription> CutterCore::getAllBacktraces()
+{
+    QList<BacktraceDescription> backtraces;
+
+    CORE_LOCK();
+    RzList *list = rz_core_debug_backtraces(core);
+    RzListIter *iter;
+    RzBacktrace *bt;
+    CutterRzListForeach (list, iter, RzBacktrace, bt) {
+        BacktraceDescription backtrace;
+        backtrace.functionName = bt->fcn ? bt->fcn->name : "";
+        backtrace.pc = RzAddressString(bt->frame ? bt->frame->addr : 0);
+        backtrace.sp = RzAddressString(bt->frame ? bt->frame->sp : 0);
+        backtrace.frameSize = QString::number(bt->frame ? bt->frame->size : 0);
+        backtrace.description = bt->desc;
+        backtraces.append(backtrace);
+    }
+    rz_list_free(list);
+    return backtraces;
 }
 
 QList<TypeDescription> CutterCore::getAllTypes()

@@ -338,15 +338,24 @@ public:
      */
     bool getItemCountAutoHide() const;
 
+    // TODO: DOCSSSSSSSSSSSSSSSSs
+    void setTruncateFunctionName(bool value);
+
+    bool getTruncateFunctionName() const;
+
+    void setFunctionNameMaxLength(int characters);
+
+    int getFunctionNameMaxLength() const;
+
 public slots:
     void refreshFont();
 signals:
     void fontsUpdated();
     void colorsUpdated();
     void interfaceThemeChanged();
-    void quickFilterToggled(bool show);
-    void itemCountToggled(bool visible);
-    void itemCountAutoHideToggled(bool value);
+    void itemCountOptionsChanged();
+    void quickFilterOptionsChanged();
+    void functionsOptionsChanged();
 #ifdef CUTTER_ENABLE_KSYNTAXHIGHLIGHTING
     void kSyntaxHighlightingThemeChanged();
 #endif

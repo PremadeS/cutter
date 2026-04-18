@@ -81,6 +81,11 @@ enum class SearchKind {
 
 enum class AddressTypeHint { Function, Code, Data, Unknown };
 
+enum class InterfaceCategory {
+    Functions,
+    QuickFilter,
+};
+
 class CUTTER_EXPORT CutterCore : public QObject
 {
     Q_OBJECT
@@ -679,6 +684,7 @@ public:
     QList<BinClassDescription> getAllClassesFromFlags();
     QList<ResourcesDescription> getAllResources();
     QList<VTableDescription> getAllVTables();
+    QList<BacktraceDescription> getAllBacktraces();
 
     /**
      * @return all loaded types
@@ -799,6 +805,7 @@ public:
     void triggerRefreshAll();
     void triggerAsmOptionsChanged();
     void triggerGraphOptionsChanged();
+    void triggerInterfaceOptionsChanged(InterfaceCategory category);
 
     void message(const QString &msg, bool debug = false);
 
@@ -939,6 +946,9 @@ signals:
      * @brief emitted when a specific type is requested to be shown in the Types Widget
      */
     void showTypeRequested(const QString &typeName);
+
+    // TODO: docs
+    void interfaceOptionsChanged(InterfaceCategory category);
 
 private:
     /**

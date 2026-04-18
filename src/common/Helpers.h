@@ -7,6 +7,7 @@
 #include <QColor>
 #include <QSizePolicy>
 #include <functional>
+#include <QMap>
 
 class QIcon;
 class QPlainTextEdit;
@@ -36,6 +37,10 @@ namespace qhelpers {
 CUTTER_EXPORT QString formatBytecount(const uint64_t bytecount);
 CUTTER_EXPORT void adjustColumns(QTreeView *tv, int columnCount, int padding);
 CUTTER_EXPORT void adjustColumns(QTreeWidget *tw, int padding);
+
+// TODO: DOCSSSSSSSSSSSSSS
+CUTTER_EXPORT void adjustColumn(QTreeView *tv, int columnIndex, bool truncate = false,
+                                int width = -1);
 CUTTER_EXPORT bool selectFirstItem(QAbstractItemView *itemView);
 CUTTER_EXPORT QTreeWidgetItem *appendRow(QTreeWidget *tw, const QString &str,
                                          const QString &str2 = QString(),

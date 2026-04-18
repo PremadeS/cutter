@@ -951,7 +951,7 @@ bool Configuration::getNavBarLegendEnabled()
 void Configuration::setShowQuickFilter(bool show)
 {
     s.setValue("showQuickFilter", show);
-    emit quickFilterToggled(show);
+    emit quickFilterOptionsChanged();
 }
 
 bool Configuration::getShowQuickFilter() const
@@ -962,7 +962,7 @@ bool Configuration::getShowQuickFilter() const
 void Configuration::setItemCountVisible(bool visible)
 {
     s.setValue("itemCountVisible", visible);
-    emit itemCountToggled(visible);
+    emit itemCountOptionsChanged();
 }
 
 bool Configuration::getItemCountVisible() const
@@ -972,11 +972,33 @@ bool Configuration::getItemCountVisible() const
 
 void Configuration::setItemCountAutoHide(bool value)
 {
-    s.value("autoHideItemCount", value);
-    emit itemCountAutoHideToggled(value);
+    s.setValue("autoHideItemCount", value);
+    emit itemCountOptionsChanged();
 }
 
 bool Configuration::getItemCountAutoHide() const
 {
     return s.value("autoHideItemCount", false).toBool();
+}
+
+void Configuration::setTruncateFunctionName(bool value)
+{
+    s.setValue("truncateFunctionName", value);
+    emit functionsOptionsChanged();
+}
+
+bool Configuration::getTruncateFunctionName() const
+{
+    return s.value("truncateFunctionName", true).toBool();
+}
+
+void Configuration::setFunctionNameMaxLength(int characters)
+{
+    s.setValue("functionNameMaxLength", characters);
+    emit functionsOptionsChanged();
+}
+
+int Configuration::getFunctionNameMaxLength() const
+{
+    return s.value("functionNameMaxLength", 320).toInt(); // TODO: match with IDA
 }

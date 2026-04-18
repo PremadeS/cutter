@@ -56,6 +56,18 @@ void adjustColumns(QTreeWidget *tw, int padding)
     adjustColumns(tw, tw->columnCount(), padding);
 }
 
+void adjustColumn(QTreeView *tv, int columnIndex, bool truncate, int width)
+{
+    if (!tv) {
+        return;
+    }
+
+    tv->resizeColumnToContents(columnIndex);
+    if (truncate && width > 0 && tv->columnWidth(columnIndex) > width) {
+        tv->setColumnWidth(columnIndex, width);
+    }
+}
+
 QTreeWidgetItem *appendRow(QTreeWidget *tw, const QString &str, const QString &str2,
                            const QString &str3, const QString &str4, const QString &str5)
 {
@@ -210,8 +222,8 @@ QByteArray applyColorToSvg(const QString &filename, QColor color)
 }
 
 /**
- * @brief finds the theme-specific icon path and calls `setter` functor providing a pointer of an
- * object which has to be used and loaded icon
+ * @brief finds the theme-specific icon path and calls `setter` functor providing a pointer of
+ * an object which has to be used and loaded icon
  * @param supportedIconsNames list of <object ptr, icon name>
  * @param setter functor which has to be called
  *   for example we need to set an action icon, the functor can be just [](void* o, const QIcon
@@ -304,5 +316,4 @@ QPoint mouseEventGlobalPos(QMouseEvent *ev)
     return ev->globalPosition().toPoint();
 #endif
 }
-
 } // end namespace
