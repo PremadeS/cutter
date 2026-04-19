@@ -24,8 +24,7 @@ QVariant BacktraceModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    switch (role) {
-    case Qt::DisplayRole: {
+    if (role == Qt::DisplayRole) {
         switch (index.column()) {
         case Column::Function:
             return backtraces[index.row()].functionName;
@@ -37,10 +36,9 @@ QVariant BacktraceModel::data(const QModelIndex &index, int role) const
             return backtraces[index.row()].frameSize;
         case Column::Description:
             return backtraces[index.row()].description;
+        default:
+            return QVariant();
         }
-    }
-    default:
-        return QVariant();
     }
 
     return QVariant();
@@ -123,6 +121,6 @@ void BacktraceWidget::fontsUpdatedSlot()
 void BacktraceWidget::adjustFunctionNameCol()
 {
     qhelpers::adjustColumn(backtraceView, BacktraceModel::Function,
-                           Config()->getTruncateFunctionName(),
-                           Config()->getFunctionNameMaxLength());
+                           Config()->getTruncateFunctionNameCol(),
+                           Config()->getFunctionNameColWidth());
 }

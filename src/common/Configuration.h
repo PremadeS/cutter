@@ -338,14 +338,22 @@ public:
      */
     bool getItemCountAutoHide() const;
 
-    // TODO: DOCSSSSSSSSSSSSSSSSs
-    void setTruncateFunctionName(bool value);
+    /**
+     * @brief Enable or Disable default width of function name column in widgets
+     *
+     * Prevents long function names from excessively stretching the UI.
+     * The default width is specified by @ref setFunctionNameColumnWidth
+     */
+    void setTruncateFunctionNameCol(bool value);
+    bool getTruncateFunctionNameCol() const;
 
-    bool getTruncateFunctionName() const;
-
-    void setFunctionNameMaxLength(int characters);
-
-    int getFunctionNameMaxLength() const;
+    /**
+     * @brief Set the function name column width in pixels
+     *
+     * This is only used if @ref setTruncateFunctionNameCol is set to true
+     */
+    void setFunctionNameColWidth(int characters);
+    int getFunctionNameColWidth() const;
 
 public slots:
     void refreshFont();

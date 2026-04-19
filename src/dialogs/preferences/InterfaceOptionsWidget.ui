@@ -57,6 +57,9 @@
            <layout class="QHBoxLayout" name="fcnTruncateLayout" stretch="0,0,0">
             <item>
              <widget class="QCheckBox" name="fcnTruncateCheckBox">
+              <property name="toolTip">
+               <string>Sets the default width for function name columns in widgets. In Functions widget the width is only applied if in Horizontal view</string>
+              </property>
               <property name="text">
                <string>Default function name column width</string>
               </property>
@@ -82,6 +85,9 @@
                 <width>0</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string>Sets the default width for function name columns in Functions and Backtrace widget. In Functions widget the width is only applied if in Horizontal view</string>
               </property>
               <property name="maximum">
                <number>9999</number>

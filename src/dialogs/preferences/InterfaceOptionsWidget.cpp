@@ -17,18 +17,18 @@ InterfaceOptionsWidget::~InterfaceOptionsWidget() {}
 
 void InterfaceOptionsWidget::setUpFunctions()
 {
-    bool truncate = Config()->getTruncateFunctionName();
+    bool truncate = Config()->getTruncateFunctionNameCol();
     ui->fcnTruncateCheckBox->setChecked(truncate);
     ui->fcnTruncateSpinBox->setEnabled(truncate);
-    ui->fcnTruncateSpinBox->setValue(Config()->getFunctionNameMaxLength());
+    ui->fcnTruncateSpinBox->setValue(Config()->getFunctionNameColWidth());
 
     connect(ui->fcnTruncateCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
         ui->fcnTruncateSpinBox->setEnabled(checked);
-        Config()->setTruncateFunctionName(checked);
+        Config()->setTruncateFunctionNameCol(checked);
     });
 
     connect(ui->fcnTruncateSpinBox, &QSpinBox::valueChanged, Config(),
-            &Configuration::setFunctionNameMaxLength);
+            &Configuration::setFunctionNameColWidth);
 }
 
 void InterfaceOptionsWidget::setUpQuickFilter()

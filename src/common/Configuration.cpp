@@ -981,24 +981,24 @@ bool Configuration::getItemCountAutoHide() const
     return s.value("autoHideItemCount", false).toBool();
 }
 
-void Configuration::setTruncateFunctionName(bool value)
+void Configuration::setTruncateFunctionNameCol(bool value)
 {
-    s.setValue("truncateFunctionName", value);
+    s.setValue("truncateFcnNameCol", value);
     emit functionsOptionsChanged();
 }
 
-bool Configuration::getTruncateFunctionName() const
+bool Configuration::getTruncateFunctionNameCol() const
 {
-    return s.value("truncateFunctionName", true).toBool();
+    return s.value("truncateFcnNameCol", true).toBool();
 }
 
-void Configuration::setFunctionNameMaxLength(int characters)
+void Configuration::setFunctionNameColWidth(int characters)
 {
-    s.setValue("functionNameMaxLength", characters);
+    s.setValue("fcnNameColWidth", characters);
     emit functionsOptionsChanged();
 }
 
-int Configuration::getFunctionNameMaxLength() const
+int Configuration::getFunctionNameColWidth() const
 {
-    return s.value("functionNameMaxLength", 320).toInt(); // TODO: match with IDA
+    return s.value("fcnNameColWidth", 400).toInt();
 }

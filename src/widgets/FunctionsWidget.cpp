@@ -557,9 +557,9 @@ FunctionsWidget::FunctionsWidget(MainWindow *main)
             });
 
     auto updateNameColumnWidth = [this] {
-        bool truncate = Config()->getTruncateFunctionName();
+        bool truncate = Config()->getTruncateFunctionNameCol();
         if (truncate) {
-            maxFunctionNameWidth = Config()->getFunctionNameMaxLength();
+            maxFunctionNameWidth = Config()->getFunctionNameColWidth();
         }
 
         qhelpers::adjustColumn(ui->treeView, FunctionModel::NameColumn, truncate,
@@ -612,8 +612,8 @@ void FunctionsWidget::refreshTree()
                 qhelpers::adjustColumns(ui->treeView, 3, 0);
 
                 qhelpers::adjustColumn(ui->treeView, FunctionModel::NameColumn,
-                                       Config()->getTruncateFunctionName(),
-                                       Config()->getFunctionNameMaxLength());
+                                       Config()->getTruncateFunctionNameCol(),
+                                       Config()->getFunctionNameColWidth());
             });
     Core()->getAsyncTaskManager()->start(task);
 }
@@ -673,7 +673,7 @@ void FunctionsWidget::onActionHorizontalToggled(bool enable)
         QMap<int, int> override;
         override[FunctionModel::NameColumn] = maxFunctionNameWidth;
         qhelpers::adjustColumn(ui->treeView, FunctionModel::NameColumn,
-                               Config()->getTruncateFunctionName(), maxFunctionNameWidth);
+                               Config()->getTruncateFunctionNameCol(), maxFunctionNameWidth);
     }
 }
 
