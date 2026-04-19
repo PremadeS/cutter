@@ -24,8 +24,6 @@ protected:
 
 private:
     std::unique_ptr<Ui::QuickFilterView> ui;
-
-    void toggleFilter();
 };
 
 #endif // QUICKFILTERVIEW_H

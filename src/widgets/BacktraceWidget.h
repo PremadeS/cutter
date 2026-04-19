@@ -9,7 +9,6 @@
 #include "CutterDockWidget.h"
 
 class MainWindow;
-class RzBackTrace;
 
 namespace Ui {
 class BacktraceWidget;

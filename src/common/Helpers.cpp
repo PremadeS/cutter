@@ -42,7 +42,16 @@ QString formatBytecount(const uint64_t bytecount)
 
 void adjustColumns(QTreeView *tv, int columnCount, int padding)
 {
-    for (int i = 0; i != columnCount; ++i) {
+    adjustColumns(tv, 0, columnCount, padding);
+}
+
+void adjustColumns(QTreeView *tv, int start, int end, int padding)
+{
+    if (!tv) {
+        return;
+    }
+
+    for (int i = start; i < end; ++i) {
         tv->resizeColumnToContents(i);
         if (padding > 0) {
             int width = tv->columnWidth(i);
@@ -56,14 +65,14 @@ void adjustColumns(QTreeWidget *tw, int padding)
     adjustColumns(tw, tw->columnCount(), padding);
 }
 
-void adjustColumn(QTreeView *tv, int columnIndex, bool truncate, int width)
+void adjustColumn(QTreeView *tv, int columnIndex, int width)
 {
     if (!tv) {
         return;
     }
 
     tv->resizeColumnToContents(columnIndex);
-    if (truncate && width > 0 && tv->columnWidth(columnIndex) > width) {
+    if (width >= 0 && tv->columnWidth(columnIndex) > width) {
         tv->setColumnWidth(columnIndex, width);
     }
 }
@@ -222,8 +231,8 @@ QByteArray applyColorToSvg(const QString &filename, QColor color)
 }
 
 /**
- * @brief finds the theme-specific icon path and calls `setter` functor providing a pointer of
- * an object which has to be used and loaded icon
+ * @brief finds the theme-specific icon path and calls `setter` functor providing a pointer of an
+ * object which has to be used and loaded icon
  * @param supportedIconsNames list of <object ptr, icon name>
  * @param setter functor which has to be called
  *   for example we need to set an action icon, the functor can be just [](void* o, const QIcon
@@ -316,4 +325,5 @@ QPoint mouseEventGlobalPos(QMouseEvent *ev)
     return ev->globalPosition().toPoint();
 #endif
 }
+
 } // end namespace

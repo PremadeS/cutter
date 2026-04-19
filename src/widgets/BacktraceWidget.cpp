@@ -1,7 +1,6 @@
 #include "BacktraceWidget.h"
 #include "ui_BacktraceWidget.h"
-#include "common/JsonModel.h"
-#include "QHeaderView"
+#include <QTreeView>
 
 #include "core/MainWindow.h"
 
@@ -83,10 +82,10 @@ BacktraceWidget::BacktraceWidget(MainWindow *main)
     ui->setupUi(this);
 
     // setup backtrace view
-    // backtraceView->setFont(Config()->getFont());
+    backtraceView->setFont(Config()->getFont());
     backtraceView->setModel(backtraceModel);
     backtraceView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    backtraceView->setIndentation(8);
+    backtraceView->setIndentation(0);
     ui->verticalLayout->addWidget(backtraceView);
 
     refreshDeferrer = createRefreshDeferrer([this]() { updateContents(); });
@@ -109,7 +108,7 @@ void BacktraceWidget::updateContents()
 
     const auto &backtraces = Core()->getAllBacktraces();
     backtraceModel->setBacktraces(backtraces);
-    qhelpers::adjustColumns(backtraceView, 3, 0);
+    qhelpers::adjustColumns(backtraceView, 1, 3, 0);
     adjustFunctionNameCol();
 }
 
@@ -120,7 +119,7 @@ void BacktraceWidget::fontsUpdatedSlot()
 
 void BacktraceWidget::adjustFunctionNameCol()
 {
-    qhelpers::adjustColumn(backtraceView, BacktraceModel::Function,
-                           Config()->getTruncateFunctionNameCol(),
-                           Config()->getFunctionNameColWidth());
+    qhelpers::adjustColumn(
+            backtraceView, BacktraceModel::Function,
+            Config()->getTruncateFunctionNameCol() ? Config()->getFunctionNameColWidth() : -1);
 }

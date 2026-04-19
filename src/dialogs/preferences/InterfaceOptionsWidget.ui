@@ -61,7 +61,7 @@
                <string>Sets the default width for function name columns in widgets. In Functions widget the width is only applied if in Horizontal view</string>
               </property>
               <property name="text">
-               <string>Default function name column width</string>
+               <string>Limit function name column width to</string>
               </property>
              </widget>
             </item>
@@ -87,7 +87,7 @@
                </size>
               </property>
               <property name="toolTip">
-               <string>Sets the default width for function name columns in Functions and Backtrace widget. In Functions widget the width is only applied if in Horizontal view</string>
+               <string>Sets the default width for function name columns in widgets. In Functions widget the width is only applied if in Horizontal view</string>
               </property>
               <property name="maximum">
                <number>9999</number>

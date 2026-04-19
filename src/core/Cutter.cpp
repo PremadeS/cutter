@@ -1226,11 +1226,6 @@ void CutterCore::triggerGraphOptionsChanged()
     emit graphOptionsChanged();
 }
 
-void CutterCore::triggerInterfaceOptionsChanged(InterfaceCategory category)
-{
-    emit interfaceOptionsChanged(category);
-}
-
 void CutterCore::message(const QString &msg, bool debug)
 {
     if (msg.isEmpty())
