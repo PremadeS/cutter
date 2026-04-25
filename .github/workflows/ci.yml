@@ -461,7 +461,7 @@ jobs:
         scripts/fetch_deps.sh
         install_name_tool -delete_rpath /Users/runner/work/cutter-deps/cutter-deps/qt/lib ./cutter-deps/pyside/lib/libpyside6.cpython-312-darwin.6.11.dylib #TODO: do this in cutter-deps
         source cutter-deps/env.sh
-        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/typesystems" "$PWD/cutter-deps/pyside/typesystems"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
         set -euo pipefail
         export PATH=/usr/local/opt/llvm/bin:$PATH
         mkdir build
