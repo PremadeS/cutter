@@ -437,6 +437,7 @@ jobs:
         brew bundle
         brew install pkg-config || brew link --overwrite pkgconf
         brew install kadwanev/brew/retry
+        brew install llvm@20 && brew link llvm@20
     - name: py dependencies
       run: |
         #python3 -m pip install -U pip==21.3.1
