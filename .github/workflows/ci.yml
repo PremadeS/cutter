@@ -51,8 +51,8 @@ jobs:
             package: true
             tarball: false
           - name: tarball
-            python-version: 3.6.x
-            image: ubuntu:20.04
+            python-version: 3.12.x
+            image: ubuntu:22.04
             system-deps: false
             package: false
             tarball: true
@@ -148,8 +148,8 @@ jobs:
                              qttools5-dev-tools
         fi
         if [ "${{ matrix.image }}" = "ubuntu:22.04" ]; then
-          apt-get -y install libclang-12-dev \
-                             llvm-12 \
+          apt-get -y install libclang-20-dev \
+                             llvm-20 \
                              qt6-base-dev \
                              qt6-tools-dev \
                              qt6-tools-dev-tools \
@@ -157,8 +157,8 @@ jobs:
                              libqt6core5compat6-dev \
                              libqt6svgwidgets6 \
                              qt6-l10n-tools \
-                             gcc-12 \
-                             g++-12
+                             gcc-14 \
+                             g++-14
         fi
     - uses: actions/setup-python@v6
       if: matrix.system-deps == false
