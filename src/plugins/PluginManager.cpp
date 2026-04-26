@@ -236,3 +236,4 @@ CutterPlugin *PluginManager::loadPythonPlugin(const char *moduleName)
     return plugin;
 }
 #endif
+
