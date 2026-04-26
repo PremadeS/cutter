@@ -45,7 +45,7 @@ jobs:
             cc-override: '/usr/bin/gcc-12'
             cxx-override: '/usr/bin/g++-12'
           - name: linux-x86_64 # main Appimage build
-            image: ubuntu:20.04
+            image: ubuntu:22.04
             python-version: 3.12.x
             system-deps: false
             package: true
