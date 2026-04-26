@@ -159,7 +159,7 @@ jobs:
                              g++-13
           curl -O https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
-          sudo ./llvm.sh 18
+          ./llvm.sh 18
         fi
     - uses: actions/setup-python@v6
       if: matrix.system-deps == false
