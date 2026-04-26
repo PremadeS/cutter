@@ -42,8 +42,8 @@ jobs:
             system-deps: true
             package: false
             tarball: false
-            cc-override: '/usr/bin/gcc-12'
-            cxx-override: '/usr/bin/g++-12'
+            cc-override: '/usr/bin/gcc-13'
+            cxx-override: '/usr/bin/g++-13'
           - name: linux-x86_64 # main Appimage build
             image: ubuntu:24.04
             python-version: 3.12.x
