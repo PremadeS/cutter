@@ -45,14 +45,14 @@ jobs:
             cc-override: '/usr/bin/gcc-12'
             cxx-override: '/usr/bin/g++-12'
           - name: linux-x86_64 # main Appimage build
-            image: ubuntu:22.04
+            image: ubuntu:24.04
             python-version: 3.12.x
             system-deps: false
             package: true
             tarball: false
           - name: tarball
             python-version: 3.12.x
-            image: ubuntu:22.04
+            image: ubuntu:24.04
             system-deps: false
             package: false
             tarball: true
@@ -126,14 +126,14 @@ jobs:
                              llvm-8
           ln -s /usr/bin/llvm-config-8 /usr/bin/llvm-config
         fi
-        if [ "${{ matrix.image }}" = "ubuntu:18.04" ] || [ "${{ matrix.image }}" = "ubuntu:20.04" ]; then
+        if [ "${{ matrix.image }}" = "ubuntu:18.04" ] || [ "${{ matrix.image }}" = "ubuntu:22.04" ]; then
           # install additional packages needed for appimage
           apt-get -y install libxcb1-dev \
                              libxkbcommon-dev \
                              libxcb-*-dev \
                              libegl1
         fi
-        if [ "${{ matrix.image }}" = "ubuntu:20.04" ] && [ "${{ matrix.system-deps }}" = "false" ]; then
+        if [ "${{ matrix.image }}" = "ubuntu:22.04" ] && [ "${{ matrix.system-deps }}" = "false" ]; then
           # install additional packages needed for appimage
           apt-get -y install libclang-12-dev \
                              llvm-12 \
@@ -147,18 +147,19 @@ jobs:
                              qttools5-dev \
                              qttools5-dev-tools
         fi
-        if [ "${{ matrix.image }}" = "ubuntu:22.04" ]; then
-          apt-get -y install libclang-20-dev \
-                             llvm-20 \
-                             qt6-base-dev \
+        if [ "${{ matrix.image }}" = "ubuntu:24.04" ]; then
+          apt-get -y install qt6-base-dev \
                              qt6-tools-dev \
                              qt6-tools-dev-tools \
                              libqt6svg6-dev \
                              libqt6core5compat6-dev \
                              libqt6svgwidgets6 \
                              qt6-l10n-tools \
-                             gcc-14 \
-                             g++-14
+                             gcc-13 \
+                             g++-13
+          curl -O https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 18
         fi
     - uses: actions/setup-python@v6
       if: matrix.system-deps == false
