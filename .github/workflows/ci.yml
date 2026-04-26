@@ -46,7 +46,7 @@ jobs:
             cxx-override: '/usr/bin/g++-12'
           - name: linux-x86_64 # main Appimage build
             image: ubuntu:20.04
-            python-version: 3.6.x
+            python-version: 3.12.x
             system-deps: false
             package: true
             tarball: false
@@ -188,6 +188,7 @@ jobs:
         then
           CUTTER_QT="${{ matrix.qt-major }}" scripts/fetch_deps.sh
           . cutter-deps/env.sh
+          ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
           export LD_LIBRARY_PATH="`llvm-config --libdir`:$LD_LIBRARY_PATH"
         fi
         set -e #TODO: move to top once cutter-deps doesn't fail
@@ -505,6 +506,7 @@ jobs:
       run: |
         pip install ninja
         scripts/fetch_deps.sh
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
         choco install winflexbison3
     - name: windows cmake
       if: contains(matrix.os, 'windows')
