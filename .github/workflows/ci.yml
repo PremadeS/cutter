@@ -157,7 +157,9 @@ jobs:
                              qt6-l10n-tools \
                              gcc-13 \
                              g++-13 \
-                             lsb-release 
+                             lsb-release \ 
+                             wget \
+                             software-properties-common
           curl -O https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           ./llvm.sh 20
