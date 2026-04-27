@@ -188,6 +188,7 @@ jobs:
         then
           CUTTER_QT="${{ matrix.qt-major }}" scripts/fetch_deps.sh
           . cutter-deps/env.sh
+          ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
           export LD_LIBRARY_PATH="`llvm-config --libdir`:$LD_LIBRARY_PATH"
         fi
         set -e #TODO: move to top once cutter-deps doesn't fail
