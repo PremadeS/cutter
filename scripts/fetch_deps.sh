@@ -9,11 +9,11 @@ DEPS_BASE_URL=https://github.com/premades/cutter-deps/releases/download/v2
 
 if [ "$CUTTER_QT" == "5" ]; then
 	DEPS_FILE_linux_x86_64=cutter-deps-q5-linux-x86_64.tar.gz
-	DEPS_SHA256_linux_x86_64=019b12730b55d57c8352b1b2603ce009b3c837cb78d1f7594d557ce26815fa2e
+	DEPS_SHA256_linux_x86_64=ab3099fe699db100f2d00e1b70cdf77dec6b8fdd9cd1709c96e123a15fb62571
 	DEPS_BASE_URL=https://github.com/rizinorg/cutter-deps/releases/download/qt5-v17
 else
 	DEPS_FILE_linux_x86_64=cutter-deps-linux-x86_64.tar.gz
-	DEPS_SHA256_linux_x86_64=f63c5af2d9872bc6538a94c839d6ef6645c7630c42cff30f1d9da8eefd9eb040
+	DEPS_SHA256_linux_x86_64=019b12730b55d57c8352b1b2603ce009b3c837cb78d1f7594d557ce26815fa2e
 fi
 echo $DEPS_SHA256_linux_x86_64
 
