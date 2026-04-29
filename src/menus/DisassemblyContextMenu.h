@@ -159,11 +159,24 @@ private:
     QWidget *parentForDialog();
 
     // For creating anonymous entries (that are always visible)
-    QAction *addAnonymousAction(QString name, const char *slot, QKeySequence shortcut);
+    // QAction *addAnonymousAction(QString name, const char *slot, QKeySequence shortcut);
 
-    void initAction(QAction *action, QString name, const char *slot = nullptr);
-    void initAction(QAction *action, QString name, const char *slot, QKeySequence keySequence);
-    void initShortcutAction(QAction *action, const QString &id, const char *slot);
+    // void initAction(QAction *action, QString name, const char *slot = nullptr);
+    // void initAction(QAction *action, QString name, const char *slot, QKeySequence keySequence);
+    // void initShortcutAction(QAction *action, const QString &id, const char *slot);
+
+    // For creating anonymous entries (that are always visible)
+    template<typename SlotFunc>
+    QAction *addAnonymousAction(QString name, SlotFunc slot, QKeySequence keySequence);
+
+    template<typename SlotFunc>
+    void initAction(QAction *action, QString name, SlotFunc slot);
+
+    template<typename SlotFunc>
+    void initAction(QAction *action, QString name, SlotFunc slot, QKeySequence keySequence);
+
+    template<typename SlotFunc>
+    void initShortcutAction(QAction *action, const QString &id, SlotFunc slot);
 
     void setBase(QString base);
     void setToData(int size, int repeat = 1);
@@ -234,5 +247,7 @@ private:
      * This function handles every possible object.
      */
     void buildRenameMenu(ThingUsedHere *tuh);
+
+    // TODO: docss
 };
 #endif // DISASSEMBLYCONTEXTMENU_H
