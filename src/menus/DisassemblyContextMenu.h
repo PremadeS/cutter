@@ -33,39 +33,39 @@ private slots:
     void aboutToShowSlot();
     void aboutToHideSlot();
 
-    void on_actionEditFunction_triggered();
-    void on_actionEditInstruction_triggered();
-    void on_actionNopInstruction_triggered();
-    void on_actionJmpReverse_triggered();
-    void on_actionEditBytes_triggered();
+    void editFunctionTriggered();
+    void editInstructionTriggered();
+    void nopInstructionTriggered();
+    void jmpReverseTriggered();
+    void editBytesTriggered();
     void showReverseJmpQuery();
 
-    void on_actionCopy_triggered();
-    void on_actionCopyAddr_triggered();
-    void on_actionCopyInstrBytes_triggered();
-    void on_actionAddComment_triggered();
-    void on_actionAnalyzeFunction_triggered();
-    void on_actionRename_triggered();
-    void on_actionGlobalVar_triggered();
-    void on_actionSetFunctionVarTypes_triggered();
-    void on_actionXRefs_triggered();
-    void on_actionXRefsForVariables_triggered();
+    void copyTriggered();
+    void copyAddrTriggered();
+    void copyInstrBytesTriggered();
+    void addCommentTriggered();
+    void analyzeFunctionTriggered();
+    void renameTriggered();
+    void globalVarTriggered();
+    void setFunctionVarTypesTriggered();
+    void xRefsTriggered();
+    void xRefsForVariablesTriggered();
 
-    void on_actionDeleteComment_triggered();
-    void on_actionDeleteFlag_triggered();
-    void on_actionDeleteFunction_triggered();
+    void deleteCommentTriggered();
+    void deleteFlagTriggered();
+    void deleteFunctionTriggered();
 
-    void on_actionAddBreakpoint_triggered();
-    void on_actionAdvancedBreakpoint_triggered();
-    void on_actionContinueUntil_triggered();
-    void on_actionSetPC_triggered();
+    void addBreakpointTriggered();
+    void advancedBreakpointTriggered();
+    void continueUntilTriggered();
+    void setPCTriggered();
 
-    void on_actionSetToCode_triggered();
-    void on_actionSetAsString_triggered();
-    void on_actionSetAsStringRemove_triggered();
-    void on_actionSetAsStringAdvanced_triggered();
-    void on_actionSetToData_triggered();
-    void on_actionSetToDataEx_triggered();
+    void setToCodeTriggered();
+    void setAsStringTriggered();
+    void setAsStringRemoveTriggered();
+    void setAsStringAdvancedTriggered();
+    void setToDataTriggered();
+    void setToDataExTriggered();
 
     /**
      * @brief Executed on selecting an offset from the structureOffsetMenu
@@ -73,7 +73,7 @@ private slots:
      * structure offset
      * \param action The action which trigered the event
      */
-    void on_actionStructureOffsetMenu_triggered(QAction *action);
+    void structureOffsetMenuTriggered(QAction *action);
 
 private:
     RVA offset;

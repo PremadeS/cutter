@@ -71,16 +71,15 @@ DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *main
       actionSetToDataQword(this),
       showInSubmenu(this)
 {
-    initShortcutAction(&actionCopy, "Disassembly.copy",
-                       &DisassemblyContextMenu::on_actionCopy_triggered);
+    initShortcutAction(&actionCopy, "Disassembly.copy", &DisassemblyContextMenu::copyTriggered);
     addAction(&actionCopy);
 
     initShortcutAction(&actionCopyAddr, "General.copyAddress",
-                       &DisassemblyContextMenu::on_actionCopyAddr_triggered);
+                       &DisassemblyContextMenu::copyAddrTriggered);
     addAction(&actionCopyAddr);
 
     initShortcutAction(&actionCopyInstrBytes, "Disassembly.copyInstructionBytes",
-                       &DisassemblyContextMenu::on_actionCopyInstrBytes_triggered);
+                       &DisassemblyContextMenu::copyInstrBytesTriggered);
     addAction(&actionCopyInstrBytes);
 
     initAction(&showInSubmenu, tr("Show in"), nullptr);
@@ -89,31 +88,30 @@ DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *main
     copySeparator = addSeparator();
 
     initShortcutAction(&actionAddComment, "General.addComment",
-                       &DisassemblyContextMenu::on_actionAddComment_triggered);
+                       &DisassemblyContextMenu::addCommentTriggered);
     addAction(&actionAddComment);
 
     initShortcutAction(&actionSetFunctionVarTypes, "Disassembly.retypeLocals",
-                       &DisassemblyContextMenu::on_actionSetFunctionVarTypes_triggered);
+                       &DisassemblyContextMenu::setFunctionVarTypesTriggered);
     addAction(&actionSetFunctionVarTypes);
 
     initShortcutAction(&actionEditFunction, "Disassembly.editFunction",
-                       &DisassemblyContextMenu::on_actionEditFunction_triggered);
+                       &DisassemblyContextMenu::editFunctionTriggered);
     addAction(&actionEditFunction);
 
     initAction(&actionDeleteComment, tr("Delete comment"),
-               &DisassemblyContextMenu::on_actionDeleteComment_triggered);
+               &DisassemblyContextMenu::deleteCommentTriggered);
     addAction(&actionDeleteComment);
 
-    initAction(&actionDeleteFlag, tr("Delete flag"),
-               &DisassemblyContextMenu::on_actionDeleteFlag_triggered);
+    initAction(&actionDeleteFlag, tr("Delete flag"), &DisassemblyContextMenu::deleteFlagTriggered);
     addAction(&actionDeleteFlag);
 
     initShortcutAction(&actionDeleteFunction, "Disassembly.undefineFunction",
-                       &DisassemblyContextMenu::on_actionDeleteFunction_triggered);
+                       &DisassemblyContextMenu::deleteFunctionTriggered);
     addAction(&actionDeleteFunction);
 
     initShortcutAction(&actionAnalyzeFunction, "Disassembly.defineFunction",
-                       &DisassemblyContextMenu::on_actionAnalyzeFunction_triggered);
+                       &DisassemblyContextMenu::analyzeFunctionTriggered);
     addAction(&actionAnalyzeFunction);
 
     addSeparator();
@@ -126,18 +124,17 @@ DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *main
 
     structureOffsetMenu = addMenu(tr("Structure offset"));
     connect(structureOffsetMenu, &QMenu::triggered, this,
-            &DisassemblyContextMenu::on_actionStructureOffsetMenu_triggered);
+            &DisassemblyContextMenu::structureOffsetMenuTriggered);
 
     addSetAsMenu();
 
     addSeparator();
 
-    initShortcutAction(&actionXRefs, "General.showXRefs",
-                       &DisassemblyContextMenu::on_actionXRefs_triggered);
+    initShortcutAction(&actionXRefs, "General.showXRefs", &DisassemblyContextMenu::xRefsTriggered);
     addAction(&actionXRefs);
 
     initShortcutAction(&actionXRefsForVariables, "Disassembly.XRefsForVariables",
-                       &DisassemblyContextMenu::on_actionXRefsForVariables_triggered);
+                       &DisassemblyContextMenu::xRefsForVariablesTriggered);
     addAction(&actionXRefsForVariables);
 
     addSeparator();
@@ -176,11 +173,11 @@ void DisassemblyContextMenu::addAddAtMenu()
     setAsMenu = addMenu(tr("Add at..."));
 
     initShortcutAction(&actionRename, "Disassembly.rename",
-                       &DisassemblyContextMenu::on_actionRename_triggered);
+                       &DisassemblyContextMenu::renameTriggered);
     setAsMenu->addAction(&actionRename);
 
     initShortcutAction(&actionGlobalVar, "Disassembly.globalVariable",
-                       &DisassemblyContextMenu::on_actionGlobalVar_triggered);
+                       &DisassemblyContextMenu::globalVarTriggered);
     setAsMenu->addAction(&actionGlobalVar);
 }
 
@@ -243,17 +240,17 @@ void DisassemblyContextMenu::addSetAsMenu()
     setAsMenu = addMenu(tr("Set as..."));
 
     initShortcutAction(&actionSetToCode, "Disassembly.setToCode",
-                       &DisassemblyContextMenu::on_actionSetToCode_triggered);
+                       &DisassemblyContextMenu::setToCodeTriggered);
     setAsMenu->addAction(&actionSetToCode);
 
     setAsString = setAsMenu->addMenu(tr("String..."));
 
     initShortcutAction(&actionSetAsStringAuto, "Disassembly.setAsString",
-                       &DisassemblyContextMenu::on_actionSetAsString_triggered);
+                       &DisassemblyContextMenu::setAsStringTriggered);
     initAction(&actionSetAsStringRemove, tr("Remove"),
-               &DisassemblyContextMenu::on_actionSetAsStringRemove_triggered);
+               &DisassemblyContextMenu::setAsStringRemoveTriggered);
     initShortcutAction(&actionSetAsStringAdvanced, "Disassembly.setAsStringAdvanced",
-                       &DisassemblyContextMenu::on_actionSetAsStringAdvanced_triggered);
+                       &DisassemblyContextMenu::setAsStringAdvancedTriggered);
 
     setAsString->addAction(&actionSetAsStringAuto);
     setAsString->addAction(&actionSetAsStringRemove);
@@ -283,13 +280,13 @@ void DisassemblyContextMenu::addSetToDataMenu()
     connect(&actionSetToDataQword, &QAction::triggered, this, [this] { setToData(8); });
 
     initShortcutAction(&actionSetToDataEx, "Disassembly.setToDataEx",
-                       &DisassemblyContextMenu::on_actionSetToDataEx_triggered);
+                       &DisassemblyContextMenu::setToDataExTriggered);
     actionSetToDataEx.setText(tr("Advanced"));
     setToDataMenu->addAction(&actionSetToDataEx);
 
     auto switchAction = new QAction(this);
     initShortcutAction(switchAction, "Disassembly.setToData",
-                       &DisassemblyContextMenu::on_actionSetToData_triggered);
+                       &DisassemblyContextMenu::setToDataTriggered);
     setToDataMenu->addAction(switchAction);
 }
 
@@ -298,19 +295,17 @@ void DisassemblyContextMenu::addEditMenu()
     editMenu = addMenu(tr("Edit"));
 
     initAction(&actionEditInstruction, tr("Instruction"),
-               &DisassemblyContextMenu::on_actionEditInstruction_triggered);
+               &DisassemblyContextMenu::editInstructionTriggered);
     editMenu->addAction(&actionEditInstruction);
 
     initAction(&actionNopInstruction, tr("Nop Instruction"),
-               &DisassemblyContextMenu::on_actionNopInstruction_triggered);
+               &DisassemblyContextMenu::nopInstructionTriggered);
     editMenu->addAction(&actionNopInstruction);
 
-    initAction(&actionEditBytes, tr("Bytes"),
-               &DisassemblyContextMenu::on_actionEditBytes_triggered);
+    initAction(&actionEditBytes, tr("Bytes"), &DisassemblyContextMenu::editBytesTriggered);
     editMenu->addAction(&actionEditBytes);
 
-    initAction(&actionJmpReverse, tr("Reverse Jump"),
-               &DisassemblyContextMenu::on_actionJmpReverse_triggered);
+    initAction(&actionJmpReverse, tr("Reverse Jump"), &DisassemblyContextMenu::jmpReverseTriggered);
     editMenu->addAction(&actionJmpReverse);
 }
 
@@ -319,10 +314,10 @@ void DisassemblyContextMenu::addBreakpointMenu()
     breakpointMenu = addMenu(tr("Breakpoint"));
 
     initShortcutAction(&actionAddBreakpoint, "Debug.toggleBreakpoint",
-                       &DisassemblyContextMenu::on_actionAddBreakpoint_triggered);
+                       &DisassemblyContextMenu::addBreakpointTriggered);
     breakpointMenu->addAction(&actionAddBreakpoint);
     initShortcutAction(&actionAdvancedBreakpoint, "Debug.advancedBreakpoint",
-                       &DisassemblyContextMenu::on_actionAdvancedBreakpoint_triggered);
+                       &DisassemblyContextMenu::advancedBreakpointTriggered);
     breakpointMenu->addAction(&actionAdvancedBreakpoint);
 }
 
@@ -331,10 +326,10 @@ void DisassemblyContextMenu::addDebugMenu()
     debugMenu = addMenu(tr("Debug"));
 
     initAction(&actionContinueUntil, tr("Continue until line"),
-               &DisassemblyContextMenu::on_actionContinueUntil_triggered);
+               &DisassemblyContextMenu::continueUntilTriggered);
     debugMenu->addAction(&actionContinueUntil);
 
-    initAction(&actionSetPC, "Set PC", &DisassemblyContextMenu::on_actionSetPC_triggered);
+    initAction(&actionSetPC, "Set PC", &DisassemblyContextMenu::setPCTriggered);
     debugMenu->addAction(&actionSetPC);
 }
 
@@ -641,7 +636,7 @@ void DisassemblyContextMenu::aboutToHideSlot()
     actionXRefsForVariables.setVisible(true);
 }
 
-void DisassemblyContextMenu::on_actionEditInstruction_triggered()
+void DisassemblyContextMenu::editInstructionTriggered()
 {
     if (!ioModesController.prepareForWriting()) {
         return;
@@ -663,7 +658,7 @@ void DisassemblyContextMenu::on_actionEditInstruction_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionNopInstruction_triggered()
+void DisassemblyContextMenu::nopInstructionTriggered()
 {
     if (!ioModesController.prepareForWriting()) {
         return;
@@ -683,7 +678,7 @@ void DisassemblyContextMenu::showReverseJmpQuery()
     }
 }
 
-void DisassemblyContextMenu::on_actionJmpReverse_triggered()
+void DisassemblyContextMenu::jmpReverseTriggered()
 {
     if (!ioModesController.prepareForWriting()) {
         return;
@@ -691,7 +686,7 @@ void DisassemblyContextMenu::on_actionJmpReverse_triggered()
     Core()->jmpReverse(offset);
 }
 
-void DisassemblyContextMenu::on_actionEditBytes_triggered()
+void DisassemblyContextMenu::editBytesTriggered()
 {
     if (!ioModesController.prepareForWriting()) {
         return;
@@ -710,29 +705,29 @@ void DisassemblyContextMenu::on_actionEditBytes_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionCopy_triggered()
+void DisassemblyContextMenu::copyTriggered()
 {
     emit copy();
 }
 
-void DisassemblyContextMenu::on_actionCopyAddr_triggered()
+void DisassemblyContextMenu::copyAddrTriggered()
 {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(RzAddressString(offset));
 }
 
-void DisassemblyContextMenu::on_actionCopyInstrBytes_triggered()
+void DisassemblyContextMenu::copyInstrBytesTriggered()
 {
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(Core()->getInstructionBytes(offset));
 }
 
-void DisassemblyContextMenu::on_actionAddBreakpoint_triggered()
+void DisassemblyContextMenu::addBreakpointTriggered()
 {
     Core()->toggleBreakpoint(offset);
 }
 
-void DisassemblyContextMenu::on_actionAdvancedBreakpoint_triggered()
+void DisassemblyContextMenu::advancedBreakpointTriggered()
 {
     int index = Core()->breakpointIndexAt(offset);
     if (index >= 0) {
@@ -742,23 +737,23 @@ void DisassemblyContextMenu::on_actionAdvancedBreakpoint_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionContinueUntil_triggered()
+void DisassemblyContextMenu::continueUntilTriggered()
 {
     Core()->continueUntilDebug(offset);
 }
 
-void DisassemblyContextMenu::on_actionSetPC_triggered()
+void DisassemblyContextMenu::setPCTriggered()
 {
     QString progCounterName = Core()->getRegisterName("PC");
     Core()->setRegister(progCounterName, RzAddressString(offset).toUpper());
 }
 
-void DisassemblyContextMenu::on_actionAddComment_triggered()
+void DisassemblyContextMenu::addCommentTriggered()
 {
     CommentsDialog::addOrEditComment(offset, parentForDialog());
 }
 
-void DisassemblyContextMenu::on_actionAnalyzeFunction_triggered()
+void DisassemblyContextMenu::analyzeFunctionTriggered()
 {
     RVA flagOffset;
     QString name = Core()->nearestFlag(offset, &flagOffset);
@@ -790,7 +785,7 @@ void DisassemblyContextMenu::on_actionAnalyzeFunction_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionRename_triggered()
+void DisassemblyContextMenu::renameTriggered()
 {
     bool ok = false;
     if (doRenameAction == RENAME_FUNCTION) {
@@ -825,7 +820,7 @@ void DisassemblyContextMenu::on_actionRename_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionGlobalVar_triggered()
+void DisassemblyContextMenu::globalVarTriggered()
 {
     bool ok = false;
     GlobalVariableDialog dialog(doRenameInfo.addr, parentForDialog());
@@ -837,7 +832,7 @@ void DisassemblyContextMenu::on_actionGlobalVar_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionSetFunctionVarTypes_triggered()
+void DisassemblyContextMenu::setFunctionVarTypesTriggered()
 {
     RzAnalysisFunction *fcn = Core()->functionIn(offset);
 
@@ -854,14 +849,14 @@ void DisassemblyContextMenu::on_actionSetFunctionVarTypes_triggered()
     dialog.exec();
 }
 
-void DisassemblyContextMenu::on_actionXRefs_triggered()
+void DisassemblyContextMenu::xRefsTriggered()
 {
     XrefsDialog dialog(mainWindow);
     dialog.fillRefsForAddress(offset, RzAddressString(offset), false);
     dialog.exec();
 }
 
-void DisassemblyContextMenu::on_actionXRefsForVariables_triggered()
+void DisassemblyContextMenu::xRefsForVariablesTriggered()
 {
     if (isHighlightedWordLocalVar()) {
         XrefsDialog dialog(mainWindow);
@@ -870,22 +865,22 @@ void DisassemblyContextMenu::on_actionXRefsForVariables_triggered()
     }
 }
 
-void DisassemblyContextMenu::on_actionSetToCode_triggered()
+void DisassemblyContextMenu::setToCodeTriggered()
 {
     Core()->setToCode(offset);
 }
 
-void DisassemblyContextMenu::on_actionSetAsString_triggered()
+void DisassemblyContextMenu::setAsStringTriggered()
 {
     Core()->setAsString(offset);
 }
 
-void DisassemblyContextMenu::on_actionSetAsStringRemove_triggered()
+void DisassemblyContextMenu::setAsStringRemoveTriggered()
 {
     Core()->removeString(offset);
 }
 
-void DisassemblyContextMenu::on_actionSetAsStringAdvanced_triggered()
+void DisassemblyContextMenu::setAsStringAdvancedTriggered()
 {
     EditStringDialog dialog(parentForDialog());
     const int predictedStrSize = Core()->getString(offset).size();
@@ -921,7 +916,7 @@ void DisassemblyContextMenu::on_actionSetAsStringAdvanced_triggered()
     Core()->setAsString(strAddr, strSize, coreStringType);
 }
 
-void DisassemblyContextMenu::on_actionSetToData_triggered()
+void DisassemblyContextMenu::setToDataTriggered()
 {
     int size = Core()->sizeofDataMeta(offset);
     if (size > 8 || (size && (size & (size - 1)))) {
@@ -935,7 +930,7 @@ void DisassemblyContextMenu::on_actionSetToData_triggered()
     setToData(size);
 }
 
-void DisassemblyContextMenu::on_actionSetToDataEx_triggered()
+void DisassemblyContextMenu::setToDataExTriggered()
 {
     SetToDataDialog dialog(offset, parentForDialog());
     if (!dialog.exec()) {
@@ -944,27 +939,27 @@ void DisassemblyContextMenu::on_actionSetToDataEx_triggered()
     setToData(dialog.getItemSize(), dialog.getItemCount());
 }
 
-void DisassemblyContextMenu::on_actionStructureOffsetMenu_triggered(QAction *action)
+void DisassemblyContextMenu::structureOffsetMenuTriggered(QAction *action)
 {
     Core()->applyStructureOffset(action->data().toString(), offset);
 }
 
-void DisassemblyContextMenu::on_actionDeleteComment_triggered()
+void DisassemblyContextMenu::deleteCommentTriggered()
 {
     Core()->delComment(offset);
 }
 
-void DisassemblyContextMenu::on_actionDeleteFlag_triggered()
+void DisassemblyContextMenu::deleteFlagTriggered()
 {
     Core()->delFlag(offset);
 }
 
-void DisassemblyContextMenu::on_actionDeleteFunction_triggered()
+void DisassemblyContextMenu::deleteFunctionTriggered()
 {
     Core()->delFunction(offset);
 }
 
-void DisassemblyContextMenu::on_actionEditFunction_triggered()
+void DisassemblyContextMenu::editFunctionTriggered()
 {
     auto core = Core()->lock();
     EditFunctionDialog dialog(parentForDialog());
