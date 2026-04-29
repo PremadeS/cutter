@@ -22,12 +22,12 @@ InitializationFileEditor::InitializationFileEditor(PreferencesDialog *dialog)
     connect(ui->saveRC, &QDialogButtonBox::accepted, this, &InitializationFileEditor::saveCutterRC);
     connect(ui->executeNow, &QDialogButtonBox::accepted, this,
             &InitializationFileEditor::executeCutterRC);
-    connect(ui->ConfigFileEdit, &QPlainTextEdit::modificationChanged, ui->saveRC,
+    connect(ui->configFileEdit, &QPlainTextEdit::modificationChanged, ui->saveRC,
             &QWidget::setEnabled);
 
     const QDir cutterRCDirectory = Core()->getCutterRCDefaultDirectory();
     auto cutterRCFileInfo = QFileInfo(cutterRCDirectory, "rc");
-    QString cutterRCLocation = cutterRCFileInfo.absoluteFilePath();
+    const QString cutterRCLocation = cutterRCFileInfo.absoluteFilePath();
 
     ui->cutterRCLoaded->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->cutterRCLoaded->setOpenExternalLinks(true);
@@ -37,11 +37,11 @@ InitializationFileEditor::InitializationFileEditor(PreferencesDialog *dialog)
                          cutterRCLocation.toHtmlEscaped()));
 
     ui->executeNow->button(QDialogButtonBox::Retry)->setText(tr("Execute", "script"));
-    ui->ConfigFileEdit->clear();
+    ui->configFileEdit->clear();
     if (cutterRCFileInfo.exists()) {
         QFile cutterRC(cutterRCLocation);
         if (cutterRC.open(QIODevice::ReadWrite | QIODevice::Text)) {
-            ui->ConfigFileEdit->setPlainText(cutterRC.readAll());
+            ui->configFileEdit->setPlainText(cutterRC.readAll());
         }
         cutterRC.close();
     }
@@ -57,16 +57,16 @@ void InitializationFileEditor::saveCutterRC()
         cutterRCDirectory.mkpath(".");
     }
     auto cutterRCFileInfo = QFileInfo(cutterRCDirectory, "rc");
-    QString cutterRCLocation = cutterRCFileInfo.absoluteFilePath();
+    const QString cutterRCLocation = cutterRCFileInfo.absoluteFilePath();
 
     QFile cutterRC(cutterRCLocation);
     if (cutterRC.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
         QTextStream out(&cutterRC);
-        QString text = ui->ConfigFileEdit->toPlainText();
+        const QString text = ui->configFileEdit->toPlainText();
         out << text;
         cutterRC.close();
     }
-    ui->ConfigFileEdit->document()->setModified(false);
+    ui->configFileEdit->document()->setModified(false);
 }
 
 void InitializationFileEditor::executeCutterRC()

@@ -10,7 +10,7 @@ SetToDataDialog::SetToDataDialog(RVA startAddr, QWidget *parent)
     validator->setBottom(1);
     ui->sizeEdit->setValidator(validator);
     ui->repeatEdit->setValidator(validator);
-    ui->startAddrLabel->setText(RzAddressString(startAddr));
+    ui->startAddrLabel->setText(rzAddressString(startAddr));
     updateEndAddress();
 }
 
@@ -31,17 +31,17 @@ int SetToDataDialog::getItemCount()
 
 void SetToDataDialog::updateEndAddress()
 {
-    RVA endAddr = startAddress + (getItemSize() * getItemCount());
-    ui->endAddrLabel->setText(RzAddressString(endAddr));
+    RVA const endAddr = startAddress + (getItemSize() * getItemCount());
+    ui->endAddrLabel->setText(rzAddressString(endAddr));
 }
 
-void SetToDataDialog::on_sizeEdit_textChanged(const QString &arg1)
+void SetToDataDialog::onSizeEditTextChanged(const QString &arg1)
 {
     Q_UNUSED(arg1);
     updateEndAddress();
 }
 
-void SetToDataDialog::on_repeatEdit_textChanged(const QString &arg1)
+void SetToDataDialog::onRepeatEditTextChanged(const QString &arg1)
 {
     Q_UNUSED(arg1);
     updateEndAddress();

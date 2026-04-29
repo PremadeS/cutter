@@ -110,7 +110,7 @@ public:
      */
     List makeList(const T &value)
     {
-        size_t position = data.size();
+        const size_t position = data.size();
         data.push_back(Item { 0, value });
         return { position, position };
     }

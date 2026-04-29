@@ -13,7 +13,7 @@ class EditVariablesDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit EditVariablesDialog(RVA offset, QString initialVar = QString(),
+    explicit EditVariablesDialog(RVA offset, const QString &initialVar = QString(),
                                  QWidget *parent = nullptr);
     ~EditVariablesDialog();
 

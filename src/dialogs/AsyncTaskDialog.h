@@ -18,11 +18,11 @@ class AsyncTaskDialog : public QDialog
     Q_OBJECT
 
 public:
-    AsyncTaskDialog(AsyncTask::Ptr task, QWidget *parent = nullptr);
+    AsyncTaskDialog(const AsyncTask::Ptr &task, QWidget *parent = nullptr);
     ~AsyncTaskDialog();
 
     void setInterruptOnClose(bool v) { interruptOnClose = v; }
-    bool getInterruptOnClose() { return interruptOnClose; }
+    bool getInterruptOnClose() const const { return interruptOnClose; }
 
 public slots:
     void reject() override;

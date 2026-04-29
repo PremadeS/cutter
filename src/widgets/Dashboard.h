@@ -27,8 +27,8 @@ public:
 
 private slots:
     void updateContents();
-    void on_certificateButton_clicked();
-    void on_versioninfoButton_clicked();
+    void onCertificateButtonClicked();
+    void onVersioninfoButtonClicked();
 
 private:
     std::unique_ptr<Ui::Dashboard> ui;

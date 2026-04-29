@@ -49,7 +49,7 @@ struct ExportDescription
     RVA size;
     QString type;
     QString name;
-    QString flag_name;
+    QString flagName;
 };
 
 struct HeaderDescription
@@ -62,14 +62,14 @@ struct HeaderDescription
 
 struct FlirtDescription
 {
-    QString bin_name;
-    QString arch_name;
-    QString arch_bits;
-    QString base_name;
-    QString short_path;
-    QString file_path;
+    QString binName;
+    QString archName;
+    QString archBits;
+    QString baseName;
+    QString shortPath;
+    QString filePath;
     QString details;
-    QString n_modules;
+    QString nModules;
 };
 
 struct TypeDescription
@@ -168,9 +168,9 @@ struct EntrypointDescription
 struct XrefDescription
 {
     RVA from;
-    QString from_str;
+    QString fromStr;
     RVA to;
-    QString to_str;
+    QString toStr;
     QString type;
 };
 
@@ -399,11 +399,11 @@ struct Arena
     RVA offset;
     QString type;
     ut64 top;
-    ut64 last_remainder;
+    ut64 lastRemainder;
     ut64 next;
-    ut64 next_free;
-    ut64 system_mem;
-    ut64 max_system_mem;
+    ut64 nextFree;
+    ut64 systemMem;
+    ut64 maxSystemMem;
 };
 
 struct BasefindCoreStatusDescription

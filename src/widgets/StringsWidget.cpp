@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QModelIndex>
 #include <QShortcut>
+#include <utility>
 
 StringsModel::StringsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
 
@@ -32,7 +33,7 @@ QVariant StringsModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case StringsModel::OffsetColumn:
-            return RzAddressString(str.vaddr);
+            return rzAddressString(str.vaddr);
         case StringsModel::StringColumn:
             return str.string;
         case StringsModel::TypeColumn:
@@ -48,7 +49,7 @@ QVariant StringsModel::data(const QModelIndex &index, int role) const
         default:
             return QVariant();
         }
-    case StringDescriptionRole:
+    case stringDescriptionRole:
         return QVariant::fromValue(str);
     default:
         return QVariant();
@@ -102,7 +103,7 @@ StringsProxyModel::StringsProxyModel(StringsModel *sourceModel, QObject *parent)
 
 void StringsProxyModel::setSelectedSection(QString section)
 {
-    selectedSection = section;
+    selectedSection = std::move(section);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     invalidateFilter();
 #else
@@ -112,9 +113,8 @@ void StringsProxyModel::setSelectedSection(QString section)
 
 bool StringsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    StringDescription str =
-            index.data(StringsModel::StringDescriptionRole).value<StringDescription>();
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto str = index.data(StringsModel::stringDescriptionRole).value<StringDescription>();
     if (selectedSection.isEmpty()) {
         return qhelpers::filterStringContains(str.string, this);
     } else {
@@ -151,7 +151,11 @@ bool StringsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
     return leftStr->vaddr < rightStr->vaddr;
 }
 
-StringsWidget::StringsWidget(MainWindow *main) : CutterDockWidget(main), ui(new Ui::StringsWidget)
+StringsWidget::StringsWidget(MainWindow *main)
+    : CutterDockWidget(main),
+      ui(new Ui::StringsWidget),
+      model(new StringsModel(this)),
+      proxyModel(new StringsProxyModel(model, this))
 {
     ui->setupUi(this);
     ui->quickFilterView->setLabelText(tr("Section:"));
@@ -159,24 +163,22 @@ StringsWidget::StringsWidget(MainWindow *main) : CutterDockWidget(main), ui(new 
     qhelpers::setVerticalScrollMode(ui->stringsTreeView);
 
     // Shift-F12 to toggle strings window
-    QShortcut *toggle_shortcut = Shortcuts()->makeQShortcut("Strings.toggle", main);
-    connect(toggle_shortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Strings.toggle", main);
+    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
 
-    connect(ui->actionCopy_String, &QAction::triggered, this, &StringsWidget::on_actionCopy);
+    connect(ui->actionCopyString, &QAction::triggered, this, &StringsWidget::onActionCopy);
 
     ui->actionFilter->setShortcut(QKeySequence::Find);
 
     ui->stringsTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    model = new StringsModel(this);
-    proxyModel = new StringsProxyModel(model, this);
     ui->stringsTreeView->setMainWindow(main);
     ui->stringsTreeView->setModel(proxyModel);
     ui->stringsTreeView->sortByColumn(-1, Qt::AscendingOrder);
 
     //
     auto menu = ui->stringsTreeView->getItemContextMenu();
-    menu->addAction(ui->actionCopy_String);
+    menu->addAction(ui->actionCopyString);
 
     connect(ui->quickFilterView, &ComboQuickFilterView::filterTextChanged, proxyModel,
             &QSortFilterProxyModel::setFilterWildcard);
@@ -255,10 +257,10 @@ void StringsWidget::stringSearchFinished(const QList<StringDescription> &strings
     task.clear();
 }
 
-void StringsWidget::on_actionCopy()
+void StringsWidget::onActionCopy()
 {
-    QModelIndex current_item = ui->stringsTreeView->currentIndex();
-    int row = current_item.row();
+    const QModelIndex currentItem = ui->stringsTreeView->currentIndex();
+    const int row = currentItem.row();
 
     QModelIndex index;
 

@@ -26,7 +26,7 @@ public:
     enum Column { PidColumn = 0, UidColumn, StatusColumn, PathColumn, ColumnCount };
     enum Role { ProcDescriptionRole = Qt::UserRole };
 
-    ProcessModel(QObject *parent = 0);
+    ProcessModel(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -79,10 +79,10 @@ public:
     int getPID();
 
 private slots:
-    void on_buttonBox_accepted();
-    void on_buttonBox_rejected();
-    void on_allProcView_doubleClicked(const QModelIndex &index);
-    void on_procBeingAnalyzedView_doubleClicked(const QModelIndex &index);
+    void onButtonBoxAccepted();
+    void onButtonBoxRejected();
+    void onAllProcViewDoubleClicked(const QModelIndex &index);
+    void onProcBeingAnalyzedViewDoubleClicked(const QModelIndex &index);
     void updateModelData();
 
 private:

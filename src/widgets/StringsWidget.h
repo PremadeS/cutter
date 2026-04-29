@@ -39,7 +39,7 @@ public:
         CommentColumn,
         ColumnCount
     };
-    static const int StringDescriptionRole = Qt::UserRole;
+    static const int stringDescriptionRole = Qt::UserRole;
 
     StringsModel(QObject *parent = nullptr);
 
@@ -82,7 +82,7 @@ private slots:
     void stringSearchFinished(const QList<StringDescription> &strings);
     void refreshSectionCombo();
 
-    void on_actionCopy();
+    void onActionCopy();
 
 private:
     std::unique_ptr<Ui::StringsWidget> ui;

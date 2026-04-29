@@ -18,7 +18,7 @@ private:
 
 public:
     enum Columns { OFFSET = 0, TYPE, CODE, COMMENT, COUNT };
-    static const int FlagDescriptionRole = Qt::UserRole;
+    static const int flagDescriptionRole = Qt::UserRole;
 
     XrefModel(QObject *parent = nullptr);
     void readForOffset(RVA offset, bool to, bool whole_function);
@@ -66,7 +66,7 @@ public:
     explicit XrefsDialog(MainWindow *parent, bool hideXrefFrom = false);
     ~XrefsDialog();
 
-    void fillRefsForAddress(RVA addr, QString name, bool whole_function);
+    void fillRefsForAddress(RVA addr, const QString &name, bool whole_function);
     /**
      * @brief Initializes toModel and fromModel with the details about the references to the
      * specified local variable 'nameOfVariable'.
@@ -74,7 +74,7 @@ public:
      * initialized.
      * @param offset An offset in the function in which the specified local variable exist.
      */
-    void fillRefsForVariable(QString nameOfVariable, RVA offset);
+    void fillRefsForVariable(const QString &nameOfVariable, RVA offset);
 
 private slots:
     QString normalizeAddr(const QString &addr) const;
@@ -89,7 +89,7 @@ private slots:
 
 private:
     RVA addr;
-    QString func_name;
+    QString funcName;
     XrefModel toModel;
     XrefFilterProxyModel toProxyModel;
     XrefModel fromModel;
@@ -97,8 +97,8 @@ private:
 
     std::unique_ptr<Ui::XrefsDialog> ui;
 
-    void updateLabels(QString name);
-    void updateLabelsForVariables(QString name);
+    void updateLabels(const QString &name);
+    void updateLabelsForVariables(const QString &name);
     void updatePreview(RVA addr);
     void hideXrefFromSection();
 };

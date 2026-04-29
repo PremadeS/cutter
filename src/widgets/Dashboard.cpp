@@ -32,17 +32,17 @@ Dashboard::~Dashboard() {}
 void Dashboard::updateContents()
 {
     RzCoreLocked core(Core());
-    int fd = rz_io_fd_get_current(core->io);
-    RzIODesc *desc = rz_io_desc_get(core->io, fd);
+    const int fd = rz_io_fd_get_current(core->io);
+    const RzIODesc *desc = rz_io_desc_get(core->io, fd);
     setPlainText(this->ui->modeEdit, desc ? rz_str_rwx_i(desc->perm & RZ_PERM_RWX) : "");
 
     RzBinFile *bf = rz_bin_cur(core->bin);
     if (bf) {
         setPlainText(this->ui->compilationDateEdit, rz_core_bin_get_compile_time(bf));
         if (bf->o) {
-            char *relco_buf = sdb_get(bf->o->kv, "elf.relro");
-            if (RZ_STR_ISNOTEMPTY(relco_buf)) {
-                QString relro = QString(relco_buf).section(QLatin1Char(' '), 0, 0);
+            const char *relcoBuf = sdb_get(bf->o->kv, "elf.relro");
+            if (RZ_STR_ISNOTEMPTY(relcoBuf)) {
+                QString relro = QString(relcoBuf).section(QLatin1Char(' '), 0, 0);
                 relro[0] = relro[0].toUpper();
                 setPlainText(this->ui->relroEdit, relro);
             } else {
@@ -66,7 +66,7 @@ void Dashboard::updateContents()
     setPlainText(ui->subsysEdit, binInfo ? binInfo->subsystem : "");
     setPlainText(ui->compilerEdit, binInfo ? binInfo->compiler : "");
     setPlainText(ui->bitsEdit, binInfo ? QString::number(binInfo->bits) : "");
-    setPlainText(ui->baddrEdit, bf ? RzAddressString(rz_bin_file_get_baddr(bf)) : "");
+    setPlainText(ui->baddrEdit, bf ? rzAddressString(rz_bin_file_get_baddr(bf)) : "");
     setPlainText(ui->sizeEdit, bf ? qhelpers::formatBytecount(bf->size) : "");
     setPlainText(ui->fdEdit, bf ? QString::number(bf->fd) : "");
 
@@ -78,8 +78,8 @@ void Dashboard::updateContents()
     setRzBinInfo(binInfo);
 
     // Setting the value of "static"
-    int static_value = rz_bin_is_static(core->bin);
-    setPlainText(ui->staticEdit, setBoolText(static_value));
+    const int staticValue = rz_bin_is_static(core->bin);
+    setPlainText(ui->staticEdit, setBoolText(staticValue));
 
     const RzPVector *hashes = bf ? rz_bin_file_compute_hashes(core->bin, bf, UT64_MAX) : nullptr;
 
@@ -90,7 +90,7 @@ void Dashboard::updateContents()
 
     // Define dynamic components to hold the hashes
     hashesWidget = new QWidget();
-    QFormLayout *hashesLayout = new QFormLayout;
+    auto *hashesLayout = new QFormLayout;
     hashesWidget->setLayout(hashesLayout);
     ui->hashesVerticalLayout->addWidget(hashesWidget);
 
@@ -98,10 +98,10 @@ void Dashboard::updateContents()
     if (hashes != nullptr) {
         for (const auto &hash : CutterPVector<RzBinFileHash>(hashes)) {
             // Create a bold QString with the hash name uppercased
-            QString label = QString("<b>%1:</b>").arg(QString(hash->type).toUpper());
+            const QString label = QString("<b>%1:</b>").arg(QString(hash->type).toUpper());
 
             // Define a Read-Only line edit to display the hash value
-            QLineEdit *hashLineEdit = new QLineEdit();
+            auto *hashLineEdit = new QLineEdit();
             hashLineEdit->setReadOnly(true);
             hashLineEdit->setText(hash->hex);
 
@@ -114,15 +114,15 @@ void Dashboard::updateContents()
         }
     }
 
-    st64 fcns = rz_list_length(rz_analysis_function_list(core->analysis));
-    st64 strs = rz_flag_count(core->flags, "str.*");
-    st64 syms = rz_flag_count(core->flags, "sym.*");
-    st64 imps = rz_flag_count(core->flags, "sym.imp.*");
-    st64 code = rz_core_analysis_code_count(core);
-    st64 covr = rz_core_analysis_coverage_count(core);
-    st64 call = rz_core_analysis_calls_count(core);
-    ut64 xrfs = rz_analysis_xrefs_count(core->analysis);
-    double precentage = (code > 0) ? (covr * 100.0 / code) : 0;
+    const st64 fcns = rz_list_length(rz_analysis_function_list(core->analysis));
+    const st64 strs = rz_flag_count(core->flags, "str.*");
+    const st64 syms = rz_flag_count(core->flags, "sym.*");
+    const st64 imps = rz_flag_count(core->flags, "sym.imp.*");
+    const st64 code = rz_core_analysis_code_count(core);
+    const st64 covr = rz_core_analysis_coverage_count(core);
+    const st64 call = rz_core_analysis_calls_count(core);
+    const ut64 xrfs = rz_analysis_xrefs_count(core->analysis);
+    const double precentage = (code > 0) ? (covr * 100.0 / code) : 0;
 
     setPlainText(ui->functionsLineEdit, QString::number(fcns));
     setPlainText(ui->xRefsLineEdit, QString::number(xrfs));
@@ -156,7 +156,7 @@ void Dashboard::updateContents()
     ui->versioninfoButton->setEnabled(Core()->existsFileInfo());
 }
 
-void Dashboard::on_certificateButton_clicked()
+void Dashboard::onCertificateButtonClicked()
 {
     QDialog dialog(this);
     auto view = new QTreeWidget(&dialog);
@@ -178,7 +178,7 @@ void Dashboard::on_certificateButton_clicked()
     dialog.exec();
 }
 
-void Dashboard::on_versioninfoButton_clicked()
+void Dashboard::onVersioninfoButtonClicked()
 {
 
     static QDialog *infoDialog = nullptr;

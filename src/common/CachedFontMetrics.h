@@ -11,10 +11,10 @@ template<typename T>
 class CachedFontMetrics
 {
 public:
-    explicit CachedFontMetrics(const QFont &font) : mFontMetrics(font)
+    explicit CachedFontMetrics(const QFont &font)
+        : mFontMetrics(font), mHeight(mFontMetrics.height())
     {
         memset(mWidths, 0, sizeof(mWidths));
-        mHeight = mFontMetrics.height();
     }
 
     T width(const QChar &ch)
@@ -56,7 +56,7 @@ public:
         QChar temp;
 
         for (int i = 0; i < text.length(); i++) {
-            QChar ch = text[i];
+            const QChar ch = text[i];
 
             if (ch.isHighSurrogate())
                 temp = ch;

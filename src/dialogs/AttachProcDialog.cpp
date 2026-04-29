@@ -123,20 +123,18 @@ QString ProcessBeingAnalysedProxyModel::processPathToFilename(const QString &pat
 
 bool ProcessBeingAnalysedProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    ProcessDescription item =
-            index.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto item = index.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
 
-    QString procFilename = processPathToFilename(item.path);
+    const QString procFilename = processPathToFilename(item.path);
     return procFilename == processBeingAnalysedFilename;
 }
 
 bool ProcessBeingAnalysedProxyModel::lessThan(const QModelIndex &left,
                                               const QModelIndex &right) const
 {
-    ProcessDescription leftProc =
-            left.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
-    ProcessDescription rightProc =
+    const auto leftProc = left.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
+    const auto rightProc =
             right.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
 
     return ProcessModel::lessThan(leftProc, rightProc, left.column());
@@ -153,17 +151,15 @@ ProcessProxyModel::ProcessProxyModel(ProcessModel *sourceModel, QObject *parent)
 
 bool ProcessProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    ProcessDescription item =
-            index.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto item = index.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
     return qhelpers::filterStringContains(item.path, this);
 }
 
 bool ProcessProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    ProcessDescription leftProc =
-            left.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
-    ProcessDescription rightProc =
+    const auto leftProc = left.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
+    const auto rightProc =
             right.data(ProcessModel::ProcDescriptionRole).value<ProcessDescription>();
 
     return ProcessModel::lessThan(leftProc, rightProc, left.column());
@@ -172,14 +168,16 @@ bool ProcessProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
 // ----------------
 // AttachProcDialog
 // ----------------
-AttachProcDialog::AttachProcDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AttachProcDialog)
+AttachProcDialog::AttachProcDialog(QWidget *parent)
+    : QDialog(parent),
+      ui(new Ui::AttachProcDialog),
+      processBeingAnalyzedProxyModel(new ProcessBeingAnalysedProxyModel(processModel, this)),
+      processModel(new ProcessModel(this)),
+      processProxyModel(new ProcessProxyModel(processModel, this)),
+      timer(new QTimer(this))
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));
-
-    processModel = new ProcessModel(this);
-    processProxyModel = new ProcessProxyModel(processModel, this);
-    processBeingAnalyzedProxyModel = new ProcessBeingAnalysedProxyModel(processModel, this);
 
     // View of all processes
     auto allView = ui->allProcView;
@@ -201,7 +199,7 @@ AttachProcDialog::AttachProcDialog(QWidget *parent) : QDialog(parent), ui(new Ui
             &QSortFilterProxyModel::setFilterWildcard);
 
     // Update the processes every 'updateIntervalMs' seconds
-    timer = new QTimer(this);
+
     connect(timer, &QTimer::timeout, this, &AttachProcDialog::updateModelData);
     timer->start(updateIntervalMs);
 }
@@ -222,8 +220,8 @@ void AttachProcDialog::updateModelData()
 
     // Save the old selection and scroll position so that we can update and
     // model and then restore it.
-    bool allViewHadSelection = allView->selectionModel()->hasSelection();
-    bool smallViewHadSelection = smallView->selectionModel()->hasSelection();
+    const bool allViewHadSelection = allView->selectionModel()->hasSelection();
+    const bool smallViewHadSelection = smallView->selectionModel()->hasSelection();
     int allViewPrevScrollPos = 0;
     int smallViewPrevScrollPos = 0;
     int allViewPrevPID = 0;
@@ -278,9 +276,9 @@ void AttachProcDialog::updateModelData()
     }
 }
 
-void AttachProcDialog::on_buttonBox_accepted() {}
+void AttachProcDialog::onButtonBoxAccepted() {}
 
-void AttachProcDialog::on_buttonBox_rejected()
+void AttachProcDialog::onButtonBoxRejected()
 {
     close();
 }
@@ -329,14 +327,14 @@ int AttachProcDialog::getPID()
     return pid;
 }
 
-void AttachProcDialog::on_allProcView_doubleClicked(const QModelIndex &index)
+void AttachProcDialog::onAllProcViewDoubleClicked(const QModelIndex &index)
 {
     Q_UNUSED(index);
 
     accept();
 }
 
-void AttachProcDialog::on_procBeingAnalyzedView_doubleClicked(const QModelIndex &index)
+void AttachProcDialog::onProcBeingAnalyzedViewDoubleClicked(const QModelIndex &index)
 {
     Q_UNUSED(index);
 

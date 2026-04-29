@@ -20,10 +20,10 @@ class VisualNavbar : public QToolBar
 
     struct XToAddress
     {
-        double x_start;
-        double x_end;
-        RVA address_from;
-        RVA address_to;
+        double xStart;
+        double xEnd;
+        RVA addressFrom;
+        RVA addressTo;
     };
 
 public:
@@ -39,14 +39,14 @@ private slots:
     void drawSeekCursor();
     void drawPCCursor();
     void drawCursor(RVA addr, QColor color, QGraphicsRectItem *&graphicsItem);
-    void on_seekChanged(RVA addr);
+    void onSeekChanged(RVA addr);
     void showLegendContextMenu(const QPoint &pos);
 
 private:
     QGraphicsView *graphicsView;
     QGraphicsScene *graphicsScene;
     QGraphicsRectItem *seekGraphicsItem;
-    QGraphicsRectItem *PCGraphicsItem;
+    QGraphicsRectItem *pcGraphicsItem;
     QGraphicsItemGroup *legendItem;
     MainWindow *main;
 

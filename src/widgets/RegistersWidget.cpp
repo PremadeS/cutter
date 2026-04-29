@@ -10,7 +10,10 @@
 #include <QLineEdit>
 
 RegistersWidget::RegistersWidget(MainWindow *main)
-    : CutterDockWidget(main), ui(new Ui::RegistersWidget), addressContextMenu(this, main)
+    : CutterDockWidget(main),
+      ui(new Ui::RegistersWidget),
+      addressContextMenu(this, main),
+      refreshDeferrer(createRefreshDeferrer([this]() { updateContents(); }))
 {
     ui->setupUi(this);
 
@@ -18,8 +21,6 @@ RegistersWidget::RegistersWidget(MainWindow *main)
     registerLayout->setVerticalSpacing(0);
     registerLayout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     ui->verticalLayout->addLayout(registerLayout);
-
-    refreshDeferrer = createRefreshDeferrer([this]() { updateContents(); });
 
     connect(Core(), &CutterCore::refreshAll, this, &RegistersWidget::updateContents);
     connect(Core(), &CutterCore::registersChanged, this, &RegistersWidget::updateContents);
@@ -80,8 +81,8 @@ void RegistersWidget::setRegisterGrid()
             registerLayout->addWidget(registerLabel, i, col);
             registerLayout->addWidget(registerEditValue, i, col + 1);
             connect(registerEditValue, &QLineEdit::editingFinished, [=]() {
-                QString regNameString = registerLabel->text();
-                QString regValueString = registerEditValue->text();
+                const QString regNameString = registerLabel->text();
+                const QString regValueString = registerEditValue->text();
                 Core()->setRegister(regNameString, regValueString);
             });
         } else {
@@ -114,7 +115,7 @@ void RegistersWidget::setRegisterGrid()
     }
 }
 
-void RegistersWidget::openContextMenu(QPoint point, QString address)
+void RegistersWidget::openContextMenu(QPoint point, const QString &address)
 {
     addressContextMenu.setTarget(address.toULongLong(nullptr, 16));
     addressContextMenu.exec(point);

@@ -25,7 +25,7 @@ public:
      * most likely will be a C representation of a Type.
      * @param readonly - Will be set as "true" for viewing mode
      */
-    void fillTextArea(QString content);
+    void fillTextArea(const QString &content);
 
     /**
      * @brief Set the name of the type that is going to be changed
@@ -39,13 +39,13 @@ private slots:
      * Opens a File Dialog from where the user can select a file from where
      * the types will be loaded.
      */
-    void on_selectFileButton_clicked();
+    void onSelectFileButtonClicked();
 
     /**
      * @brief Executed whenever the text inside the textbox changes
      * When the text box is empty, the OK button is disabled.
      */
-    void on_plainTextEdit_textChanged();
+    void onPlainTextEditTextChanged();
 
     /**
      * @brief done Closes the dialog and sets its result code to r

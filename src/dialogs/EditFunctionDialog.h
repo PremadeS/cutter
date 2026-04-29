@@ -28,9 +28,9 @@ public:
     QString getCallConSelected();
 
 private slots:
-    void on_buttonBox_accepted();
+    void onButtonBoxAccepted();
 
-    void on_buttonBox_rejected();
+    void onButtonBoxRejected();
 
 private:
     std::unique_ptr<Ui::EditFunctionDialog> ui;

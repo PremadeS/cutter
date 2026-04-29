@@ -39,7 +39,7 @@ UpdateWorker::UpdateWorker(QObject *parent) : QObject(parent), pending(false)
 
 void UpdateWorker::checkCurrentVersion(time_t timeoutMs)
 {
-    QUrl url("https://api.github.com/repos/rizinorg/cutter/releases/latest");
+    const QUrl url("https://api.github.com/repos/rizinorg/cutter/releases/latest");
     QNetworkRequest request;
     request.setUrl(url);
 
@@ -70,7 +70,7 @@ void UpdateWorker::showUpdateDialog(bool showDontCheckForUpdatesButton)
         mb.setStandardButtons(QMessageBox::Ok);
     }
     mb.setDefaultButton(QMessageBox::Ok);
-    int ret = mb.exec();
+    const int ret = mb.exec();
     if (ret == QMessageBox::Reset) {
         Config()->setAutoUpdateEnabled(false);
     }
@@ -90,7 +90,7 @@ void UpdateWorker::serveVersionCheckReply()
                                   .toString();
         versionReplyStr.remove('v');
     }
-    QVersionNumber versionReply = QVersionNumber::fromString(versionReplyStr);
+    const QVersionNumber versionReply = QVersionNumber::fromString(versionReplyStr);
     if (!versionReply.isNull()) {
         latestVersion = versionReply;
     }

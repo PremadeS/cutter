@@ -21,7 +21,7 @@ public:
     enum Column { KeyColumn = 0, ValueColumn = 1 };
 
 private slots:
-    void CopyTreeWidgetSelection(QTreeWidget *t);
+    void copyTreeWidgetSelection(QTreeWidget *t);
     void clearSelectionOnClose();
 
 protected:
@@ -32,14 +32,14 @@ protected:
     QAction *selAllActionRightTreewidget = nullptr;
 
     void contextMenuEvent(QContextMenuEvent *event) override;
-    void on_buttonBox_rejected();
+    void onButtonBoxRejected();
 
     /**
      * @fn AboutDialog::on_copyVersionInfoButton_clicked()
      *
      * @brief Copies the table values to Clipboard.
      */
-    void on_copyVersionInfoButton_clicked();
+    void onCopyVersionInfoButtonClicked();
 
 private:
     std::unique_ptr<Ui::VersionInfoDialog> ui;

@@ -54,8 +54,8 @@ public:
                            QWidget *parent = nullptr);
 
 private slots:
-    void on_buttonBox_accepted();
-    void on_buttonBox_rejected();
+    void onButtonBoxAccepted();
+    void onButtonBoxRejected();
 
     void updateVirtualUI();
     void validateInput();

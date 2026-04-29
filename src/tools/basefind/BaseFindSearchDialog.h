@@ -30,7 +30,7 @@ signals:
     void cancelSearch();
 
 private slots:
-    void on_buttonBox_rejected();
+    void onButtonBoxRejected();
 
 private:
     std::vector<QProgressBar *> bars;

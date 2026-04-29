@@ -56,7 +56,7 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case AddrColumn:
-            return RzAddressString(breakpoint.addr);
+            return rzAddressString(breakpoint.addr);
         case NameColumn:
             return breakpoint.name;
         case TypeColumn:
@@ -179,18 +179,19 @@ BreakpointProxyModel::BreakpointProxyModel(BreakpointModel *sourceModel, QObject
 }
 
 BreakpointWidget::BreakpointWidget(MainWindow *main)
-    : CutterDockWidget(main), ui(new Ui::BreakpointWidget)
+    : CutterDockWidget(main),
+      ui(new Ui::BreakpointWidget),
+      breakpointModel(new BreakpointModel(this)),
+      breakpointProxyModel(new BreakpointProxyModel(breakpointModel, this)),
+      refreshDeferrer(createRefreshDeferrer([this]() { refreshBreakpoint(); }))
 {
     ui->setupUi(this);
 
     ui->breakpointTreeView->setMainWindow(mainWindow);
-    breakpointModel = new BreakpointModel(this);
-    breakpointProxyModel = new BreakpointProxyModel(breakpointModel, this);
+
     ui->breakpointTreeView->setModel(breakpointProxyModel);
     ui->breakpointTreeView->sortByColumn(BreakpointModel::AddrColumn, Qt::AscendingOrder);
     ui->breakpointTreeView->setItemDelegate(new BoolTogggleDelegate(this));
-
-    refreshDeferrer = createRefreshDeferrer([this]() { refreshBreakpoint(); });
 
     setScrollMode();
 

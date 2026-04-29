@@ -48,12 +48,12 @@ public slots:
     void showItemContextMenu(const QPoint &pt);
 
 private slots:
-    void on_buttonBox_rejected();
+    void onButtonBoxRejected();
 
 private:
-    void onActionCopyLine();
-    void onActionSetLoadAddr();
-    void onActionSetMapAddr();
+    void onActionCopyLine() const;
+    void onActionSetLoadAddr() const;
+    void onActionSetMapAddr() const;
 
     std::unique_ptr<Ui::BaseFindResultsDialog> ui;
     BaseFindResultsModel *model;

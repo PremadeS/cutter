@@ -33,16 +33,16 @@ EditMethodDialog::EditMethodDialog(bool classFixed, QWidget *parent)
 
 EditMethodDialog::~EditMethodDialog() {}
 
-void EditMethodDialog::on_buttonBox_accepted() {}
+void EditMethodDialog::onButtonBoxAccepted() {}
 
-void EditMethodDialog::on_buttonBox_rejected()
+void EditMethodDialog::onButtonBoxRejected()
 {
     close();
 }
 
 void EditMethodDialog::updateVirtualUI()
 {
-    bool enabled = ui->virtualCheckBox->isChecked();
+    const bool enabled = ui->virtualCheckBox->isChecked();
     ui->vtableOffsetEdit->setEnabled(enabled);
     ui->vtableOffsetLabel->setEnabled(enabled);
 }
@@ -98,7 +98,7 @@ void EditMethodDialog::setClass(const QString &className)
         }
 
         for (int i = 0; i < classComboBox->count(); i++) {
-            QString cls = classComboBox->itemData(i).toString();
+            const QString cls = classComboBox->itemData(i).toString();
             if (cls == className) {
                 classComboBox->setCurrentIndex(i);
                 break;
@@ -116,7 +116,7 @@ void EditMethodDialog::setMethod(const AnalysisMethodDescription &desc)
 {
     ui->nameEdit->setText(desc.name);
     ui->realNameEdit->setText(desc.realName);
-    ui->addressEdit->setText(desc.addr != RVA_INVALID ? RzAddressString(desc.addr) : nullptr);
+    ui->addressEdit->setText(desc.addr != RVA_INVALID ? rzAddressString(desc.addr) : nullptr);
 
     if (desc.vtableOffset >= 0) {
         ui->virtualCheckBox->setChecked(true);
@@ -127,7 +127,7 @@ void EditMethodDialog::setMethod(const AnalysisMethodDescription &desc)
     }
 
     // Check if auto-rename should be enabled
-    bool enableAutoRename = ui->nameEdit->text().isEmpty()
+    const bool enableAutoRename = ui->nameEdit->text().isEmpty()
             || ui->nameEdit->text() == convertRealNameToName(ui->realNameEdit->text());
     ui->autoRenameCheckBox->setChecked(enableAutoRename);
 
@@ -143,7 +143,7 @@ void EditMethodDialog::setMethod(const AnalysisMethodDescription &desc)
 QString EditMethodDialog::getClass() const
 {
     if (classComboBox) {
-        int index = classComboBox->currentIndex();
+        const int index = classComboBox->currentIndex();
         if (index < 0) {
             return nullptr;
         }
@@ -174,7 +174,7 @@ bool EditMethodDialog::showDialog(const QString &title, bool classFixed, QString
     dialog.setWindowTitle(title);
     dialog.setClass(*className);
     dialog.setMethod(*desc);
-    int result = dialog.exec();
+    const int result = dialog.exec();
     *className = dialog.getClass();
     *desc = dialog.getMethod();
     return result == QDialog::DialogCode::Accepted;

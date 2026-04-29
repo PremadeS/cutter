@@ -56,11 +56,11 @@ public slots:
 private slots:
     void setupFont();
 
-    void on_rzInputLineEdit_returnPressed();
-    void on_debugeeInputLineEdit_returnPressed();
+    void onRzInputLineEditReturnPressed();
+    void onDebugeeInputLineEditReturnPressed();
     void onIndexChange();
 
-    void on_execButton_clicked();
+    void onExecButtonClicked();
 
     void showCustomContextMenu(const QPoint &pt);
 

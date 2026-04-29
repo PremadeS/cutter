@@ -20,16 +20,16 @@ BaseFindSearchDialog::~BaseFindSearchDialog() {}
 
 void BaseFindSearchDialog::show(RzBaseFindOpt *opts)
 {
-    RzThreadNCores n_cores = rz_th_physical_core_number();
-    if (opts->max_threads > n_cores || opts->max_threads < 1) {
-        opts->max_threads = n_cores;
+    const RzThreadNCores nCores = rz_th_physical_core_number();
+    if (opts->max_threads > nCores || opts->max_threads < 1) {
+        opts->max_threads = nCores;
     }
 
-    QFormLayout *layout = new QFormLayout();
+    auto *layout = new QFormLayout();
     ui->scrollAreaWidgetContents->setLayout(layout);
     for (ut32 i = 0; i < opts->max_threads; ++i) {
-        QString label = QString::asprintf("Core %u", i);
-        QProgressBar *pbar = new QProgressBar(nullptr);
+        const QString label = QString::asprintf("Core %u", i);
+        auto *pbar = new QProgressBar(nullptr);
         layout->addRow(label, pbar);
         pbar->setRange(0, 100);
         bars.push_back(pbar);
@@ -55,12 +55,12 @@ void BaseFindSearchDialog::onProgress(BasefindCoreStatusDescription status)
 void BaseFindSearchDialog::onCompletion()
 {
     auto results = basefind->results();
-    BaseFindResultsDialog *table = new BaseFindResultsDialog(results, parentWidget());
+    auto *table = new BaseFindResultsDialog(results, parentWidget());
     table->show();
     this->close();
 }
 
-void BaseFindSearchDialog::on_buttonBox_rejected()
+void BaseFindSearchDialog::onButtonBoxRejected()
 {
     emit cancelSearch();
 }

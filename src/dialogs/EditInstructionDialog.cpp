@@ -23,9 +23,9 @@ EditInstructionDialog::EditInstructionDialog(InstructionEditMode editMode, QWidg
 
 EditInstructionDialog::~EditInstructionDialog() {}
 
-void EditInstructionDialog::on_buttonBox_accepted() {}
+void EditInstructionDialog::onButtonBoxAccepted() {}
 
-void EditInstructionDialog::on_buttonBox_rejected()
+void EditInstructionDialog::onButtonBoxRejected()
 {
     close();
 }
@@ -59,10 +59,10 @@ void EditInstructionDialog::updatePreview(const QString &input)
         ui->instructionLabel->setText("");
         return;
     } else if (editMode == EDIT_BYTES) {
-        QByteArray data = CutterCore::hexStringToBytes(input);
+        const QByteArray data = CutterCore::hexStringToBytes(input);
         result = Core()->disassemble(data).replace('\n', "; ");
     } else if (editMode == EDIT_TEXT) {
-        QByteArray data = Core()->assemble(input);
+        const QByteArray data = Core()->assemble(input);
         result = CutterCore::bytesToHexString(data).trimmed();
     }
 

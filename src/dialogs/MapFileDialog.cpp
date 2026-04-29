@@ -12,10 +12,10 @@ MapFileDialog::MapFileDialog(QWidget *parent) : QDialog(parent), ui(new Ui::MapF
 
 MapFileDialog::~MapFileDialog() {}
 
-void MapFileDialog::on_selectFileButton_clicked()
+void MapFileDialog::onSelectFileButtonClicked()
 {
-    QString currentDir = Config()->getRecentFolder();
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Select file"), currentDir);
+    const QString currentDir = Config()->getRecentFolder();
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("Select file"), currentDir);
 
     if (!fileName.isEmpty()) {
         ui->filenameLineEdit->setText(fileName);
@@ -23,11 +23,11 @@ void MapFileDialog::on_selectFileButton_clicked()
     }
 }
 
-void MapFileDialog::on_buttonBox_accepted()
+void MapFileDialog::onButtonBoxAccepted()
 {
     const QString &filePath = QDir::toNativeSeparators(ui->filenameLineEdit->text());
     RVA mapAddress = RVA_INVALID;
-    QString mapAddressStr = ui->mapAddressLineEdit->text();
+    const QString mapAddressStr = ui->mapAddressLineEdit->text();
     if (!mapAddressStr.isEmpty()) {
         mapAddress = Core()->math(mapAddressStr);
     }
@@ -39,7 +39,7 @@ void MapFileDialog::on_buttonBox_accepted()
     close();
 }
 
-void MapFileDialog::on_buttonBox_rejected()
+void MapFileDialog::onButtonBoxRejected()
 {
     close();
 }

@@ -4,6 +4,7 @@
 #include <QJsonValue>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <utility>
 
 RizinGraphWidget::RizinGraphWidget(MainWindow *main)
     : CutterDockWidget(main),
@@ -77,7 +78,7 @@ GenericRizinGraphView::GenericRizinGraphView(RizinGraphWidget *parent, MainWindo
 
 void GenericRizinGraphView::setGraphCommand(QString cmd)
 {
-    graphCommand = cmd;
+    graphCommand = std::move(cmd);
 }
 
 void GenericRizinGraphView::refreshView()
@@ -97,15 +98,15 @@ void GenericRizinGraphView::loadCurrentGraph()
         return;
     }
 
-    CutterJson functionsDoc = Core()->cmdj(QString("%1 json").arg(graphCommand));
+    const CutterJson functionsDoc = Core()->cmdj(QString("%1 json").arg(graphCommand));
     auto nodes = functionsDoc["nodes"];
 
-    for (CutterJson block : nodes) {
-        uint64_t id = block["id"].toUt64();
+    for (const CutterJson block : nodes) {
+        const uint64_t id = block["id"].toUt64();
 
         QString content;
-        QString title = block["title"].toString();
-        QString body = block["body"].toString();
+        const QString title = block["title"].toString();
+        const QString body = block["body"].toString();
         if (!title.isEmpty() && !body.isEmpty()) {
             content = title + "/n" + body;
         } else {
@@ -128,7 +129,7 @@ void GenericRizinGraphView::loadCurrentGraph()
     computeGraphPlacement();
 
     if (graphCommand != lastShownCommand) {
-        selectedBlock = NO_BLOCK_SELECTED;
+        selectedBlock = noBlockSelected;
         lastShownCommand = graphCommand;
         center();
     }

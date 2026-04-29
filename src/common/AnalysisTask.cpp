@@ -20,7 +20,7 @@ QString AnalysisTask::getTitle()
 {
     // If no file is loaded we consider it's Initial Analysis
     RzCoreLocked core(Core());
-    RzList *descs = rz_id_storage_list(core->io->files);
+    const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs)) {
         return tr("Initial Analysis");
     }
@@ -32,7 +32,7 @@ void AnalysisTask::runTask()
     int perms = RZ_PERM_RX;
     if (options.writeEnabled) {
         perms |= RZ_PERM_W;
-        emit Core()->ioModeChanged();
+        emit Core() -> ioModeChanged();
     }
 
     // Demangle (must be before file Core()->loadFile)
@@ -40,11 +40,11 @@ void AnalysisTask::runTask()
 
     // Do not reload the file if already loaded
     RzCoreLocked core(Core());
-    RzList *descs = rz_id_storage_list(core->io->files);
+    const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs) && options.filename.length()) {
         log(tr("Loading the file..."));
         openFailed = false;
-        bool fileLoaded =
+        const bool fileLoaded =
                 Core()->loadFile(options.filename, options.binLoadAddr, options.mapAddr, perms,
                                  options.useVA, options.loadBinInfo, options.forceBinPlugin);
         if (!fileLoaded) {

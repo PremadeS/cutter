@@ -39,7 +39,7 @@ void PluginManager::loadPlugins(bool enablePlugins)
         return;
     }
 
-    QString userPluginDir = getUserPluginsDirectory();
+    const QString userPluginDir = getUserPluginsDirectory();
     if (!userPluginDir.isEmpty()) {
         loadPluginsFromDir(QDir(userPluginDir), true);
     }
@@ -98,7 +98,7 @@ void PluginManager::destroyPlugins()
 QVector<QDir> PluginManager::getPluginDirectories() const
 {
     QVector<QDir> result;
-    QStringList locations = Cutter::standardLocations(QStandardPaths::AppDataLocation);
+    const QStringList locations = Cutter::standardLocations(QStandardPaths::AppDataLocation);
     for (auto &location : locations) {
         result.push_back(QDir(location).filePath("plugins"));
     }
@@ -106,10 +106,10 @@ QVector<QDir> PluginManager::getPluginDirectories() const
 #if QT_VERSION < QT_VERSION_CHECK(5, 6, 0) && defined(Q_OS_UNIX)
     QChar listSeparator = ':';
 #else
-    QChar listSeparator = QDir::listSeparator();
+    QChar const listSeparator = QDir::listSeparator();
 #endif
-    QString extra_plugin_dirs = CUTTER_EXTRA_PLUGIN_DIRS;
-    for (auto &path : extra_plugin_dirs.split(listSeparator, CUTTER_QT_SKIP_EMPTY_PARTS)) {
+    QString const extraPluginDirs = CUTTER_EXTRA_PLUGIN_DIRS;
+    for (auto &path : extraPluginDirs.split(listSeparator, CUTTER_QT_SKIP_EMPTY_PARTS)) {
         result.push_back(QDir(path));
     }
 
@@ -118,7 +118,7 @@ QVector<QDir> PluginManager::getPluginDirectories() const
 
 QString PluginManager::getUserPluginsDirectory() const
 {
-    QString location = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    const QString location = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     if (location.isEmpty()) {
         return QString();
     }

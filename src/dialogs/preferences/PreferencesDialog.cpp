@@ -90,7 +90,7 @@ void PreferencesDialog::changePage(QTreeWidgetItem *current, QTreeWidgetItem *pr
     if (!current)
         current = previous;
 
-    int index = current->data(0, Qt::UserRole).toInt();
+    const int index = current->data(0, Qt::UserRole).toInt();
 
     if (index)
         ui->configPanel->setCurrentIndex(index - 1);

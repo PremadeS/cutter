@@ -23,9 +23,9 @@ public:
 
     static void addOrEditComment(RVA offset, QWidget *parent);
 private slots:
-    void on_buttonBox_accepted();
+    void onButtonBoxAccepted();
 
-    void on_buttonBox_rejected();
+    void onButtonBoxRejected();
 
 private:
     std::unique_ptr<Ui::CommentsDialog> ui;

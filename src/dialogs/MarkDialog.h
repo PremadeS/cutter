@@ -5,7 +5,7 @@
 #include <QDialog>
 #include <QColor>
 
-constexpr qreal MARK_ALPHA_F = 0.5; // 50% alpha to show blending of multiple overalapping marks
+constexpr qreal markAlphaF = 0.5; // 50% alpha to show blending of multiple overalapping marks
 
 namespace Ui {
 class MarkDialog;

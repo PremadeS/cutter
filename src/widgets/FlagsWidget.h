@@ -26,7 +26,7 @@ private:
 
 public:
     enum Columns { OFFSET = 0, SIZE, NAME, REALNAME, COMMENT, COUNT };
-    static const int FlagDescriptionRole = Qt::UserRole;
+    static const int flagDescriptionRole = Qt::UserRole;
 
     FlagsModel(QObject *parent = nullptr);
 
@@ -68,10 +68,10 @@ public:
     ~FlagsWidget();
 
 private slots:
-    void on_flagspaceCombo_currentTextChanged(const QString &arg1);
+    void onFlagspaceComboCurrentTextChanged(const QString &arg1);
 
-    void on_actionRename_triggered();
-    void on_actionDelete_triggered();
+    void onActionRenameTriggered();
+    void onActionDeleteTriggered();
 
     void flagsChanged();
     void refreshFlagspaces();
@@ -81,8 +81,8 @@ private:
     MainWindow *main;
 
     bool disableFlagRefresh = false;
-    FlagsModel *flags_model;
-    FlagsSortFilterProxyModel *flags_proxy_model;
+    FlagsModel *flagsModel;
+    FlagsSortFilterProxyModel *flagsProxyModel;
 
     void refreshFlags();
     void setScrollMode();

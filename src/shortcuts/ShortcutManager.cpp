@@ -41,8 +41,8 @@ Qt::KeyboardModifier ShortcutManager::convertKeyToModifer(const QKeySequence &se
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     Qt::Key key = static_cast<Qt::Key>(sequence[0] & ~Qt::KeyboardModifierMask);
 #else
-    QKeyCombination combo = sequence[0];
-    Qt::Key key = combo.key();
+    QKeyCombination const combo = sequence[0];
+    const Qt::Key key = combo.key();
 #endif
     switch (key) {
     case Qt::Key_Alt:
@@ -74,7 +74,7 @@ Shortcut ShortcutManager::getShortcut(const QString &id)
 
     Shortcut result = defaultShortcuts.value(id);
 
-    QList<QKeySequence> customKeySequences = getKeySequences(id);
+    const QList<QKeySequence> customKeySequences = getKeySequences(id);
     if (!customKeySequences.isEmpty()) {
         result.keySequences = customKeySequences;
     }
@@ -88,8 +88,8 @@ QHash<QString, Shortcut> ShortcutManager::getAllShortcuts()
     shortcuts.reserve(defaultShortcuts.size());
 
     for (auto it = defaultShortcuts.cbegin(); it != defaultShortcuts.cend(); ++it) {
-        const QString name = it.key();
-        Shortcut s = getShortcut(name);
+        const QString &name = it.key();
+        const Shortcut s = getShortcut(name);
         shortcuts.insert(name, s);
     }
     return shortcuts;
@@ -98,22 +98,22 @@ QHash<QString, Shortcut> ShortcutManager::getAllShortcuts()
 QAction *ShortcutManager::makeAction(const QString &id, QObject *parent)
 {
 
-    QAction *action = new QAction(parent);
+    auto *action = new QAction(parent);
     setupAction(*action, id);
     return action;
 }
 
 void ShortcutManager::setupAction(QAction &action, const QString &id)
 {
-    Shortcut s = getShortcut(id);
+    const Shortcut s = getShortcut(id);
     action.setShortcuts(s.keySequences);
     action.setText(QCoreApplication::translate(s.context, s.text));
 }
 
 QShortcut *ShortcutManager::makeQShortcut(const QString &id, QWidget *parent)
 {
-    QShortcut *shortcut = new QShortcut(parent);
-    QList<QKeySequence> keySequences = getKeySequences(id);
+    auto *shortcut = new QShortcut(parent);
+    const QList<QKeySequence> keySequences = getKeySequences(id);
     if (!keySequences.isEmpty()) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         shortcut->setKeys(keySequences);
@@ -135,7 +135,7 @@ bool ShortcutManager::matchesKeySequence(const QString &id, const QKeySequence &
     return false;
 }
 
-QList<QKeySequence> ShortcutManager::getCustomKeySequences(const QString &id)
+QList<QKeySequence> ShortcutManager::getCustomKeySequences(const QString & /*id*/)
 {
     return {}; // Custom shortcut support is not implemented yet
 }

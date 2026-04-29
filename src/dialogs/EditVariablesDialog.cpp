@@ -6,7 +6,7 @@
 #include <QMetaType>
 #include <QPushButton>
 
-EditVariablesDialog::EditVariablesDialog(RVA offset, QString initialVar, QWidget *parent)
+EditVariablesDialog::EditVariablesDialog(RVA offset, const QString &initialVar, QWidget *parent)
     : QDialog(parent), ui(new Ui::EditVariablesDialog), functionAddress(RVA_INVALID)
 {
     ui->setupUi(this);
@@ -15,8 +15,8 @@ EditVariablesDialog::EditVariablesDialog(RVA offset, QString initialVar, QWidget
                                       &EditVariablesDialog::updateFields);
 
     auto core = Core()->lock();
-    RzAnalysisFunction *f = rz_analysis_get_function_at(core->analysis, offset);
-    QString fcnName = f->name;
+    const RzAnalysisFunction *f = rz_analysis_get_function_at(core->analysis, offset);
+    const QString fcnName = f->name;
     functionAddress = offset;
     setWindowTitle(tr("Edit Variables in Function: %1").arg(fcnName));
 
@@ -55,7 +55,7 @@ void EditVariablesDialog::applyFields()
         // nothing was selected or list is empty
         return;
     }
-    VariableDescription desc = ui->dropdownLocalVars->currentData().value<VariableDescription>();
+    const auto desc = ui->dropdownLocalVars->currentData().value<VariableDescription>();
 
     RzCoreLocked core(Core());
     RzAnalysisFunction *fcn = Core()->functionIn(core->offset);
@@ -68,43 +68,43 @@ void EditVariablesDialog::applyFields()
         return;
     }
 
-    char *error_msg = NULL;
-    RzType *v_type = rz_type_parse_string_single(
+    const char *errorMsg = nullptr;
+    RzType *vType = rz_type_parse_string_single(
             rz_analysis_get_type_db(core->analysis)->parser,
-            ui->typeComboBox->currentText().toUtf8().constData(), &error_msg);
-    if (!v_type || error_msg) {
+            ui->typeComboBox->currentText().toUtf8().constData(), &errorMsg);
+    if (!vType || errorMsg) {
         return;
     }
-    rz_analysis_var_set_type(v, v_type, true);
+    rz_analysis_var_set_type(v, vType, true);
 
     // TODO Remove all those replace once rizin command parser is fixed
-    QString newName = ui->nameEdit->text()
-                              .replace(QLatin1Char(' '), QLatin1Char('_'))
-                              .replace(QLatin1Char('\\'), QLatin1Char('_'))
-                              .replace(QLatin1Char('/'), QLatin1Char('_'));
+    const QString newName = ui->nameEdit->text()
+                                    .replace(QLatin1Char(' '), QLatin1Char('_'))
+                                    .replace(QLatin1Char('\\'), QLatin1Char('_'))
+                                    .replace(QLatin1Char('/'), QLatin1Char('_'));
     if (newName != desc.name) {
         Core()->renameFunctionVariable(newName, desc.name, functionAddress);
     }
 
     // Refresh the views to reflect the changes to vars
-    emit Core()->refreshCodeViews();
+    emit Core() -> refreshCodeViews();
 }
 
 void EditVariablesDialog::updateFields()
 {
-    bool hasSelection = ui->dropdownLocalVars->currentIndex() >= 0;
+    const bool hasSelection = ui->dropdownLocalVars->currentIndex() >= 0;
     auto okButton = ui->buttonBox->button(QDialogButtonBox::Ok);
     okButton->setEnabled(hasSelection);
     if (!hasSelection) {
         ui->nameEdit->clear();
         return;
     }
-    VariableDescription desc = ui->dropdownLocalVars->currentData().value<VariableDescription>();
+    const auto desc = ui->dropdownLocalVars->currentData().value<VariableDescription>();
     ui->nameEdit->setText(desc.name);
     ui->typeComboBox->setCurrentText(desc.type);
 }
 
-static void addTypeDescriptionsToComboBox(QComboBox *comboBox, QList<TypeDescription> list)
+static void addTypeDescriptionsToComboBox(QComboBox *comboBox, const QList<TypeDescription> &list)
 {
     for (const TypeDescription &thisType : list) {
         comboBox->addItem(thisType.type);

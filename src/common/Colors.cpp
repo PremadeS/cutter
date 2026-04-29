@@ -1,18 +1,20 @@
 #include "Colors.h"
+
+#include <utility>
 #include "common/Configuration.h"
 
 Colors::Colors() {}
 
 void Colors::colorizeAssembly(RichTextPainter::List &list, QString opcode, ut64 type_num)
 {
-    RichTextPainter::CustomRichText_t assembly;
+    RichTextPainter::CustomRichTextT assembly;
     assembly.highlight = false;
     assembly.flags = RichTextPainter::FlagColor;
 
     // TODO cut opcode and use op["ptr"] to colorate registers and immediate values
-    assembly.text = opcode;
+    assembly.text = std::move(opcode);
 
-    QString colorName = Colors::getColor(type_num);
+    const QString colorName = Colors::getColor(type_num);
     assembly.textColor = ConfigColor(colorName);
     list.push_back(assembly);
 }
@@ -100,7 +102,7 @@ QString Colors::getColor(ut64 type)
 
 QColor Colors::overlayColor(const QColor &base, const QColor &overlay)
 {
-    int alpha = overlay.alpha();
+    const int alpha = overlay.alpha();
     if (alpha == 255) {
         return overlay;
     }
@@ -108,9 +110,9 @@ QColor Colors::overlayColor(const QColor &base, const QColor &overlay)
         return base;
     }
 
-    int r = (overlay.red() * alpha + base.red() * (255 - alpha)) / 255;
-    int g = (overlay.green() * alpha + base.green() * (255 - alpha)) / 255;
-    int b = (overlay.blue() * alpha + base.blue() * (255 - alpha)) / 255;
+    const int r = (overlay.red() * alpha + base.red() * (255 - alpha)) / 255;
+    const int g = (overlay.green() * alpha + base.green() * (255 - alpha)) / 255;
+    const int b = (overlay.blue() * alpha + base.blue() * (255 - alpha)) / 255;
 
     return QColor(r, g, b);
 }

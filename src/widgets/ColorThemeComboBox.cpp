@@ -14,7 +14,7 @@ ColorThemeComboBox::ColorThemeComboBox(QWidget *parent) : QComboBox(parent), sho
 
 void ColorThemeComboBox::updateFromConfig(bool interfaceThemeChanged)
 {
-    QSignalBlocker signalBlockerColorBox(this);
+    const QSignalBlocker signalBlockerColorBox(this);
 
     const int curInterfaceThemeIndex = Config()->getInterfaceTheme();
     const QList<QString> themes(showOnlyCustom ? ThemeWorker().customThemes()
@@ -29,9 +29,10 @@ void ColorThemeComboBox::updateFromConfig(bool interfaceThemeChanged)
         }
     }
 
-    QString curTheme = interfaceThemeChanged ? Config()->getLastThemeOf(
-                               Configuration::cutterInterfaceThemesList()[curInterfaceThemeIndex])
-                                             : Config()->getColorTheme();
+    QString curTheme = interfaceThemeChanged
+            ? Config()->getLastThemeOf(
+                      Configuration::cutterInterfaceThemesList()[curInterfaceThemeIndex])
+            : Config()->getColorTheme();
     const int index = findText(curTheme);
 
     setCurrentIndex(index == -1 ? 0 : index);
@@ -41,7 +42,7 @@ void ColorThemeComboBox::updateFromConfig(bool interfaceThemeChanged)
     }
     int maxThemeLen = 0;
     for (const QString &str : themes) {
-        int strLen = str.length();
+        const int strLen = str.length();
         if (strLen > maxThemeLen) {
             maxThemeLen = strLen;
         }
@@ -52,7 +53,7 @@ void ColorThemeComboBox::updateFromConfig(bool interfaceThemeChanged)
 
 void ColorThemeComboBox::onCurrentIndexChanged(int index)
 {
-    QString theme = itemText(index);
+    const QString theme = itemText(index);
 
     int curQtThemeIndex = Config()->getInterfaceTheme();
     if (curQtThemeIndex >= Configuration::cutterInterfaceThemesList().size()) {

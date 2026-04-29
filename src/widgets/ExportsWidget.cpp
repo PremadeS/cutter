@@ -29,9 +29,9 @@ QVariant ExportsModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case ExportsModel::OffsetColumn:
-            return RzAddressString(exp.vaddr);
+            return rzAddressString(exp.vaddr);
         case ExportsModel::SizeColumn:
-            return RzSizeString(exp.size);
+            return rzSizeString(exp.size);
         case ExportsModel::TypeColumn:
             return exp.type;
         case ExportsModel::NameColumn:
@@ -92,7 +92,7 @@ ExportsProxyModel::ExportsProxyModel(ExportsModel *source_model, QObject *parent
 
 bool ExportsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
     auto exp = index.data(ExportsModel::ExportDescriptionRole).value<ExportDescription>();
 
     return qhelpers::filterStringContains(exp.name, this);
@@ -130,21 +130,23 @@ bool ExportsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
     return leftExp.vaddr < rightExp.vaddr;
 }
 
-ExportsWidget::ExportsWidget(MainWindow *main) : ListDockWidget(main)
+ExportsWidget::ExportsWidget(MainWindow *main)
+    : ListDockWidget(main),
+      exportsModel(new ExportsModel(this)),
+      exportsProxyModel(new ExportsProxyModel(exportsModel, this))
 {
     setWindowTitle(tr("Exports"));
     setObjectName("ExportsWidget");
 
-    exportsModel = new ExportsModel(this);
-    exportsProxyModel = new ExportsProxyModel(exportsModel, this);
     setModels(exportsProxyModel);
 
     ui->treeView->sortByColumn(ExportsModel::OffsetColumn, Qt::AscendingOrder);
     connect(ui->treeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this]() {
         AddressableItemContextMenu *contextMenu = ui->treeView->getItemContextMenu();
-        QModelIndex index = ui->treeView->selectionModel()->currentIndex();
+        const QModelIndex index = ui->treeView->selectionModel()->currentIndex();
         if (index.isValid()) {
-            QVariant variant = exportsProxyModel->data(index, ExportsModel::ExportDescriptionRole);
+            const QVariant variant =
+                    exportsProxyModel->data(index, ExportsModel::ExportDescriptionRole);
             if (variant.canConvert<ExportDescription>()) {
                 auto exp = variant.value<ExportDescription>();
                 contextMenu->toggleBreakpointAction(exp.type == "FUNC");
@@ -154,8 +156,8 @@ ExportsWidget::ExportsWidget(MainWindow *main) : ListDockWidget(main)
         contextMenu->toggleBreakpointAction(false);
     });
 
-    QShortcut *toggle_shortcut = Shortcuts()->makeQShortcut("Exports.toggle", main);
-    connect(toggle_shortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Exports.toggle", main);
+    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
 
     connect(Core(), &CutterCore::codeRebased, this, &ExportsWidget::refreshExports);
     connect(Core(), &CutterCore::refreshAll, this, &ExportsWidget::refreshExports);

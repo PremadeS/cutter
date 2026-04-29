@@ -24,7 +24,7 @@ PreferenceCategory::PreferenceCategory(const QString &name, const QIcon &icon,
 
 void PreferenceCategory::addItem(QTreeWidget &tree, QStackedWidget &panel)
 {
-    QTreeWidgetItem *w = new QTreeWidgetItem({ name });
+    auto *w = new QTreeWidgetItem({ name });
 
     tree.addTopLevelItem(w);
     for (auto &c : children)
@@ -41,7 +41,7 @@ void PreferenceCategory::addItem(QTreeWidget &tree, QStackedWidget &panel)
 
 void PreferenceCategory::addItem(QTreeWidgetItem &tree, QStackedWidget &panel)
 {
-    QTreeWidgetItem *w = new QTreeWidgetItem({ name });
+    auto *w = new QTreeWidgetItem({ name });
 
     tree.addChild(w);
     for (auto &c : children)

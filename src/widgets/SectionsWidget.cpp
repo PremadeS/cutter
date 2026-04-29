@@ -54,13 +54,13 @@ QVariant SectionsModel::data(const QModelIndex &index, int role) const
         case SectionsModel::NameColumn:
             return section.name;
         case SectionsModel::SizeColumn:
-            return RzSizeString(section.size);
+            return rzSizeString(section.size);
         case SectionsModel::AddressColumn:
-            return RzAddressString(section.vaddr);
+            return rzAddressString(section.vaddr);
         case SectionsModel::EndAddressColumn:
-            return RzAddressString(section.vaddr + section.vsize);
+            return rzAddressString(section.vaddr + section.vsize);
         case SectionsModel::VirtualSizeColumn:
-            return RzSizeString(section.vsize);
+            return rzSizeString(section.vsize);
         case SectionsModel::PermissionsColumn:
             return section.perm;
         case SectionsModel::EntropyColumn:
@@ -158,14 +158,14 @@ bool SectionsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &ri
     }
 }
 
-SectionsWidget::SectionsWidget(MainWindow *main) : ListDockWidget(main)
+SectionsWidget::SectionsWidget(MainWindow *main)
+    : ListDockWidget(main),
+      dockRefreshDeferrer(createRefreshDeferrer([this]() { refreshDocks(); })),
+      sectionsRefreshDeferrer(createRefreshDeferrer([this]() { refreshSections(); }))
 {
     setObjectName("SectionsWidget");
     setWindowTitle(tr("Sections"));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-
-    sectionsRefreshDeferrer = createRefreshDeferrer([this]() { refreshSections(); });
-    dockRefreshDeferrer = createRefreshDeferrer([this]() { refreshDocks(); });
 
     initSectionsTable();
     initQuickFilter();
@@ -196,7 +196,7 @@ void SectionsWidget::initAddrMapDocks()
     rawAddrDock = new RawAddrDock(sectionsModel, this);
     virtualAddrDock = new VirtualAddrDock(sectionsModel, this);
     addrDockWidget = new QWidget();
-    QHBoxLayout *addrDockLayout = new QHBoxLayout();
+    auto *addrDockLayout = new QHBoxLayout();
     addrDockLayout->addWidget(rawAddrDock);
     addrDockLayout->addWidget(virtualAddrDock);
     addrDockWidget->setLayout(addrDockLayout);
@@ -269,18 +269,18 @@ void SectionsWidget::refreshDocks()
 
 void SectionsWidget::drawIndicatorOnAddrDocks()
 {
-    RVA offset = Core()->getOffset();
+    RVA const offset = Core()->getOffset();
     for (int i = 0; i != virtualAddrDock->proxyModel->rowCount(); i++) {
-        QModelIndex idx = virtualAddrDock->proxyModel->index(i, 0);
-        RVA vaddr =
+        const QModelIndex idx = virtualAddrDock->proxyModel->index(i, 0);
+        RVA const vaddr =
                 idx.data(SectionsModel::SectionDescriptionRole).value<SectionDescription>().vaddr;
-        int vsize =
+        const int vsize =
                 idx.data(SectionsModel::SectionDescriptionRole).value<SectionDescription>().vsize;
-        RVA end = vaddr + vsize;
+        RVA const end = vaddr + vsize;
         if (offset < end) {
-            QString name = idx.data(SectionsModel::SectionDescriptionRole)
-                                   .value<SectionDescription>()
-                                   .name;
+            const QString name = idx.data(SectionsModel::SectionDescriptionRole)
+                                         .value<SectionDescription>()
+                                         .name;
             float ratio = 0;
             if (vsize > 0 && offset > vaddr) {
                 ratio = (float)(offset - vaddr) / (float)vsize;
@@ -308,23 +308,23 @@ void SectionsWidget::updateToggle()
 
 AbstractAddrDock::AbstractAddrDock(SectionsModel *model, QWidget *parent)
     : QDockWidget(parent),
+      heightDivisor(1000),
+      heightThreshold(30),
+      indicatorHeight(5),
+      indicatorParamPosY(20),
+      rectOffset(100),
+      rectWidthMax(400),
+      rectWidthMin(80),
       addrDockScene(new AddrDockScene(this)),
-      graphicsView(new QGraphicsView(this))
+      graphicsView(new QGraphicsView(this)),
+      proxyModel(new SectionsProxyModel(model, this))
 {
     graphicsView->setScene(addrDockScene);
     setWidget(graphicsView);
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-    proxyModel = new SectionsProxyModel(model, this);
 
     setWidget(graphicsView);
 
-    indicatorHeight = 5;
-    indicatorParamPosY = 20;
-    heightThreshold = 30;
-    heightDivisor = 1000;
-    rectOffset = 100;
-    rectWidthMin = 80;
-    rectWidthMax = 400;
     indicatorColor = ConfigColor("gui.navbar.seek");
     textColor = ConfigColor("gui.dataoffset");
 }
@@ -341,31 +341,31 @@ void AbstractAddrDock::updateDock()
     textColor = ConfigColor("gui.dataoffset");
 
     int y = 0;
-    int validMinSize = getValidMinSize();
-    int rectWidth = getRectWidth();
+    const int validMinSize = getValidMinSize();
+    const int rectWidth = getRectWidth();
     proxyModel->sort(SectionsModel::AddressColumn, Qt::AscendingOrder);
     for (int i = 0; i < proxyModel->rowCount(); ++i) {
-        QModelIndex idx = proxyModel->index(i, 0);
+        const QModelIndex idx = proxyModel->index(i, 0);
         auto desc = idx.data(SectionsModel::SectionDescriptionRole).value<SectionDescription>();
 
-        QString name = desc.name;
+        const QString name = desc.name;
 
         addrDockScene->seekAddrMap[name] = desc.vaddr;
         addrDockScene->seekAddrSizeMap[name] = desc.vsize;
 
-        RVA addr = getAddressOfSection(desc);
-        RVA size = getSizeOfSection(desc);
+        RVA const addr = getAddressOfSection(desc);
+        RVA const size = getSizeOfSection(desc);
         addrDockScene->nameAddrMap[name] = addr;
         addrDockScene->nameAddrSizeMap[name] = size;
 
-        int drawSize = getAdjustedSize(size, validMinSize);
+        const int drawSize = getAdjustedSize(size, validMinSize);
 
-        QGraphicsRectItem *rect = new QGraphicsRectItem(rectOffset, y, rectWidth, drawSize);
+        auto *rect = new QGraphicsRectItem(rectOffset, y, rectWidth, drawSize);
         rect->setBrush(QBrush(idx.data(Qt::DecorationRole).value<QColor>()));
         addrDockScene->addItem(rect);
 
-        addTextItem(textColor, QPoint(0, y), RzAddressString(addr));
-        addTextItem(textColor, QPoint(rectOffset, y), RzSizeString(size));
+        addTextItem(textColor, QPoint(0, y), rzAddressString(addr));
+        addTextItem(textColor, QPoint(rectOffset, y), rzSizeString(size));
         addTextItem(textColor, QPoint(rectOffset + rectWidth, y), name);
 
         addrDockScene->namePosYMap[name] = y;
@@ -377,16 +377,16 @@ void AbstractAddrDock::updateDock()
     graphicsView->setSceneRect(addrDockScene->itemsBoundingRect());
 }
 
-void AbstractAddrDock::addTextItem(QColor color, QPoint pos, QString string)
+void AbstractAddrDock::addTextItem(QColor color, QPoint pos, const QString &string)
 {
-    QGraphicsTextItem *text = new QGraphicsTextItem;
+    auto *text = new QGraphicsTextItem;
     text->setDefaultTextColor(color);
     text->setPos(pos);
     text->setPlainText(string);
     addrDockScene->addItem(text);
 }
 
-int AbstractAddrDock::getAdjustedSize(int size, int validMinSize)
+int AbstractAddrDock::getAdjustedSize(int size, int validMinSize) const
 {
     if (size == 0) {
         return size;
@@ -414,8 +414,8 @@ int AbstractAddrDock::getValidMinSize()
 {
     proxyModel->sort(SectionsModel::SizeColumn, Qt::AscendingOrder);
     for (int i = 0; i < proxyModel->rowCount(); i++) {
-        QModelIndex idx = proxyModel->index(i, 0);
-        int size = getSizeOfSection(
+        const QModelIndex idx = proxyModel->index(i, 0);
+        const int size = getSizeOfSection(
                 idx.data(SectionsModel::SectionDescriptionRole).value<SectionDescription>());
         if (size > 0) {
             return size;
@@ -424,14 +424,13 @@ int AbstractAddrDock::getValidMinSize()
     return 0;
 }
 
-void AbstractAddrDock::drawIndicator(QString name, float ratio)
+void AbstractAddrDock::drawIndicator(const QString &name, float ratio)
 {
-    RVA offset = Core()->getOffset();
-    float padding = addrDockScene->nameHeightMap[name] * ratio;
-    int y = addrDockScene->namePosYMap[name] + (int)padding;
-    QColor color = indicatorColor;
-    QGraphicsRectItem *indicator =
-            new QGraphicsRectItem(QRectF(0, y, getIndicatorWidth(), indicatorHeight));
+    RVA const offset = Core()->getOffset();
+    const float padding = addrDockScene->nameHeightMap[name] * ratio;
+    const int y = addrDockScene->namePosYMap[name] + (int)padding;
+    const QColor color = indicatorColor;
+    auto *indicator = new QGraphicsRectItem(QRectF(0, y, getIndicatorWidth(), indicatorHeight));
     indicator->setBrush(QBrush(color));
     addrDockScene->addItem(indicator);
 
@@ -443,20 +442,17 @@ void AbstractAddrDock::drawIndicator(QString name, float ratio)
     addTextItem(color, QPoint(0, y - indicatorParamPosY), QString("0x%1").arg(offset, 0, 16));
 }
 
-AddrDockScene::AddrDockScene(QWidget *parent) : QGraphicsScene(parent)
-{
-    disableCenterOn = false;
-}
+AddrDockScene::AddrDockScene(QWidget *parent) : QGraphicsScene(parent), disableCenterOn(false) {}
 
 AddrDockScene::~AddrDockScene() {}
 
 void AddrDockScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    RVA addr = getAddrFromPos((int)event->scenePos().y(), false);
+    RVA const addr = getAddrFromPos((int)event->scenePos().y(), false);
     if (addr != RVA_INVALID) {
-        QToolTip::showText(event->screenPos(), RzAddressString(addr));
+        QToolTip::showText(event->screenPos(), rzAddressString(addr));
         if (event->buttons() & Qt::LeftButton) {
-            RVA seekAddr = getAddrFromPos((int)event->scenePos().y(), true);
+            RVA const seekAddr = getAddrFromPos((int)event->scenePos().y(), true);
             disableCenterOn = true;
             Core()->seekAndShow(seekAddr);
             disableCenterOn = false;
@@ -478,9 +474,9 @@ RVA AddrDockScene::getAddrFromPos(int posY, bool seek)
     QHash<QString, RVA> addrMap = seek ? seekAddrMap : nameAddrMap;
     QHash<QString, RVA> addrSizeMap = seek ? seekAddrSizeMap : nameAddrSizeMap;
     for (it = namePosYMap.constBegin(); it != namePosYMap.constEnd(); ++it) {
-        QString name = it.key();
-        int y = it.value();
-        int h = nameHeightMap[name];
+        const QString &const name = it.key();
+        const int y = it.value();
+        const int h = nameHeightMap[name];
         if (posY >= y && y + h >= posY) {
             if (h == 0) {
                 return addrMap[name];

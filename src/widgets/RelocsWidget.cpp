@@ -25,7 +25,7 @@ QVariant RelocsModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case RelocsModel::VAddrColumn:
-            return RzAddressString(reloc.vaddr);
+            return rzAddressString(reloc.vaddr);
         case RelocsModel::TypeColumn:
             return reloc.type;
         case RelocsModel::NameColumn:
@@ -90,7 +90,7 @@ RelocsProxyModel::RelocsProxyModel(RelocsModel *sourceModel, QObject *parent)
 
 bool RelocsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
     auto reloc = index.data(RelocsModel::RelocDescriptionRole).value<RelocDescription>();
 
     return qhelpers::filterStringContains(reloc.name, this);

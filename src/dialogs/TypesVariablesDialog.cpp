@@ -50,7 +50,7 @@ QVariant TypesVariablesModel::data(const QModelIndex &index, int role) const
         }
     }
 
-    if (role == TypeVariableRole) {
+    if (role == typeVariableRole) {
         return QVariant::fromValue(v);
     }
     return QVariant();
@@ -103,13 +103,13 @@ bool TypesVariablesProxyModel::filterAcceptsRow(int source_row,
         return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
     }
 
-    QVariant var = sourceModel()->data(sourceModel()->index(source_row, 0),
-                                       TypesVariablesModel::TypeVariableRole);
+    const QVariant var = sourceModel()->data(sourceModel()->index(source_row, 0),
+                                             TypesVariablesModel::typeVariableRole);
     if (!var.isValid()) {
         return false;
     }
 
-    VariableEntry v = var.value<VariableEntry>();
+    const auto v = var.value<VariableEntry>();
     return (v.scope == selectedScope)
             && QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
 }
@@ -117,12 +117,12 @@ bool TypesVariablesProxyModel::filterAcceptsRow(int source_row,
 bool TypesVariablesProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     if (left.column() == TypesVariablesModel::Column::ADDRESS) {
-        QVariant varLeft = sourceModel()->data(left, TypesVariablesModel::TypeVariableRole);
-        QVariant varRight = sourceModel()->data(right, TypesVariablesModel::TypeVariableRole);
+        const QVariant varLeft = sourceModel()->data(left, TypesVariablesModel::typeVariableRole);
+        const QVariant varRight = sourceModel()->data(right, TypesVariablesModel::typeVariableRole);
 
         if (varLeft.isValid() && varRight.isValid()) {
-            VariableEntry vLeft = varLeft.value<VariableEntry>();
-            VariableEntry vRight = varRight.value<VariableEntry>();
+            const auto vLeft = varLeft.value<VariableEntry>();
+            const auto vRight = varRight.value<VariableEntry>();
 
             return vLeft.offset < vRight.offset;
         }
@@ -132,13 +132,14 @@ bool TypesVariablesProxyModel::lessThan(const QModelIndex &left, const QModelInd
 }
 
 TypesVariablesDialog::TypesVariablesDialog(QWidget *parent, const QString &typeName)
-    : QDialog(parent), ui(new Ui::TypesVariablesDialog)
+    : QDialog(parent),
+      ui(new Ui::TypesVariablesDialog),
+      proxyModel(new TypesVariablesProxyModel(this)),
+      sourceModel(new TypesVariablesModel(this))
 {
     ui->setupUi(this);
     setWindowTitle(tr("Variables: %1").arg(typeName));
 
-    sourceModel = new TypesVariablesModel(this);
-    proxyModel = new TypesVariablesProxyModel(this);
     proxyModel->setSourceModel(sourceModel);
 
     proxyModel->setFilterKeyColumn(-1);
@@ -164,7 +165,7 @@ TypesVariablesDialog::TypesVariablesDialog(QWidget *parent, const QString &typeN
 
     connect(scopeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             [this, scopeCombo, updateCount](int index) {
-                int scope = scopeCombo->itemData(index).toInt();
+                const int scope = scopeCombo->itemData(index).toInt();
                 proxyModel->setScope(static_cast<VariableScope>(scope));
                 updateCount();
             });
@@ -214,7 +215,7 @@ void TypesVariablesDialog::onItemDoubleClicked(const QModelIndex &index)
     if (!index.isValid()) {
         return;
     }
-    VariableEntry v = index.data(TypesVariablesModel::TypeVariableRole).value<VariableEntry>();
+    const auto v = index.data(TypesVariablesModel::typeVariableRole).value<VariableEntry>();
     Core()->seekAndShow(v.offset);
     close();
 }

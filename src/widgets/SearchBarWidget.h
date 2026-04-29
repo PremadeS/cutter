@@ -66,13 +66,13 @@ signals:
 
 private:
     std::unique_ptr<Ui::SearchBarWidget> ui;
-    int m_index = 0;
-    int m_count = 0;
+    int mIndex = 0;
+    int mCount = 0;
 
-    QAction *m_caseSensitiveAction;
-    QAction *m_wholeWordsAction;
-    QAction *m_regExpAction;
-    QAction *m_highlightMatchesAction;
+    QAction *mCaseSensitiveAction;
+    QAction *mWholeWordsAction;
+    QAction *mRegExpAction;
+    QAction *mHighlightMatchesAction;
 };
 
 #endif // SEARCHBARWIDGET_H

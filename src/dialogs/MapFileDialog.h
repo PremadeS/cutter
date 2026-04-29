@@ -18,9 +18,9 @@ public:
     ~MapFileDialog();
 
 private slots:
-    void on_selectFileButton_clicked();
-    void on_buttonBox_accepted();
-    void on_buttonBox_rejected();
+    void onSelectFileButtonClicked();
+    void onButtonBoxAccepted();
+    void onButtonBoxRejected();
 
 private:
     std::unique_ptr<Ui::MapFileDialog> ui;

@@ -17,9 +17,9 @@ public:
     DecompilerContextMenu(QWidget *parent, MainWindow *mainWindow);
     ~DecompilerContextMenu();
 
-    bool getIsTogglingBreakpoints();
+    bool getIsTogglingBreakpoints() const;
     void setAnnotationHere(RzCodeAnnotation *annotation);
-    RVA getFirstOffsetInLine();
+    RVA getFirstOffsetInLine() const;
 
 signals:
     void copy();
@@ -36,11 +36,11 @@ private slots:
     void aboutToHideSlot();
 
     void actionCopyTriggered();
-    void actionCopyInstructionAddressTriggered();
+    void actionCopyInstructionAddressTriggered() const;
     void actionCopyReferenceAddressTriggered();
 
     void actionAddCommentTriggered();
-    void actionDeleteCommentTriggered();
+    void actionDeleteCommentTriggered() const;
 
     void actionRenameThingHereTriggered();
     void actionDeleteNameTriggered();
@@ -52,8 +52,8 @@ private slots:
     void actionToggleBreakpointTriggered();
     void actionAdvancedBreakpointTriggered();
 
-    void actionContinueUntilTriggered();
-    void actionSetPCTriggered();
+    void actionContinueUntilTriggered() const;
+    void actionSetPCTriggered() const;
 
 private:
     // Private variables

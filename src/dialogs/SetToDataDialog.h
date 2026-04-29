@@ -20,8 +20,8 @@ public:
     int getItemCount();
 
 private slots:
-    void on_sizeEdit_textChanged(const QString &arg1);
-    void on_repeatEdit_textChanged(const QString &arg1);
+    void onSizeEditTextChanged(const QString &arg1);
+    void onRepeatEditTextChanged(const QString &arg1);
 
 private:
     void updateEndAddress();

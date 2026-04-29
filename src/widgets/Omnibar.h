@@ -14,7 +14,7 @@ public:
     void refresh(const QStringList &flagList);
 
 private slots:
-    void on_gotoEntry_returnPressed();
+    void onGotoEntryReturnPressed();
 
     void restoreCompleter();
 

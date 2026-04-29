@@ -53,8 +53,8 @@ struct CUTTER_EXPORT SizePolicyMinMax
     int min;
     int max;
 
-    void restoreWidth(QWidget *widget);
-    void restoreHeight(QWidget *widget);
+    void restoreWidth(QWidget *widget) const;
+    void restoreHeight(QWidget *widget) const;
 };
 
 CUTTER_EXPORT SizePolicyMinMax forceWidth(QWidget *widget, int width);
@@ -66,8 +66,8 @@ CUTTER_EXPORT int getMaxFullyDisplayedLines(QPlainTextEdit *plainTextEdit);
 CUTTER_EXPORT QByteArray applyColorToSvg(const QByteArray &data, QColor color);
 CUTTER_EXPORT QByteArray applyColorToSvg(const QString &filename, QColor color);
 
-CUTTER_EXPORT void setThemeIcons(QList<QPair<void *, QString>> supportedIconsNames,
-                                 std::function<void(void *, const QIcon &)> setter);
+CUTTER_EXPORT void setThemeIcons(const QList<QPair<void *, QString>> &supportedIconsNames,
+                                 const std::function<void(void *, const QIcon &)> &setter);
 
 CUTTER_EXPORT void prependQAction(QAction *action, QMenu *menu);
 CUTTER_EXPORT qreal devicePixelRatio(const QPaintDevice *p);
@@ -77,7 +77,8 @@ CUTTER_EXPORT qreal devicePixelRatio(const QPaintDevice *p);
  * @param data - value to search in combobox item data
  * @param defaultIndex - item to select in case no match
  */
-CUTTER_EXPORT void selectIndexByData(QComboBox *comboBox, QVariant data, int defaultIndex = -1);
+CUTTER_EXPORT void selectIndexByData(QComboBox *comboBox, const QVariant &data,
+                                     int defaultIndex = -1);
 /**
  * @brief Emit data change signal in a model's column (DisplayRole)
  * @param model - model containing data with changes

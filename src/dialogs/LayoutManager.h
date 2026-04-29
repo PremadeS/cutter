@@ -19,7 +19,7 @@ public:
     ~LayoutManager();
 
 private:
-    void refreshNameList(QString selection = "");
+    void refreshNameList(const QString &selection = "");
     void renameCurrentLayout();
     void deleteLayout();
     void updateButtons();

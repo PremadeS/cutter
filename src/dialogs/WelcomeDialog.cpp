@@ -20,7 +20,7 @@ WelcomeDialog::WelcomeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Welc
                               + "</font>");
     ui->themeComboBox->setCurrentIndex(Config()->getInterfaceTheme());
 
-    QSignalBlocker s(ui->updatesCheckBox);
+    const QSignalBlocker s(ui->updatesCheckBox);
     ui->updatesCheckBox->setChecked(Config()->getAutoUpdateEnabled());
 
     auto langs = Config()->getAvailableTranslations();
@@ -63,7 +63,7 @@ WelcomeDialog::~WelcomeDialog()
  * @brief change Cutter's QT Theme as selected by the user
  * @param index - a Slot being called after theme's value changes its index
  */
-void WelcomeDialog::on_themeComboBox_currentIndexChanged(int index)
+void WelcomeDialog::onThemeComboBoxCurrentIndexChanged(int index)
 {
     Config()->setInterfaceTheme(index);
 
@@ -77,7 +77,7 @@ void WelcomeDialog::on_themeComboBox_currentIndexChanged(int index)
  */
 void WelcomeDialog::onLanguageCurrentIndexChanged(int)
 {
-    QVariant language = ui->languageComboBox->currentData();
+    const QVariant language = ui->languageComboBox->currentData();
     if (language.canConvert<QLocale>()) {
         Config()->setLocale(language.toLocale());
     }
@@ -93,9 +93,9 @@ void WelcomeDialog::onLanguageCurrentIndexChanged(int)
 /**
  * @brief show Cutter's About dialog
  */
-void WelcomeDialog::on_checkUpdateButton_clicked()
+void WelcomeDialog::onCheckUpdateButtonClicked()
 {
-    AboutDialog *a = new AboutDialog(this);
+    auto *a = new AboutDialog(this);
     a->setAttribute(Qt::WA_DeleteOnClose);
     a->open();
 }
@@ -103,12 +103,12 @@ void WelcomeDialog::on_checkUpdateButton_clicked()
 /**
  * @brief accept user preferences, close the window and continue Cutter's execution
  */
-void WelcomeDialog::on_continueButton_clicked()
+void WelcomeDialog::onContinueButtonClicked()
 {
     accept();
 }
 
-void WelcomeDialog::on_updatesCheckBox_stateChanged(int)
+void WelcomeDialog::onUpdatesCheckBoxStateChanged(int)
 {
     Config()->setAutoUpdateEnabled(!Config()->getAutoUpdateEnabled());
 }

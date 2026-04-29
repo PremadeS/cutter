@@ -36,8 +36,8 @@ protected:
 private:
     void setupTheme();
 
-    static const int HIGHLIGHT_COUNT = RZ_SYNTAX_HIGHLIGHT_TYPE_GLOBAL_VARIABLE + 1;
-    std::array<QTextCharFormat, HIGHLIGHT_COUNT> format;
+    static const int highlightCount = RZ_SYNTAX_HIGHLIGHT_TYPE_GLOBAL_VARIABLE + 1;
+    std::array<QTextCharFormat, highlightCount> format;
     RzAnnotatedCode *code = nullptr;
 };
 

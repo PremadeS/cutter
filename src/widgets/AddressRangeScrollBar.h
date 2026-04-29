@@ -13,8 +13,8 @@ public:
     void setPosition(RVA address);
     RVA address();
 
-    RVA clampAddressToRange(RVA address);
-    RVA rangeSize();
+    RVA clampAddressToRange(RVA address) const;
+    RVA rangeSize() const;
 
     /**
      * @brief Sends fake wheelEvent to the parent QScrollBar

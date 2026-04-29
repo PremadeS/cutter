@@ -116,13 +116,13 @@ bool isXRefFromComment(RVA offset, const QString &line);
  * @brief Reads the offset for the cursor position
  * @return The disassembly offset of the hovered asm text
  */
-RVA readDisassemblyOffset(QTextCursor tc);
+RVA readDisassemblyOffset(const QTextCursor &tc);
 
 /*!
  * @brief Reads the arrow offset for the cursor position
  * @return Offset the arrow points to
  */
-RVA readDisassemblyArrow(QTextCursor tc);
+RVA readDisassemblyArrow(const QTextCursor &tc);
 
 /**
  * @brief Gets the text and address at the current cursor position

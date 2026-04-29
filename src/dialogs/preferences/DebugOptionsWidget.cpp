@@ -35,20 +35,20 @@ void DebugOptionsWidget::updateDebugPlugin()
     disconnect(ui->pluginComboBox, &QComboBox::currentTextChanged, this,
                &DebugOptionsWidget::onDebugPluginChanged);
 
-    QStringList plugins = Core()->getDebugPlugins();
+    const QStringList plugins = Core()->getDebugPlugins();
     for (const QString &str : plugins)
         ui->pluginComboBox->addItem(str);
 
-    QString plugin = Core()->getActiveDebugPlugin();
+    const QString plugin = Core()->getActiveDebugPlugin();
     ui->pluginComboBox->setCurrentText(plugin);
 
     connect(ui->pluginComboBox, &QComboBox::currentTextChanged, this,
             &DebugOptionsWidget::onDebugPluginChanged);
 
-    QString stackSize = Core()->getConfig("esil.stack.size");
+    const QString stackSize = Core()->getConfig("esil.stack.size");
     ui->stackSize->setText(stackSize);
     ui->stackSize->setPlaceholderText(stackSize);
-    QString stackAddr = Core()->getConfig("esil.stack.addr");
+    const QString stackAddr = Core()->getConfig("esil.stack.addr");
     ui->stackAddr->setText(stackAddr);
     ui->stackAddr->setPlaceholderText(stackAddr);
     connect(ui->stackAddr, &QLineEdit::editingFinished, this, &DebugOptionsWidget::updateStackAddr);
@@ -62,14 +62,14 @@ void DebugOptionsWidget::onDebugPluginChanged(const QString &plugin)
 
 void DebugOptionsWidget::updateStackSize()
 {
-    QString newSize = ui->stackSize->text();
+    const QString newSize = ui->stackSize->text();
     Core()->setConfig("esil.stack.size", newSize);
     ui->stackSize->setPlaceholderText(newSize);
 }
 
 void DebugOptionsWidget::updateStackAddr()
 {
-    QString newAddr = ui->stackAddr->text();
+    const QString newAddr = ui->stackAddr->text();
     Core()->setConfig("esil.stack.addr", newAddr);
     ui->stackAddr->setPlaceholderText(newAddr);
 }

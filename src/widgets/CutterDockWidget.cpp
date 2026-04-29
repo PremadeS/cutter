@@ -20,8 +20,8 @@ bool CutterDockWidget::event(QEvent *event)
 
     if (event->type() == QEvent::Move || event->type() == QEvent::MouseMove) {
 
-        Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-        Qt::KeyboardModifier mod =
+        const Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
+        const Qt::KeyboardModifier mod =
                 Shortcuts()->convertKeyToModifer(Shortcuts()->getKeySequence("Docking.toggle"));
 
         if (mods & mod) {
@@ -83,7 +83,7 @@ QWidget *CutterDockWidget::widgetToFocusOnRaise()
 void CutterDockWidget::updateIsVisibleToUser()
 {
     // Check if the user can actually see the widget.
-    bool visibleToUser = isVisible() && !visibleRegion().isEmpty() && !ignoreVisibility;
+    const bool visibleToUser = isVisible() && !visibleRegion().isEmpty() && !ignoreVisibility;
     if (visibleToUser == isVisibleToUserCurrent) {
         return;
     }

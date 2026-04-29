@@ -41,8 +41,8 @@ private slots:
     void showReverseJmpQuery();
 
     void copyTriggered();
-    void copyAddrTriggered();
-    void copyInstrBytesTriggered();
+    void copyAddrTriggered() const;
+    void copyInstrBytesTriggered() const;
     void addCommentTriggered();
     void analyzeFunctionTriggered();
     void renameTriggered();
@@ -51,18 +51,18 @@ private slots:
     void xRefsTriggered();
     void xRefsForVariablesTriggered();
 
-    void deleteCommentTriggered();
-    void deleteFlagTriggered();
-    void deleteFunctionTriggered();
+    void deleteCommentTriggered() const;
+    void deleteFlagTriggered() const;
+    void deleteFunctionTriggered() const;
 
-    void addBreakpointTriggered();
+    void addBreakpointTriggered() const;
     void advancedBreakpointTriggered();
-    void continueUntilTriggered();
-    void setPCTriggered();
+    void continueUntilTriggered() const;
+    void setPCTriggered() const;
 
-    void setToCodeTriggered();
-    void setAsStringTriggered();
-    void setAsStringRemoveTriggered();
+    void setToCodeTriggered() const;
+    void setAsStringTriggered() const;
+    void setAsStringRemoveTriggered() const;
     void setAsStringAdvancedTriggered();
     void setToDataTriggered();
     void setToDataExTriggered();
@@ -73,7 +73,7 @@ private slots:
      * structure offset
      * \param action The action which trigered the event
      */
-    void structureOffsetMenuTriggered(QAction *action);
+    void structureOffsetMenuTriggered(QAction *action) const;
 
 private:
     RVA offset;
@@ -170,17 +170,17 @@ private:
     QAction *addAnonymousAction(QString name, SlotFunc slot, QKeySequence keySequence);
 
     template<typename SlotFunc>
-    void initAction(QAction *action, QString name, SlotFunc slot);
+    void initAction(QAction *action, const const QString &&name, SlotFunc slot);
 
     template<typename SlotFunc>
-    void initAction(QAction *action, QString name, SlotFunc slot, QKeySequence keySequence);
+    void initAction(QAction *action, QString name, SlotFunc slot, const QKeySequence &keySequence);
 
     template<typename SlotFunc>
     void initShortcutAction(QAction *action, const QString &id, SlotFunc slot);
 
-    void setBase(QString base);
-    void setToData(int size, int repeat = 1);
-    void setBits(int bits);
+    void setBase(const QString &base) const;
+    void setToData(int size, int repeat = 1) const;
+    void setBits(int bits) const;
 
     void addSetBaseMenu();
     void addSetBitsMenu();

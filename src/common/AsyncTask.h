@@ -30,8 +30,8 @@ public:
     void wait();
     bool wait(int timeout);
     virtual void interrupt();
-    bool isInterrupted() { return interrupted; }
-    bool isRunning() { return running; }
+    bool isInterrupted() const { return interrupted; }
+    bool isRunning() const { return running; }
 
     const QString &getLog() { return logBuffer; }
     const QElapsedTimer &getTimer() { return timer; }
@@ -71,7 +71,7 @@ public:
     explicit AsyncTaskManager(QObject *parent = nullptr);
     ~AsyncTaskManager();
 
-    void start(AsyncTask::Ptr task);
+    void start(const AsyncTask::Ptr &task);
     bool getTasksRunning();
 
 signals:

@@ -44,7 +44,8 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
       debugOutputEnabled(true),
       maxHistoryEntries(100),
       lastHistoryPosition(invalidHistoryPos),
-      completer(nullptr),
+      completionActive(false),
+      completer(new QCompleter(&completionModel, this)),
       historyUpShortcut(nullptr),
       historyDownShortcut(nullptr)
 {
@@ -57,8 +58,8 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     setupFont();
 
     // Adjust text margins of consoleOutputTextEdit
-    QTextDocument *console_docu = ui->outputTextEdit->document();
-    console_docu->setDocumentMargin(10);
+    QTextDocument *consoleDocu = ui->outputTextEdit->document();
+    consoleDocu->setDocumentMargin(10);
 
     // Ctrl+` and ';' to toggle console widget
     QAction *toggleConsole = toggleViewAction();
@@ -73,7 +74,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     connect(actionClear, &QAction::triggered, this, [this] {
         ui->outputTextEdit->clear();
         ui->outputTextEdit->setExtraSelections({});
-        m_searchBar->clear();
+        mSearchBar->clear();
     });
     addAction(actionClear);
 
@@ -88,8 +89,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     actions.append(actionWrapLines);
 
     // Completion
-    completionActive = false;
-    completer = new QCompleter(&completionModel, this);
+
     completer->setMaxVisibleItems(20);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setFilterMode(Qt::MatchStartsWith);
@@ -104,15 +104,15 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
             &ConsoleWidget::showCustomContextMenu);
 
     // Esc clears rzInputLineEdit and debugeeInputLineEdit (like OmniBar)
-    QShortcut *rizin_clear_shortcut =
+    QShortcut *rizinClearShortcut =
             Shortcuts()->makeQShortcut("Console.clearRzInputLineEdit", ui->rzInputLineEdit);
-    connect(rizin_clear_shortcut, &QShortcut::activated, this, &ConsoleWidget::clear);
-    rizin_clear_shortcut->setContext(Qt::WidgetShortcut);
+    connect(rizinClearShortcut, &QShortcut::activated, this, &ConsoleWidget::clear);
+    rizinClearShortcut->setContext(Qt::WidgetShortcut);
 
-    QShortcut *debugee_clear_shortcut =
+    QShortcut *debugeeClearShortcut =
             Shortcuts()->makeQShortcut("Console.clearDebugee", ui->debugeeInputLineEdit);
-    connect(debugee_clear_shortcut, &QShortcut::activated, this, &ConsoleWidget::clear);
-    debugee_clear_shortcut->setContext(Qt::WidgetShortcut);
+    connect(debugeeClearShortcut, &QShortcut::activated, this, &ConsoleWidget::clear);
+    debugeeClearShortcut->setContext(Qt::WidgetShortcut);
 
     // Up and down arrows show history
     historyUpShortcut = Shortcuts()->makeQShortcut("Console.historyUp", ui->rzInputLineEdit);
@@ -123,7 +123,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     connect(historyDownShortcut, &QShortcut::activated, this, &ConsoleWidget::historyNext);
     historyDownShortcut->setContext(Qt::WidgetShortcut);
 
-    QShortcut *completionShortcut =
+    const QShortcut *completionShortcut =
             Shortcuts()->makeQShortcut("Console.complete", ui->rzInputLineEdit);
     connect(completionShortcut, &QShortcut::activated, this, &ConsoleWidget::triggerCompletion);
 
@@ -153,16 +153,16 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     }
 
     connect(ui->outputTextEdit, &SearchableTextEdit::textChanged, this, [this] {
-        if (m_searchBar && m_searchBar->isVisible()) {
-            QPair<int, int> range =
-                    ui->outputTextEdit->search(m_searchBar->text(), m_searchBar->options());
-            m_searchBar->setRange(range.first, range.second);
+        if (mSearchBar && mSearchBar->isVisible()) {
+            const QPair<int, int> range =
+                    ui->outputTextEdit->search(mSearchBar->text(), mSearchBar->options());
+            mSearchBar->setRange(range.first, range.second);
         }
     });
 
     connect(ui->outputTextEdit, &SearchableTextEdit::updateRequest, this,
             [this](const QRect &, int dy) {
-                if (m_searchBar && m_searchBar->isVisible() && dy != 0) {
+                if (mSearchBar && mSearchBar->isVisible() && dy != 0) {
                     ui->outputTextEdit->highlightMatches();
                 }
             });
@@ -194,14 +194,14 @@ bool ConsoleWidget::eventFilter(QObject *obj, QEvent *event)
     if (completer && obj == completer->popup() &&
         // disable up/down shortcuts if completer is shown
         (event->type() == QEvent::Type::Show || event->type() == QEvent::Type::Hide)) {
-        bool enabled = !completer->popup()->isVisible();
+        const bool enabled = !completer->popup()->isVisible();
         if (historyUpShortcut) {
             historyUpShortcut->setEnabled(enabled);
         }
         if (historyDownShortcut) {
             historyDownShortcut->setEnabled(enabled);
         }
-    } else if (m_searchBar && m_searchBar->isVisible()
+    } else if (mSearchBar && mSearchBar->isVisible()
                && obj == ui->outputTextEdit->verticalScrollBar()) {
         if (event->type() == QEvent::Show || event->type() == QEvent::Hide) {
             this->updateSearchBarPosition();
@@ -242,7 +242,7 @@ void ConsoleWidget::focusInputLineEdit()
 void ConsoleWidget::removeLastLine()
 {
     ui->outputTextEdit->setFocus();
-    QTextCursor cur = ui->outputTextEdit->textCursor();
+    const QTextCursor cur = ui->outputTextEdit->textCursor();
     ui->outputTextEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
     ui->outputTextEdit->moveCursor(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
     ui->outputTextEdit->moveCursor(QTextCursor::End, QTextCursor::KeepAnchor);
@@ -258,14 +258,14 @@ void ConsoleWidget::executeCommand(const QString &command)
     }
     ui->rzInputLineEdit->setEnabled(false);
 
-    QString cmd_line = "[" + RzAddressString(Core()->getOffset()) + "]> " + command;
-    addOutput(cmd_line);
+    const QString cmdLine = "[" + rzAddressString(Core()->getOffset()) + "]> " + command;
+    addOutput(cmdLine);
 
-    RVA oldOffset = Core()->getOffset();
+    RVA const oldOffset = Core()->getOffset();
     commandTask =
             QSharedPointer<CommandTask>(new CommandTask(command, CommandTask::ColorMode::MODE_16M));
     connect(commandTask.data(), &CommandTask::finished, this,
-            [this, cmd_line, command, oldOffset](const QString &result) {
+            [this, cmdLine, command, oldOffset](const QString &result) {
                 ui->outputTextEdit->appendHtml(CutterCore::ansiEscapeToHtml(result));
                 scrollOutputToEnd();
                 historyAdd(command);
@@ -297,7 +297,7 @@ void ConsoleWidget::sendToStdin(const QString &input)
 
 void ConsoleWidget::onIndexChange()
 {
-    int target = ui->inputCombo->currentIndex();
+    const int target = ui->inputCombo->currentIndex();
     if (target == InputTarget::Debugee) {
         ui->rzInputLineEdit->setVisible(false);
         ui->debugeeInputLineEdit->setVisible(true);
@@ -315,9 +315,9 @@ void ConsoleWidget::setWrap(bool wrap)
                                              : QPlainTextEdit::NoWrap);
 }
 
-void ConsoleWidget::on_rzInputLineEdit_returnPressed()
+void ConsoleWidget::onRzInputLineEditReturnPressed()
 {
-    QString input = ui->rzInputLineEdit->text();
+    const QString input = ui->rzInputLineEdit->text();
     if (input.isEmpty()) {
         return;
     }
@@ -325,9 +325,9 @@ void ConsoleWidget::on_rzInputLineEdit_returnPressed()
     ui->rzInputLineEdit->clear();
 }
 
-void ConsoleWidget::on_debugeeInputLineEdit_returnPressed()
+void ConsoleWidget::onDebugeeInputLineEditReturnPressed()
 {
-    QString input = ui->debugeeInputLineEdit->text();
+    const QString input = ui->debugeeInputLineEdit->text();
     if (input.isEmpty()) {
         return;
     }
@@ -335,16 +335,16 @@ void ConsoleWidget::on_debugeeInputLineEdit_returnPressed()
     ui->debugeeInputLineEdit->clear();
 }
 
-void ConsoleWidget::on_execButton_clicked()
+void ConsoleWidget::onExecButtonClicked()
 {
-    on_rzInputLineEdit_returnPressed();
+    onRzInputLineEditReturnPressed();
 }
 
 void ConsoleWidget::showCustomContextMenu(const QPoint &pt)
 {
     actionWrapLines->setChecked(ui->outputTextEdit->lineWrapMode() == QPlainTextEdit::WidgetWidth);
 
-    QMenu *menu = new QMenu(ui->outputTextEdit);
+    auto *menu = new QMenu(ui->outputTextEdit);
     menu->addActions(actions);
     menu->exec(ui->outputTextEdit->mapToGlobal(pt));
     menu->deleteLater();
@@ -409,7 +409,7 @@ void ConsoleWidget::updateCompletion()
 
     auto current = ui->rzInputLineEdit->text();
     auto completions = Core()->autocomplete(current, RZ_LINE_PROMPT_DEFAULT);
-    int lastSpace = current.lastIndexOf(' ');
+    const int lastSpace = current.lastIndexOf(' ');
     if (lastSpace >= 0) {
         current = current.left(lastSpace + 1);
         for (auto &s : completions) {
@@ -540,29 +540,29 @@ void ConsoleWidget::searchBarHidden()
 
 void ConsoleWidget::searchBarShown()
 {
-    searchChanged(m_searchBar->text(), m_searchBar->options());
+    searchChanged(mSearchBar->text(), mSearchBar->options());
 }
 
 void ConsoleWidget::findNext()
 {
-    int index = ui->outputTextEdit->findNext();
-    m_searchBar->setCurrentIndex(index);
+    const int index = ui->outputTextEdit->findNext();
+    mSearchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::findPrev()
 {
-    int index = ui->outputTextEdit->findPrev();
-    m_searchBar->setCurrentIndex(index);
+    const int index = ui->outputTextEdit->findPrev();
+    mSearchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::findLast()
 {
-    int index = ui->outputTextEdit->findLast();
-    m_searchBar->setCurrentIndex(index);
+    const int index = ui->outputTextEdit->findLast();
+    mSearchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::searchChanged(const QString &text, int options)
 {
-    QPair<int, int> range = ui->outputTextEdit->search(text, options);
-    m_searchBar->setRange(range.first, range.second);
+    const QPair<int, int> range = ui->outputTextEdit->search(text, options);
+    mSearchBar->setRange(range.first, range.second);
 }

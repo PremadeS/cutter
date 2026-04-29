@@ -28,8 +28,8 @@ public:
     ut32 getMinScore() const;
 
 private slots:
-    void on_buttonBox_accepted();
-    void on_buttonBox_rejected();
+    void onButtonBoxAccepted();
+    void onButtonBoxRejected();
 
 private:
     std::unique_ptr<Ui::BaseFindDialog> ui;

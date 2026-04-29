@@ -85,13 +85,13 @@ int main(int argc, char *argv[])
 #    endif
 #endif
 
-    CutterApplication a(argc, argv);
+    CutterApplication const a(argc, argv);
 
     Cutter::migrateThemes();
 
     if (Config()->getAutoUpdateEnabled()) {
 #if CUTTER_UPDATE_WORKER_AVAILABLE
-        UpdateWorker *updateWorker = new UpdateWorker;
+        auto *updateWorker = new UpdateWorker;
         QObject::connect(updateWorker, &UpdateWorker::checkComplete,
                          [=](const QVersionNumber &version, const QString &error) {
                              if (error.isEmpty()
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    int ret = a.exec();
+    const int ret = a.exec();
 
     return ret;
 }

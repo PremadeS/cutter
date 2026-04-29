@@ -58,9 +58,9 @@ QString EditFunctionDialog::getCallConSelected()
     return ui->callConComboBox->currentText();
 }
 
-void EditFunctionDialog::on_buttonBox_accepted() {}
+void EditFunctionDialog::onButtonBoxAccepted() {}
 
-void EditFunctionDialog::on_buttonBox_rejected()
+void EditFunctionDialog::onButtonBoxRejected()
 {
     close();
 }

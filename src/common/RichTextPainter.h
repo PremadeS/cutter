@@ -20,7 +20,7 @@ public:
     // structures
     enum CustomRichTextFlags { FlagNone, FlagColor, FlagBackground, FlagAll };
 
-    struct CustomRichText_t
+    struct CustomRichTextT
     {
         QString text;
         QColor textColor;
@@ -32,7 +32,7 @@ public:
         bool highlightConnectPrev = false;
     };
 
-    typedef std::vector<CustomRichText_t> List;
+    typedef std::vector<CustomRichTextT> List;
 
     // functions
     template<typename T = qreal>

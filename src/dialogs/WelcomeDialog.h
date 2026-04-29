@@ -22,15 +22,15 @@ class WelcomeDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit WelcomeDialog(QWidget *parent = 0);
+    explicit WelcomeDialog(QWidget *parent = nullptr);
     ~WelcomeDialog();
 
 private slots:
-    void on_themeComboBox_currentIndexChanged(int index);
+    void onThemeComboBoxCurrentIndexChanged(int index);
     void onLanguageCurrentIndexChanged(int index);
-    void on_checkUpdateButton_clicked();
-    void on_continueButton_clicked();
-    void on_updatesCheckBox_stateChanged(int state);
+    void onCheckUpdateButtonClicked();
+    void onContinueButtonClicked();
+    void onUpdatesCheckBoxStateChanged(int state);
 
 private:
     Ui::WelcomeDialog *ui;

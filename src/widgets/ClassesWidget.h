@@ -38,7 +38,7 @@ public:
      *
      * will contain values of type RVA
      */
-    static const int OffsetRole = Qt::UserRole;
+    static const int offsetRole = Qt::UserRole;
 
     /**
      * @brief Name role of data for QModelIndex
@@ -46,14 +46,14 @@ public:
      * will contain values of QString, used for sorting,
      * as well as identifying classes and methods
      */
-    static const int NameRole = Qt::UserRole + 1;
+    static const int nameRole = Qt::UserRole + 1;
 
     /**
      * @brief Type role of data for QModelIndex
      *
      * will contain values of RowType
      */
-    static const int TypeRole = Qt::UserRole + 2;
+    static const int typeRole = Qt::UserRole + 2;
 
     /**
      * @brief VTable role of data for QModelIndex
@@ -61,7 +61,7 @@ public:
      * will contain values of type long long for sorting
      * by vtable offset
      */
-    static const int VTableRole = Qt::UserRole + 3;
+    static const int vTableRole = Qt::UserRole + 3;
 
     /**
      * @brief Real Name role of data for QModelIndex
@@ -69,7 +69,7 @@ public:
      * will contain values of QString, used for sorting,
      * as well as identifying classes and methods
      */
-    static const int RealNameRole = Qt::UserRole + 4;
+    static const int realNameRole = Qt::UserRole + 4;
 
     explicit ClassesModel(QObject *parent = nullptr) : AddressableItemModel(parent) {}
 
@@ -205,9 +205,9 @@ private:
 
     Source getSource();
 
-    BinClassesModel *bin_model = nullptr;
-    AnalysisClassesModel *analysis_model = nullptr;
-    ClassesSortFilterProxyModel *proxy_model;
+    BinClassesModel *binModel = nullptr;
+    AnalysisClassesModel *analysisModel = nullptr;
+    ClassesSortFilterProxyModel *proxyModel;
 
     QComboBox *classSourceCombo;
 

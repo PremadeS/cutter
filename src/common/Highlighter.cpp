@@ -3,11 +3,9 @@
 
 #include <QtGui>
 
-Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
+Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent), core(Core())
 {
     HighlightingRule rule;
-
-    core = Core();
 
     regFormat.setForeground(QColor(236, 100, 75));
 
@@ -31,10 +29,10 @@ Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 void Highlighter::highlightBlock(const QString &text)
 {
     for (const HighlightingRule &rule : highlightingRules) {
-        QRegularExpression expression(rule.pattern);
+        const QRegularExpression expression(rule.pattern);
         int index = expression.match(text).capturedStart();
         while (index >= 0) {
-            int length = expression.match(text).capturedLength();
+            const int length = expression.match(text).capturedLength();
             setFormat(index, length, rule.format);
             index = expression.match(text.mid(index + length)).capturedStart();
         }
@@ -46,9 +44,9 @@ void Highlighter::highlightBlock(const QString &text)
         startIndex = QRegularExpression(commentStartRegularExpression).match(text).capturedStart();
 
     while (startIndex >= 0) {
-        QRegularExpressionMatch commentEndMatch =
+        const QRegularExpressionMatch commentEndMatch =
                 QRegularExpression(commentEndRegularExpression).match(text.mid(startIndex));
-        int endIndex = commentEndMatch.capturedStart();
+        const int endIndex = commentEndMatch.capturedStart();
         int commentLength;
         if (endIndex == -1) {
             setCurrentBlockState(1);

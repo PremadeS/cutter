@@ -34,17 +34,17 @@ typedef ut64 RVA;
  */
 #define RVA_INVALID RVA_MAX
 
-inline QString RzAddressString(RVA addr)
+inline QString rzAddressString(RVA addr)
 {
     return QString::asprintf("%#010llx", addr);
 }
 
-inline QString RzSizeString(RVA size)
+inline QString rzSizeString(RVA size)
 {
     return QString::asprintf("%#llx", size);
 }
 
-inline QString RzHexString(RVA size)
+inline QString rzHexString(RVA size)
 {
     return QString::asprintf("%#llx", size);
 }

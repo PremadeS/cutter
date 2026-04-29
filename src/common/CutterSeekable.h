@@ -39,14 +39,14 @@ public:
      * If it's not synchronized, it will return the seekable current seek.
      * @return the seekable current offset.
      */
-    RVA getOffset();
+    RVA getOffset() const;
 
     /**
      * @brief isSynchronized tells whether the seekable
      * is synchronized with Core or not.
      * @return boolean
      */
-    bool isSynchronized();
+    bool isSynchronized() const;
 
     /**
      * @brief seekToReference will seek to the function or the object which is referenced in a given

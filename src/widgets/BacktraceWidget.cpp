@@ -6,16 +6,18 @@
 #include "core/MainWindow.h"
 
 BacktraceWidget::BacktraceWidget(MainWindow *main)
-    : CutterDockWidget(main), ui(new Ui::BacktraceWidget)
+    : CutterDockWidget(main),
+      ui(new Ui::BacktraceWidget),
+      refreshDeferrer(createRefreshDeferrer([this]() { updateContents(); }))
 {
     ui->setupUi(this);
 
     // setup backtrace model
-    QString PC = Core()->getRegisterName("PC");
-    QString SP = Core()->getRegisterName("SP");
+    const QString pc = Core()->getRegisterName("PC");
+    const QString sp = Core()->getRegisterName("SP");
     modelBacktrace->setHorizontalHeaderItem(0, new QStandardItem(tr("Function")));
-    modelBacktrace->setHorizontalHeaderItem(1, new QStandardItem(SP));
-    modelBacktrace->setHorizontalHeaderItem(2, new QStandardItem(PC));
+    modelBacktrace->setHorizontalHeaderItem(1, new QStandardItem(sp));
+    modelBacktrace->setHorizontalHeaderItem(2, new QStandardItem(pc));
     modelBacktrace->setHorizontalHeaderItem(3, new QStandardItem(tr("Description")));
     modelBacktrace->setHorizontalHeaderItem(4, new QStandardItem(tr("Frame Size")));
     viewBacktrace->setFont(Config()->getFont());
@@ -23,8 +25,6 @@ BacktraceWidget::BacktraceWidget(MainWindow *main)
     viewBacktrace->verticalHeader()->setVisible(false);
     viewBacktrace->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->verticalLayout->addWidget(viewBacktrace);
-
-    refreshDeferrer = createRefreshDeferrer([this]() { updateContents(); });
 
     connect(Core(), &CutterCore::refreshAll, this, &BacktraceWidget::updateContents);
     connect(Core(), &CutterCore::registersChanged, this, &BacktraceWidget::updateContents);
@@ -50,11 +50,11 @@ void BacktraceWidget::setBacktraceGrid()
     RzListIter *iter;
     RzBacktrace *bt;
     CutterRzListForeach (list, iter, RzBacktrace, bt) {
-        QString funcName = bt->fcn ? bt->fcn->name : "";
-        QString pc = RzAddressString(bt->frame ? bt->frame->addr : 0);
-        QString sp = RzAddressString(bt->frame ? bt->frame->sp : 0);
-        QString frameSize = QString::number(bt->frame ? bt->frame->size : 0);
-        QString desc = bt->desc;
+        const QString funcName = bt->fcn ? bt->fcn->name : "";
+        const QString pc = rzAddressString(bt->frame ? bt->frame->addr : 0);
+        const QString sp = rzAddressString(bt->frame ? bt->frame->sp : 0);
+        const QString frameSize = QString::number(bt->frame ? bt->frame->size : 0);
+        const QString desc = bt->desc;
 
         modelBacktrace->setItem(i, 0, new QStandardItem(funcName));
         modelBacktrace->setItem(i, 1, new QStandardItem(sp));

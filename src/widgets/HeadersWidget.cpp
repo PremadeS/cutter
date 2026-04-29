@@ -26,7 +26,7 @@ QVariant HeadersModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case OffsetColumn:
-            return RzAddressString(header.vaddr);
+            return rzAddressString(header.vaddr);
         case NameColumn:
             return header.name;
         case ValueColumn:
@@ -83,17 +83,16 @@ HeadersProxyModel::HeadersProxyModel(HeadersModel *sourceModel, QObject *parent)
 
 bool HeadersProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    HeaderDescription item =
-            index.data(HeadersModel::HeaderDescriptionRole).value<HeaderDescription>();
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto item = index.data(HeadersModel::HeaderDescriptionRole).value<HeaderDescription>();
     return qhelpers::filterStringContains(item.name, this);
 }
 
 bool HeadersProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    HeaderDescription leftHeader =
+    const auto leftHeader =
             left.data(HeadersModel::HeaderDescriptionRole).value<HeaderDescription>();
-    HeaderDescription rightHeader =
+    const auto rightHeader =
             right.data(HeadersModel::HeaderDescriptionRole).value<HeaderDescription>();
 
     switch (left.column()) {
@@ -112,13 +111,14 @@ bool HeadersProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
     return leftHeader.vaddr < rightHeader.vaddr;
 }
 
-HeadersWidget::HeadersWidget(MainWindow *main) : ListDockWidget(main)
+HeadersWidget::HeadersWidget(MainWindow *main)
+    : ListDockWidget(main),
+      headersModel(new HeadersModel(this)),
+      headersProxyModel(new HeadersProxyModel(headersModel, this))
 {
     setWindowTitle(tr("Headers"));
     setObjectName("HeadersWidget");
 
-    headersModel = new HeadersModel(this);
-    headersProxyModel = new HeadersProxyModel(headersModel, this);
     setModels(headersProxyModel);
     ui->treeView->sortByColumn(HeadersModel::OffsetColumn, Qt::AscendingOrder);
 

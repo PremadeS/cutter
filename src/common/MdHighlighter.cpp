@@ -32,10 +32,10 @@ MdHighlighter::MdHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 void MdHighlighter::highlightBlock(const QString &text)
 {
     for (const HighlightingRule &rule : highlightingRules) {
-        QRegularExpression expression(rule.pattern);
+        const QRegularExpression expression(rule.pattern);
         int index = expression.match(text).capturedStart();
         while (index >= 0) {
-            int length = expression.match(text).capturedLength();
+            const int length = expression.match(text).capturedLength();
             setFormat(index, length, rule.format);
             index = expression.match(text.mid(index + length)).capturedStart();
         }

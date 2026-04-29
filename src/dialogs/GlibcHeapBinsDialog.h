@@ -31,7 +31,7 @@ public:
     void clearData();
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    RVA arena_addr = 0;
+    RVA arenaAddr = 0;
     RzList *getChunks(int index);
     QString getBinMessage(int index);
     QVector<RzHeapBin *> values;
@@ -54,7 +54,7 @@ private slots:
 
 private:
     Ui::GlibcHeapBinsDialog *ui;
-    RVA m_state;
+    RVA mState;
     BinsModel *binsModel {};
     HeapBinsGraphView *graphView;
     MainWindow *main;

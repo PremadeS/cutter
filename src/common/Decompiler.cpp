@@ -10,8 +10,8 @@ Decompiler::Decompiler(const QString &id, const QString &name, QObject *parent)
 {
 }
 
-RzAnnotatedCode *Decompiler::makeWarning(QString warningMessage)
+RzAnnotatedCode *Decompiler::makeWarning(const QString &warningMessage)
 {
-    std::string temporary = warningMessage.toStdString();
+    const std::string temporary = warningMessage.toStdString();
     return rz_annotated_code_new(strdup(temporary.c_str()));
 }

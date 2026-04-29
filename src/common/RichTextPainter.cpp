@@ -15,7 +15,7 @@ void RichTextPainter::paintRichText(QPainter *painter, T x, T y, T w, T h, T xin
     QPen pen;
     QPen highlightPen;
     QBrush brush(Qt::cyan);
-    for (const CustomRichText_t &curRichText : richText) {
+    for (const CustomRichTextT &curRichText : richText) {
         T textWidth = fontMetrics->width(curRichText.text);
         T backgroundWidth = textWidth;
         if (backgroundWidth + xinc > w)
@@ -46,7 +46,7 @@ void RichTextPainter::paintRichText(QPainter *painter, T x, T y, T w, T h, T xin
             painter->setPen(pen);
             break;
         }
-        int flags = 0;
+        const int flags = 0;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         flags = Qt::TextBypassShaping;
 #endif
@@ -80,7 +80,7 @@ template void RichTextPainter::paintRichText<qreal>(QPainter *painter, qreal x, 
  */
 void RichTextPainter::htmlRichText(const List &richText, QString &textHtml, QString &textPlain)
 {
-    for (const CustomRichText_t &curRichText : richText) {
+    for (const CustomRichTextT &curRichText : richText) {
         if (curRichText.text == " ") { // blank
             textHtml += " ";
             textPlain += " ";
@@ -129,16 +129,16 @@ RichTextPainter::List RichTextPainter::fromTextDocument(const QTextDocument &doc
 
     for (QTextBlock block = doc.begin(); block != doc.end(); block = block.next()) {
         for (QTextBlock::iterator it = block.begin(); it != block.end(); ++it) {
-            QTextFragment fragment = it.fragment();
-            QTextCharFormat format = fragment.charFormat();
+            const QTextFragment fragment = it.fragment();
+            const QTextCharFormat format = fragment.charFormat();
 
-            CustomRichText_t text;
+            CustomRichTextT text;
             text.text = fragment.text();
             text.textColor = format.foreground().color();
             text.textBackground = format.background().color();
 
-            bool hasForeground = format.hasProperty(QTextFormat::ForegroundBrush);
-            bool hasBackground = format.hasProperty(QTextFormat::BackgroundBrush);
+            const bool hasForeground = format.hasProperty(QTextFormat::ForegroundBrush);
+            const bool hasBackground = format.hasProperty(QTextFormat::BackgroundBrush);
 
             if (hasForeground && !hasBackground) {
                 text.flags = FlagColor;
@@ -166,14 +166,14 @@ RichTextPainter::List RichTextPainter::cropped(const RichTextPainter::List &rich
     int cols = 0;
     bool cropped = false;
     for (const auto &text : richText) {
-        int textLength = text.text.size();
+        const int textLength = text.text.size();
         if (cols + textLength <= maxCols) {
             r.push_back(text);
             cols += textLength;
         } else if (cols == maxCols) {
             break;
         } else {
-            CustomRichText_t croppedText = text;
+            CustomRichTextT croppedText = text;
             croppedText.text.truncate(maxCols - cols);
             r.push_back(croppedText);
             cropped = true;

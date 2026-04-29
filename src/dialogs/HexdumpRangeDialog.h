@@ -15,7 +15,7 @@ class HexdumpRangeDialog : public QDialog
 public:
     explicit HexdumpRangeDialog(QWidget *parent = nullptr, bool allowEmpty = false);
     ~HexdumpRangeDialog();
-    bool empty();
+    bool empty() const;
     ut64 getStartAddress() const;
     ut64 getEndAddress() const;
 
@@ -37,7 +37,7 @@ private:
     bool allowEmpty = false;
 
 private slots:
-    void on_radioButtonClicked(bool checked);
+    void onRadioButtonClicked(bool checked);
 };
 
 #endif // HEXDUMPRANGEDIALOG_H

@@ -29,8 +29,8 @@ GraphOptionsWidget::GraphOptionsWidget(PreferencesDialog *dialog)
 
     connect(Core(), &CutterCore::graphOptionsChanged, this,
             &GraphOptionsWidget::updateOptionsFromVars);
-    QSpinBox *graphSpacingWidgets[] = { ui->horizontalEdgeSpacing, ui->horizontalBlockSpacing,
-                                        ui->verticalEdgeSpacing, ui->verticalBlockSpacing };
+    const QSpinBox *graphSpacingWidgets[] = { ui->horizontalEdgeSpacing, ui->horizontalBlockSpacing,
+                                              ui->verticalEdgeSpacing, ui->verticalBlockSpacing };
     for (auto widget : graphSpacingWidgets) {
         connect<void (QSpinBox::*)(int)>(widget, &QSpinBox::valueChanged, this,
                                          &GraphOptionsWidget::layoutSpacingChanged);
@@ -55,7 +55,7 @@ void GraphOptionsWidget::updateOptionsFromVars()
     ui->verticalEdgeSpacing->setValue(edgeSpacing.y());
 }
 
-void GraphOptionsWidget::triggerOptionsChanged()
+void GraphOptionsWidget::triggerOptionsChanged() const
 {
     disconnect(Core(), &CutterCore::graphOptionsChanged, this,
                &GraphOptionsWidget::updateOptionsFromVars);
@@ -64,19 +64,19 @@ void GraphOptionsWidget::triggerOptionsChanged()
             &GraphOptionsWidget::updateOptionsFromVars);
 }
 
-void GraphOptionsWidget::on_maxColsSpinBox_valueChanged(int value)
+void GraphOptionsWidget::onMaxColsSpinBoxValueChanged(int value)
 {
     Config()->setGraphBlockMaxChars(value);
     triggerOptionsChanged();
 }
 
-void GraphOptionsWidget::on_minFontSizeSpinBox_valueChanged(int value)
+void GraphOptionsWidget::onMinFontSizeSpinBoxValueChanged(int value)
 {
     Config()->setGraphMinFontSize(value);
     triggerOptionsChanged();
 }
 
-void GraphOptionsWidget::on_graphPreviewCheckBox_toggled(bool checked)
+void GraphOptionsWidget::onGraphPreviewCheckBoxToggled(bool checked)
 {
     Config()->setGraphPreview(checked);
     triggerOptionsChanged();
@@ -89,14 +89,16 @@ void GraphOptionsWidget::checkTransparentStateChanged(int checked)
 
 void GraphOptionsWidget::bitmapGraphScaleValueChanged(double value)
 {
-    double value_decimal = value / (double)100.0;
-    Config()->setBitmapExportScaleFactor(value_decimal);
+    const double valueDecimal = value / (double)100.0;
+    Config()->setBitmapExportScaleFactor(valueDecimal);
 }
 
 void GraphOptionsWidget::layoutSpacingChanged()
 {
-    QPoint blockSpacing { ui->horizontalBlockSpacing->value(), ui->verticalBlockSpacing->value() };
-    QPoint edgeSpacing { ui->horizontalEdgeSpacing->value(), ui->verticalEdgeSpacing->value() };
+    const QPoint blockSpacing { ui->horizontalBlockSpacing->value(),
+                                ui->verticalBlockSpacing->value() };
+    const QPoint edgeSpacing { ui->horizontalEdgeSpacing->value(),
+                               ui->verticalEdgeSpacing->value() };
     Config()->setGraphSpacing(blockSpacing, edgeSpacing);
     triggerOptionsChanged();
 }

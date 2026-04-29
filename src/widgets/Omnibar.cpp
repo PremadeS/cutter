@@ -18,18 +18,18 @@ Omnibar::Omnibar(MainWindow *main, QWidget *parent) : QLineEdit(parent), main(ma
     this->setTextMargins(10, 0, 0, 0);
     this->setClearButtonEnabled(true);
 
-    connect(this, &QLineEdit::returnPressed, this, &Omnibar::on_gotoEntry_returnPressed);
+    connect(this, &QLineEdit::returnPressed, this, &Omnibar::onGotoEntryReturnPressed);
 
     // Esc clears omnibar
-    QShortcut *clear_shortcut = Shortcuts()->makeQShortcut("Omnibar.clear", this);
-    connect(clear_shortcut, &QShortcut::activated, this, &Omnibar::clear);
-    clear_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    QShortcut *clearShortcut = Shortcuts()->makeQShortcut("Omnibar.clear", this);
+    connect(clearShortcut, &QShortcut::activated, this, &Omnibar::clear);
+    clearShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 }
 
 void Omnibar::setupCompleter()
 {
     // Set gotoEntry completer for jump history
-    QCompleter *completer = new QCompleter(flags, this);
+    auto *completer = new QCompleter(flags, this);
     completer->setMaxVisibleItems(20);
     completer->setCompletionMode(QCompleter::PopupCompletion);
     completer->setModelSorting(QCompleter::CaseSensitivelySortedModel);
@@ -64,12 +64,12 @@ void Omnibar::clear()
     setFocus();
 }
 
-void Omnibar::on_gotoEntry_returnPressed()
+void Omnibar::onGotoEntryReturnPressed()
 {
-    QString str = this->text();
+    const QString str = this->text();
     if (!str.isEmpty()) {
         if (auto memoryWidget = main->getLastMemoryWidget()) {
-            RVA offset = Core()->math(str);
+            RVA const offset = Core()->math(str);
             memoryWidget->getSeekable()->seek(offset);
             memoryWidget->raiseMemoryWidget();
         } else {

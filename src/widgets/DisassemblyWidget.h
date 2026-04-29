@@ -56,7 +56,7 @@ public slots:
      */
     void showTransientScrollBar();
 protected slots:
-    void on_seekChanged(RVA offset, CutterCore::SeekHistoryType type);
+    void onSeekChanged(RVA offset, CutterCore::SeekHistoryType type);
     void refreshIfInRange(RVA offset);
     void instructionChanged(RVA offset);
     void refreshDisasm(RVA offset = RVA_INVALID);

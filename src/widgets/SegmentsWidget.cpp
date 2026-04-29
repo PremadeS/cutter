@@ -48,9 +48,9 @@ QVariant SegmentsModel::data(const QModelIndex &index, int role) const
         case SegmentsModel::SizeColumn:
             return QString::number(segment.size);
         case SegmentsModel::AddressColumn:
-            return RzAddressString(segment.vaddr);
+            return rzAddressString(segment.vaddr);
         case SegmentsModel::EndAddressColumn:
-            return RzAddressString(segment.vaddr + segment.size);
+            return rzAddressString(segment.vaddr + segment.size);
         case SegmentsModel::PermColumn:
             return segment.perm;
         case SegmentsModel::CommentColumn:
@@ -134,13 +134,14 @@ bool SegmentsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &ri
     return false;
 }
 
-SegmentsWidget::SegmentsWidget(MainWindow *main) : ListDockWidget(main)
+SegmentsWidget::SegmentsWidget(MainWindow *main)
+    : ListDockWidget(main),
+      proxyModel(new SegmentsProxyModel(segmentsModel, this)),
+      segmentsModel(new SegmentsModel(this))
 {
     setObjectName("SegmentsWidget");
     setWindowTitle(tr("Segments"));
 
-    segmentsModel = new SegmentsModel(this);
-    proxyModel = new SegmentsProxyModel(segmentsModel, this);
     setModels(proxyModel);
 
     ui->treeView->sortByColumn(SegmentsModel::NameColumn, Qt::AscendingOrder);

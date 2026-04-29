@@ -29,9 +29,9 @@ QVariant MemoryMapModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case AddrStartColumn:
-            return RzAddressString(memoryMap.addrStart);
+            return rzAddressString(memoryMap.addrStart);
         case AddrEndColumn:
-            return RzAddressString(memoryMap.addrEnd);
+            return rzAddressString(memoryMap.addrEnd);
         case NameColumn:
             return memoryMap.name;
         case PermColumn:
@@ -84,17 +84,17 @@ MemoryProxyModel::MemoryProxyModel(MemoryMapModel *sourceModel, QObject *parent)
 
 bool MemoryProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    MemoryMapDescription item =
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto item =
             index.data(MemoryMapModel::MemoryDescriptionRole).value<MemoryMapDescription>();
     return qhelpers::filterStringContains(item.name, this);
 }
 
 bool MemoryProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    MemoryMapDescription leftMemMap =
+    const auto leftMemMap =
             left.data(MemoryMapModel::MemoryDescriptionRole).value<MemoryMapDescription>();
-    MemoryMapDescription rightMemMap =
+    const auto rightMemMap =
             right.data(MemoryMapModel::MemoryDescriptionRole).value<MemoryMapDescription>();
 
     switch (left.column()) {
@@ -116,17 +116,17 @@ bool MemoryProxyModel::lessThan(const QModelIndex &left, const QModelIndex &righ
     return leftMemMap.addrStart < rightMemMap.addrStart;
 }
 
-MemoryMapWidget::MemoryMapWidget(MainWindow *main) : ListDockWidget(main)
+MemoryMapWidget::MemoryMapWidget(MainWindow *main)
+    : ListDockWidget(main),
+      memoryModel(new MemoryMapModel(this)),
+      memoryProxyModel(new MemoryProxyModel(memoryModel, this)),
+      refreshDeferrer(createRefreshDeferrer([this]() { refreshMemoryMap(); }))
 {
     setWindowTitle(tr("Memory Map"));
     setObjectName("MemoryMapWidget");
 
-    memoryModel = new MemoryMapModel(this);
-    memoryProxyModel = new MemoryProxyModel(memoryModel, this);
     setModels(memoryProxyModel);
     ui->treeView->sortByColumn(MemoryMapModel::AddrStartColumn, Qt::AscendingOrder);
-
-    refreshDeferrer = createRefreshDeferrer([this]() { refreshMemoryMap(); });
 
     connect(Core(), &CutterCore::refreshAll, this, &MemoryMapWidget::refreshMemoryMap);
     connect(Core(), &CutterCore::registersChanged, this, &MemoryMapWidget::refreshMemoryMap);

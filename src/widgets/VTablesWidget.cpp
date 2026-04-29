@@ -36,7 +36,7 @@ int VTableModel::columnCount(const QModelIndex &) const
 
 QVariant VTableModel::data(const QModelIndex &index, int role) const
 {
-    QModelIndex parent = index.parent();
+    const QModelIndex parent = index.parent();
     if (parent.isValid()) {
         const BinClassMethodDescription &res = vtables.at(parent.row()).methods.at(index.row());
         switch (role) {
@@ -45,10 +45,10 @@ QVariant VTableModel::data(const QModelIndex &index, int role) const
             case NAME:
                 return res.name.isEmpty() ? tr("No Name found") : res.name;
             case ADDRESS:
-                return RzAddressString(res.addr);
+                return rzAddressString(res.addr);
             }
             break;
-        case VTableDescriptionRole:
+        case vTableDescriptionRole:
             return QVariant::fromValue(res);
         default:
             break;
@@ -60,10 +60,10 @@ QVariant VTableModel::data(const QModelIndex &index, int role) const
             case NAME:
                 return tr("VTable") + " " + QString::number(index.row() + 1);
             case ADDRESS:
-                return RzAddressString(vtables.at(index.row()).addr);
+                return rzAddressString(vtables.at(index.row()).addr);
             }
             break;
-        case VTableDescriptionRole: {
+        case vTableDescriptionRole: {
             const VTableDescription &res = vtables.at(index.row());
             return QVariant::fromValue(res);
         }
@@ -124,27 +124,29 @@ bool VTableSortFilterProxyModel::filterAcceptsRow(int source_row,
     return false;
 }
 
-VTablesWidget::VTablesWidget(MainWindow *main) : CutterDockWidget(main), ui(new Ui::VTablesWidget)
+VTablesWidget::VTablesWidget(MainWindow *main)
+    : CutterDockWidget(main),
+      ui(new Ui::VTablesWidget),
+      model(new VTableModel(this)),
+      proxy(new VTableSortFilterProxyModel(model, this)),
+      refreshDeferrer(createRefreshDeferrer([this]() { refreshVTables(); }))
 {
     ui->setupUi(this);
-
-    model = new VTableModel(this);
-    proxy = new VTableSortFilterProxyModel(model, this);
 
     ui->vTableTreeView->setModel(proxy);
     ui->vTableTreeView->sortByColumn(VTableModel::ADDRESS, Qt::AscendingOrder);
 
     // Esc to clear the filter entry
-    QShortcut *clear_shortcut = Shortcuts()->makeQShortcut("General.clearFilter", this);
-    connect(clear_shortcut, &QShortcut::activated, ui->quickFilterView,
+    QShortcut *clearShortcut = Shortcuts()->makeQShortcut("General.clearFilter", this);
+    connect(clearShortcut, &QShortcut::activated, ui->quickFilterView,
             &QuickFilterView::clearFilter);
-    clear_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    clearShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     // Ctrl-F to show/hide the filter entry
-    QShortcut *search_shortcut = Shortcuts()->makeQShortcut("General.showFilter", this);
-    connect(search_shortcut, &QShortcut::activated, ui->quickFilterView,
+    QShortcut *searchShortcut = Shortcuts()->makeQShortcut("General.showFilter", this);
+    connect(searchShortcut, &QShortcut::activated, ui->quickFilterView,
             &QuickFilterView::showFilter);
-    search_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    searchShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     connect(ui->quickFilterView, &QuickFilterView::filterTextChanged, proxy,
             &QSortFilterProxyModel::setFilterWildcard);
@@ -156,8 +158,6 @@ VTablesWidget::VTablesWidget(MainWindow *main) : CutterDockWidget(main), ui(new 
 
     connect(Core(), &CutterCore::codeRebased, this, &VTablesWidget::refreshVTables);
     connect(Core(), &CutterCore::refreshAll, this, &VTablesWidget::refreshVTables);
-
-    refreshDeferrer = createRefreshDeferrer([this]() { refreshVTables(); });
 }
 
 VTablesWidget::~VTablesWidget() {}
@@ -180,19 +180,19 @@ void VTablesWidget::refreshVTables()
     ui->quickFilterView->setItemCount(proxy->rowCount());
 }
 
-void VTablesWidget::on_vTableTreeView_doubleClicked(const QModelIndex &index)
+void VTablesWidget::onVTableTreeViewDoubleClicked(const QModelIndex &index)
 {
     if (!index.isValid()) {
         return;
     }
 
-    QModelIndex parent = index.parent();
+    const QModelIndex parent = index.parent();
     if (parent.isValid()) {
-        Core()->seekAndShow(index.data(VTableModel::VTableDescriptionRole)
+        Core()->seekAndShow(index.data(VTableModel::vTableDescriptionRole)
                                     .value<BinClassMethodDescription>()
                                     .addr);
     } else {
         Core()->seekAndShow(
-                index.data(VTableModel::VTableDescriptionRole).value<VTableDescription>().addr);
+                index.data(VTableModel::vTableDescriptionRole).value<VTableDescription>().addr);
     }
 }

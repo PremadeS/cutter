@@ -3,12 +3,13 @@
 
 #include <QClipboard>
 #include <QMessageBox>
+#include <utility>
 
 #include <core/Cutter.h>
 #include <CutterApplication.h>
 
 BaseFindResultsModel::BaseFindResultsModel(QList<BasefindResultDescription> list, QObject *parent)
-    : QAbstractListModel(parent), list(list)
+    : QAbstractListModel(parent), list(std::move(list))
 {
 }
 
@@ -68,19 +69,18 @@ QVariant BaseFindResultsModel::headerData(int section, Qt::Orientation, int role
 
 BaseFindResultsDialog::BaseFindResultsDialog(QList<BasefindResultDescription> results,
                                              QWidget *parent)
-    : QDialog(parent), ui(new Ui::BaseFindResultsDialog)
+    : QDialog(parent), ui(new Ui::BaseFindResultsDialog), blockMenu(new QMenu(this))
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));
 
-    model = new BaseFindResultsModel(results, this);
+    model = new BaseFindResultsModel(std::move(results), this);
     ui->tableView->setModel(model);
     ui->tableView->sortByColumn(BaseFindResultsModel::ScoreColumn, Qt::AscendingOrder);
     ui->tableView->verticalHeader()->hide();
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    blockMenu = new QMenu(this);
     actionCopyCandidate = new QAction(tr("Copy %1"), this);
     actionSetLoadAddr = new QAction(tr("Reopen Cutter with base address as %1"), this);
     actionSetMapAddr = new QAction(tr("Reopen Cutter with map address as %1"), this);
@@ -114,13 +114,13 @@ void BaseFindResultsDialog::showItemContextMenu(const QPoint &pt)
     }
 }
 
-void BaseFindResultsDialog::onActionCopyLine()
+void BaseFindResultsDialog::onActionCopyLine() const
 {
     auto clipboard = QApplication::clipboard();
     clipboard->setText(QString::asprintf("%#010llx", candidate));
 }
 
-void BaseFindResultsDialog::onActionSetLoadAddr()
+void BaseFindResultsDialog::onActionSetLoadAddr() const
 {
     auto cutter = static_cast<CutterApplication *>(qApp);
     auto options = cutter->getInitialOptions();
@@ -138,7 +138,7 @@ void BaseFindResultsDialog::onActionSetLoadAddr()
     cutter->launchNewInstance(args);
 }
 
-void BaseFindResultsDialog::onActionSetMapAddr()
+void BaseFindResultsDialog::onActionSetMapAddr() const
 {
     auto cutter = static_cast<CutterApplication *>(qApp);
     auto options = cutter->getInitialOptions();
@@ -158,4 +158,4 @@ void BaseFindResultsDialog::onActionSetMapAddr()
 
 BaseFindResultsDialog::~BaseFindResultsDialog() {}
 
-void BaseFindResultsDialog::on_buttonBox_rejected() {}
+void BaseFindResultsDialog::onButtonBoxRejected() {}

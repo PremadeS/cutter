@@ -2,6 +2,8 @@
 #include "RizinTask.h"
 #include <rz_core.h>
 
+#include <utility>
+
 RizinTask::~RizinTask()
 {
     if (task) {
@@ -11,17 +13,17 @@ RizinTask::~RizinTask()
 
 void RizinTask::startTask()
 {
-    rz_core_task_enqueue(&Core()->core_->tasks, task);
+    rz_core_task_enqueue(&Core()->core->tasks, task);
 }
 
 void RizinTask::breakTask()
 {
-    rz_core_task_break(&Core()->core_->tasks, task->id);
+    rz_core_task_break(&Core()->core->tasks, task->id);
 }
 
 void RizinTask::joinTask()
 {
-    rz_core_task_join(&Core()->core_->tasks, nullptr, task->id);
+    rz_core_task_join(&Core()->core->tasks, nullptr, task->id);
 }
 
 void RizinTask::taskFinished()
@@ -74,7 +76,7 @@ const char *RizinCmdTask::getResultRaw()
 // RizinFunctionTask
 
 RizinFunctionTask::RizinFunctionTask(std::function<void *(RzCore *)> fcn, bool transient)
-    : fcn(fcn), res(nullptr)
+    : fcn(std::move(fcn)), res(nullptr)
 {
     auto core = Core()->lock();
     task = rz_core_function_task_new(
@@ -85,7 +87,7 @@ RizinFunctionTask::RizinFunctionTask(std::function<void *(RzCore *)> fcn, bool t
 
 void *RizinFunctionTask::runner(RzCore *core, void *user)
 {
-    RizinFunctionTask *task = reinterpret_cast<RizinFunctionTask *>(user);
+    auto *task = reinterpret_cast<RizinFunctionTask *>(user);
     task->res = task->fcn(core);
     task->taskFinished();
     return nullptr;

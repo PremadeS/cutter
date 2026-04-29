@@ -20,8 +20,8 @@ public slots:
     void clearTarget();
 
 private:
-    void onActionCopyLine();
-    void onActionApplySignature();
+    void onActionCopyLine() const;
+    void onActionApplySignature() const;
 
     QMenu *pluginMenu;
     QAction *pluginMenuAction;

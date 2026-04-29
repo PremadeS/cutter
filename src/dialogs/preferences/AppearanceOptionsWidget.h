@@ -29,29 +29,29 @@ private slots:
     void updateFontFromConfig();
     void updateThemeFromConfig(bool interfaceThemeChanged = true);
 
-    void on_fontSelectionButton_clicked();
+    void onFontSelectionButtonClicked();
     void onFontZoomBoxValueChanged(int zoom);
-    void on_themeComboBox_currentIndexChanged(int index);
-    void on_copyButton_clicked();
-    void on_deleteButton_clicked();
+    void onThemeComboBoxCurrentIndexChanged(int index);
+    void onCopyButtonClicked();
+    void onDeleteButtonClicked();
 
     /**
      * @brief Imports theme file specified by user to custom themes
      * directory.
      */
-    void on_importButton_clicked();
+    void onImportButtonClicked();
 
     /**
      * @brief Exports current color theme to file
      * specified by user.
      */
-    void on_exportButton_clicked();
+    void onExportButtonClicked();
 
     /**
      * @brief Shows dialog to rename current color theme.
      */
-    void on_renameButton_clicked();
-    void on_editButton_clicked();
+    void onRenameButtonClicked();
+    void onEditButtonClicked();
     void onLanguageComboBoxCurrentIndexChanged(int index);
 
 private:

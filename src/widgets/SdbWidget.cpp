@@ -6,6 +6,7 @@
 
 #include <QDebug>
 #include <QTreeWidget>
+#include <utility>
 
 SdbWidget::SdbWidget(MainWindow *main) : CutterDockWidget(main), ui(new Ui::SdbWidget)
 {
@@ -19,7 +20,7 @@ SdbWidget::SdbWidget(MainWindow *main) : CutterDockWidget(main), ui(new Ui::SdbW
 
 void SdbWidget::reload(QString _path)
 {
-    path = _path;
+    path = std::move(_path);
 
     ui->lineEdit->setText(path);
     /* insert root sdb keyvalue pairs */
@@ -29,7 +30,7 @@ void SdbWidget::reload(QString _path)
     /* key-values */
     keys = Core()->sdbListKeys(path);
     for (const QString &key : keys) {
-        QTreeWidgetItem *tempItem = new QTreeWidgetItem();
+        auto *tempItem = new QTreeWidgetItem();
         tempItem->setText(0, key);
         tempItem->setText(1, Core()->sdbGet(path, key));
         tempItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled
@@ -43,7 +44,7 @@ void SdbWidget::reload(QString _path)
         keys.append("..");
     }
     for (const QString &key : keys) {
-        QTreeWidgetItem *tempItem = new QTreeWidgetItem();
+        auto *tempItem = new QTreeWidgetItem();
         tempItem->setText(0, key + "/");
         tempItem->setText(1, "");
         ui->treeWidget->insertTopLevelItem(0, tempItem);
@@ -51,7 +52,7 @@ void SdbWidget::reload(QString _path)
     qhelpers::adjustColumns(ui->treeWidget, 0);
 }
 
-void SdbWidget::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
+void SdbWidget::onTreeWidgetItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
     if (column < 0)
         return;
@@ -60,7 +61,7 @@ void SdbWidget::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int colum
 
     if (column == 0) {
         if (item->text(0) == "../") {
-            int idx = path.lastIndexOf(QLatin1Char('/'));
+            const int idx = path.lastIndexOf(QLatin1Char('/'));
             if (idx != -1) {
                 newpath = path.mid(0, idx);
             } else {
@@ -82,7 +83,7 @@ void SdbWidget::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int colum
 
 SdbWidget::~SdbWidget() = default;
 
-void SdbWidget::on_lockButton_clicked()
+void SdbWidget::onLockButtonClicked()
 {
     if (ui->lockButton->isChecked()) {
         this->setAllowedAreas(Qt::NoDockWidgetArea);
@@ -93,7 +94,7 @@ void SdbWidget::on_lockButton_clicked()
     }
 }
 
-void SdbWidget::on_treeWidget_itemChanged(QTreeWidgetItem *item, int column)
+void SdbWidget::onTreeWidgetItemChanged(QTreeWidgetItem *item, int column)
 {
     Core()->sdbSet(path, item->text(0), item->text(column));
 }

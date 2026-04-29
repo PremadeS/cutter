@@ -111,7 +111,7 @@ public:
     void addMenuFileAction(QAction *action);
 
     QString getFilename() const { return filename; }
-    void messageBoxWarning(QString title, QString message);
+    void messageBoxWarning(const QString &title, const QString &message);
 
     QString getUniqueObjectName(const QString &widgetType) const;
     void showMemoryWidget();
@@ -141,13 +141,13 @@ public slots:
     void seekToFunctionStart();
     void setTabLocation();
 
-    void on_actionTabs_triggered();
+    void onActionTabsTriggered();
 
-    void on_actionAnalyze_triggered();
+    void onActionAnalyzeTriggered() const;
 
     void lockDocks(bool lock);
 
-    void on_actionRun_Script_triggered();
+    void onActionRunScriptTriggered();
 
     void toggleResponsive(bool maybe);
 
@@ -155,50 +155,50 @@ public slots:
 
     void toggleOverview(bool visibility, GraphWidget *targetGraph);
 private slots:
-    void on_actionBaseFind_triggered();
-    void on_actionAbout_triggered();
-    void on_actionIssue_triggered();
+    void onActionBaseFindTriggered();
+    void onActionAboutTriggered();
+    void onActionIssueTriggered();
     void documentationClicked();
     void addExtraGraph();
     void addExtraHexdump();
     void addExtraDisassembly();
     void addExtraDecompiler();
 
-    void on_actionRefresh_Panels_triggered();
+    void onActionRefreshPanelsTriggered();
 
-    void on_actionDisasAdd_comment_triggered();
+    void onActionDisasAddCommentTriggered();
 
-    void on_actionDefault_triggered();
+    void onActionDefaultTriggered();
 
-    void on_actionNew_triggered();
+    void onActionNewTriggered();
 
-    void on_actionSave_triggered();
-    void on_actionSaveAs_triggered();
+    void onActionSaveTriggered();
+    void onActionSaveAsTriggered();
 
-    void on_actionBackward_triggered();
-    void on_actionForward_triggered();
+    void onActionBackwardTriggered();
+    void onActionForwardTriggered();
 
-    void on_actionMap_triggered();
+    void onActionMapTriggered();
 
-    void on_actionTabs_on_Top_triggered();
+    void onActionTabsOnTopTriggered();
 
-    void on_actionReset_settings_triggered();
+    void onActionResetSettingsTriggered();
 
-    void on_actionQuit_triggered();
+    void onActionQuitTriggered();
 
-    void on_actionRefresh_contents_triggered();
+    void onActionRefreshContentsTriggered();
 
-    void on_actionPreferences_triggered();
+    void onActionPreferencesTriggered();
 
-    void on_actionImportPDB_triggered();
+    void onActionImportPdbTriggered();
 
-    void on_actionExport_as_code_triggered();
+    void onActionExportAsCodeTriggered();
 
-    void on_actionApplySigFromFile_triggered();
+    void onActionApplySigFromFileTriggered();
 
-    void on_actionCreateNewSig_triggered();
+    void onActionCreateNewSigTriggered();
 
-    void on_actionGrouped_dock_dragging_triggered(bool checked);
+    void onActionGroupedDockDraggingTriggered(bool checked);
 
     void updateTasksIndicator();
 

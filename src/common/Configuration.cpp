@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QApplication>
 #include <QHash>
+#include <utility>
 
 #ifdef CUTTER_ENABLE_KSYNTAXHIGHLIGHTING
 #    include <KSyntaxHighlighting/Repository>
@@ -37,8 +38,8 @@ const QHash<QString, ColorFlags> Configuration::relevantThemes = {
 
     { "cutter", LightFlag },    { "matrix", LightFlag }, { "white", LightFlag },
 };
-static const QString DEFAULT_LIGHT_COLOR_THEME = "cutter";
-static const QString DEFAULT_DARK_COLOR_THEME = "ayu";
+static const QString defaultLightColorTheme = "cutter";
+static const QString defaultDarkColorTheme = "ayu";
 
 const QHash<QString, QHash<ColorFlags, QColor>> Configuration::cutterOptionColors = {
     { "gui.cflow",
@@ -189,7 +190,7 @@ void Configuration::loadInitial()
 
 QString Configuration::getRecentFolder()
 {
-    QString recentFolder = s.value("dir.recentFolder", QDir::homePath()).toString();
+    const QString recentFolder = s.value("dir.recentFolder", QDir::homePath()).toString();
 
     return QDir::toNativeSeparators(recentFolder);
 }
@@ -279,7 +280,7 @@ bool Configuration::setLocaleByName(const QString &language)
 
 bool Configuration::windowColorIsDark()
 {
-    ColorFlags currentThemeColorFlags = getCurrentTheme()->flag;
+    const ColorFlags currentThemeColorFlags = getCurrentTheme()->flag;
     if (currentThemeColorFlags == ColorFlags::LightFlag) {
         return false;
     } else if (currentThemeColorFlags == ColorFlags::DarkFlag) {
@@ -304,7 +305,7 @@ void Configuration::loadNativeStylesheet()
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
-        QString stylesheet = ts.readAll();
+        const QString stylesheet = ts.readAll();
 #ifdef Q_OS_MACOS
         QFile mf(nativeWindowIsDark() ? ":native/native-macos-dark.qss"
                                       : ":native/native-macos-light.qss");
@@ -339,7 +340,7 @@ void Configuration::loadLightStylesheet()
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
-        QString stylesheet = ts.readAll();
+        const QString stylesheet = ts.readAll();
 
         QPalette p = qApp->palette();
         p.setColor(QPalette::Text, Qt::black);
@@ -358,7 +359,7 @@ void Configuration::loadDarkStylesheet()
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
-        QString stylesheet = ts.readAll();
+        const QString stylesheet = ts.readAll();
 #ifdef Q_OS_MACX
         // see https://github.com/ColinDuquesnoy/QDarkStyleSheet/issues/22#issuecomment-96179529
         stylesheet += "QDockWidget::title"
@@ -384,7 +385,7 @@ void Configuration::loadMidnightStylesheet()
     } else {
         f.open(QFile::ReadOnly | QFile::Text);
         QTextStream ts(&f);
-        QString stylesheet = ts.readAll();
+        const QString stylesheet = ts.readAll();
 
         QPalette p = qApp->palette();
         p.setColor(QPalette::Text, Qt::white);
@@ -396,7 +397,7 @@ void Configuration::loadMidnightStylesheet()
 
 const QFont Configuration::getBaseFont() const
 {
-    QFont font = s.value("font", QFont("Inconsolata", 11)).value<QFont>();
+    const auto font = s.value("font", QFont("Inconsolata", 11)).value<QFont>();
     return font;
 }
 
@@ -420,7 +421,7 @@ void Configuration::refreshFont()
 
 qreal Configuration::getZoomFactor() const
 {
-    qreal fontZoom = s.value("zoomFactor", 1.0).value<qreal>();
+    const auto fontZoom = s.value("zoomFactor", 1.0).value<qreal>();
     return qMax(fontZoom, 0.1);
 }
 
@@ -442,7 +443,7 @@ void Configuration::setInterfaceTheme(int theme)
     }
     s.setValue("ColorPalette", theme);
 
-    CutterInterfaceTheme interfaceTheme = cutterInterfaceThemesList()[theme];
+    const CutterInterfaceTheme interfaceTheme = cutterInterfaceThemesList()[theme];
 
     if (interfaceTheme.name == "Native") {
         loadNativeStylesheet();
@@ -553,7 +554,7 @@ void Configuration::setColorTheme(const QString &theme)
         s.setValue("theme", theme);
     }
 
-    ColorThemeWorker::Theme colorTheme = ThemeWorker().getTheme(theme);
+    const ColorThemeWorker::Theme colorTheme = ThemeWorker().getTheme(theme);
     for (auto it = colorTheme.constBegin(); it != colorTheme.constEnd(); it++) {
         setColor(it.key(), it.value());
     }
@@ -563,12 +564,12 @@ void Configuration::setColorTheme(const QString &theme)
 
 void Configuration::adjustColorThemeDarkness()
 {
-    bool windowIsDark = windowColorIsDark();
-    int windowDarkness = windowIsDark ? DarkFlag : LightFlag;
-    int currentColorThemeDarkness = colorThemeDarkness(getColorTheme());
+    const bool windowIsDark = windowColorIsDark();
+    const int windowDarkness = windowIsDark ? DarkFlag : LightFlag;
+    const int currentColorThemeDarkness = colorThemeDarkness(getColorTheme());
 
     if ((currentColorThemeDarkness & windowDarkness) == 0) {
-        setColorTheme(windowIsDark ? DEFAULT_DARK_COLOR_THEME : DEFAULT_LIGHT_COLOR_THEME);
+        setColorTheme(windowIsDark ? defaultDarkColorTheme : defaultLightColorTheme);
     }
 }
 
@@ -608,7 +609,7 @@ const QList<CutterInterfaceTheme> &Configuration::cutterInterfaceThemesList()
 
 QVariant Configuration::getConfigVar(const QString &key)
 {
-    QHash<QString, QVariant>::const_iterator it = asmOptions.find(key);
+    const QHash<QString, QVariant>::const_iterator it = asmOptions.find(key);
     if (it != asmOptions.end()) {
         switch (it.value().type()) {
         case QVariant::Type::Bool:
@@ -662,7 +663,7 @@ std::vector<Configuration::LangInfo> Configuration::getAvailableTranslations()
 
     QSet<QString> fileNamesSet;
     for (const auto &trDir : trDirs) {
-        QDir dir(trDir);
+        const QDir dir(trDir);
         if (!dir.exists()) {
             continue;
         }
@@ -684,14 +685,14 @@ std::vector<Configuration::LangInfo> Configuration::getAvailableTranslations()
         if (parts.length() < 2) {
             continue;
         }
-        auto langCode = parts[1];
+        const auto &langCode = parts[1];
         ++langCount[langCode];
     }
 
     for (auto &i : fileNames) {
         auto name = QFileInfo(i).baseName();
-        QString localeName = name.mid(sizeof("cutter_") - 1);
-        QLocale locale(localeName);
+        const QString localeName = name.mid(sizeof("cutter_") - 1);
+        const QLocale locale(localeName);
         if (locale.language() == QLocale::C) {
             continue;
         }
@@ -704,7 +705,7 @@ std::vector<Configuration::LangInfo> Configuration::getAvailableTranslations()
         if (langCount[langCode] <= 1
             && locale.language() != QLocale::Chinese) { // Always distinguish Chinese Traditional,
                                                         // Chinese simplified
-            QLocale localSimple(locale.language());
+            const QLocale localSimple(locale.language());
             auto simpleName = localSimple.nativeLanguageName();
             if (!simpleName.isEmpty()) {
                 currLanguageName = simpleName;
@@ -848,10 +849,10 @@ QList<RecentFileEntry> Configuration::getRecentFiles() const
 
     const QStringList list = s.value("recentFileList").toStringList();
     for (const QString &file : list) {
-        int sep = file.indexOf("://");
+        const int sep = file.indexOf("://");
         if (sep != -1) {
-            QString ioMode = file.left(sep + 3);
-            QString path = file.mid(sep + 3);
+            const QString ioMode = file.left(sep + 3);
+            const QString path = file.mid(sep + 3);
             recentFiles.append({ ioMode, path });
         } else {
             recentFiles.append({ "file://", file });
@@ -892,7 +893,7 @@ void Configuration::setRecentProjects(const QList<RecentFileEntry> &list)
 
 void Configuration::addRecentProject(QString file)
 {
-    RecentFileEntry project = { "", file };
+    const RecentFileEntry project = { "", std::move(file) };
     QList<RecentFileEntry> files = getRecentProjects();
     files.removeAll(project);
     files.prepend(project);

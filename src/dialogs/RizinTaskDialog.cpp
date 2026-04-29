@@ -5,7 +5,7 @@
 
 #include "ui_RizinTaskDialog.h"
 
-RizinTaskDialog::RizinTaskDialog(RizinTask::Ptr task, QWidget *parent)
+RizinTaskDialog::RizinTaskDialog(const RizinTask::Ptr &task, QWidget *parent)
     : QDialog(parent), ui(new Ui::RizinTaskDialog), task(task)
 {
     ui->setupUi(this);
@@ -25,9 +25,9 @@ RizinTaskDialog::~RizinTaskDialog() {}
 
 void RizinTaskDialog::updateProgressTimer()
 {
-    int secondsElapsed = elapsedTimer.elapsed() / 1000;
-    int minutesElapsed = secondsElapsed / 60;
-    int hoursElapsed = minutesElapsed / 60;
+    const int secondsElapsed = elapsedTimer.elapsed() / 1000;
+    const int minutesElapsed = secondsElapsed / 60;
+    const int hoursElapsed = minutesElapsed / 60;
 
     QString label;
     if (hoursElapsed) {

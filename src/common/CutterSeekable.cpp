@@ -44,7 +44,7 @@ void CutterSeekable::seekPrev()
     }
 }
 
-RVA CutterSeekable::getOffset()
+RVA CutterSeekable::getOffset() const
 {
     return (synchronized) ? Core()->getOffset() : widgetOffset;
 }
@@ -54,7 +54,7 @@ void CutterSeekable::toggleSynchronization()
     setSynchronization(!synchronized);
 }
 
-bool CutterSeekable::isSynchronized()
+bool CutterSeekable::isSynchronized() const
 {
     return synchronized;
 }
@@ -65,7 +65,7 @@ void CutterSeekable::seekToReference(RVA offset)
         return;
     }
 
-    QList<XrefDescription> refs = Core()->getXRefs(offset, false, false);
+    const QList<XrefDescription> refs = Core()->getXRefs(offset, false, false);
 
     if (refs.length()) {
         if (refs.length() > 1) {

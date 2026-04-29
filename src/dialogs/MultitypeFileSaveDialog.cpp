@@ -15,7 +15,7 @@ MultitypeFileSaveDialog::MultitypeFileSaveDialog(QWidget *parent, const QString 
 }
 
 void MultitypeFileSaveDialog::setTypes(
-        const QVector<MultitypeFileSaveDialog::TypeDescription> types, bool useDetection)
+        const QVector<MultitypeFileSaveDialog::TypeDescription> &types, bool useDetection)
 {
     this->hasTypeDetection = useDetection;
     this->types.clear();
@@ -39,7 +39,7 @@ MultitypeFileSaveDialog::TypeDescription MultitypeFileSaveDialog::selectedType()
         return {};
     }
     if (hasTypeDetection && filterIt == this->types.begin()) {
-        QFileInfo info(this->selectedFiles().first());
+        const QFileInfo info(this->selectedFiles().first());
         QString currentSuffix = info.suffix();
         filterIt = std::find_if(types.begin(), types.end(),
                                 [&currentSuffix](const TypeDescription &v) {
@@ -57,7 +57,7 @@ MultitypeFileSaveDialog::TypeDescription MultitypeFileSaveDialog::selectedType()
 void MultitypeFileSaveDialog::done(int r)
 {
     if (r == QDialog::Accepted) {
-        QFileInfo info(selectedFiles().first());
+        const QFileInfo info(selectedFiles().first());
         auto selectedType = this->selectedType();
         if (selectedType.extension.isEmpty()) {
             QMessageBox::warning(this, tr("File save error"),
@@ -74,17 +74,17 @@ void MultitypeFileSaveDialog::onFilterSelected(const QString &filter)
     if (it == types.end()) {
         return;
     }
-    bool detectionSelected = hasTypeDetection && it == types.begin();
+    const bool detectionSelected = hasTypeDetection && it == types.begin();
     if (detectionSelected) {
         setDefaultSuffix(types[1].extension);
     } else {
         setDefaultSuffix(it->extension);
     }
     if (!this->selectedFiles().empty()) {
-        QString currentSelection = this->selectedFiles().first();
-        QFileInfo info(currentSelection);
+        const QString currentSelection = this->selectedFiles().first();
+        const QFileInfo info(currentSelection);
         if (!detectionSelected) {
-            QString currentSuffix = info.suffix();
+            const QString currentSuffix = info.suffix();
             if (currentSuffix != it->extension) {
                 selectFile(info.dir().filePath(info.completeBaseName() + "." + it->extension));
             }

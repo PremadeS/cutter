@@ -141,8 +141,8 @@ protected:
     QGraphicsView *graphicsView;
     SectionsProxyModel *proxyModel;
 
-    void addTextItem(QColor color, QPoint pos, QString string);
-    int getAdjustedSize(int size, int validMinSize);
+    void addTextItem(QColor color, QPoint pos, const QString &string);
+    int getAdjustedSize(int size, int validMinSize) const;
     int getRectWidth();
     int getIndicatorWidth();
     int getValidMinSize();
@@ -151,7 +151,7 @@ protected:
     virtual RVA getAddressOfSection(const SectionDescription &section) = 0;
 
 private:
-    void drawIndicator(QString name, float ratio);
+    void drawIndicator(const QString &name, float ratio);
 };
 
 class AddrDockScene : public QGraphicsScene

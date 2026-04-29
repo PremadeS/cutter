@@ -9,7 +9,7 @@ bool Basefind::threadCallback(const RzBaseFindThreadInfo *info, void *user)
 Basefind::Basefind(CutterCore *core)
     : core(core),
       scores(nullptr),
-      continue_run(true)
+      continueRun(true)
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
       ,
       mutex(QMutex::Recursive)
@@ -61,13 +61,13 @@ void Basefind::run()
     mutex.lock();
     rz_list_free(scores);
     scores = nullptr;
-    continue_run = true;
+    continueRun = true;
     mutex.unlock();
 
     core->coreMutex.lock();
     options.callback = threadCallback;
     options.user = this;
-    scores = rz_basefind(core->core_, &options);
+    scores = rz_basefind(core->core, &options);
     core->coreMutex.unlock();
 
     emit complete();
@@ -76,7 +76,7 @@ void Basefind::run()
 void Basefind::cancel()
 {
     mutex.lock();
-    continue_run = false;
+    continueRun = false;
     mutex.unlock();
 }
 
@@ -103,7 +103,7 @@ bool Basefind::updateProgress(const RzBaseFindThreadInfo *info)
     status.percentage = info->percentage;
 
     emit progress(status);
-    bool ret = continue_run;
+    const bool ret = continueRun;
     mutex.unlock();
     return ret;
 }

@@ -16,9 +16,9 @@ CommentsDialog::CommentsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Co
 
 CommentsDialog::~CommentsDialog() {}
 
-void CommentsDialog::on_buttonBox_accepted() {}
+void CommentsDialog::onButtonBoxAccepted() {}
 
-void CommentsDialog::on_buttonBox_rejected()
+void CommentsDialog::onButtonBoxRejected()
 {
     close();
 }
@@ -40,9 +40,9 @@ void CommentsDialog::addOrEditComment(RVA offset, QWidget *parent)
     CommentsDialog dialog(parent);
 
     if (comment.isNull() || comment.isEmpty()) {
-        dialog.setWindowTitle(tr("Add Comment at %1").arg(RzAddressString(offset)));
+        dialog.setWindowTitle(tr("Add Comment at %1").arg(rzAddressString(offset)));
     } else {
-        dialog.setWindowTitle(tr("Edit Comment at %1").arg(RzAddressString(offset)));
+        dialog.setWindowTitle(tr("Edit Comment at %1").arg(rzAddressString(offset)));
     }
 
     dialog.setComment(comment);
@@ -59,7 +59,7 @@ void CommentsDialog::addOrEditComment(RVA offset, QWidget *parent)
 bool CommentsDialog::eventFilter(QObject * /*obj*/, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        const auto *keyEvent = static_cast<QKeyEvent *>(event);
 
         // Confirm comment by pressing Ctrl/Cmd+Return
         if ((keyEvent->modifiers() & Qt::ControlModifier)

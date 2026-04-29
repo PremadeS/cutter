@@ -25,7 +25,7 @@ private:
 
 public:
     enum Columns { OFFSET = 0, SIZE, CODE, DATA, COMMENT, COUNT };
-    static const int SearchDescriptionRole = Qt::UserRole;
+    static const int searchDescriptionRole = Qt::UserRole;
 
     SearchModel(QObject *parent = nullptr);
 
@@ -73,8 +73,8 @@ private slots:
 private:
     std::unique_ptr<Ui::SearchWidget> ui;
 
-    SearchModel *search_model;
-    SearchSortFilterProxyModel *search_proxy_model;
+    SearchModel *searchModel;
+    SearchSortFilterProxyModel *searchProxyModel;
 
     void refreshSearch();
     void checkSearchResultEmpty();

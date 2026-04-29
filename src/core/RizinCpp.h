@@ -70,7 +70,7 @@ private:
     const RzPVector *const vec;
 
 public:
-    class iterator
+    class Iterator
     {
     public:
         using iterator_category = std::input_iterator_tag;
@@ -83,27 +83,27 @@ public:
         T **p;
 
     public:
-        iterator(T **p) : p(p) {}
-        iterator(const iterator &o) : p(o.p) {}
-        iterator &operator++()
+        Iterator(T **p) : p(p) {}
+        Iterator(const Iterator &o) : p(o.p) {}
+        Iterator &operator++()
         {
             p++;
             return *this;
         }
-        iterator operator++(int)
+        Iterator operator++(int)
         {
-            iterator tmp(*this);
+            Iterator tmp(*this);
             operator++();
             return tmp;
         }
-        bool operator==(const iterator &rhs) const { return p == rhs.p; }
-        bool operator!=(const iterator &rhs) const { return p != rhs.p; }
+        bool operator==(const Iterator &rhs) const { return p == rhs.p; }
+        bool operator!=(const Iterator &rhs) const { return p != rhs.p; }
         T *operator*() { return *p; }
     };
 
     CutterPVector(const RzPVector *vec) : vec(vec) {}
-    iterator begin() const { return iterator(reinterpret_cast<T **>(vec->v.a)); }
-    iterator end() const { return iterator(reinterpret_cast<T **>(vec->v.a) + vec->v.len); }
+    Iterator begin() const { return Iterator(reinterpret_cast<T **>(vec->v.a)); }
+    Iterator end() const { return Iterator(reinterpret_cast<T **>(vec->v.a) + vec->v.len); }
 };
 
 template<typename T>
@@ -113,7 +113,7 @@ private:
     const RzList *const list;
 
 public:
-    class iterator
+    class Iterator
     {
     public:
         using iterator_category = std::input_iterator_tag;
@@ -126,9 +126,9 @@ public:
         RzListIter *iter;
 
     public:
-        explicit iterator(RzListIter *iter) : iter(iter) {}
-        iterator(const iterator &o) : iter(o.iter) {}
-        iterator &operator++()
+        explicit Iterator(RzListIter *iter) : iter(iter) {}
+        Iterator(const Iterator &o) : iter(o.iter) {}
+        Iterator &operator++()
         {
             if (!iter) {
                 return *this;
@@ -136,14 +136,14 @@ public:
             iter = iter->next;
             return *this;
         }
-        iterator operator++(int)
+        Iterator operator++(int)
         {
-            iterator tmp(*this);
+            Iterator tmp(*this);
             operator++();
             return tmp;
         }
-        bool operator==(const iterator &rhs) const { return iter == rhs.iter; }
-        bool operator!=(const iterator &rhs) const { return iter != rhs.iter; }
+        bool operator==(const Iterator &rhs) const { return iter == rhs.iter; }
+        bool operator!=(const Iterator &rhs) const { return iter != rhs.iter; }
         T *operator*()
         {
             if (!iter) {
@@ -154,14 +154,14 @@ public:
     };
 
     explicit CutterRzList(const RzList *l) : list(l) {}
-    iterator begin() const
+    Iterator begin() const
     {
         if (!list) {
-            return iterator(nullptr);
+            return Iterator(nullptr);
         }
-        return iterator(list->head);
+        return Iterator(list->head);
     }
-    iterator end() const { return iterator(nullptr); }
+    Iterator end() const { return Iterator(nullptr); }
 };
 
 template<typename T>

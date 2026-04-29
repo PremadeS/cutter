@@ -21,11 +21,11 @@ class CUTTER_EXPORT RizinTaskDialog : public QDialog
 
 public:
     using Ptr = QSharedPointer<RizinTask>;
-    RizinTaskDialog(Ptr task, QWidget *parent = nullptr);
+    RizinTaskDialog(const Ptr &task, QWidget *parent = nullptr);
     ~RizinTaskDialog();
 
     void setBreakOnClose(bool v) { breakOnClose = v; }
-    bool getBreakOnClose() { return breakOnClose; }
+    bool getBreakOnClose() const const { return breakOnClose; }
     void setDesc(const QString &label);
 
 public slots:

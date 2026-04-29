@@ -27,7 +27,7 @@ public:
 private slots:
     void updateContents();
     void setRegisterGrid();
-    void openContextMenu(QPoint point, QString address);
+    void openContextMenu(QPoint point, const QString &address);
 
     /**
      * @brief Opens the RegisterProfileDialog to view or edit register profile

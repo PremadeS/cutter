@@ -41,7 +41,7 @@ public:
     enum Column { RegColumn = 0, ValueColumn, RefColumn, CommentColumn, ColumnCount };
     enum Role { RegisterRefDescriptionRole = Qt::UserRole };
 
-    RegisterRefModel(QObject *parent = 0);
+    RegisterRefModel(QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
@@ -71,7 +71,7 @@ public:
     ~RegisterRefsWidget();
 
 private slots:
-    void on_registerRefTreeView_doubleClicked(const QModelIndex &index);
+    void onRegisterRefTreeViewDoubleClicked(const QModelIndex &index);
     void refreshRegisterRef();
     void copyClip(int column);
     void customMenuRequested(QPoint pos);

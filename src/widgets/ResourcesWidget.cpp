@@ -28,7 +28,7 @@ QVariant ResourcesModel::data(const QModelIndex &index, int role) const
         case NAME:
             return res.name;
         case VADDR:
-            return RzAddressString(res.vaddr);
+            return rzAddressString(res.vaddr);
         case INDEX:
             return QString::number(res.index);
         case TYPE:
@@ -99,12 +99,13 @@ RVA ResourcesModel::address(const QModelIndex &index) const
     return res.vaddr;
 }
 
-ResourcesWidget::ResourcesWidget(MainWindow *main) : ListDockWidget(main)
+ResourcesWidget::ResourcesWidget(MainWindow *main)
+    : ListDockWidget(main),
+      filterModel(new AddressableFilterProxyModel(model, this)),
+      model(new ResourcesModel(this))
 {
     setObjectName("ResourcesWidget");
 
-    model = new ResourcesModel(this);
-    filterModel = new AddressableFilterProxyModel(model, this);
     filterModel->setSortRole(Qt::EditRole);
     setModels(filterModel);
 

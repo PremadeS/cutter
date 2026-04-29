@@ -40,8 +40,8 @@ private:
     bool functionIsMain(ut64 addr) const;
 
 public:
-    static const int FunctionDescriptionRole = Qt::UserRole;
-    static const int IsImportRole = Qt::UserRole + 1;
+    static const int functionDescriptionRole = Qt::UserRole;
+    static const int isImportRole = Qt::UserRole + 1;
 
     enum Column {
         NameColumn = 0,
@@ -58,7 +58,8 @@ public:
         ColumnCount
     };
 
-    FunctionModel(bool nested, QFont defaultFont, QFont highlightFont, QObject *parent = nullptr);
+    FunctionModel(bool nested, const QFont &defaultFont, const QFont &highlightFont,
+                  QObject *parent = nullptr);
 
     QModelIndex index(int row, int column,
                       const QModelIndex &parent = QModelIndex()) const override;
@@ -77,7 +78,7 @@ public:
     bool updateCurrentIndex();
 
     void setNested(bool nested);
-    bool isNested() { return nested; }
+    bool isNested() const const { return nested; }
 
     RVA address(const QModelIndex &index) const override;
     QString name(const QModelIndex &index) const override;

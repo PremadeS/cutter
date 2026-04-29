@@ -64,9 +64,9 @@ bool IOModesController::prepareForWriting()
             "For safety, please consider using Cache mode and then commit the changes manually "
             "via File -> Commit modifications to disk."));
     msgBox.addButton(QObject::tr("Cancel"), QMessageBox::RejectRole);
-    QAbstractButton *reopenButton =
+    const QAbstractButton *reopenButton =
             msgBox.addButton(QObject::tr("Reopen in Write mode"), QMessageBox::YesRole);
-    QAbstractButton *iocacheButton =
+    const QAbstractButton *iocacheButton =
             msgBox.addButton(QObject::tr("Enable Cache mode"), QMessageBox::YesRole);
 
     msgBox.exec();
@@ -96,7 +96,7 @@ bool IOModesController::askCommitUnsavedChanges()
 {
     // Check if there are uncommitted changes
     if (!allChangesComitted()) {
-        QMessageBox::StandardButton ret = QMessageBox::question(
+        const QMessageBox::StandardButton ret = QMessageBox::question(
                 parentWindow, QObject::tr("Uncommitted changes"),
                 QObject::tr("It seems that you have changes or patches that are not committed to "
                             "the file.\n"
@@ -107,7 +107,7 @@ bool IOModesController::askCommitUnsavedChanges()
             Core()->commitWriteCache();
         } else if (ret == QMessageBox::Discard) {
             Core()->resetWriteCache();
-            emit Core()->refreshCodeViews();
+            emit Core() -> refreshCodeViews();
         } else if (ret == QMessageBox::Cancel) {
             return false;
         }

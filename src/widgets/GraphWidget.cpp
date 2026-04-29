@@ -4,7 +4,8 @@
 #include "shortcuts/ShortcutManager.h"
 #include <QVBoxLayout>
 
-GraphWidget::GraphWidget(MainWindow *main) : MemoryDockWidget(MemoryWidgetType::Graph, main)
+GraphWidget::GraphWidget(MainWindow *main)
+    : MemoryDockWidget(MemoryWidgetType::Graph, main), header(new QLineEdit(this))
 {
     setObjectName(main ? main->getUniqueObjectName(getWidgetType()) : getWidgetType());
 
@@ -16,7 +17,6 @@ GraphWidget::GraphWidget(MainWindow *main) : MemoryDockWidget(MemoryWidgetType::
     layout->setContentsMargins(0, 0, 0, 0);
     layoutWidget->setLayout(layout);
 
-    header = new QLineEdit(this);
     header->setReadOnly(true);
     layout->addWidget(header);
 
@@ -29,8 +29,8 @@ GraphWidget::GraphWidget(MainWindow *main) : MemoryDockWidget(MemoryWidgetType::
     // getting the name of the class is implementation defined, and cannot be
     // used reliably across different compilers.
     // QShortcut *toggle_shortcut = new QShortcut(widgetShortcuts[typeid(this).name()], main);
-    QShortcut *toggle_shortcut = Shortcuts()->makeQShortcut("Graph.toggle", main);
-    connect(toggle_shortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Graph.toggle", main);
+    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
 
     connect(graphView, &DisassemblerGraphView::nameChanged, this,
             &MemoryDockWidget::updateWindowTitle);

@@ -62,11 +62,7 @@ struct BasicCursor
 
 struct HexCursor
 {
-    HexCursor()
-    {
-        isVisible = false;
-        onAsciiArea = false;
-    }
+    HexCursor() : isVisible(false), onAsciiArea(false) : isVisible(false), onAsciiArea(false) {}
 
     bool isVisible;
     bool onAsciiArea;
@@ -96,14 +92,14 @@ public:
 class BufferData : public AbstractData
 {
 public:
-    BufferData() { m_buffer.fill(0, 1); }
+    BufferData() { mBuffer.fill(0, 1); }
 
     explicit BufferData(const QByteArray &buffer)
     {
         if (buffer.isEmpty()) {
-            m_buffer.fill(0, 1);
+            mBuffer.fill(0, 1);
         } else {
-            m_buffer = buffer;
+            mBuffer = buffer;
         }
     }
 
@@ -113,9 +109,9 @@ public:
 
     bool copy(void *out, uint64_t addr, size_t len) override
     {
-        if (addr < static_cast<uint64_t>(m_buffer.size())
-            && (static_cast<uint64_t>(m_buffer.size()) - addr) < len) {
-            memcpy(out, m_buffer.constData() + addr, len);
+        if (addr < static_cast<uint64_t>(mBuffer.size())
+            && (static_cast<uint64_t>(mBuffer.size()) - addr) < len) {
+            memcpy(out, mBuffer.constData() + addr, len);
             return true;
         }
         return false;
@@ -123,18 +119,18 @@ public:
 
     bool write(const uint8_t *in, uint64_t addr, size_t len) override
     {
-        if (addr < static_cast<uint64_t>(m_buffer.size())
-            && (static_cast<uint64_t>(m_buffer.size()) - addr) < len) {
-            memcpy(m_buffer.data() + addr, in, len);
+        if (addr < static_cast<uint64_t>(mBuffer.size())
+            && (static_cast<uint64_t>(mBuffer.size()) - addr) < len) {
+            memcpy(mBuffer.data() + addr, in, len);
             return true;
         }
         return false;
     }
 
-    uint64_t maxIndex() override { return m_buffer.size() - 1; }
+    uint64_t maxIndex() override { return mBuffer.size() - 1; }
 
 private:
-    QByteArray m_buffer;
+    QByteArray mBuffer;
 };
 
 class MemoryData : public AbstractData
@@ -142,56 +138,56 @@ class MemoryData : public AbstractData
 public:
     MemoryData() = default;
     ~MemoryData() override = default;
-    static constexpr size_t BLOCK_SIZE = 4096;
+    static constexpr size_t blockSize = 4096;
 
     void fetch(uint64_t address, int length) override
     {
         // FIXME: reuse data if possible
         const uint64_t blockSize = 0x1000ULL;
-        uint64_t alignedAddr = address & ~(blockSize - 1);
-        int offset = address - alignedAddr;
+        const uint64_t const alignedAddr = address & ~(blockSize - 1);
+        const int const offset = address - alignedAddr;
         int len = (offset + length + (blockSize - 1)) & ~(blockSize - 1);
-        m_firstBlockAddr = alignedAddr;
-        m_lastValidAddr = length ? alignedAddr + len - 1 : 0;
-        if (m_lastValidAddr < m_firstBlockAddr) {
-            m_lastValidAddr = -1;
-            len = m_lastValidAddr - m_firstBlockAddr + 1;
+        mFirstBlockAddr = alignedAddr;
+        mLastValidAddr = length ? alignedAddr + len - 1 : 0;
+        if (mLastValidAddr < mFirstBlockAddr) {
+            mLastValidAddr = -1;
+            len = mLastValidAddr - mFirstBlockAddr + 1;
         }
-        m_blocks.clear();
+        mBlocks.clear();
         uint64_t addr = alignedAddr;
         for (ut64 i = 0; i < len / blockSize; ++i, addr += blockSize) {
-            m_blocks.append(Core()->ioRead(addr, blockSize));
+            mBlocks.append(Core()->ioRead(addr, blockSize));
         }
     }
 
     bool copy(void *out, uint64_t addr, size_t len) override
     {
-        if (addr < m_firstBlockAddr
-            || addr > m_lastValidAddr
+        if (addr < mFirstBlockAddr
+            || addr > mLastValidAddr
             /* do not merge with previous check to handle overflows */
-            || (m_lastValidAddr - addr + 1) < len || m_blocks.isEmpty()) {
+            || (mLastValidAddr - addr + 1) < len || mBlocks.isEmpty()) {
             memset(out, 0xff, len);
             return false;
         }
 
-        int totalOffset = addr - m_firstBlockAddr;
-        int blockId = totalOffset / BLOCK_SIZE;
-        int blockOffset = totalOffset % BLOCK_SIZE;
-        size_t first_part = BLOCK_SIZE - blockOffset;
-        if (first_part >= len) {
-            memcpy(out, m_blocks.at(blockId).constData() + blockOffset, len);
+        const int const totalOffset = addr - mFirstBlockAddr;
+        const int const blockId = totalOffset / blockSize;
+        const int const blockOffset = totalOffset % blockSize;
+        const size_t const firstPart = blockSize - blockOffset;
+        if (firstPart >= len) {
+            memcpy(out, mBlocks.at(blockId).constData() + blockOffset, len);
         } else {
-            memcpy(out, m_blocks.at(blockId).constData() + blockOffset, first_part);
-            memcpy(static_cast<char *>(out) + first_part, m_blocks.at(blockId + 1).constData(),
-                   len - first_part);
+            memcpy(out, mBlocks.at(blockId).constData() + blockOffset, firstPart);
+            memcpy(static_cast<char *>(out) + firstPart, mBlocks.at(blockId + 1).constData(),
+                   len - firstPart);
         }
         return true;
     }
 
     void writeToCache(const uint8_t *in, uint64_t adr, size_t len)
     {
-        if (adr < m_firstBlockAddr) {
-            uint64_t prefix = m_firstBlockAddr - adr;
+        if (adr < mFirstBlockAddr) {
+            const uint64_t const prefix = mFirstBlockAddr - adr;
             if (prefix <= len) {
                 return;
             }
@@ -199,16 +195,16 @@ public:
             adr += prefix;
             len -= prefix;
         }
-        if (adr > m_lastValidAddr) {
+        if (adr > mLastValidAddr) {
             return;
         }
-        int offset = (int)(adr - m_firstBlockAddr);
-        int blockId = offset / BLOCK_SIZE;
-        int blockOffset = offset % BLOCK_SIZE;
-        while (len > 0 && blockId < m_blocks.size()) {
-            size_t l = BLOCK_SIZE - blockOffset;
+        const int const offset = (int)(adr - mFirstBlockAddr);
+        int blockId = offset / blockSize;
+        int blockOffset = offset % blockSize;
+        while (len > 0 && blockId < mBlocks.size()) {
+            size_t l = blockSize - blockOffset;
             l = std::min(l, len);
-            memcpy(m_blocks[blockId].data() + blockOffset, in, l);
+            memcpy(mBlocks[blockId].data() + blockOffset, in, l);
             len -= l;
             blockOffset = 0;
             adr += l;
@@ -222,85 +218,81 @@ public:
         RzCoreLocked core(Core());
         rz_core_write_at(core, adr, in, len);
         writeToCache(in, adr, len);
-        emit Core()->instructionChanged(adr);
+        emit Core() -> instructionChanged(adr);
         return true;
     }
 
     uint64_t maxIndex() override { return std::numeric_limits<uint64_t>::max(); }
 
-    uint64_t minIndex() override { return m_firstBlockAddr; }
+    uint64_t minIndex() override { return mFirstBlockAddr; }
 
 private:
-    QVector<QByteArray> m_blocks;
-    uint64_t m_firstBlockAddr = 0;
-    uint64_t m_lastValidAddr = 0;
+    QVector<QByteArray> mBlocks;
+    uint64_t mFirstBlockAddr = 0;
+    uint64_t mLastValidAddr = 0;
 };
 
 class HexSelection
 {
 public:
-    HexSelection()
-    {
-        m_empty = true;
-        m_start = m_end = 0;
-    }
+    HexSelection() : m_empty(true) : m_empty(true) { mStart = mEnd = 0; }
 
     inline void init(BasicCursor addr)
     {
         m_empty = true;
-        m_init = addr;
+        mInit = addr;
     }
 
     void set(uint64_t start, uint64_t end)
     {
         m_empty = false;
-        m_init = BasicCursor(start);
-        m_start = start;
-        m_end = end;
+        mInit = BasicCursor(start);
+        mStart = start;
+        mEnd = end;
     }
 
     void update(BasicCursor addr)
     {
         m_empty = false;
-        if (m_init < addr) {
-            m_start = m_init.address;
-            m_end = addr.address;
+        if (mInit < addr) {
+            mStart = mInit.address;
+            mEnd = addr.address;
             if (!addr.pastEnd)
-                m_end -= 1;
-        } else if (addr < m_init) {
-            m_start = addr.address;
-            m_end = m_init.address;
-            if (!m_init.pastEnd)
-                m_end -= 1;
+                mEnd -= 1;
+        } else if (addr < mInit) {
+            mStart = addr.address;
+            mEnd = mInit.address;
+            if (!mInit.pastEnd)
+                mEnd -= 1;
         } else {
-            m_start = m_end = m_init.address;
+            mStart = mEnd = mInit.address;
             m_empty = true;
         }
     }
 
-    bool intersects(uint64_t start, uint64_t end)
+    bool intersects(uint64_t start, uint64_t end) const const
     {
-        return !m_empty && m_end >= start && m_start <= end;
+        return !m_empty && mEnd >= start && mStart <= end;
     }
 
-    bool contains(uint64_t pos) const { return !m_empty && m_start <= pos && pos <= m_end; }
+    bool contains(uint64_t pos) const { return !m_empty && mStart <= pos && pos <= mEnd; }
 
     uint64_t size() const
     {
         uint64_t size = 0;
         if (!isEmpty())
-            size = m_end - m_start + 1;
+            size = mEnd - mStart + 1;
         return size;
     }
 
     inline bool isEmpty() const { return m_empty; }
-    inline uint64_t start() const { return m_start; }
-    inline uint64_t end() const { return m_end; }
+    inline uint64_t start() const { return mStart; }
+    inline uint64_t end() const { return mEnd; }
 
 private:
-    BasicCursor m_init;
-    uint64_t m_start;
-    uint64_t m_end;
+    BasicCursor mInit;
+    uint64_t mStart;
+    uint64_t mEnd;
     bool m_empty;
 };
 
@@ -391,16 +383,16 @@ private slots:
     void onActionEditMarkTriggered(const QString &name);
 
     // Write command slots
-    void w_writeString();
-    void w_increaseDecrease();
-    void w_writeBytes();
-    void w_writeZeros();
-    void w_write64();
-    void w_writeRandom();
-    void w_duplFromOffset();
-    void w_writePascalString();
-    void w_writeWideString();
-    void w_writeCString();
+    void wWriteString();
+    void wIncreaseDecrease();
+    void wWriteBytes();
+    void wWriteZeros();
+    void wWrite64();
+    void wWriteRandom();
+    void wDuplFromOffset();
+    void wWritePascalString();
+    void wWriteWideString();
+    void wWriteCString();
 
     void onKeyboardEditTriggered(bool enabled);
     void onKeyboardEditChanged(bool enabled);
@@ -509,7 +501,7 @@ private:
     void typeOverwriteModeChar(QChar c);
     HexNavigationMode defaultNavigationMode();
     void refreshWordEditState();
-    bool parseWord(QString word, uint8_t *buf, size_t bufferSize) const;
+    bool parseWord(const QString &word, uint8_t *buf, size_t bufferSize) const;
     bool handleAsciiWrite(QKeyEvent *event);
     bool handleNumberWrite(QKeyEvent *event);
 

@@ -36,7 +36,7 @@ class TypesVariablesModel : public QAbstractTableModel
 
 public:
     enum Column { NAME = 0, ADDRESS, SCOPE, FUNCTION, COUNT };
-    static const int TypeVariableRole = Qt::UserRole;
+    static const int typeVariableRole = Qt::UserRole;
 
     explicit TypesVariablesModel(QObject *parent = nullptr);
 

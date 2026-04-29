@@ -29,10 +29,10 @@ signals:
     void xrefsTriggered();
 
 private:
-    void onActionCopyAddress();
+    void onActionCopyAddress() const;
     void onActionShowXrefs();
     void onActionAddComment();
-    void onActionToggleBreakpoint();
+    void onActionToggleBreakpoint() const;
 
     virtual void aboutToShowSlot();
 

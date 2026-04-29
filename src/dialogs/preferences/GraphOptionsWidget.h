@@ -25,14 +25,14 @@ public:
 private:
     std::unique_ptr<Ui::GraphOptionsWidget> ui;
 
-    void triggerOptionsChanged();
+    void triggerOptionsChanged() const;
 
 private slots:
     void updateOptionsFromVars();
 
-    void on_maxColsSpinBox_valueChanged(int value);
-    void on_minFontSizeSpinBox_valueChanged(int value);
-    void on_graphPreviewCheckBox_toggled(bool checked);
+    void onMaxColsSpinBoxValueChanged(int value);
+    void onMinFontSizeSpinBoxValueChanged(int value);
+    void onGraphPreviewCheckBoxToggled(bool checked);
 
     void checkTransparentStateChanged(int checked);
     void bitmapGraphScaleValueChanged(double value);

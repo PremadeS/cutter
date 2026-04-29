@@ -52,8 +52,8 @@ void AddressRangeScrollBar::refreshRange()
     beginOffset = RVA_MAX;
     endOffset = 0;
     if (!Core()->currentlyEmulating && Core()->currentlyDebugging) {
-        QString currentlyOpenFile = Core()->getConfig("file.path");
-        QList<MemoryMapDescription> memoryMaps = Core()->getMemoryMap();
+        const QString currentlyOpenFile = Core()->getConfig("file.path");
+        const QList<MemoryMapDescription> memoryMaps = Core()->getMemoryMap();
         for (const MemoryMapDescription &map : memoryMaps) {
             if (map.fileName == currentlyOpenFile) {
                 if (map.addrStart < beginOffset) {
@@ -66,19 +66,19 @@ void AddressRangeScrollBar::refreshRange()
         }
     } else {
         RzCoreLocked core(Core());
-        RzPVector *mapsPtr = rz_io_maps(core->io);
+        const RzPVector *mapsPtr = rz_io_maps(core->io);
         if (!mapsPtr) {
             emit hideScrollBar();
             return;
         }
-        CutterPVector<RzIOMap> maps { mapsPtr };
+        const CutterPVector<RzIOMap> maps { mapsPtr };
         for (const RzIOMap *const map : maps) {
             // Skip the ESIL memory stack region
             if (Core()->currentlyEmulating && std::strncmp(rz_str_get(map->name), "mem.", 4) == 0) {
                 continue;
             }
-            ut64 b = rz_itv_begin(map->itv);
-            ut64 e = rz_itv_end(map->itv);
+            const ut64 b = rz_itv_begin(map->itv);
+            const ut64 e = rz_itv_end(map->itv);
             if (b < beginOffset) {
                 beginOffset = b;
             }
@@ -133,8 +133,8 @@ void AddressRangeScrollBar::setPosition(RVA address)
     auto offset = address - beginOffset;
     if ((RVA_MAX / maximum()) < rangeSize()) {
         // Fallback formula for large files
-        uint64_t smallBox = rangeSize() / maximum();
-        uint64_t extra = rangeSize() % maximum();
+        const uint64_t smallBox = rangeSize() / maximum();
+        const uint64_t extra = rangeSize() % maximum();
         auto bigBoxRange = (smallBox + 1) * extra;
         if (offset < bigBoxRange) {
             scrollBarPos = offset / (smallBox + 1);
@@ -165,7 +165,7 @@ RVA AddressRangeScrollBar::address()
     return (value() * rangeSize()) / maximum() + beginOffset;
 }
 
-RVA AddressRangeScrollBar::clampAddressToRange(RVA address)
+RVA AddressRangeScrollBar::clampAddressToRange(RVA address) const
 {
     if (address > endOffset) {
         return endOffset;
@@ -176,7 +176,7 @@ RVA AddressRangeScrollBar::clampAddressToRange(RVA address)
     return address;
 }
 
-RVA AddressRangeScrollBar::rangeSize()
+RVA AddressRangeScrollBar::rangeSize() const
 {
     return endOffset - beginOffset;
 }
@@ -204,7 +204,7 @@ void AddressRangeScrollBar::wheelEvent(QWheelEvent *event)
     // Typical scroll speed is 1 line per 5 degrees
     const int lineDelta = 5 * 8;
     if (accumScrollWheelDeltaY >= lineDelta || accumScrollWheelDeltaY <= -lineDelta) {
-        int lineCount = accumScrollWheelDeltaY / lineDelta;
+        const int lineCount = accumScrollWheelDeltaY / lineDelta;
         accumScrollWheelDeltaY -= lineDelta * lineCount;
         if ((lineCount < 0 && value() == maximum()) || (lineCount > 0 && value() == minimum())) {
             return;

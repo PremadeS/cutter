@@ -19,7 +19,7 @@ public:
     void updateSearchBarPosition();
 
 protected:
-    SearchBarWidget *m_searchBar;
+    SearchBarWidget *mSearchBar;
 
     void resizeEvent(QResizeEvent *event) override;
     int searchHPadding() const override;

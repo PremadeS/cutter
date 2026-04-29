@@ -77,8 +77,8 @@ protected:
     AddressableItemContextMenu addressableItemContextMenu;
     QAction copyAction;
 
-    static const ut64 NO_BLOCK_SELECTED = RVA_INVALID;
-    ut64 selectedBlock = NO_BLOCK_SELECTED;
+    static const ut64 noBlockSelected = RVA_INVALID;
+    ut64 selectedBlock = noBlockSelected;
     bool enableBlockSelection = true;
     bool haveAddresses = false;
 

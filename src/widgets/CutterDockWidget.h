@@ -19,7 +19,7 @@ public:
     explicit CutterDockWidget(MainWindow *parent);
     ~CutterDockWidget() override;
     bool eventFilter(QObject *object, QEvent *event) override;
-    bool isVisibleToUser() { return isVisibleToUserCurrent; }
+    bool isVisibleToUser() const { return isVisibleToUserCurrent; }
 
     /**
      * @brief Set whether the Widget should be deleted after it is closed.

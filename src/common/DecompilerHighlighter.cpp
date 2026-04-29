@@ -46,19 +46,19 @@ void DecompilerHighlighter::highlightBlock(const QString &)
         return;
     }
     auto block = currentBlock();
-    size_t start = block.position();
-    size_t end = block.position() + block.length();
+    const size_t start = block.position();
+    const size_t end = block.position() + block.length();
 
     auto annotations = fromOwned(rz_annotated_code_annotations_range(code, start, end));
     void **iter;
     rz_pvector_foreach(annotations.get(), iter)
     {
-        RzCodeAnnotation *annotation = static_cast<RzCodeAnnotation *>(*iter);
+        const auto *annotation = static_cast<RzCodeAnnotation *>(*iter);
         if (annotation->type != RZ_CODE_ANNOTATION_TYPE_SYNTAX_HIGHLIGHT) {
             continue;
         }
         auto type = annotation->syntax_highlight.type;
-        if (size_t(type) >= HIGHLIGHT_COUNT) {
+        if (size_t(type) >= highlightCount) {
             continue;
         }
         auto annotationStart = annotation->start;

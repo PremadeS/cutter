@@ -23,7 +23,7 @@ public:
     ~EntrypointWidget();
 
 private slots:
-    void on_entrypointTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
+    void onEntrypointTreeWidgetItemDoubleClicked(QTreeWidgetItem *item, int column);
 
     void fillEntrypoint();
 

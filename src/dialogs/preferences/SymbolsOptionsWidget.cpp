@@ -54,10 +54,10 @@ void SymbolsOptionsWidget::reanalyze()
     Core()->setConfig("bin.dbginfo.debuginfod_urls", ui->debuginfodLineEdit->text());
     Core()->setConfig("pdb.server", ui->pdbServerEdit->text());
 
-    mainWindow->on_actionAnalyze_triggered();
-    QUrl pdbFile = QUrl::fromUserInput(ui->pdbLineEdit->text());
+    mainWindow->onActionAnalyzeTriggered();
+    const QUrl pdbFile = QUrl::fromUserInput(ui->pdbLineEdit->text());
     if (pdbFile.isValid() && pdbFile.isLocalFile()) {
-        QFileInfo pdbFileInfo(pdbFile.toLocalFile());
+        const QFileInfo pdbFileInfo(pdbFile.toLocalFile());
         if (pdbFileInfo.exists() && pdbFileInfo.isFile()) {
             Core()->loadPDB(ui->pdbLineEdit->text());
             mainWindow->refreshAll();

@@ -44,7 +44,7 @@ QPixmap SvgIconEngine::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     QPixmap pix = QPixmap::fromImage(img, Qt::NoFormatConversion);
     {
         QPainter painter(&pix);
-        QRect r(QPoint(0, 0), size);
+        const QRect r(QPoint(0, 0), size);
         this->paint(&painter, r, mode, state);
     }
     return pix;

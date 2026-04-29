@@ -53,7 +53,7 @@ private:
     bool parseCommandLineOptions();
 
 private:
-    bool m_FileAlreadyDropped;
+    bool mFileAlreadyDropped;
     CutterCore core;
     MainWindow *mainWindow;
     CutterCommandLineOptions clOptions;

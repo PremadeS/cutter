@@ -85,18 +85,18 @@ RegisterRefProxyModel::RegisterRefProxyModel(RegisterRefModel *sourceModel, QObj
 
 bool RegisterRefProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    RegisterRefDescription item = index.data(RegisterRefModel::RegisterRefDescriptionRole)
-                                          .value<RegisterRefDescription>();
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto item = index.data(RegisterRefModel::RegisterRefDescriptionRole)
+                              .value<RegisterRefDescription>();
     return qhelpers::filterStringContains(item.reg, this);
 }
 
 bool RegisterRefProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    RegisterRefDescription leftRegRef =
+    const auto leftRegRef =
             left.data(RegisterRefModel::RegisterRefDescriptionRole).value<RegisterRefDescription>();
-    RegisterRefDescription rightRegRef = right.data(RegisterRefModel::RegisterRefDescriptionRole)
-                                                 .value<RegisterRefDescription>();
+    const auto rightRegRef = right.data(RegisterRefModel::RegisterRefDescriptionRole)
+                                     .value<RegisterRefDescription>();
 
     switch (left.column()) {
     case RegisterRefModel::RegColumn:
@@ -116,12 +116,15 @@ bool RegisterRefProxyModel::lessThan(const QModelIndex &left, const QModelIndex 
 }
 
 RegisterRefsWidget::RegisterRefsWidget(MainWindow *main)
-    : CutterDockWidget(main), ui(new Ui::RegisterRefsWidget), addressableItemContextMenu(this, main)
+    : CutterDockWidget(main),
+      ui(new Ui::RegisterRefsWidget),
+      refreshDeferrer(createRefreshDeferrer([this]() { refreshRegisterRef(); })),
+      registerRefModel(new RegisterRefModel(this)),
+      registerRefProxyModel(new RegisterRefProxyModel(registerRefModel, this)),
+      addressableItemContextMenu(this, main)
 {
     ui->setupUi(this);
 
-    registerRefModel = new RegisterRefModel(this);
-    registerRefProxyModel = new RegisterRefProxyModel(registerRefModel, this);
     ui->registerRefTreeView->setModel(registerRefProxyModel);
     ui->registerRefTreeView->setAutoScroll(false);
     ui->registerRefTreeView->sortByColumn(RegisterRefModel::RegColumn, Qt::AscendingOrder);
@@ -136,13 +139,11 @@ RegisterRefsWidget::RegisterRefsWidget(MainWindow *main)
     connect(ui->registerRefTreeView->selectionModel(), &QItemSelectionModel::currentChanged, this,
             &RegisterRefsWidget::onCurrentChanged);
 
-    refreshDeferrer = createRefreshDeferrer([this]() { refreshRegisterRef(); });
-
     // Ctrl-F to show/hide the filter entry
-    QShortcut *search_shortcut = Shortcuts()->makeQShortcut("General.showFilter", this);
-    connect(search_shortcut, &QShortcut::activated, ui->quickFilterView,
+    QShortcut *searchShortcut = Shortcuts()->makeQShortcut("General.showFilter", this);
+    connect(searchShortcut, &QShortcut::activated, ui->quickFilterView,
             &QuickFilterView::showFilter);
-    search_shortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    searchShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     connect(ui->quickFilterView, &QuickFilterView::filterTextChanged, registerRefProxyModel,
             &QSortFilterProxyModel::setFilterWildcard);
@@ -180,7 +181,7 @@ void RegisterRefsWidget::refreshRegisterRef()
     for (const RegisterRef &reg : Core()->getRegisterRefs()) {
         RegisterRefDescription desc;
 
-        desc.value = RzAddressString(reg.value);
+        desc.value = rzAddressString(reg.value);
         desc.reg = reg.name;
         desc.refDesc = Core()->formatRefDesc(QSharedPointer<AddrRefs>::create(reg.ref));
 
@@ -202,10 +203,10 @@ void RegisterRefsWidget::setScrollMode()
     qhelpers::setVerticalScrollMode(ui->registerRefTreeView);
 }
 
-void RegisterRefsWidget::on_registerRefTreeView_doubleClicked(const QModelIndex &index)
+void RegisterRefsWidget::onRegisterRefTreeViewDoubleClicked(const QModelIndex &index)
 {
-    RegisterRefDescription item = index.data(RegisterRefModel::RegisterRefDescriptionRole)
-                                          .value<RegisterRefDescription>();
+    const auto item = index.data(RegisterRefModel::RegisterRefDescriptionRole)
+                              .value<RegisterRefDescription>();
     Core()->seekAndShow(item.value);
 }
 
@@ -230,18 +231,18 @@ void RegisterRefsWidget::onCurrentChanged(const QModelIndex &current, const QMod
                                .toString();
     }
 
-    RVA offset = Core()->math(offsetString);
+    RVA const offset = Core()->math(offsetString);
     addressableItemContextMenu.setTarget(offset);
 }
 
 void RegisterRefsWidget::copyClip(int column)
 {
-    int row = ui->registerRefTreeView->selectionModel()->currentIndex().row();
-    QString value = ui->registerRefTreeView->selectionModel()
-                            ->currentIndex()
-                            .sibling(row, column)
-                            .data()
-                            .toString();
+    const int row = ui->registerRefTreeView->selectionModel()->currentIndex().row();
+    const QString value = ui->registerRefTreeView->selectionModel()
+                                  ->currentIndex()
+                                  .sibling(row, column)
+                                  .data()
+                                  .toString();
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(value);
 }

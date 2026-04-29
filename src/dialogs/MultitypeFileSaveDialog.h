@@ -20,7 +20,7 @@ public:
     explicit MultitypeFileSaveDialog(QWidget *parent = nullptr, const QString &caption = QString(),
                                      const QString &directory = QString());
 
-    void setTypes(const QVector<TypeDescription> types, bool useDetection = true);
+    void setTypes(const QVector<TypeDescription> &types, bool useDetection = true);
     TypeDescription selectedType() const;
 
 protected:

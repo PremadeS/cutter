@@ -9,7 +9,7 @@ GlibcHeapInfoDialog::GlibcHeapInfoDialog(RVA offset, QString status, QWidget *pa
     ui->setupUi(this);
 
     // set window title
-    QString windowTitle = tr("Chunk @ ") + RzAddressString(offset);
+    QString windowTitle = tr("Chunk @ ") + rzAddressString(offset);
     if (!this->status.isEmpty()) {
         windowTitle += QString("(" + this->status + ")");
     }
@@ -34,13 +34,13 @@ void GlibcHeapInfoDialog::updateFields()
     }
 
     // Update the information in the widget
-    this->ui->baseEdit->setText(RzAddressString(offset));
-    this->ui->sizeEdit->setText(RzHexString(chunk->size));
-    this->ui->bkEdit->setText(RzAddressString(chunk->bk));
-    this->ui->fdEdit->setText(RzAddressString(chunk->fd));
-    this->ui->bknsEdit->setText(RzAddressString(chunk->bk_nextsize));
-    this->ui->fdnsEdit->setText(RzAddressString(chunk->fd_nextsize));
-    this->ui->prevSizeEdit->setText(RzHexString(chunk->prev_size));
+    this->ui->baseEdit->setText(rzAddressString(offset));
+    this->ui->sizeEdit->setText(rzHexString(chunk->size));
+    this->ui->bkEdit->setText(rzAddressString(chunk->bk));
+    this->ui->fdEdit->setText(rzAddressString(chunk->fd));
+    this->ui->bknsEdit->setText(rzAddressString(chunk->bk_nextsize));
+    this->ui->fdnsEdit->setText(rzAddressString(chunk->fd_nextsize));
+    this->ui->prevSizeEdit->setText(rzHexString(chunk->prev_size));
     if (chunk->is_mmapped) {
         this->ui->rbIM->setChecked(true);
     } else {
@@ -69,7 +69,7 @@ void GlibcHeapInfoDialog::saveChunkInfo()
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Save);
 
-    int ret = msgBox.exec();
+    const int ret = msgBox.exec();
     switch (ret) {
     case QMessageBox::Save:
         // Save was clicked

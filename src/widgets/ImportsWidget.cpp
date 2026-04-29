@@ -38,7 +38,7 @@ QVariant ImportsModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case ImportsModel::AddressColumn:
-            return RzAddressString(import.plt);
+            return rzAddressString(import.plt);
         case ImportsModel::TypeColumn:
             return import.type;
         case ImportsModel::SafetyColumn:
@@ -120,7 +120,7 @@ ImportsProxyModel::ImportsProxyModel(ImportsModel *sourceModel, QObject *parent)
 
 bool ImportsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
     auto import = index.data(ImportsModel::ImportDescriptionRole).value<ImportDescription>();
 
     return qhelpers::filterStringContains(import.name, this);
@@ -175,8 +175,8 @@ ImportsWidget::ImportsWidget(MainWindow *main)
     setModels(importsProxyModel);
     // Sort by library name by default to create a solid context per each group of imports
     ui->treeView->sortByColumn(ImportsModel::LibraryColumn, Qt::AscendingOrder);
-    QShortcut *toggle_shortcut = Shortcuts()->makeQShortcut("Imports.toggle", main);
-    connect(toggle_shortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Imports.toggle", main);
+    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
 
     connect(Core(), &CutterCore::codeRebased, this, &ImportsWidget::refreshImports);
     connect(Core(), &CutterCore::refreshAll, this, &ImportsWidget::refreshImports);

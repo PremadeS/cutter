@@ -6,7 +6,7 @@
  */
 void BasicInstructionHighlighter::clear(RVA address, RVA size)
 {
-    BasicInstructionIt it = biMap.lower_bound(address);
+    auto it = biMap.lower_bound(address);
     if (it != biMap.begin()) {
         --it;
     }
@@ -34,14 +34,14 @@ void BasicInstructionHighlighter::clear(RVA address, RVA size)
         }
     }
 
-    for (RVA addr : addrs) {
+    for (RVA const addr : addrs) {
         const BasicInstruction &bi = biMap[addr];
         if (std::max(bi.address, address) < std::min(bi.address + bi.size, address + size)) {
             biMap.erase(addr);
         }
     }
 
-    for (BasicInstruction newInstr : newInstructions) {
+    for (const BasicInstruction newInstr : newInstructions) {
         biMap[newInstr.address] = newInstr;
     }
 }
@@ -62,12 +62,12 @@ void BasicInstructionHighlighter::highlight(RVA address, RVA size, QColor color)
  */
 BasicInstruction *BasicInstructionHighlighter::getBasicInstruction(RVA address)
 {
-    BasicInstructionIt it = biMap.upper_bound(address);
+    auto it = biMap.upper_bound(address);
     if (it == biMap.begin()) {
         return nullptr;
     }
 
-    BasicInstruction *bi = &(--it)->second;
+    const BasicInstruction *bi = &(--it)->second;
     if (bi->address <= address && address < bi->address + bi->size) {
         return bi;
     }

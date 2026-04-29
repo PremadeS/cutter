@@ -23,7 +23,7 @@ public:
     int columnCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    RVA arena_addr = 0;
+    RVA arenaAddr = 0;
 
 private:
     QVector<Chunk> values;

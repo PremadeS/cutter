@@ -1,10 +1,9 @@
 
 #include "AsyncTask.h"
 
-AsyncTask::AsyncTask() : QObject(nullptr), QRunnable()
+AsyncTask::AsyncTask() : QObject(nullptr), QRunnable(), running(false)
 {
     setAutoDelete(false);
-    running = false;
 }
 
 AsyncTask::~AsyncTask()
@@ -20,7 +19,7 @@ void AsyncTask::wait()
 
 bool AsyncTask::wait(int timeout)
 {
-    bool r = runningMutex.tryLock(timeout);
+    const bool r = runningMutex.tryLock(timeout);
     if (r) {
         runningMutex.unlock();
     }
@@ -62,19 +61,19 @@ void AsyncTask::log(QString s)
     emit logChanged(logBuffer);
 }
 
-AsyncTaskManager::AsyncTaskManager(QObject *parent) : QObject(parent)
+AsyncTaskManager::AsyncTaskManager(QObject *parent)
+    : QObject(parent), threadPool(new QThreadPool(this))
 {
-    threadPool = new QThreadPool(this);
 }
 
 AsyncTaskManager::~AsyncTaskManager() {}
 
-void AsyncTaskManager::start(AsyncTask::Ptr task)
+void AsyncTaskManager::start(const AsyncTask::Ptr &task)
 {
     tasks.append(task);
     task->prepareRun();
 
-    QWeakPointer<AsyncTask> weakPtr = task;
+    const QWeakPointer<AsyncTask> weakPtr = task;
     connect(task.data(), &AsyncTask::finished, this, [this, weakPtr]() {
         tasks.removeOne(weakPtr);
         emit tasksChanged();
