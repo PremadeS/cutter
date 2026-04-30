@@ -73,12 +73,12 @@ void AsyncTaskManager::start(const AsyncTask::Ptr &task)
     tasks.append(task);
     task->prepareRun();
 
-    const QWeakPointer<AsyncTask> weakPtr = task;
-    connect(task.data(), &AsyncTask::finished, this, [this, weakPtr]() {
+    const std::weak_ptr<AsyncTask> weakPtr = task;
+    connect(task.get(), &AsyncTask::finished, this, [this, weakPtr]() {
         tasks.removeOne(weakPtr);
         emit tasksChanged();
     });
-    threadPool->start(task.data());
+    threadPool->start(task.get());
     emit tasksChanged();
 }
 

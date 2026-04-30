@@ -13,6 +13,8 @@
 
 class AsyncTaskManager;
 
+// Same CUTTER_EXPORT check
+
 class CUTTER_EXPORT AsyncTask : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -20,7 +22,7 @@ class CUTTER_EXPORT AsyncTask : public QObject, public QRunnable
     friend class AsyncTaskManager;
 
 public:
-    using Ptr = QSharedPointer<AsyncTask>;
+    using Ptr = std::shared_ptr<AsyncTask>;
 
     AsyncTask();
     ~AsyncTask();

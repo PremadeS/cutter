@@ -8,6 +8,10 @@
 
 #include "core/CutterCommon.h"
 
+// Check are these CUTTER_EXPORT required for plugins?
+
+// TODO: an abstract item model which has an address field for each index
+// is there more to it?
 class CUTTER_EXPORT AddressableItemModelI
 {
 public:
@@ -17,14 +21,11 @@ public:
      * @param index item intex
      * @return Item name or empty QString if item doesn't have short descriptive name.
      */
-    virtual QString name(const QModelIndex &index) const
-    {
-        Q_UNUSED(index)
-        return QString();
-    }
+    virtual QString name(const QModelIndex & /*index*/) const { return QString(); }
     virtual QAbstractItemModel *asItemModel() = 0;
 };
 
+// TODO: write docs for these classes
 template<class ParentModel = QAbstractItemModel>
 class CUTTER_EXPORT AddressableItemModel : public ParentModel, public AddressableItemModelI
 {
@@ -37,6 +38,7 @@ public:
     QAbstractItemModel *asItemModel() { return this; }
 };
 
+// TODO: docs for Addressable filter proxy model
 class CUTTER_EXPORT AddressableFilterProxyModel : public AddressableItemModel<QSortFilterProxyModel>
 {
     using ParentClass = AddressableItemModel<QSortFilterProxyModel>;

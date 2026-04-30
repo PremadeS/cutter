@@ -23,7 +23,7 @@ public:
 
     void interrupt() override;
 
-    bool getOpenFileFailed() const const { return openFailed; }
+    bool getOpenFileFailed() const { return openFailed; }
 
 protected:
     void runTask() override;
