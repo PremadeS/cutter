@@ -465,6 +465,7 @@ jobs:
         source cutter-deps/env.sh
         ln -sf "$PWD/cutter-deps/pyside/share/PySide6/typesystems" "$PWD/cutter-deps/pyside/typesystems"
         ln -sf "$PWD/cutter-deps/pyside/share/PySide6/glue" "$PWD/cutter-deps/pyside/glue"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/doc" "$PWD/cutter-deps/pyside/doc"
         set -euo pipefail
         export PATH=/usr/local/opt/llvm/bin:$PATH
         mkdir build
