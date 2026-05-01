@@ -507,7 +507,8 @@ jobs:
       run: |
         pip install ninja
         scripts/fetch_deps.sh
-        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/typesystems" "$PWD/cutter-deps/pyside/typesystems"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/glue" "$PWD/cutter-deps/pyside/glue"
         choco install winflexbison3
     - name: windows cmake
       if: contains(matrix.os, 'windows')
