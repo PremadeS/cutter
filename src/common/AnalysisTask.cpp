@@ -32,13 +32,14 @@ void AnalysisTask::runTask()
     int perms = RZ_PERM_RX;
     if (options.writeEnabled) {
         perms |= RZ_PERM_W;
-        emit Core() -> ioModeChanged();
+        emit Core()->ioModeChanged();
     }
 
     // Demangle (must be before file Core()->loadFile)
     Core()->setConfig("bin.demangle", options.demangle);
 
     // Do not reload the file if already loaded
+    // TODO: Move to CutterCore
     RzCoreLocked core(Core());
     const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs) && options.filename.length()) {
@@ -64,6 +65,7 @@ void AnalysisTask::runTask()
     }
 
     if (!options.os.isNull()) {
+        // TODO:  Core()->setConfig()
         RzCoreLocked core(Core());
         rz_config_set(core->config, "asm.os", options.os.toUtf8().constData());
     }
@@ -90,6 +92,7 @@ void AnalysisTask::runTask()
         Core()->setEndianness(options.endian == InitialOptions::Endianness::Big);
     }
 
+    // Move to CutterCore
     rz_flag_space_set(core->flags, "*");
 
     if (!options.script.isNull()) {

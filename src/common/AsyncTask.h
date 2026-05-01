@@ -13,8 +13,8 @@
 
 class AsyncTaskManager;
 
-// Same CUTTER_EXPORT check
-
+// TODO: Same CUTTER_EXPORT check
+// TODO: docs
 class CUTTER_EXPORT AsyncTask : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -61,6 +61,7 @@ private:
     void prepareRun();
 };
 
+// TODO: docs
 class AsyncTaskManager : public QObject
 {
     Q_OBJECT

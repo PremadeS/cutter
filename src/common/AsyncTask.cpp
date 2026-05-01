@@ -66,7 +66,10 @@ AsyncTaskManager::AsyncTaskManager(QObject *parent)
 {
 }
 
-AsyncTaskManager::~AsyncTaskManager() {}
+AsyncTaskManager::~AsyncTaskManager()
+{
+    // use waitForDone?
+}
 
 void AsyncTaskManager::start(const AsyncTask::Ptr &task)
 {

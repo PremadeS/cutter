@@ -22,7 +22,7 @@ public:
     ~AsyncTaskDialog();
 
     void setInterruptOnClose(bool v) { interruptOnClose = v; }
-    bool getInterruptOnClose() const const { return interruptOnClose; }
+    bool getInterruptOnClose() const { return interruptOnClose; }
 
 public slots:
     void reject() override;

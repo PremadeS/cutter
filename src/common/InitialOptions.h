@@ -15,6 +15,7 @@ struct CommandDescription
     QString translatedDescription() const;
 };
 
+// TODO: docs
 struct InitialOptions
 {
     enum class Endianness { Auto, Little, Big };

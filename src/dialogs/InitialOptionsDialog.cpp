@@ -422,6 +422,8 @@ void InitialOptionsDialog::setupAndStartAnalysis()
     const AsyncTask::Ptr analysisTaskPtr(analysisTask);
 
     auto *taskDialog = new AsyncTaskDialog(analysisTaskPtr);
+
+    // TODO: check why it gets stuck when loading large binaries and doesn't close on cross button
     taskDialog->setInterruptOnClose(true);
     taskDialog->setAttribute(Qt::WA_DeleteOnClose);
     taskDialog->show();
