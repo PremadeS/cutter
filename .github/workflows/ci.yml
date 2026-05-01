@@ -189,7 +189,6 @@ jobs:
         then
           CUTTER_QT="${{ matrix.qt-major }}" scripts/fetch_deps.sh
           . cutter-deps/env.sh
-          ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
         fi
         set -e #TODO: move to top once cutter-deps doesn't fail
         if [ "${{ matrix.cc-override }}" != "default" ]
@@ -197,7 +196,8 @@ jobs:
           export CC="${{matrix.cc-override}}"
           export CXX="${{matrix.cxx-override}}"
         fi
-
+        
+        PYSIDE6_DEPS="$PWD/cutter-deps/pyside/share/PySide6"
         mkdir build
         cd build
         if [ "${{ matrix.system-deps }}" = "false" ]
@@ -227,6 +227,8 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=appdir/usr \
             -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
             -DCUTTER_QT=${{ matrix.qt-major }} \
+            -DPYSIDE_TYPESYSTEMS="$PYSIDE6_DEPS/typesystems" \
+            -DPYSIDE_GLUE="$PYSIDE6_DEPS/glue"
             ..
         else
           cmake \
