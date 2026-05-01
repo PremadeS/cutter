@@ -463,7 +463,8 @@ jobs:
         export MACOSX_DEPLOYMENT_TARGET=10.15
         scripts/fetch_deps.sh
         source cutter-deps/env.sh
-        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/typesystems" "$PWD/cutter-deps/pyside/typesystems"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/glue" "$PWD/cutter-deps/pyside/glue"
         set -euo pipefail
         export PATH=/usr/local/opt/llvm/bin:$PATH
         mkdir build
