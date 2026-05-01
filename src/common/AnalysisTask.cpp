@@ -19,6 +19,7 @@ void AnalysisTask::interrupt()
 QString AnalysisTask::getTitle()
 {
     // If no file is loaded we consider it's Initial Analysis
+    // TODO: Move to CutterCore
     RzCoreLocked core(Core());
     const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs)) {
@@ -65,8 +66,6 @@ void AnalysisTask::runTask()
     }
 
     if (!options.os.isNull()) {
-        // TODO:  Core()->setConfig()
-        RzCoreLocked core(Core());
         rz_config_set(core->config, "asm.os", options.os.toUtf8().constData());
     }
 
@@ -76,6 +75,7 @@ void AnalysisTask::runTask()
     }
 
     if (Core()->getConfigb("bin.dbginfo.debuginfod")) {
+        log(tr("Applying Dwarf..."));
         Core()->applyDwarf();
     }
 
