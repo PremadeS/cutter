@@ -228,7 +228,7 @@ jobs:
             -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
             -DCUTTER_QT=${{ matrix.qt-major }} \
             -DPYSIDE_TYPESYSTEMS="$PYSIDE6_DEPS/typesystems" \
-            -DPYSIDE_GLUE="$PYSIDE6_DEPS/glue"
+            -DPYSIDE_GLUE="$PYSIDE6_DEPS/glue" \
             ..
         else
           cmake \
