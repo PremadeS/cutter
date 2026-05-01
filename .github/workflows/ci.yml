@@ -196,8 +196,7 @@ jobs:
           export CC="${{matrix.cc-override}}"
           export CXX="${{matrix.cxx-override}}"
         fi
-        
-        PYSIDE6_DEPS="$PWD/cutter-deps/pyside/share/PySide6"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"*
         mkdir build
         cd build
         if [ "${{ matrix.system-deps }}" = "false" ]
@@ -227,7 +226,6 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=appdir/usr \
             -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
             -DCUTTER_QT=${{ matrix.qt-major }} \
-            -DCMAKE_PREFIX_PATH="$PYSIDE6_DEPS" \
             ..
         else
           cmake \
@@ -510,6 +508,7 @@ jobs:
         scripts/fetch_deps.sh
         ln -sf "$PWD/cutter-deps/pyside/share/PySide6/typesystems" "$PWD/cutter-deps/pyside/typesystems"
         ln -sf "$PWD/cutter-deps/pyside/share/PySide6/glue" "$PWD/cutter-deps/pyside/glue"
+        ln -sf "$PWD/cutter-deps/pyside/share/PySide6/doc" "$PWD/cutter-deps/pyside/doc"
         choco install winflexbison3
     - name: windows cmake
       if: contains(matrix.os, 'windows')
