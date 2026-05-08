@@ -31,6 +31,36 @@ void AsyncTask::interrupt()
     interrupted = true;
 }
 
+bool AsyncTask::isInterrupted() const
+{
+    return interrupted;
+}
+
+bool AsyncTask::isRunning() const
+{
+    return running;
+}
+
+const QString &AsyncTask::getLog()
+{
+    return logBuffer;
+}
+
+const QElapsedTimer &AsyncTask::getTimer()
+{
+    return timer;
+}
+
+qint64 AsyncTask::getElapsedTime()
+{
+    return timer.isValid() ? timer.elapsed() : 0;
+}
+
+QString AsyncTask::getTitle()
+{
+    return QString();
+}
+
 void AsyncTask::prepareRun()
 {
     interrupted = false;
@@ -46,6 +76,7 @@ void AsyncTask::run()
 
     logBuffer.clear();
     emit logChanged(logBuffer);
+
     runTask();
 
     running = false;
@@ -68,7 +99,7 @@ AsyncTaskManager::AsyncTaskManager(QObject *parent)
 
 AsyncTaskManager::~AsyncTaskManager()
 {
-    // use waitForDone?
+    // TODO: use waitForDone?
 }
 
 void AsyncTaskManager::start(const AsyncTask::Ptr &task)

@@ -10,8 +10,10 @@
 
 // Check are these CUTTER_EXPORT required for plugins?
 
-// TODO: an abstract item model which has an address field for each index
-// is there more to it?
+
+/**
+ * @brief An interface for QAbstractItemModel containing an address field for each index
+ */
 class CUTTER_EXPORT AddressableItemModelI
 {
 public:
@@ -25,7 +27,9 @@ public:
     virtual QAbstractItemModel *asItemModel() = 0;
 };
 
-// TODO: write docs for these classes
+/**
+ * @brief A wrapper class for QAbstractItemModel containing an address field for each index
+ */
 template<class ParentModel = QAbstractItemModel>
 class CUTTER_EXPORT AddressableItemModel : public ParentModel, public AddressableItemModelI
 {
@@ -38,7 +42,10 @@ public:
     QAbstractItemModel *asItemModel() { return this; }
 };
 
-// TODO: docs for Addressable filter proxy model
+/**
+ * @brief A wrapper class for QSortFilterProxyModel with @ref AddressableItemModelI as source
+ * model
+ */
 class CUTTER_EXPORT AddressableFilterProxyModel : public AddressableItemModel<QSortFilterProxyModel>
 {
     using ParentClass = AddressableItemModel<QSortFilterProxyModel>;

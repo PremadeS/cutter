@@ -16,16 +16,26 @@ void AnalysisTask::interrupt()
     rz_cons_singleton()->context->breaked = true;
 }
 
+bool AnalysisTask::getOpenFileFailed() const
+{
+    return openFailed;
+}
+
 QString AnalysisTask::getTitle()
 {
-    // If no file is loaded we consider it's Initial Analysis
     // TODO: Move to CutterCore
+    // If no file is loaded we consider it's Initial Analysis
     RzCoreLocked core(Core());
     const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs)) {
         return tr("Initial Analysis");
     }
     return tr("Analyzing Program");
+}
+
+void AnalysisTask::setOptions(const InitialOptions &options)
+{
+    this->options = options;
 }
 
 void AnalysisTask::runTask()
@@ -40,7 +50,6 @@ void AnalysisTask::runTask()
     Core()->setConfig("bin.demangle", options.demangle);
 
     // Do not reload the file if already loaded
-    // TODO: Move to CutterCore
     RzCoreLocked core(Core());
     const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs) && options.filename.length()) {

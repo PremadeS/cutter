@@ -13,8 +13,12 @@
 
 class AsyncTaskManager;
 
-// TODO: Same CUTTER_EXPORT check
-// TODO: docs
+/**
+ * @brief Wrapper class for QRunnable that provides timing and logging, intended to be used
+ * with @ref AsyncTaskManager
+ *
+ * Logs and timings are used to show progress in "TODO: THE NAME" dialog
+ */
 class CUTTER_EXPORT AsyncTask : public QObject, public QRunnable
 {
     Q_OBJECT
@@ -32,14 +36,14 @@ public:
     void wait();
     bool wait(int timeout);
     virtual void interrupt();
-    bool isInterrupted() const { return interrupted; }
-    bool isRunning() const { return running; }
+    bool isInterrupted() const;
+    bool isRunning() const;
 
-    const QString &getLog() { return logBuffer; }
-    const QElapsedTimer &getTimer() { return timer; }
-    qint64 getElapsedTime() { return timer.isValid() ? timer.elapsed() : 0; }
+    const QString &getLog();
+    const QElapsedTimer &getTimer();
+    qint64 getElapsedTime();
 
-    virtual QString getTitle() { return QString(); }
+    virtual QString getTitle();
 
 protected:
     virtual void runTask() = 0;
@@ -61,7 +65,10 @@ private:
     void prepareRun();
 };
 
-// TODO: docs
+/**
+ * @brief Wrapper class for QThreadPool, used for starting @ref AsyncTask objects on separate
+ * threads
+ */
 class AsyncTaskManager : public QObject
 {
     Q_OBJECT
