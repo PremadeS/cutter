@@ -361,6 +361,8 @@ public:
     bool tryFile(const QString &path, bool rw);
     bool mapFile(const QString &path, RVA mapaddr);
     void loadScript(const QString &scriptname);
+    // TODO: docs?
+    bool isFileLoaded();
 
     /* Seek functions */
     void seek(const QString &thing);

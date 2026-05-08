@@ -11,8 +11,8 @@
 #define ThemeWorker() (ColorThemeWorker::instance())
 
 /**
- * @brief The ColorThemeWorker class is a singletone that provides API for working with
- * color themes.
+ * @brief The ColorThemeWorker class is a singleton that provides API for working with
+ * color themes
  */
 class ColorThemeWorker : public QObject
 {

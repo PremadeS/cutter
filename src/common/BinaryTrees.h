@@ -1,8 +1,9 @@
 #ifndef BINARY_TREES_H
 #define BINARY_TREES_H
 
-/** \file BinaryTrees.h
- * \brief Utilities to simplify creation of specialized augmented binary trees.
+/**
+ * @file BinaryTrees.h
+ * @brief Utilities to simplify creation of specialized augmented binary trees.
  */
 
 #include <vector>
@@ -19,8 +20,8 @@
  * Child classes are expected to implement updateFromChildren(NodeType&parent, NodeType& left,
  * NodeType& right) method which calculates inner node values from children nodes.
  *
- * \tparam NodeTypeT type of each tree element
- * \tparam FinalType final child class used for curiously recurring template pattern
+ * @tparam NodeTypeT type of each tree element
+ * @tparam FinalType final child class used for curiously recurring template pattern
  */
 template<class NodeTypeT, class FinalType>
 class SegmentTreeBase
@@ -86,7 +87,7 @@ protected:
 };
 
 /**
- * \brief Tree for point modification and range queries.
+ * @brief Tree for point modification and range queries.
  */
 template<class NodeType, class FinalType>
 class PointSetSegmentTree : public SegmentTreeBase<NodeType, FinalType>
@@ -221,17 +222,17 @@ public:
 };
 
 /**
- * \brief Tree that supports lazily applying an operation to range.
+ * @brief Tree that supports lazily applying an operation to range.
  *
  * Each inner node has a promise value describing an operation that needs to be applied to
  * corresponding subtree.
  *
  * Child classes are expected to implement to pushDown(size_t nodePosition) method. Which applies
- * the applies the operation stored in \a promise for nodePosition to the direct children nodes.
+ * the applies the operation stored in @a promise for nodePosition to the direct children nodes.
  *
- * \tparam NodeType type of tree nodes
- * \tparam PromiseType type describing operation that needs to be applied to subtree
- * \tparam FinalType child class type for CRTP. See SegmentTreeBase
+ * @tparam NodeType type of tree nodes
+ * @tparam PromiseType type describing operation that needs to be applied to subtree
+ * @tparam FinalType child class type for CRTP. See SegmentTreeBase
  */
 template<class NodeType, class PromiseType, class FinalType>
 class LazySegmentTreeBase : public SegmentTreeBase<NodeType, FinalType>
@@ -467,7 +468,7 @@ public:
     }
 
     /**
-     * @brief Update min and max values in the range [\a left, \a right) with number \a value.
+     * @brief Update min and max values in the range [@a left, @a right) with number @a value.
      * @param left inclusive range left side
      * @param right exclusive right side of range
      * @param value number to be used for updating minimum and maximum

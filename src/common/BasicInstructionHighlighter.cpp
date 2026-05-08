@@ -1,9 +1,6 @@
 #include "BasicInstructionHighlighter.h"
 #include <vector>
 
-/**
- * @brief Clear the basic instruction highlighting
- */
 void BasicInstructionHighlighter::clear(RVA address, RVA size)
 {
     auto it = biMap.lower_bound(address);
@@ -34,7 +31,7 @@ void BasicInstructionHighlighter::clear(RVA address, RVA size)
         }
     }
 
-    for (RVA const addr : addrs) {
+    for (const RVA addr : addrs) {
         const BasicInstruction &bi = biMap[addr];
         if (std::max(bi.address, address) < std::min(bi.address + bi.size, address + size)) {
             biMap.erase(addr);
@@ -46,21 +43,14 @@ void BasicInstructionHighlighter::clear(RVA address, RVA size)
     }
 }
 
-/**
- * @brief Highlight the basic instruction at address
- */
 void BasicInstructionHighlighter::highlight(RVA address, RVA size, QColor color)
 {
     clear(address, size);
     biMap[address] = { address, size, color };
 }
 
-/**
- * @brief Return a highlighted basic instruction
- *
- * If there is nothing to highlight at specified address, returns nullptr
- */
-BasicInstruction *BasicInstructionHighlighter::getBasicInstruction(RVA address)
+const BasicInstructionHighlighter::BasicInstruction *
+BasicInstructionHighlighter::getBasicInstruction(RVA address) const
 {
     auto it = biMap.upper_bound(address);
     if (it == biMap.begin()) {

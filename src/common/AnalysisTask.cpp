@@ -23,11 +23,7 @@ bool AnalysisTask::getOpenFileFailed() const
 
 QString AnalysisTask::getTitle()
 {
-    // TODO: Move to CutterCore
-    // If no file is loaded we consider it's Initial Analysis
-    RzCoreLocked core(Core());
-    const RzList *descs = rz_id_storage_list(core->io->files);
-    if (rz_list_empty(descs)) {
+    if (Core()->isFileLoaded()) {
         return tr("Initial Analysis");
     }
     return tr("Analyzing Program");
@@ -46,11 +42,13 @@ void AnalysisTask::runTask()
         emit Core()->ioModeChanged();
     }
 
-    // Demangle (must be before file Core()->loadFile)
-    Core()->setConfig("bin.demangle", options.demangle);
+    // Need to lock Core here so avoid the use of Core()-> functions as much as possible
+    RzCoreLocked core(Core());
+
+    // recursive mutex Demangle (must be before file Core()->loadFile)
+    rz_config_set_b(core->config, "bin.demangle", options.demangle);
 
     // Do not reload the file if already loaded
-    RzCoreLocked core(Core());
     const RzList *descs = rz_id_storage_list(core->io->files);
     if (rz_list_empty(descs) && options.filename.length()) {
         log(tr("Loading the file..."));
@@ -80,12 +78,12 @@ void AnalysisTask::runTask()
 
     if (!options.pdbFile.isNull()) {
         log(tr("Loading PDB file..."));
-        Core()->loadPDB(options.pdbFile);
+        rz_core_bin_pdb_load(core, options.pdbFile.toUtf8().constData());
     }
 
     if (Core()->getConfigb("bin.dbginfo.debuginfod")) {
         log(tr("Applying Dwarf..."));
-        Core()->applyDwarf();
+        rz_core_bin_apply_dwarf(core, rz_bin_cur(core->bin));
     }
 
     if (isInterrupted()) {
@@ -98,7 +96,8 @@ void AnalysisTask::runTask()
     }
 
     if (options.endian != InitialOptions::Endianness::Auto) {
-        Core()->setEndianness(options.endian == InitialOptions::Endianness::Big);
+        rz_config_set_b(core->config, "cfg.bigendian",
+                        options.endian == InitialOptions::Endianness::Big);
     }
 
     // Move to CutterCore

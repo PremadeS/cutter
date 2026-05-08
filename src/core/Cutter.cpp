@@ -4920,6 +4920,13 @@ void CutterCore::loadScript(const QString &scriptname)
     triggerRefreshAll();
 }
 
+bool CutterCore::isFileLoaded()
+{
+    CORE_LOCK();
+    const RzList *descs = rz_id_storage_list(core->io->files);
+    return rz_list_empty(descs);
+}
+
 QString CutterCore::getRizinVersionReadable(const char *program)
 {
     return fromOwnedCharPtr(rz_version_str(core->sys_path, program));
