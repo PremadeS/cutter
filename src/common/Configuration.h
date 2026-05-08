@@ -41,6 +41,9 @@ struct RecentFileEntry
     }
 };
 
+/**
+ * @brief Singleton class to save and load all of the configuration values
+ */
 class CUTTER_EXPORT Configuration : public QObject
 {
     Q_OBJECT
@@ -232,11 +235,15 @@ public:
     void setPreviewValue(bool checked);
     bool getPreviewValue() const;
 
+    // Tooltip
+
     /**
      * @brief Show tooltips for known values of registers, variables, and memory when debugging
      */
     void setShowVarTooltips(bool enabled);
     bool getShowVarTooltips() const;
+
+    // Recent Items
 
     /**
      * @brief Recently opened binaries, as shown in NewFileDialog.
@@ -274,7 +281,7 @@ public:
      */
     void removeRecentRegProfile(const QString &profile);
 
-    // Functions Widget Layout
+    // Interface
 
     /**
      * @brief Get the layout of the Functions widget.

@@ -11,6 +11,8 @@ class InitialOptionsDialog;
 
 /**
  * @brief Background task for initial binary analysis and file loading
+ *
+ * @ingroup AsyncTask
  */
 class AnalysisTask : public AsyncTask
 {
@@ -20,7 +22,7 @@ public:
     explicit AnalysisTask();
     ~AnalysisTask();
 
-    QString getTitle() override;
+    QString getTitle() const override;
 
     void setOptions(const InitialOptions &options);
 

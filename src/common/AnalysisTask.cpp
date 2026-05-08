@@ -21,7 +21,7 @@ bool AnalysisTask::getOpenFileFailed() const
     return openFailed;
 }
 
-QString AnalysisTask::getTitle()
+QString AnalysisTask::getTitle() const
 {
     if (Core()->isFileLoaded()) {
         return tr("Initial Analysis");

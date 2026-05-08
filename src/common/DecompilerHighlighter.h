@@ -9,7 +9,7 @@
 #include <array>
 
 /**
- * \brief SyntaxHighlighter based on annotations from decompiled code.
+ * @brief SyntaxHighlighter based on annotations from decompiled code.
  * Can be only used in combination with DecompilerWidget.
  */
 class CUTTER_EXPORT DecompilerHighlighter : public QSyntaxHighlighter

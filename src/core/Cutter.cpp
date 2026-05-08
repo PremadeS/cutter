@@ -5022,6 +5022,12 @@ bool CutterCore::setColor(const QString &key, const QString &color)
     return true;
 }
 
+QString CutterCore::getColorNameFromOp(ut32 opType)
+{
+    CORE_LOCK();
+    return rz_print_color_op_type(core->print, opType);
+}
+
 QString CutterCore::ansiEscapeToHtml(const QString &text)
 {
     int len;

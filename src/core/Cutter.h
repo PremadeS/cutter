@@ -430,6 +430,7 @@ public:
     QHash<QString, QColor> getTheme();
     QStringList getThemeKeys();
     bool setColor(const QString &key, const QString &color);
+    QString getColorNameFromOp(ut32 opType);
     QStringList getConfigVariableSpaces(const QString &key = "");
 
     /* Assembly\Hexdump related methods */

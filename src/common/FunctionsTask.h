@@ -5,12 +5,17 @@
 #include "common/AsyncTask.h"
 #include "core/Cutter.h"
 
+/**
+ * @brief Async task for fetching functions through rizin
+ *
+ * @ingroup AsyncTask
+ */
 class FunctionsTask : public AsyncTask
 {
     Q_OBJECT
 
 public:
-    QString getTitle() override { return tr("Fetching Functions"); }
+    QString getTitle() const override { return tr("Fetching Functions"); }
 
 signals:
     void fetchFinished(const QList<FunctionDescription> &strings);

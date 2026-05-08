@@ -32,6 +32,9 @@ class QMouseEvent;
 #    define CUTTER_QT_SKIP_EMPTY_PARTS Qt::SkipEmptyParts
 #endif
 
+/**
+ * @brief Helpers for QT related items
+ */
 namespace qhelpers {
 CUTTER_EXPORT QString formatBytecount(const uint64_t bytecount);
 CUTTER_EXPORT void adjustColumns(QTreeView *tv, int columnCount, int padding);

@@ -19,13 +19,15 @@ public:
 
 /**
  * @brief Helpers for translating UI elements (words, lines) into disassembly data
+ *
+ * @ingroup Disassmebly
  */
 namespace DisassemblyHelper {
 
 /**
  * @brief Identifies what kind of item was clicked or hovered
  */
-enum class TargetType {
+enum class TargetType : ut8 {
     VariableXRef,
     VariableValue,
     TypeName,
@@ -60,7 +62,7 @@ struct TargetAction
 /**
  * @brief Filter to control how deep the search goes
  */
-enum TargetFilter {
+enum TargetFilter : ut8 {
     XRefComments = 1 << 0,
     VariableXrefs = 1 << 1,
     VariableValues = 1 << 2,

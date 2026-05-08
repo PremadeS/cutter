@@ -1,4 +1,3 @@
-
 #include "CommandTask.h"
 #include "TempConfig.h"
 

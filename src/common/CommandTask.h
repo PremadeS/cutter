@@ -5,6 +5,11 @@
 #include "common/AsyncTask.h"
 #include "core/Cutter.h"
 
+/**
+ * TODO: add brief after seeing what it does  I'm pretty used this is used by the console widget
+ *
+ * @ingroup AsyncTask
+ */
 class CUTTER_EXPORT CommandTask : public AsyncTask
 {
     Q_OBJECT
@@ -19,7 +24,7 @@ public:
 
     CommandTask(const QString &cmd, ColorMode colorMode = ColorMode::DISABLED);
 
-    QString getTitle() override { return tr("Running Command"); }
+    QString getTitle() const override { return tr("Running Command"); }
 
 signals:
     void finished(const QString &result);

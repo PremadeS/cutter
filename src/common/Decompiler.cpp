@@ -1,4 +1,3 @@
-
 #include "Decompiler.h"
 #include "Cutter.h"
 

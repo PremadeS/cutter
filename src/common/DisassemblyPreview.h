@@ -8,9 +8,9 @@
 class QWidget;
 
 /**
- * @brief Namespace to define relevant functions
+ * @brief Namespace containing functions for showing tooltips in disassembly
  *
- * @ingroup DisassemblyPreview
+ * @ingroup Disassembly
  */
 namespace DisassemblyPreview {
 /*!

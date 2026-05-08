@@ -12,11 +12,19 @@
 
 class AsyncTaskManager;
 
+// TODO: check if it works without defgroup ting
 /**
+ * @defgroup AsyncTask Async Task
+ */
+
+/**
+ *
  * @brief Wrapper class for QRunnable that provides timing and logging, intended to be used
  * with @ref AsyncTaskManager
  *
  * Logs and timings are used to show progress in "TODO: THE NAME" dialog
+ *
+ * @ingroup AsyncTask
  */
 class CUTTER_EXPORT AsyncTask : public QObject, public QRunnable
 {
@@ -42,7 +50,7 @@ public:
     const QElapsedTimer &getTimer();
     qint64 getElapsedTime();
 
-    virtual QString getTitle();
+    virtual QString getTitle() const;
 
 protected:
     virtual void runTask() = 0;
@@ -67,6 +75,8 @@ private:
 /**
  * @brief Wrapper class for QThreadPool, used for starting @ref AsyncTask objects on separate
  * threads
+ *
+ * @ingroup AsyncTask
  */
 class AsyncTaskManager : public QObject
 {

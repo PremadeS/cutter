@@ -19,7 +19,7 @@ TypesInteractionDialog::TypesInteractionDialog(QWidget *parent, bool readOnly)
     const QFont font = Config()->getBaseFont();
     ui->plainTextEdit->setFont(font);
     ui->plainTextEdit->setPlainText("");
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     ui->plainTextEdit->setTabStopDistance(4 * QFontMetrics(font).horizontalAdvance(' '));
 #endif
 

@@ -40,20 +40,16 @@ public:
 
     /**
      * @brief Copies @a srcThemeName with name @a copyThemeName.
-     * @param srcThemeName
-     * Name of theme to be copied.
-     * @param copyThemeName
-     * Name of copy.
+     * @param srcThemeName Name of theme to be copied.
+     * @param copyThemeName Name of copy.
      * @return "" on success or error message.
      */
     QString copy(const QString &srcThemeName, const QString &copyThemeName) const;
 
     /**
      * @brief Saves @a theme as @a themeName theme.
-     * @param theme
-     * Theme to be saved.
-     * @param themeName
-     * Name of theme to save.
+     * @param theme Theme to be saved.
+     * @param themeName Name of theme to save.
      * @return "" on success or error message.
      */
     QString save(const Theme &theme, const QString &themeName) const;
@@ -61,8 +57,7 @@ public:
     /**
      * @brief Returns whether or not @a themeName theme is custom (created by user or imported) or
      * not.
-     * @param themeName
-     * Name of theme to check.
+     * @param themeName Name of theme to check.
      */
     bool isCustomTheme(const QString &themeName) const;
 
@@ -74,15 +69,13 @@ public:
 
     /**
      * @brief Returns theme as QHash where key is option name and value is QColor.
-     * @param themeName
-     * Theme to get.
+     * @param themeName Theme to get.
      */
     Theme getTheme(const QString &themeName) const;
 
     /**
      * @brief Deletes theme named @a themeName.
-     * @param themeName
-     * Name of theme to be removed.
+     * @param themeName Name of theme to be removed.
      * @return "" on success or error message.
      */
     QString deleteTheme(const QString &themeName) const;
@@ -101,11 +94,9 @@ public:
 
     /**
      * @brief Returns whether or not file at @a filePath is a color theme.
-     * @param filePath
-     * Path to file to check.
-     * @param ok
-     * Output parameter. Indicates wheter or not check was successful.
-     * @return true if given file is color theme and ok == true, otherwise returns false.
+     * @param filePath Path to file to check.
+     * @param ok Output parameter. Indicates wheter or not check was successful.
+     * @return true if given file is a valid color theme and ok == true, otherwise returns false.
      */
     bool isFileTheme(const QString &filePath, bool *ok) const;
 
@@ -114,8 +105,8 @@ public:
      */
     QStringList customThemes() const;
 
-    QString getStandardThemesPath() { return standardRzThemesLocationPath; }
-    QString getCustomThemesPath() { return customRzThemesLocationPath; }
+    QString getStandardThemesPath() const { return standardRzThemesLocationPath; }
+    QString getCustomThemesPath() const { return customRzThemesLocationPath; }
 
     const QStringList &getRizinSpecificOptions();
 

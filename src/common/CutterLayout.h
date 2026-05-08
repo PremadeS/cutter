@@ -6,9 +6,12 @@
 #include <QString>
 #include <QVariantMap>
 
-namespace Cutter {
+/**
+ * @brief Utilities related to cutter layout
+ */
+namespace Layout {
 
-struct CutterLayout
+struct Config
 {
     QByteArray geometry;
     QByteArray state;

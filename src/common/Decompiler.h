@@ -9,7 +9,7 @@
 #include <QObject>
 
 /**
- * Implements a decompiler that can be registered using CutterCore::registerDecompiler()
+ * @brief Implements a decompiler that can be registered using CutterCore::registerDecompiler()
  */
 class CUTTER_EXPORT Decompiler : public QObject
 {
