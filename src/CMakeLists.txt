@@ -1,6 +1,7 @@
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/CutterConfig.h.in"
                "${CMAKE_CURRENT_BINARY_DIR}/CutterConfig.h")
 
+# sort theseeeeeeeeeeeeeeeeeeee
 set(SOURCES
     Main.cpp
     core/Cutter.cpp
@@ -172,6 +173,7 @@ set(SOURCES
     widgets/ItemCountLineEdit.cpp
     widgets/AbstractFilterView.cpp
     dialogs/preferences/InterfaceOptionsWidget.cpp
+    common/Json.cpp
 )
 set(HEADER_FILES
     core/Cutter.h

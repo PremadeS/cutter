@@ -4,6 +4,11 @@
 #include "core/Cutter.h"
 #include <qwidget.h>
 
+/**
+ * @brief Manages switching between Read-Only, Cache, and Write modes
+ *
+ * Handles the logic required when changing how Cutter interacts with the underlying file on disk
+ */
 class IOModesController : public QObject
 
 {
@@ -13,7 +18,6 @@ public:
     enum class Mode { READ_ONLY, CACHE, WRITE };
     bool prepareForWriting();
     bool canWrite();
-    bool allChangesComitted();
     Mode getIOMode();
     void setIOMode(Mode mode);
 

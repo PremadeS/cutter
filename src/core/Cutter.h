@@ -34,7 +34,6 @@ class RizinTaskDialog;
 
 #include <rz_heap_glibc.h>
 #include <rz_project.h>
-#include <memory>
 
 #define Core() (CutterCore::instance())
 
@@ -813,7 +812,7 @@ public:
 
     RzCoreLocked lock();
     CUTTER_DEPRECATED("Use CutterCore::lock instead")
-    RzCoreLocked core();
+    RzCoreLocked rzcore();
 
     static QString ansiEscapeToHtml(const QString &text);
     BasicBlockHighlighter *getBBHighlighter();
@@ -853,6 +852,12 @@ public:
      * @return true if write mode is enabled, otherwise return false.
      */
     bool isWriteModeEnabled();
+
+    /**
+     * @brief Check if there are modified blocks in the IO cache that haven't been saved
+     * @return true if the cache contains "dirty" (unwritten) data, false otherwise.
+     */
+    bool hasUncommitedChanges();
 
     /**
      * @brief   Returns the textual version of global or specific graph.

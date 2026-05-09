@@ -9,6 +9,10 @@
 
 class QTextDocument;
 
+/**
+ * @brief Wrapper of QSyntaxHighlighter for Markdown
+ * TODO: make a base class for these, why is everyone defining the same HighlightingRule struct?????
+ */
 class MdHighlighter : public QSyntaxHighlighter
 {
     Q_OBJECT

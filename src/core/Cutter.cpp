@@ -5143,6 +5143,18 @@ bool CutterCore::isWriteModeEnabled()
     return false;
 }
 
+bool CutterCore::hasUncommitedChanges()
+{
+
+    CORE_LOCK();
+    for (auto c : CutterPVector<RzIOCache>(&core->io->cache)) {
+        if (!c->written) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
  * @brief get a compact disassembly preview for tooltips
  * @param address - the address from which to print the disassembly

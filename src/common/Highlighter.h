@@ -11,6 +11,10 @@
 class QTextDocument;
 class MainWindow;
 
+/**
+ * @brief Wrapper for QSyntaxHighlighter for highlighting assembly text
+ * TODO: this being used anywhere????????
+ */
 class Highlighter : public QSyntaxHighlighter
 {
     Q_OBJECT
@@ -22,8 +26,6 @@ protected:
     void highlightBlock(const QString &text);
 
 private:
-    CutterCore *core;
-
     struct HighlightingRule
     {
         QRegularExpression pattern;

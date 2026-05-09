@@ -3,13 +3,13 @@
 
 #include <QtGui>
 
-Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent), core(Core())
+Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
     HighlightingRule rule;
 
     regFormat.setForeground(QColor(236, 100, 75));
 
-    for (const QString &pattern : this->core->regs) {
+    for (const QString &pattern : Core()->regs) {
         rule.pattern.setPattern("\\b" + pattern + "\\b");
         rule.pattern.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
         rule.format = regFormat;

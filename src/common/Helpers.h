@@ -33,12 +33,18 @@ class QMouseEvent;
 #endif
 
 /**
- * @brief Helpers for QT related items
+ * @brief Helpers for QT related objects
  */
 namespace qhelpers {
 CUTTER_EXPORT QString formatBytecount(const uint64_t bytecount);
 CUTTER_EXPORT void adjustColumns(QTreeView *tv, int columnCount, int padding);
 CUTTER_EXPORT void adjustColumns(QTreeWidget *tw, int padding);
+
+/**
+ * @brief Select first item of a QAbstractItemView if not empty
+ * @param itemView
+ * @return true if first item was selected
+ */
 CUTTER_EXPORT bool selectFirstItem(QAbstractItemView *itemView);
 CUTTER_EXPORT QTreeWidgetItem *appendRow(QTreeWidget *tw, const QString &str,
                                          const QString &str2 = QString(),
@@ -69,6 +75,14 @@ CUTTER_EXPORT int getMaxFullyDisplayedLines(QPlainTextEdit *plainTextEdit);
 CUTTER_EXPORT QByteArray applyColorToSvg(const QByteArray &data, QColor color);
 CUTTER_EXPORT QByteArray applyColorToSvg(const QString &filename, QColor color);
 
+/**
+ * @brief Finds the theme-specific icon path and calls `setter` functor providing a pointer of an
+ * object which has to be used and loaded icon
+ * @param supportedIconsNames list of <object ptr, icon name>
+ * @param setter functor which has to be called
+ *   for example we need to set an action icon, the functor can be just [](void* o, const QIcon
+ * &icon) { static_cast<QAction*>(o)->setIcon(icon); }
+ */
 CUTTER_EXPORT void setThemeIcons(const QList<QPair<void *, QString>> &supportedIconsNames,
                                  const std::function<void(void *, const QIcon &)> &setter);
 

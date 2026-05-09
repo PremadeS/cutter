@@ -15,15 +15,9 @@
 #include <QMenu>
 #include <QComboBox>
 
-static QAbstractItemView::ScrollMode scrollMode()
-{
-    const bool useScrollperpixel = true;
-    return useScrollperpixel ? QAbstractItemView::ScrollPerPixel : QAbstractItemView::ScrollPerItem;
-}
-
 namespace qhelpers {
 
-QString formatBytecount(const uint64_t bytecount)
+QString formatBytecount(const ut64 bytecount)
 {
     if (bytecount == 0) {
         return "0";
@@ -76,11 +70,6 @@ QTreeWidgetItem *appendRow(QTreeWidget *tw, const QString &str, const QString &s
     return tempItem;
 }
 
-/**
- * @brief Select first item of a QAbstractItemView if not empty
- * @param itemView
- * @return true if first item was selected
- */
 bool selectFirstItem(QAbstractItemView *itemView)
 {
     if (!itemView) {
@@ -99,7 +88,7 @@ bool selectFirstItem(QAbstractItemView *itemView)
 
 void setVerticalScrollMode(QAbstractItemView *tw)
 {
-    tw->setVerticalScrollMode(scrollMode());
+    tw->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
 void setCheckedWithoutSignals(QAbstractButton *button, bool checked)
@@ -203,19 +192,13 @@ QByteArray applyColorToSvg(const QByteArray &data, QColor color)
 QByteArray applyColorToSvg(const QString &filename, QColor color)
 {
     QFile file(filename);
-    file.open(QIODevice::ReadOnly);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return QByteArray();
+    }
 
     return applyColorToSvg(file.readAll(), color);
 }
 
-/**
- * @brief finds the theme-specific icon path and calls `setter` functor providing a pointer of an
- * object which has to be used and loaded icon
- * @param supportedIconsNames list of <object ptr, icon name>
- * @param setter functor which has to be called
- *   for example we need to set an action icon, the functor can be just [](void* o, const QIcon
- * &icon) { static_cast<QAction*>(o)->setIcon(icon); }
- */
 void setThemeIcons(const QList<QPair<void *, QString>> &supportedIconsNames,
                    const std::function<void(void *, const QIcon &)> &setter)
 {

@@ -1,8 +1,9 @@
-
 #ifndef PROGRESSINDICATOR_H
 #define PROGRESSINDICATOR_H
 
 #include <QWidget>
+
+// TODO: MOVE TO widgets
 
 class ProgressIndicator : public QWidget
 {

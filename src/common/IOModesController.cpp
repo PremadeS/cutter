@@ -81,21 +81,10 @@ bool IOModesController::prepareForWriting()
     return true;
 }
 
-bool IOModesController::allChangesComitted()
-{
-    RzCoreLocked core(Core());
-    for (auto c : CutterPVector<RzIOCache>(&core->io->cache)) {
-        if (!c->written) {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool IOModesController::askCommitUnsavedChanges()
 {
     // Check if there are uncommitted changes
-    if (!allChangesComitted()) {
+    if (!Core()->hasUncommitedChanges()) {
         const QMessageBox::StandardButton ret = QMessageBox::question(
                 parentWindow, QObject::tr("Uncommitted changes"),
                 QObject::tr("It seems that you have changes or patches that are not committed to "
