@@ -1,4 +1,3 @@
-
 #ifndef ASYNCTASKDIALOG_H
 #define ASYNCTASKDIALOG_H
 
@@ -13,6 +12,9 @@ namespace Ui {
 class AsyncTaskDialog;
 }
 
+/**
+ * @brief Dialog for displaying progress, logs, and elapsed time @ref AsyncTask
+ */
 class AsyncTaskDialog : public QDialog
 {
     Q_OBJECT

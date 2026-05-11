@@ -2,6 +2,7 @@
 #include "ui_LayoutManager.h"
 #include <QIntValidator>
 #include <QInputDialog>
+#include <QMessageBox>
 
 using namespace Cutter;
 

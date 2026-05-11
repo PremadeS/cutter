@@ -11,6 +11,11 @@ namespace Ui {
 class MarkDialog;
 }
 
+/**
+ * @brief Dialog for managing marks
+ *
+ * Marks are similar to bookmarking a specific address or range of addresses
+ */
 class MarkDialog : public QDialog
 {
     Q_OBJECT

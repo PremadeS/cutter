@@ -9,6 +9,9 @@ namespace Ui {
 class FlagDialog;
 }
 
+/**
+ * @brief Dialog for modifying flags at a specific offset
+ */
 class FlagDialog : public QDialog
 {
     Q_OBJECT
@@ -25,7 +28,7 @@ private:
     std::unique_ptr<Ui::FlagDialog> ui;
     RVA offset;
     QString flagName;
-    ut64 flagOffset;
+    RVA flagOffset;
 };
 
 #endif // FLAGDIALOG_H

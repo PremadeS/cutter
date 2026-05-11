@@ -9,6 +9,9 @@ namespace Ui {
 class GlobalVariableDialog;
 }
 
+/**
+ * @brief Dialog for defining, modifying, or deleting global variables at a specific address
+ */
 class GlobalVariableDialog : public QDialog
 {
     Q_OBJECT

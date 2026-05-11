@@ -8,6 +8,9 @@ namespace Ui {
 class EditFunctionDialog;
 }
 
+/**
+ * @brief Dialog for editing functions
+ */
 class EditFunctionDialog : public QDialog
 {
     Q_OBJECT

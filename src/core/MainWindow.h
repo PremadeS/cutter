@@ -7,7 +7,7 @@
 #include "common/Configuration.h"
 #include "common/InitialOptions.h"
 #include "common/IOModesController.h"
-// #include "common/CutterLayout.h"
+#include "common/CutterLayout.h"
 #include "MemoryDockWidget.h"
 
 #include <memory>

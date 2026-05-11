@@ -3,13 +3,18 @@
 
 #include <QDialog>
 #include <QAbstractTableModel>
+#include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 namespace Ui {
 class RizinPluginsDialog;
 }
 
+/**
+ * @brief Dialog for listing and describing all loaded Rizin plugins, categorized by their subsystem
+ * (Bin, IO, Core, Asm)
+ */
 class RizinPluginsDialog : public QDialog
 {
     Q_OBJECT
@@ -19,7 +24,7 @@ public:
     ~RizinPluginsDialog();
 
 private:
-    Ui::RizinPluginsDialog *ui;
+    std::unique_ptr<Ui::RizinPluginsDialog> ui;
 };
 
 #endif // PLUGINSDIALOG_H

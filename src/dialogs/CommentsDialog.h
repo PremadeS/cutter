@@ -10,6 +10,9 @@ namespace Ui {
 class CommentsDialog;
 }
 
+/**
+ * @brief Dialog for adding or editing code comments at a specific address
+ */
 class CommentsDialog : public QDialog
 {
     Q_OBJECT

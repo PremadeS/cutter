@@ -5,11 +5,13 @@
 #include <QListWidgetItem>
 #include <memory>
 
+#include "CutterCommon.h" // IWYU pragma: keep
+
 namespace Ui {
 class RegisterProfileDialog;
 }
 
-enum class RegisterProfile {
+enum class RegisterProfile : ut8 {
     Default,
     Rizin,
     GDB,

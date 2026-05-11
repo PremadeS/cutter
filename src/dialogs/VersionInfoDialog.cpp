@@ -12,7 +12,7 @@
 #include <QClipboard>
 
 VersionInfoDialog::VersionInfoDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::VersionInfoDialog), core(Core())
+    : QDialog(parent), ui(new Ui::VersionInfoDialog)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -118,7 +118,7 @@ void VersionInfoDialog::onCopyVersionInfoButtonClicked()
     // Iterate & Copy leftTreeWidget items
     QTreeWidgetItemIterator itl(ui->leftTreeWidget);
 
-    int keyColumnIndex = 0, valueColumnIndex = 1;
+    const int keyColumnIndex = 0, valueColumnIndex = 1;
 
     while (*itl) {
         const QString row =
@@ -354,9 +354,9 @@ void VersionInfoDialog::fillVersionInfo()
                 ut8 *valUtf16 = sdb_decode(sdb_const_get(sdb, "value"), &lenval);
                 item = new QTreeWidgetItem();
                 item->setText(KeyColumn,
-                              QString::fromUtf16(reinterpret_cast<const ushort *>(keyUtf16)));
+                              QString::fromUtf16(reinterpret_cast<const char16_t *>(keyUtf16)));
                 item->setText(ValueColumn,
-                              QString::fromUtf16(reinterpret_cast<const ushort *>(valUtf16)));
+                              QString::fromUtf16(reinterpret_cast<const char16_t *>(valUtf16)));
                 ui->rightTreeWidget->addTopLevelItem(item);
                 free(keyUtf16);
                 free(valUtf16);

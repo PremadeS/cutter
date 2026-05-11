@@ -19,7 +19,4 @@ void ArenaInfoDialog::updateContents()
     ui->lineEditMaxMem->setText(rzAddressString(arena.maxSystemMem));
 }
 
-ArenaInfoDialog::~ArenaInfoDialog()
-{
-    delete ui;
-}
+ArenaInfoDialog::~ArenaInfoDialog() {}

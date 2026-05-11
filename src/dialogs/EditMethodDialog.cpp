@@ -1,6 +1,8 @@
 #include "EditMethodDialog.h"
 #include "ui_EditMethodDialog.h"
 
+#include "Cutter.h"
+#include "RizinCpp.h"
 #include <QComboBox>
 
 EditMethodDialog::EditMethodDialog(bool classFixed, QWidget *parent)
@@ -23,12 +25,19 @@ EditMethodDialog::EditMethodDialog(bool classFixed, QWidget *parent)
     updateVirtualUI();
     validateInput();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(ui->virtualCheckBox, &QCheckBox::checkStateChanged, this,
+            &EditMethodDialog::updateVirtualUI);
+    connect(ui->autoRenameCheckBox, &QCheckBox::checkStateChanged, this,
+            &EditMethodDialog::updateAutoRenameEnabled);
+#else
     connect(ui->virtualCheckBox, &QCheckBox::stateChanged, this,
             &EditMethodDialog::updateVirtualUI);
-    connect(ui->nameEdit, &QLineEdit::textChanged, this, &EditMethodDialog::validateInput);
-    connect(ui->realNameEdit, &QLineEdit::textChanged, this, &EditMethodDialog::updateName);
     connect(ui->autoRenameCheckBox, &QCheckBox::stateChanged, this,
             &EditMethodDialog::updateAutoRenameEnabled);
+#endif
+    connect(ui->nameEdit, &QLineEdit::textChanged, this, &EditMethodDialog::validateInput);
+    connect(ui->realNameEdit, &QLineEdit::textChanged, this, &EditMethodDialog::updateName);
 }
 
 EditMethodDialog::~EditMethodDialog() {}

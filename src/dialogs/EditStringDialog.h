@@ -4,16 +4,21 @@
 #include <memory>
 #include <QDialog>
 
+#include "CutterDescriptions.h" // IWYU pragma: keep
+
 namespace Ui {
 class EditStringDialog;
 }
 
+/**
+ * @brief Dialog for editing strings
+ */
 class EditStringDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    enum class StringType { Auto, ASCII_LATIN1, UTF8 };
+    enum class StringType : ut8 { Auto, ASCII_LATIN1, UTF8 };
     explicit EditStringDialog(QWidget *parent = nullptr);
     ~EditStringDialog();
 

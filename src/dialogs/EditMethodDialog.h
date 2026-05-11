@@ -2,15 +2,20 @@
 #define EDITMETHODDIALOG_H
 
 #include <QDialog>
+#include <QLabel>
 #include <memory>
 
-#include "core/Cutter.h"
+#include "CutterDescriptions.h"
 
 namespace Ui {
 class EditMethodDialog;
 }
 
 class QComboBox;
+
+/**
+ * @brief Dialog for creating and editing class methods
+ */
 class EditMethodDialog : public QDialog
 {
     Q_OBJECT

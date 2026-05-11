@@ -5,13 +5,15 @@
 #include <QSortFilterProxyModel>
 #include <QAbstractTableModel>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
+
+#include "CutterCommon.h"
 
 namespace Ui {
 class TypesVariablesDialog;
 }
 
-enum VariableScope { ALL = 0, GLOBAL, LOCAL };
+enum VariableScope : ut8 { ALL = 0, GLOBAL, LOCAL };
 /**
  * @brief Get a string representation of the given Scope.
  * @param scope The scope to convert.
@@ -35,7 +37,7 @@ class TypesVariablesModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    enum Column { NAME = 0, ADDRESS, SCOPE, FUNCTION, COUNT };
+    enum Column : ut8 { NAME = 0, ADDRESS, SCOPE, FUNCTION, COUNT };
     static const int typeVariableRole = Qt::UserRole;
 
     explicit TypesVariablesModel(QObject *parent = nullptr);

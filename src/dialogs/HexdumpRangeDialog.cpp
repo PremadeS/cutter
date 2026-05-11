@@ -27,22 +27,19 @@ HexdumpRangeDialog::HexdumpRangeDialog(QWidget *parent, bool allowEmpty)
             &HexdumpRangeDialog::onRadioButtonClicked);
 }
 
-HexdumpRangeDialog::~HexdumpRangeDialog()
-{
-    delete ui;
-}
+HexdumpRangeDialog::~HexdumpRangeDialog() {}
 
 bool HexdumpRangeDialog::empty() const
 {
     return emptyRange;
 }
 
-unsigned long long HexdumpRangeDialog::getStartAddress() const
+RVA HexdumpRangeDialog::getStartAddress() const
 {
     return startAddress;
 }
 
-unsigned long long HexdumpRangeDialog::getEndAddress() const
+RVA HexdumpRangeDialog::getEndAddress() const
 {
     return endAddress;
 }
@@ -62,7 +59,7 @@ void HexdumpRangeDialog::setStartAddress(ut64 start)
     ui->startAddressLineEdit->setText(QString("0x%1").arg(start, 0, 16));
 }
 
-void HexdumpRangeDialog::open(ut64 start)
+void HexdumpRangeDialog::openAt(ut64 start)
 {
     setStartAddress(start);
     setModal(false);

@@ -2,12 +2,17 @@
 #define HEAPINFODIALOG_H
 
 #include <QDialog>
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
+#include "CutterDescriptions.h" // IWYU pragma: keep
+#include <memory>
 
 namespace Ui {
 class GlibcHeapInfoDialog;
 }
 
+/**
+ * @brief Dialog for inspecting and editing the metadata of a single glibc heap chunk
+ */
 class GlibcHeapInfoDialog : public QDialog
 {
     Q_OBJECT
@@ -20,7 +25,7 @@ private slots:
     void saveChunkInfo();
 
 private:
-    Ui::GlibcHeapInfoDialog *ui;
+    std::unique_ptr<Ui::GlibcHeapInfoDialog> ui;
     void updateFields();
     RVA offset;
     QString status;

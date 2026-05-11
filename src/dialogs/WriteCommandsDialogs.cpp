@@ -4,7 +4,7 @@
 #include "ui_DuplicateFromOffsetDialog.h"
 #include "Cutter.h"
 
-#include <cmath>
+// #include <cmath>
 #include <QFontDatabase>
 
 Base64EnDecodedWriteDialog::Base64EnDecodedWriteDialog(QWidget *parent)
@@ -78,7 +78,6 @@ size_t DuplicateFromOffsetDialog::getNBytes() const
 void DuplicateFromOffsetDialog::refresh()
 {
     const QSignalBlocker sb(Core());
-    const RzCoreLocked core(Core());
     auto buf = Core()->ioRead(getOffset(), (int)getNBytes());
 
     // Add space every two characters for word wrap in hex sequence

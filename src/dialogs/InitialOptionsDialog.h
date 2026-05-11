@@ -42,7 +42,6 @@ private:
     std::unique_ptr<Ui::InitialOptionsDialog> ui;
 
     MainWindow *main;
-    CutterCore *core;
 
     QString analysisDescription(int level);
     QString shellcode;

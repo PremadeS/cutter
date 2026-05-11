@@ -15,6 +15,7 @@ ProfileDirectivesDialog::ProfileDirectivesDialog(QWidget *parent)
 
     model->setHorizontalHeaderLabels({ tr("Key"), tr("Description") });
 
+    // TODO: there should be a rizin function to query this
     addDirective("arg[0-511]", tr("Set value for argument N passed to the program"));
     addDirective("aslr", tr("Enable or disable ASLR"));
     addDirective("bits", tr("Set 32 or 64 bit (if the architecture supports it)"));

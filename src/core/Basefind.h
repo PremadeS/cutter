@@ -1,10 +1,10 @@
-#ifndef BASEFIND_CORE_H
-#define BASEFIND_CORE_H
+#ifndef BASEFIND_H
+#define BASEFIND_H
 
 #include <QThread>
 #include <QMutex>
 
-#include "Cutter.h"
+// #include "Cutter.h"
 #include "CutterDescriptions.h"
 #include <rz_basefind.h>
 
@@ -47,4 +47,4 @@ private:
     static bool threadCallback(const RzBaseFindThreadInfo *info, void *user);
 };
 
-#endif // BASEFIND_CORE_H
+#endif // BASEFIND_H

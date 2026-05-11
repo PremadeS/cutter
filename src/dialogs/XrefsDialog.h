@@ -5,9 +5,10 @@
 #include <QTreeWidgetItem>
 #include <memory>
 #include "common/Highlighter.h"
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "common/AddressableItemModel.h"
-#include "QuickFilterView.h"
+// #include "QuickFilterView.h"
+#include "CutterCommon.h" // IWYU pragma: keep
 
 class XrefModel : public AddressableItemModel<QAbstractListModel>
 {
@@ -17,7 +18,7 @@ private:
     bool to;
 
 public:
-    enum Columns { OFFSET = 0, TYPE, CODE, COMMENT, COUNT };
+    enum Columns : ut8 { OFFSET = 0, TYPE, CODE, COMMENT, COUNT };
     static const int flagDescriptionRole = Qt::UserRole;
 
     XrefModel(QObject *parent = nullptr);
@@ -58,6 +59,10 @@ namespace Ui {
 class XrefsDialog;
 }
 
+/**
+ * @brief A dialog that displays X-refs to and from an address or variable, providing a live
+ * disassembly preview
+ */
 class XrefsDialog : public QDialog
 {
     Q_OBJECT

@@ -3,13 +3,17 @@
 
 #include <QDialog>
 #include <memory>
+#include "CutterDescriptions.h" // IWYU pragma: keep
 
 namespace Ui {
 class EditInstructionDialog;
 }
 
-enum InstructionEditMode { EDIT_NONE, EDIT_BYTES, EDIT_TEXT };
+enum InstructionEditMode : ut8 { EDIT_NONE, EDIT_BYTES, EDIT_TEXT };
 
+/**
+ * @brief Dialog for editing instructions
+ */
 class EditInstructionDialog : public QDialog
 {
     Q_OBJECT

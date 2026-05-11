@@ -3,12 +3,16 @@
 
 #include <QDialog>
 #include <memory>
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 namespace Ui {
 class MapFileDialog;
 }
 
+/**
+ * @brief Dialog for mapping an external file into the current IO session at a specific memory
+ * address
+ */
 class MapFileDialog : public QDialog
 {
     Q_OBJECT

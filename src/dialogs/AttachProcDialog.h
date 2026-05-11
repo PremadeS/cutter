@@ -68,6 +68,9 @@ private:
     QString processPathToFilename(const QString &path) const;
 };
 
+/**
+ * @brief Dialog for selecting and attaching to a running process for debugging
+ */
 class AttachProcDialog : public QDialog
 {
     Q_OBJECT

@@ -14,10 +14,7 @@ SetToDataDialog::SetToDataDialog(RVA startAddr, QWidget *parent)
     updateEndAddress();
 }
 
-SetToDataDialog::~SetToDataDialog()
-{
-    delete ui;
-}
+SetToDataDialog::~SetToDataDialog() {}
 
 int SetToDataDialog::getItemSize()
 {

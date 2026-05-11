@@ -3,6 +3,8 @@
 #include "ui_GlibcHeapBinsDialog.h"
 #include "GlibcHeapInfoDialog.h"
 
+#include "Cutter.h"
+
 GlibcHeapBinsDialog::GlibcHeapBinsDialog(RVA m_state, MainWindow *main, QWidget *parent)
     : QDialog(parent),
       ui(new Ui::GlibcHeapBinsDialog),
@@ -29,10 +31,7 @@ GlibcHeapBinsDialog::GlibcHeapBinsDialog(RVA m_state, MainWindow *main, QWidget 
     this->setWindowTitle(tr("Bins info for arena @ ") + rzAddressString(m_state));
 }
 
-GlibcHeapBinsDialog::~GlibcHeapBinsDialog()
-{
-    delete ui;
-}
+GlibcHeapBinsDialog::~GlibcHeapBinsDialog() {}
 
 void GlibcHeapBinsDialog::onCurrentChanged(const QModelIndex &current, const QModelIndex &prev)
 {
@@ -69,7 +68,7 @@ void GlibcHeapBinsDialog::showHeapInfoDialog()
     const QString str = ui->lineEdit->text();
     if (!str.isEmpty()) {
         // summon glibcHeapInfoDialog box with the offset entered
-        RVA const offset = Core()->math(str);
+        const RVA offset = Core()->math(str);
         if (!offset) {
             ui->lineEdit->setText(QString());
             return;

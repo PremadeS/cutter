@@ -1,13 +1,16 @@
 #ifndef EDITVARIABLESDIALOG_H
 #define EDITVARIABLESDIALOG_H
 
-#include "core/Cutter.h"
 #include <QDialog>
+#include "CutterDescriptions.h"
 
 namespace Ui {
 class EditVariablesDialog;
 }
 
+/**
+ * @brief Dialog for editing local variables within a specific function
+ */
 class EditVariablesDialog : public QDialog
 {
     Q_OBJECT
@@ -23,7 +26,7 @@ private slots:
     void updateFields();
 
 private:
-    Ui::EditVariablesDialog *ui;
+    std::unique_ptr<Ui::EditVariablesDialog> ui;
     RVA functionAddress;
     QList<VariableDescription> variables;
 

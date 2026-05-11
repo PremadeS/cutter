@@ -3,9 +3,10 @@
 
 #include <QDialog>
 #include <QAbstractTableModel>
-#include "core/Cutter.h"
-#include <MainWindow.h>
+// #include "core/Cutter.h"
+// #include <MainWindow.h>
 #include <HeapBinsGraphView.h>
+#include <memory>
 
 namespace Ui {
 class GlibcHeapBinsDialog;
@@ -16,7 +17,7 @@ class BinsModel : public QAbstractTableModel
     Q_OBJECT
 public:
     explicit BinsModel(RVA arena_addr, QObject *parent = nullptr);
-    enum Column {
+    enum Column : ut8 {
         TypeColumn = 0,
         BinNumColumn,
         FdColumn,
@@ -39,6 +40,9 @@ public:
 private:
 };
 
+/**
+ * @brief Dialog for inspecting glibc heap bins
+ */
 class GlibcHeapBinsDialog : public QDialog
 {
     Q_OBJECT
@@ -53,7 +57,7 @@ private slots:
     void showHeapInfoDialog();
 
 private:
-    Ui::GlibcHeapBinsDialog *ui;
+    std::unique_ptr<Ui::GlibcHeapBinsDialog> ui;
     RVA mState;
     BinsModel *binsModel {};
     HeapBinsGraphView *graphView;

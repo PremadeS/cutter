@@ -3,7 +3,7 @@
 
 #include "core/Cutter.h"
 #include "common/Helpers.h"
-#include "plugins/PluginManager.h"
+// #include "plugins/PluginManager.h"
 
 RizinPluginsDialog::RizinPluginsDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::RizinPluginsDialog)
@@ -57,7 +57,4 @@ RizinPluginsDialog::RizinPluginsDialog(QWidget *parent)
     qhelpers::adjustColumns(ui->rzAsmTreeWidget, 0);
 }
 
-RizinPluginsDialog::~RizinPluginsDialog()
-{
-    delete ui;
-}
+RizinPluginsDialog::~RizinPluginsDialog() {}

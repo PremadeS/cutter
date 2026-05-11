@@ -6,7 +6,9 @@
 #include <QMessageBox>
 #include <QSettings>
 
-enum DbgBackendType { GDB = 0, WINDBG = 1 };
+#include "CutterCommon.h" // IWYU pragma: keep
+
+enum DbgBackendType : ut8 { GDB = 0, WINDBG = 1 };
 
 struct DbgBackend
 {
@@ -77,7 +79,7 @@ bool RemoteDebugDialog::validatePath()
     QMessageBox msgBox(this);
 
     const QString path = getIpOrPath();
-    if (!QFileInfo(path).exists()) {
+    if (!QFileInfo::exists(path)) {
         msgBox.setText(tr("Path does not exist"));
         msgBox.exec();
         return false;

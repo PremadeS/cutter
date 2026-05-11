@@ -56,15 +56,6 @@ void AsyncTaskDialog::updateProgressTimer()
 
 void AsyncTaskDialog::closeEvent(QCloseEvent *event)
 {
-    // TODO:
-    // This makes it impossible to close the dialog on long task?
-    //
-    // Two ways to handle this:
-    // 1- We should do a cleanup if close is pressed and return to the initial satte as if an
-    // analysis never happened
-    //
-    // 2- Keep it in the state it is after the partial analysis maybe the
-    // user didnt want to analyze everything
     if (interruptOnClose) {
         task->interrupt();
         task->wait();

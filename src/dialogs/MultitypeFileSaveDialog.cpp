@@ -1,4 +1,4 @@
-#include "CutterConfig.h"
+// #include "CutterConfig.h"
 
 #include "MultitypeFileSaveDialog.h"
 
@@ -39,7 +39,11 @@ MultitypeFileSaveDialog::TypeDescription MultitypeFileSaveDialog::selectedType()
         return {};
     }
     if (hasTypeDetection && filterIt == this->types.begin()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+        const QFileInfo info(this->selectedFiles().constFirst());
+#else
         const QFileInfo info(this->selectedFiles().first());
+#endif
         QString currentSuffix = info.suffix();
         filterIt = std::find_if(types.begin(), types.end(),
                                 [&currentSuffix](const TypeDescription &v) {
@@ -57,7 +61,11 @@ MultitypeFileSaveDialog::TypeDescription MultitypeFileSaveDialog::selectedType()
 void MultitypeFileSaveDialog::done(int r)
 {
     if (r == QDialog::Accepted) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+        const QFileInfo info(selectedFiles().constFirst());
+#else
         const QFileInfo info(selectedFiles().first());
+#endif
         auto selectedType = this->selectedType();
         if (selectedType.extension.isEmpty()) {
             QMessageBox::warning(this, tr("File save error"),
@@ -81,7 +89,11 @@ void MultitypeFileSaveDialog::onFilterSelected(const QString &filter)
         setDefaultSuffix(it->extension);
     }
     if (!this->selectedFiles().empty()) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
+        const QString currentSelection = this->selectedFiles().constFirst();
+#else
         const QString currentSelection = this->selectedFiles().first();
+#endif
         const QFileInfo info(currentSelection);
         if (!detectionSelected) {
             const QString currentSuffix = info.suffix();

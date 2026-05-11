@@ -10,6 +10,9 @@ class TypesInteractionDialog;
 
 class QSyntaxHighlighter;
 
+/**
+ * @brief A dialog for adding or editing C-style data types (structs, enums, unions)
+ */
 class TypesInteractionDialog : public QDialog
 {
     Q_OBJECT

@@ -25,8 +25,7 @@ QString CommandDescription::translatedDescription() const
 InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
     : QDialog(nullptr), // parent must not be main
       ui(new Ui::InitialOptionsDialog),
-      main(main),
-      core(Core())
+      main(main)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -35,7 +34,7 @@ InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
     ui->debuginfodLineEdit->setText(Core()->getConfig("bin.dbginfo.debuginfod_urls"));
 
     // Fill the plugins combo
-    asmPlugins = core->getRAsmPluginDescriptions();
+    asmPlugins = Core()->getRAsmPluginDescriptions();
     for (const auto &plugin : asmPlugins) {
         ui->archComboBox->addItem(plugin.name, plugin.name);
     }
@@ -56,7 +55,7 @@ InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
     setTooltipWithConfigHelp(ui->kernelComboBox, "asm.os");
     setTooltipWithConfigHelp(ui->bitsComboBox, "asm.bits");
 
-    for (const auto &plugin : core->getBinPluginDescriptions(true, false)) {
+    for (const auto &plugin : Core()->getBinPluginDescriptions(true, false)) {
         ui->formatComboBox->addItem(plugin.name, QVariant::fromValue(plugin));
     }
 
@@ -133,15 +132,22 @@ InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
     updateDebuginfodLayout();
     updatePDBLayout();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(ui->pdbCheckBox, &QCheckBox::checkStateChanged, this,
+            &InitialOptionsDialog::updatePDBLayout);
+    connect(ui->scriptCheckBox, &QCheckBox::checkStateChanged, this,
+            &InitialOptionsDialog::updateScriptLayout);
+    connect(ui->debuginfodCheckBox, &QCheckBox::checkStateChanged, this,
+            &InitialOptionsDialog::updateDebuginfodLayout);
+#else
     connect(ui->pdbCheckBox, &QCheckBox::stateChanged, this,
             &InitialOptionsDialog::updatePDBLayout);
-
-    updateScriptLayout();
-
     connect(ui->scriptCheckBox, &QCheckBox::stateChanged, this,
             &InitialOptionsDialog::updateScriptLayout);
     connect(ui->debuginfodCheckBox, &QCheckBox::stateChanged, this,
             &InitialOptionsDialog::updateDebuginfodLayout);
+#endif
+    updateScriptLayout();
 
     connect(ui->cancelButton, &QPushButton::clicked, this, &InitialOptionsDialog::reject);
 
@@ -285,7 +291,7 @@ void InitialOptionsDialog::loadOptions(const InitialOptions &options)
 
 void InitialOptionsDialog::setTooltipWithConfigHelp(QWidget *w, const char *config)
 {
-    w->setToolTip(QString("%1 (%2)").arg(core->getConfigDescription(config)).arg(config));
+    w->setToolTip(QString("%1 (%2)").arg(Core()->getConfigDescription(config)).arg(config));
 }
 
 QString InitialOptionsDialog::getSelectedArch() const

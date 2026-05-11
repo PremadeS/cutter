@@ -9,6 +9,9 @@ namespace Ui {
 class AboutDialog;
 }
 
+/**
+ * @brief Dialog that displays memory allocation details and offsets for a specific Arena.
+ */
 class AboutDialog : public QDialog
 {
     Q_OBJECT
@@ -24,15 +27,11 @@ private slots:
     void onIssueClicked();
 
     /**
-     * @fn AboutDialog::on_checkForUpdatesButton_clicked()
-     *
      * @brief Initiates process of checking for updates.
      */
     void onCheckForUpdatesButtonClicked();
 
     /**
-     * @fn AboutDialog::on_updatesCheckBox_stateChanged(int state)
-     *
      * @brief Changes value of autoUpdateEnabled option in settings.
      */
     void onUpdatesCheckBoxStateChanged(int state);

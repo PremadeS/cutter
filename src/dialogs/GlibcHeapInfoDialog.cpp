@@ -2,6 +2,7 @@
 
 #include <utility>
 #include "ui_GlibcHeapInfoDialog.h"
+#include "Cutter.h"
 
 GlibcHeapInfoDialog::GlibcHeapInfoDialog(RVA offset, QString status, QWidget *parent)
     : QDialog(parent), ui(new Ui::GlibcHeapInfoDialog), offset(offset), status(std::move(status))
@@ -20,10 +21,7 @@ GlibcHeapInfoDialog::GlibcHeapInfoDialog(RVA offset, QString status, QWidget *pa
     updateFields();
 }
 
-GlibcHeapInfoDialog::~GlibcHeapInfoDialog()
-{
-    delete ui;
-}
+GlibcHeapInfoDialog::~GlibcHeapInfoDialog() {}
 
 void GlibcHeapInfoDialog::updateFields()
 {

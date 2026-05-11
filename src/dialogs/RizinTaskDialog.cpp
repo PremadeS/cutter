@@ -10,7 +10,7 @@ RizinTaskDialog::RizinTaskDialog(const RizinTask::Ptr &task, QWidget *parent)
 {
     ui->setupUi(this);
 
-    connect(task.data(), &RizinTask::finished, this, [this]() { close(); });
+    connect(task.get(), &RizinTask::finished, this, [this]() { close(); });
 
     connect(&timer, &QTimer::timeout, this, &RizinTaskDialog::updateProgressTimer);
     timer.setInterval(1000);

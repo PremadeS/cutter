@@ -171,9 +171,9 @@ bool ProcessProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
 AttachProcDialog::AttachProcDialog(QWidget *parent)
     : QDialog(parent),
       ui(new Ui::AttachProcDialog),
-      processBeingAnalyzedProxyModel(new ProcessBeingAnalysedProxyModel(processModel, this)),
       processModel(new ProcessModel(this)),
       processProxyModel(new ProcessProxyModel(processModel, this)),
+      processBeingAnalyzedProxyModel(new ProcessBeingAnalysedProxyModel(processModel, this)),
       timer(new QTimer(this))
 {
     ui->setupUi(this);

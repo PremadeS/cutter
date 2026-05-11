@@ -1,8 +1,10 @@
 #ifndef HEXDUMPRANGEDIALOG_H
 #define HEXDUMPRANGEDIALOG_H
 
-#include "core/CutterCommon.h"
+#include "core/CutterCommon.h" // IWYU pragma: keep
 #include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class HexdumpRangeDialog;
@@ -16,11 +18,11 @@ public:
     explicit HexdumpRangeDialog(QWidget *parent = nullptr, bool allowEmpty = false);
     ~HexdumpRangeDialog();
     bool empty() const;
-    ut64 getStartAddress() const;
-    ut64 getEndAddress() const;
+    RVA getStartAddress() const;
+    RVA getEndAddress() const;
 
     void setStartAddress(ut64 start);
-    void open(ut64 start);
+    void openAt(ut64 start);
 
 public slots:
     void textEdited();
@@ -30,10 +32,10 @@ private:
     bool getLengthRadioButtonChecked() const;
     bool validate();
 
-    Ui::HexdumpRangeDialog *ui;
+    std::unique_ptr<Ui::HexdumpRangeDialog> ui;
     bool emptyRange = true;
-    ut64 startAddress;
-    ut64 endAddress;
+    RVA startAddress;
+    RVA endAddress;
     bool allowEmpty = false;
 
 private slots:

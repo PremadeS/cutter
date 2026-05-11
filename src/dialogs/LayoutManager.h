@@ -3,13 +3,16 @@
 
 #include <QDialog>
 #include <memory>
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "common/CutterLayout.h"
 
 namespace Ui {
 class LayoutManager;
 }
 
+/**
+ * @brief Dialog for managing custom UI layouts
+ */
 class LayoutManager : public QDialog
 {
     Q_OBJECT

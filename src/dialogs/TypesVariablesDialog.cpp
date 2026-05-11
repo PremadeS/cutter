@@ -1,6 +1,8 @@
 #include "TypesVariablesDialog.h"
 #include "ui_TypesVariablesDialog.h"
 
+#include "Cutter.h"
+
 QString toString(VariableScope scope)
 {
     switch (scope) {
@@ -88,12 +90,9 @@ TypesVariablesProxyModel::TypesVariablesProxyModel(QObject *parent) : QSortFilte
 
 void TypesVariablesProxyModel::setScope(VariableScope scope)
 {
+    beginFilterChange();
     selectedScope = scope;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    invalidateFilter();
-#else
-    invalidateRowsFilter();
-#endif
+    endFilterChange();
 }
 
 bool TypesVariablesProxyModel::filterAcceptsRow(int source_row,
@@ -131,11 +130,14 @@ bool TypesVariablesProxyModel::lessThan(const QModelIndex &left, const QModelInd
     return QSortFilterProxyModel::lessThan(left, right);
 }
 
+/**
+ * @brief A dialog that lists and filters variables of a specific data type
+ */
 TypesVariablesDialog::TypesVariablesDialog(QWidget *parent, const QString &typeName)
     : QDialog(parent),
       ui(new Ui::TypesVariablesDialog),
-      proxyModel(new TypesVariablesProxyModel(this)),
-      sourceModel(new TypesVariablesModel(this))
+      sourceModel(new TypesVariablesModel(this)),
+      proxyModel(new TypesVariablesProxyModel(this))
 {
     ui->setupUi(this);
     setWindowTitle(tr("Variables: %1").arg(typeName));

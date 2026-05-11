@@ -6,6 +6,8 @@
 
 #include "core/Cutter.h"
 
+#include "CutterCommon.h" // IWYU pragma: keep
+
 namespace Ui {
 class VersionInfoDialog;
 }
@@ -18,7 +20,7 @@ public:
     explicit VersionInfoDialog(QWidget *parent = nullptr);
     ~VersionInfoDialog();
 
-    enum Column { KeyColumn = 0, ValueColumn = 1 };
+    enum Column : ut8 { KeyColumn = 0, ValueColumn = 1 };
 
 private slots:
     void copyTreeWidgetSelection(QTreeWidget *t);
@@ -43,7 +45,6 @@ protected:
 
 private:
     std::unique_ptr<Ui::VersionInfoDialog> ui;
-    CutterCore *core;
 
     void fillVersionInfo();
 };

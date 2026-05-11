@@ -14,7 +14,7 @@
 
 namespace Cutter {
 
-struct Config
+struct CutterLayout
 {
     QByteArray geometry;
     QByteArray state;

@@ -8,6 +8,9 @@ namespace Ui {
 class BreakpointsDialog;
 }
 
+/**
+ * @brief Dialog for creating and editing software or hardware breakpoints
+ */
 class BreakpointsDialog : public QDialog
 {
     Q_OBJECT

@@ -3,8 +3,8 @@
 
 #include "core/Cutter.h"
 #include "common/Configuration.h"
-#include "common/SyntaxHighlighter.h"
-#include "widgets/TypesWidget.h"
+// #include "common/SyntaxHighlighter.h"
+// #include "widgets/TypesWidget.h"
 
 #include <QFileDialog>
 #include <QTemporaryFile>
@@ -64,6 +64,7 @@ void TypesInteractionDialog::onPlainTextEditTextChanged()
 
 void TypesInteractionDialog::done(int r)
 {
+    // TODO: MOVE TO CUTERCOREEEEEEEEEEEEEE
     if (r == QDialog::Accepted) {
         RzCoreLocked core(Core());
         bool success;

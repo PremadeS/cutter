@@ -6,6 +6,7 @@
 #include "core/CutterJson.h"
 #include "core/Basefind.h"
 #include "common/BasicInstructionHighlighter.h"
+#include "RizinCpp.h"
 
 #include <QMap>
 #include <QMenu>
@@ -18,7 +19,7 @@
 #include <QMutex>
 #include <QDir>
 #include <functional>
-#include <memory>
+// #include <memory>
 
 class AsyncTaskManager;
 class BasicInstructionHighlighter;

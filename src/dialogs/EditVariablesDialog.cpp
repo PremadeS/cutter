@@ -6,6 +6,8 @@
 #include <QMetaType>
 #include <QPushButton>
 
+#include "Cutter.h"
+
 EditVariablesDialog::EditVariablesDialog(RVA offset, const QString &initialVar, QWidget *parent)
     : QDialog(parent), ui(new Ui::EditVariablesDialog), functionAddress(RVA_INVALID)
 {
@@ -39,10 +41,7 @@ EditVariablesDialog::EditVariablesDialog(RVA offset, const QString &initialVar, 
     updateFields();
 }
 
-EditVariablesDialog::~EditVariablesDialog()
-{
-    delete ui;
-}
+EditVariablesDialog::~EditVariablesDialog() {}
 
 bool EditVariablesDialog::empty() const
 {
@@ -68,7 +67,7 @@ void EditVariablesDialog::applyFields()
         return;
     }
 
-    const char *errorMsg = nullptr;
+    char *errorMsg = nullptr;
     RzType *vType = rz_type_parse_string_single(
             rz_analysis_get_type_db(core->analysis)->parser,
             ui->typeComboBox->currentText().toUtf8().constData(), &errorMsg);
@@ -77,14 +76,21 @@ void EditVariablesDialog::applyFields()
     }
     rz_analysis_var_set_type(v, vType, true);
 
+    // TODO: CHECK THISSSSSSSS ===================
     // TODO Remove all those replace once rizin command parser is fixed
-    const QString newName = ui->nameEdit->text()
-                                    .replace(QLatin1Char(' '), QLatin1Char('_'))
-                                    .replace(QLatin1Char('\\'), QLatin1Char('_'))
-                                    .replace(QLatin1Char('/'), QLatin1Char('_'));
-    if (newName != desc.name) {
-        Core()->renameFunctionVariable(newName, desc.name, functionAddress);
+    // const QString newName = ui->nameEdit->text()
+    //                                 .replace(QLatin1Char(' '), QLatin1Char('_'))
+    //                                 .replace(QLatin1Char('\\'), QLatin1Char('_'))
+    //                                 .replace(QLatin1Char('/'), QLatin1Char('_'));
+    // if (newName != desc.name) {
+    //     Core()->renameFunctionVariable(newName, desc.name, functionAddress);
+    // }
+
+    if (ui->nameEdit->text() != desc.name) {
+        Core()->renameFunctionVariable(ui->nameEdit->text(), desc.name, functionAddress);
     }
+
+    // ==================================================
 
     // Refresh the views to reflect the changes to vars
     emit Core() -> refreshCodeViews();
