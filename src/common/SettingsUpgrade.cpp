@@ -219,7 +219,7 @@ static void syncCustomThemes()
             ThemeWorker().getTheme("cutter"); // default light theme
     const ColorThemeWorker::Theme darkTheme = ThemeWorker().getTheme("ayu"); // default dark theme
 
-    // note that there was no entry for angui.navbar.str (as it is a typo) so the
+    // note that there was no entry for angui.navbar.str (as it was a typo) so the
     // default color for it will most likely be black instead of the color defined
     // in config, unless changed by the user
     QHash<QString, QString> renames = {

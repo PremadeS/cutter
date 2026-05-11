@@ -8,6 +8,7 @@ RunScriptTask::~RunScriptTask() {}
 
 void RunScriptTask::interrupt()
 {
+    // TODO: isn't every child of AsyncTask doing this?
     AsyncTask::interrupt();
     rz_cons_singleton()->context->breaked = true;
 }

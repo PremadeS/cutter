@@ -1,13 +1,14 @@
-
 #include "ProgressIndicator.h"
 
 #include <QPainter>
 
-static const int lineWidth = 3;
-static const int paddingOuter = lineWidth + 2;
-static const int paddingInner = 8;
-static const int arms = 12;
-static const int timerInterval = 50;
+namespace {
+const int lineWidth = 3;
+const int paddingOuter = lineWidth + 2;
+const int paddingInner = 8;
+const int arms = 12;
+const int timerInterval = 50;
+}
 
 ProgressIndicator::ProgressIndicator(QWidget *parent) : QWidget(parent)
 {
@@ -19,8 +20,8 @@ ProgressIndicator::~ProgressIndicator() {}
 void ProgressIndicator::setProgressIndicatorVisible(bool visible)
 {
     const bool change = progressIndicatorVisible != visible;
-    progressIndicatorVisible = visible;
     if (change) {
+        progressIndicatorVisible = visible;
         update();
     }
     updateAnimationTimer();

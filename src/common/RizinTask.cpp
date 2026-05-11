@@ -1,4 +1,3 @@
-
 #include "RizinTask.h"
 #include <rz_core.h>
 
@@ -13,17 +12,20 @@ RizinTask::~RizinTask()
 
 void RizinTask::startTask()
 {
-    rz_core_task_enqueue(&Core()->core->tasks, task);
+    auto core = Core()->lock();
+    rz_core_task_enqueue(&core->tasks, task);
 }
 
 void RizinTask::breakTask()
 {
-    rz_core_task_break(&Core()->core->tasks, task->id);
+    auto core = Core()->lock();
+    rz_core_task_break(&core->tasks, task->id);
 }
 
 void RizinTask::joinTask()
 {
-    rz_core_task_join(&Core()->core->tasks, nullptr, task->id);
+    auto core = Core()->lock();
+    rz_core_task_join(&core->tasks, nullptr, task->id);
 }
 
 void RizinTask::taskFinished()

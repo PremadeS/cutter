@@ -9,6 +9,8 @@ class CutterJson;
 
 /**
  * @brief Helpers for Json related objects
+ *
+ * TODO: maybe cutter helpers??? as a namespace name
  */
 namespace Json {
 

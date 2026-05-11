@@ -1,5 +1,6 @@
 #include "CommandTask.h"
 #include "TempConfig.h"
+#include "Cutter.h"
 
 CommandTask::CommandTask(const QString &cmd, ColorMode colorMode) : cmd(cmd), colorMode(colorMode)
 {

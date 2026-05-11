@@ -1,9 +1,8 @@
-
 #ifndef COMMANDTASK_H
 #define COMMANDTASK_H
 
 #include "common/AsyncTask.h"
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 /**
  * TODO: add brief after seeing what it does  I'm pretty used this is used by the console widget
@@ -15,7 +14,7 @@ class CUTTER_EXPORT CommandTask : public AsyncTask
     Q_OBJECT
 
 public:
-    enum ColorMode {
+    enum ColorMode : ut8 {
         DISABLED = COLOR_MODE_DISABLED,
         MODE_16 = COLOR_MODE_16,
         MODE_256 = COLOR_MODE_256,

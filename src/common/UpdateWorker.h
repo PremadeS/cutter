@@ -22,10 +22,9 @@
 class QNetworkReply;
 
 /**
- * @class UpdateWorker
- * @brief The UpdateWorker class is a class providing API to check for current Cutter version.
+ * @brief The UpdateWorker class is a class providing API to check for current/latest Cutter
+ * version.
  */
-
 class UpdateWorker : public QObject
 {
     Q_OBJECT
@@ -43,7 +42,6 @@ public:
      *
      * @sa checkComplete(const QString& verson, const QString& errorMsg)
      */
-
     void checkCurrentVersion(time_t timeoutMs);
 
     /**

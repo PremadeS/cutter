@@ -1,4 +1,3 @@
-
 #ifndef FUNCTIONSTASK_H
 #define FUNCTIONSTASK_H
 

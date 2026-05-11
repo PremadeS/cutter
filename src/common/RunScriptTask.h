@@ -1,9 +1,14 @@
-#ifndef RUNSCRIPTTHREAD_H
-#define RUNSCRIPTTHREAD_H
+#ifndef RUNSCRIPTTASK_H
+#define RUNSCRIPTTASK_H
 
 #include "common/AsyncTask.h"
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
+/**
+ * @brief Async task for running rizin scripts
+ *
+ * @ingroup AsyncTask
+ */
 class RunScriptTask : public AsyncTask
 {
     Q_OBJECT
@@ -12,7 +17,7 @@ public:
     explicit RunScriptTask();
     ~RunScriptTask();
 
-    QString getTitle() override { return tr("Run Script"); }
+    QString getTitle() const override { return tr("Run Script"); }
 
     void setFileName(const QString &fileName) { this->fileName = fileName; }
 
@@ -25,4 +30,4 @@ private:
     QString fileName;
 };
 
-#endif // RUNSCRIPTTHREAD_H
+#endif // RUNSCRIPTTASK_H

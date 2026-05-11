@@ -69,15 +69,6 @@ template void RichTextPainter::paintRichText<qreal>(QPainter *painter, qreal x, 
                                                     qreal h, qreal xinc, const List &richText,
                                                     CachedFontMetrics<qreal> *fontMetrics);
 
-/**
- * @brief RichTextPainter::htmlRichText Convert rich text in x64dbg to HTML, for use by other
- * applications
- * @param richText The rich text to be converted to HTML format
- * @param textHtml The HTML source. Any previous content will be preserved and new content will be
- * appended at the end.
- * @param textPlain The plain text. Any previous content will be preserved and new content will be
- * appended at the end.
- */
 void RichTextPainter::htmlRichText(const List &richText, QString &textHtml, QString &textPlain)
 {
     for (const CustomRichTextT &curRichText : richText) {

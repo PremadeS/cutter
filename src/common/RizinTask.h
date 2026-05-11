@@ -1,21 +1,24 @@
-
 #ifndef RZTASK_H
 #define RZTASK_H
 
 #include "core/Cutter.h"
+#include <memory>
 
+/**
+ * @brief TODO: the brief
+ */
 class CUTTER_EXPORT RizinTask : public QObject
 {
     Q_OBJECT
 
 protected:
-    RzCoreTask *task;
+    RzCoreTask *task; // TODO: the priavte visibility thing?
 
     RizinTask() {}
     void taskFinished();
 
 public:
-    using Ptr = QSharedPointer<RizinTask>;
+    using Ptr = std::shared_ptr<RizinTask>;
 
     virtual ~RizinTask();
 

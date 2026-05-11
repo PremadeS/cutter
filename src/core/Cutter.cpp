@@ -158,12 +158,12 @@ RzCoreLocked::~RzCoreLocked()
 
 RzCoreLocked::operator RzCore *() &
 {
-    return core->core;
+    return core->core_;
 }
 
 RzCore *RzCoreLocked::operator->() &
 {
-    return core->core;
+    return core->core_;
 }
 
 #define CORE_LOCK() RzCoreLocked core(this)
@@ -241,8 +241,8 @@ CutterCore::~CutterCore()
 {
     delete bbHighlighter;
     rz_cons_sleep_end(coreBed);
-    rz_core_task_sync_end(&core->tasks);
-    rz_core_free(this->core);
+    rz_core_task_sync_end(&core_->tasks);
+    rz_core_free(this->core_);
     rz_cons_free();
     assert(uniqueInstance == this);
     uniqueInstance = nullptr;

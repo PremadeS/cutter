@@ -7,7 +7,7 @@
 #include "common/Highlighter.h"
 #include "common/Helpers.h"
 #include "common/SvgIconEngine.h"
-#include "common/ProgressIndicator.h"
+#include "widgets/ProgressIndicator.h"
 #include "common/TempConfig.h"
 #include "common/RunScriptTask.h"
 #include "common/PythonManager.h"

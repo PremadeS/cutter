@@ -26,7 +26,7 @@ private slots:
 #endif
 
 /**
- * SyntaxHighlighter to be used when KSyntaxHighlighting is not available
+ * @brief SyntaxHighlighter to be used when KSyntaxHighlighting is not available
  */
 class CUTTER_EXPORT FallbackSyntaxHighlighter : public QSyntaxHighlighter
 {
@@ -40,6 +40,7 @@ protected:
     void highlightBlock(const QString &text) override;
 
 private:
+    // TODO: again the same HighlightingRule and regex stuff
     struct HighlightingRule
     {
         QRegularExpression pattern;

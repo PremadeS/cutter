@@ -30,7 +30,7 @@ static QString substitutePath(QString path)
 /**
  * @brief Substitute or filter paths returned by standardLocations based on Cutter package kind.
  * @param paths list of paths to process
- * @return
+ * @return List of substituted path strings
  */
 static QStringList substitutePaths(const QStringList &paths)
 {
@@ -79,6 +79,6 @@ QStringList Cutter::getTranslationsDirectories()
 {
     auto result = locateAll(QStandardPaths::AppDataLocation, "translations",
                             QStandardPaths::LocateDirectory);
-    result << QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+    result << QLibraryInfo::path(QLibraryInfo::TranslationsPath);
     return result;
 }

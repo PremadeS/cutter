@@ -105,7 +105,7 @@ public:
 
     AsyncTaskManager *getAsyncTaskManager() { return asyncTaskManager; }
 
-    RVA getOffset() const { return core->offset; }
+    RVA getOffset() const { return core_->offset; }
 
     /* Core functions (commands) */
     /* Almost the same as core_cmd_raw,
@@ -966,7 +966,7 @@ private:
      * Internal reference to the RzCore.
      * NEVER use this directly! Always use the CORE_LOCK(); macro and access it like core->...
      */
-    RzCore *core = nullptr;
+    RzCore *core_ = nullptr;
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     QMutex coreMutex;
 #else

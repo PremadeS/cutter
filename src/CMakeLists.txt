@@ -88,7 +88,7 @@ set(SOURCES
     widgets/BacktraceWidget.cpp
     dialogs/MapFileDialog.cpp
     common/CommandTask.cpp
-    common/ProgressIndicator.cpp
+    widgets/ProgressIndicator.cpp
     common/RizinTask.cpp
     dialogs/RizinTaskDialog.cpp
     widgets/DebugActions.cpp
@@ -263,7 +263,7 @@ set(HEADER_FILES
     common/StringsTask.h
     common/FunctionsTask.h
     common/CommandTask.h
-    common/ProgressIndicator.h
+    widgets/ProgressIndicator.h
     plugins/CutterPlugin.h
     common/RizinTask.h
     dialogs/RizinTaskDialog.h
