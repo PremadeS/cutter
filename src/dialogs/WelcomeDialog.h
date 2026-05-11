@@ -2,21 +2,19 @@
 #define WELCOMEDIALOG_H
 
 #include <QDialog>
+#include <memory>
 
 namespace Ui {
-
-/**
- * @class WelcomeDialog
- * @brief The WelcomeDialog class will show the user the Welcome windows
- *  upon first execution of Cutter.
- *
- * Upon first execution of Cutter, the WelcomeDialog would be showed to the user.
- * The Welcome dialog would be showed after a reset of Cutter's preferences by the user.
- */
 
 class WelcomeDialog;
 }
 
+/**
+ * @brief The WelcomeDialog class will show the user the Welcome windows
+ * upon first execution of Cutter.
+ *
+ * The Welcome dialog would also be showed after a reset of Cutter's preferences by the user.
+ */
 class WelcomeDialog : public QDialog
 {
     Q_OBJECT
@@ -33,7 +31,7 @@ private slots:
     void onUpdatesCheckBoxStateChanged(int state);
 
 private:
-    Ui::WelcomeDialog *ui;
+    std::unique_ptr<WelcomeDialog> ui;
 };
 
 #endif // WELCOMEDIALOG_H

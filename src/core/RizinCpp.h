@@ -1,4 +1,4 @@
-/** \file RizinCpp.h
+/** @file RizinCpp.h
  * Various utilities for easier and safer interactions with Rizin
  * from C++ code.
  */

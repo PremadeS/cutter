@@ -3,11 +3,11 @@
 
 #include "core/Cutter.h" // only needed for ut64
 #include "dialogs/NewFileDialog.h"
-#include "dialogs/WelcomeDialog.h"
+// #include "dialogs/WelcomeDialog.h"
 #include "common/Configuration.h"
 #include "common/InitialOptions.h"
 #include "common/IOModesController.h"
-#include "common/CutterLayout.h"
+// #include "common/CutterLayout.h"
 #include "MemoryDockWidget.h"
 
 #include <memory>
@@ -61,6 +61,9 @@ namespace Ui {
 class MainWindow;
 }
 
+/**
+ * @brief Cutter main window
+ */
 class CUTTER_EXPORT MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -124,7 +127,7 @@ public:
                                               bool synchronized = true);
 
     /* Context menu plugins */
-    enum class ContextMenuType { Disassembly, Addressable };
+    enum class ContextMenuType : ut8 { Disassembly, Addressable };
     /**
      * @brief Fetches the pointer to a context menu extension of type
      * @param type - the type of the context menu
@@ -302,7 +305,7 @@ private:
     void enableDebugWidgetsMenu(bool enable);
     /**
      * @brief Fill menu with seek history entries.
-     * @param menu
+     * @param menu Menu to update
      * @param redo set to false for undo history, true for redo.
      */
     void updateHistoryMenu(QMenu *menu, bool redo = false);
@@ -314,7 +317,7 @@ private:
     bool isOverviewActive();
     /**
      * @brief Check if a widget is one of debug specific dock widgets.
-     * @param dock
+     * @param dock DockWidget to check
      * @return true for debug specific widgets, false for all other including common dock widgets.
      */
     bool isDebugWidget(QDockWidget *dock) const;

@@ -3,7 +3,7 @@
 
 #include "core/CutterCommon.h"
 
-#include <QSharedPointer>
+#include <memory>
 #include <QString>
 #include <QStringList>
 #include <utility>
@@ -11,13 +11,16 @@
 
 class CutterJsonOwner;
 
+/**
+ * @brief Cutter wrapper for handling Json
+ */
 class CUTTER_EXPORT CutterJson
 {
 public:
     class Iterator
     {
     public:
-        Iterator(const RzJson *value, QSharedPointer<CutterJsonOwner> owner)
+        Iterator(const RzJson *value, std::shared_ptr<CutterJsonOwner> owner)
             : value(value), owner(std::move(owner))
         {
         }
@@ -34,12 +37,12 @@ public:
 
     private:
         const RzJson *value;
-        QSharedPointer<CutterJsonOwner> owner;
+        std::shared_ptr<CutterJsonOwner> owner;
     };
 
-    CutterJson() : value(nullptr), owner(nullptr) {}
+    CutterJson() : value(nullptr) {}
 
-    CutterJson(const RzJson *value, QSharedPointer<CutterJsonOwner> owner)
+    CutterJson(const RzJson *value, std::shared_ptr<CutterJsonOwner> owner)
         : value(value), owner(std::move(owner))
     {
     }
@@ -98,7 +101,7 @@ private:
     }
 
     const RzJson *value;
-    QSharedPointer<CutterJsonOwner> owner;
+    std::shared_ptr<CutterJsonOwner> owner;
 };
 
 class CUTTER_EXPORT CutterJsonOwner

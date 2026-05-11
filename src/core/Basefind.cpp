@@ -1,4 +1,5 @@
 #include "Basefind.h"
+#include "Cutter.h"
 
 bool Basefind::threadCallback(const RzBaseFindThreadInfo *info, void *user)
 {
@@ -6,9 +7,8 @@ bool Basefind::threadCallback(const RzBaseFindThreadInfo *info, void *user)
     return th->updateProgress(info);
 }
 
-Basefind::Basefind(CutterCore *core)
-    : core(core),
-      scores(nullptr),
+Basefind::Basefind()
+    : scores(nullptr),
       continueRun(true)
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
       ,
@@ -64,11 +64,10 @@ void Basefind::run()
     continueRun = true;
     mutex.unlock();
 
-    core->coreMutex.lock();
+    auto core = Core()->lock();
     options.callback = threadCallback;
     options.user = this;
-    scores = rz_basefind(core->core, &options);
-    core->coreMutex.unlock();
+    scores = rz_basefind(core, &options);
 
     emit complete();
 }

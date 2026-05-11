@@ -7,9 +7,12 @@
 #include <QVariantMap>
 
 /**
- * @brief Utilities related to cutter layout
+ * @file Utilities related to cutter layout
+ *
+ * TODO: do this file thing for all
  */
-namespace Layout {
+
+namespace Cutter {
 
 struct Config
 {

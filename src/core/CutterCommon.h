@@ -1,13 +1,13 @@
-/** \file CutterCommon.h
+/** @file CutterCommon.h
  * This file contains any definition that is useful in the whole project.
  * For example, it may contain custom types (RVA, ut64), list iterators, etc.
  */
 #ifndef CUTTERCORE_H
 #define CUTTERCORE_H
 
-#include "rz_core.h"
+#include "rz_core.h" // IWYU pragma: keep
 #include <QString>
-#include "RizinCpp.h"
+// #include "RizinCpp.h"
 
 // Workaround for compile errors on Windows
 #ifdef Q_OS_WIN

@@ -1,4 +1,4 @@
-/** \file CutterDescriptions.h
+/** @file CutterDescriptions.h
  * This file contains every structure description that are used in widgets.
  * The descriptions are used for the Qt metatypes.
  */
@@ -149,6 +149,8 @@ struct SegmentDescription
 {
     RVA vaddr;
     RVA paddr;
+    // TODO: this is not exactly correct in edge cases.
+    // rz_analysis_function_contains() does it right.
     RVA size;
     RVA vsize;
     QString name;
@@ -316,7 +318,7 @@ struct MemoryMapDescription
 
 struct BreakpointDescription
 {
-    enum PositionType {
+    enum PositionType : ut8 {
         Address,
         Named,
         Module,

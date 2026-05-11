@@ -62,7 +62,7 @@ struct CUTTER_EXPORT RegisterRef
     QString name;
 };
 
-enum class SearchKind {
+enum class SearchKind : ut8 {
     AsmCode,
     HexString,
     ROPGadgets,
@@ -78,8 +78,13 @@ enum class SearchKind {
     MagicSignature,
 };
 
-enum class AddressTypeHint { Function, Code, Data, Unknown };
+enum class AddressTypeHint : ut8 { Function, Code, Data, Unknown };
 
+/**
+ * @brief Core class that talks to rizin.
+ *
+ * Prefer the use of this class when functionality from rizin is needed
+ */
 class CUTTER_EXPORT CutterCore : public QObject
 {
     Q_OBJECT
@@ -190,7 +195,7 @@ public:
         return returner;
     }
 
-    enum class SeekHistoryType { New, Undo, Redo };
+    enum class SeekHistoryType : ut8 { New, Undo, Redo };
 
     CutterJson cmdj(const char *str);
     CutterJson cmdj(const QString &str) { return cmdj(str.toUtf8().constData()); }
@@ -291,13 +296,13 @@ public:
 
     /* Code/Data */
     void setToCode(RVA addr);
-    enum class StringTypeFormats { None, ASCII_LATIN1, UTF8 };
+    enum class StringTypeFormats : ut8 { None, ASCII_LATIN1, UTF8 };
     /**
      * @brief Adds string at address
      * That function calls the 'Cs' command
-     * \param addr The address of the array where the string will be applied
-     * \param size The size of string
-     * \param type The type of string
+     * @param addr The address of the array where the string will be applied
+     * @param size The size of string
+     * @param type The type of string
      */
     void setAsString(RVA addr, int size = 0, StringTypeFormats type = StringTypeFormats::None);
     /**
@@ -309,14 +314,14 @@ public:
     /**
      * @brief Gets string at address
      * That function correspond the 'Cs.' command
-     * \param addr The address of the string
+     * @param addr The address of the string
      * @return string at requested address
      */
     QString getMetaString(RVA addr);
     /**
      * @brief Gets string at address
      * That function calls the 'ps' command
-     * \param addr The address of the first byte of the array
+     * @param addr The address of the first byte of the array
      * @return string at requested address
      */
     QString getString(RVA addr);
@@ -335,8 +340,8 @@ public:
      * @brief Changes immediate displacement to structure offset
      * This function makes use of the "aht" command of Rizin to apply structure
      * offset to the immediate displacement used in the given instruction
-     * \param structureOffset The name of struct which will be applied
-     * \param offset The address of the instruction where the struct will be applied
+     * @param structureOffset The name of struct which will be applied
+     * @param offset The address of the instruction where the struct will be applied
      */
     void applyStructureOffset(const QString &structureOffset, RVA offset = RVA_INVALID);
 
@@ -360,7 +365,10 @@ public:
     bool tryFile(const QString &path, bool rw);
     bool mapFile(const QString &path, RVA mapaddr);
     void loadScript(const QString &scriptname);
-    // TODO: docs?
+    /**
+     * @brief Check whether any file is loaded
+     * @return True if any file is loaded, false otherwise
+     */
     bool isFileLoaded();
 
     /* Seek functions */
@@ -377,12 +385,12 @@ public:
      */
     void showMemoryWidget();
     /**
-     * @brief Seek to \p offset and raise a memory widget showing it.
+     * @brief Seek to @p offset and raise a memory widget showing it.
      * @param offset
      */
     void seekAndShow(ut64 offset);
     /**
-     * @brief \see CutterCore::show(ut64)
+     * @brief @see CutterCore::show(ut64)
      * @param thing - addressable expression
      */
     void seekAndShow(const QString &thing);
@@ -440,7 +448,7 @@ public:
 
     static QByteArray hexStringToBytes(const QString &hex);
     static QString bytesToHexString(const QByteArray &bytes);
-    enum class HexdumpFormats { Normal, Half, Word, Quad, Signed, Octal };
+    enum class HexdumpFormats : ut8 { Normal, Half, Word, Quad, Signed, Octal };
     QString hexdump(RVA offset, int size, HexdumpFormats format);
     QString getHexdumpPreview(RVA offset, int size);
 
@@ -935,10 +943,10 @@ signals:
 
     /**
      * @brief seekChanged is emitted each time Rizin's seek value is modified
-     * @param offset
-     * @param historyType
+     * @param offset Offset to seek at
+     * @param historyType Type of seek history
      */
-    void seekChanged(RVA offset, SeekHistoryType type = SeekHistoryType::New);
+    void seekChanged(RVA offset, CutterCore::SeekHistoryType type = SeekHistoryType::New);
 
     void toggleDebugView();
 
