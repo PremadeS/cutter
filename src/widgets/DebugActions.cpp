@@ -142,10 +142,10 @@ DebugActions::DebugActions(QToolBar *toolBar, MainWindow *main)
         msgBox.exec();
     });
 
-    connect(Core(), &CutterCore::debugTaskStateChanged, this, [=]() {
+    connect(Core(), &CutterCore::debugTaskStateChanged, this, [=, this]() {
         const bool disableToolbar = Core()->isDebugTaskInProgress();
         if (Core()->currentlyDebugging) {
-            for (QAction *a : toggleActions) {
+            for (auto a : std::as_const(toggleActions)) {
                 a->setDisabled(disableToolbar);
             }
             // Suspend should only be available when other icons are disabled
@@ -156,19 +156,19 @@ DebugActions::DebugActions(QToolBar *toolBar, MainWindow *main)
                 actionContinue->setText(continueLabel);
                 actionContinue->setIcon(continueIcon);
             }
-            for (QAction *a : reverseActions) {
+            for (auto a : std::as_const(reverseActions)) {
                 a->setVisible(Core()->currentlyTracing);
                 a->setDisabled(disableToolbar);
             }
         } else {
-            for (QAction *a : toggleConnectionActions) {
+            for (auto a : std::as_const(toggleConnectionActions)) {
                 a->setDisabled(disableToolbar);
             }
         }
     });
 
     connect(actionStop, &QAction::triggered, Core(), &CutterCore::stopDebug);
-    connect(actionStop, &QAction::triggered, [=]() {
+    connect(actionStop, &QAction::triggered, [=, this]() {
         actionStart->setVisible(true);
         actionStartEmul->setVisible(true);
         actionAttach->setVisible(true);
@@ -192,7 +192,7 @@ DebugActions::DebugActions(QToolBar *toolBar, MainWindow *main)
     connect(actionStartRemote, &QAction::triggered, this, &DebugActions::attachRemoteDialog);
     connect(Core(), &CutterCore::attachedRemote, this, &DebugActions::onAttachedRemoteDebugger);
     connect(actionStartEmul, &QAction::triggered, Core(), &CutterCore::startEmulation);
-    connect(actionStartEmul, &QAction::triggered, [=]() {
+    connect(actionStartEmul, &QAction::triggered, [=, this]() {
         setAllActionsVisible(true);
         actionStart->setVisible(false);
         actionAttach->setVisible(false);
@@ -204,7 +204,7 @@ DebugActions::DebugActions(QToolBar *toolBar, MainWindow *main)
         actionStartEmul->setIcon(restartIcon);
         actionStop->setText(stopEmulLabel);
         // Reverse debug actions aren't visible until we start tracing
-        for (QAction *a : reverseActions) {
+        for (auto a : std::as_const(reverseActions)) {
             a->setVisible(false);
         }
     });
@@ -224,7 +224,7 @@ DebugActions::DebugActions(QToolBar *toolBar, MainWindow *main)
         }
     });
 
-    connect(actionTrace, &QAction::triggered, Core(), [=]() {
+    connect(actionTrace, &QAction::triggered, Core(), [=, this]() {
         // Check if a debug session was created to switch between start and stop
         if (!Core()->currentlyTracing) {
             Core()->startTraceSession();
@@ -419,7 +419,7 @@ void DebugActions::startDebug()
     setButtonVisibleIfMainExists();
 
     // Reverse debug actions aren't visible until we start tracing
-    for (QAction *a : reverseActions) {
+    for (auto a : std::as_const(reverseActions)) {
         a->setVisible(false);
     }
     actionTrace->setText(startTraceLabel);
@@ -430,14 +430,11 @@ void DebugActions::startDebug()
 
 void DebugActions::setAllActionsVisible(bool visible)
 {
-    for (QAction *action : allActions) {
+    for (auto action : std::as_const(allActions)) {
         action->setVisible(visible);
     }
 }
 
-/**
- * @brief When theme changed, change icons which have a special version for the theme.
- */
 void DebugActions::chooseThemeIcons()
 {
     // List of QActions which have alternative icons in different themes

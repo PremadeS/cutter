@@ -1,7 +1,7 @@
 #ifndef GRAPHGRIDLAYOUT_H
 #define GRAPHGRIDLAYOUT_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "GraphLayout.h"
 #include "common/LinkedListPool.h"
 
@@ -12,7 +12,7 @@
 class GraphGridLayout : public GraphLayout
 {
 public:
-    enum class LayoutType {
+    enum class LayoutType : ut8 {
         Medium,
         Wide,
         Narrow,

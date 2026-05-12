@@ -9,8 +9,8 @@
 GlibcHeapWidget::GlibcHeapWidget(MainWindow *main, QWidget *parent)
     : QWidget(parent),
       ui(new Ui::GlibcHeapWidget),
-      arenaSelectorView(ui->arenaSelector),
       viewHeap(ui->tableView),
+      arenaSelectorView(ui->arenaSelector),
       addressableItemContextMenu(this, main),
       refreshDeferrer(dynamic_cast<CutterDockWidget *>(parent)->createRefreshDeferrer(
               [this]() { updateContents(); })),
@@ -48,10 +48,7 @@ GlibcHeapWidget::GlibcHeapWidget(MainWindow *main, QWidget *parent)
     addActions(addressableItemContextMenu.actions());
 }
 
-GlibcHeapWidget::~GlibcHeapWidget()
-{
-    delete ui;
-}
+GlibcHeapWidget::~GlibcHeapWidget() {}
 
 GlibcHeapModel::GlibcHeapModel(QObject *parent) : QAbstractTableModel(parent) {}
 
@@ -128,8 +125,9 @@ int GlibcHeapModel::rowCount(const QModelIndex &) const
 
 QVariant GlibcHeapModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= values.count())
+    if (!index.isValid() || index.row() >= values.count()) {
         return QVariant();
+    }
 
     const auto &item = values.at(index.row());
 

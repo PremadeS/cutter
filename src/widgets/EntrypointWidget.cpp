@@ -7,10 +7,6 @@
 #include <QTreeWidget>
 #include <QPen>
 
-/*
- * Entrypoint Widget
- */
-
 EntrypointWidget::EntrypointWidget(MainWindow *main)
     : CutterDockWidget(main), ui(new Ui::EntrypointWidget)
 {

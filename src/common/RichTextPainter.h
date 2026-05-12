@@ -39,8 +39,8 @@ typedef std::vector<CustomRichTextT> List;
 
 // functions
 template<typename T = qreal>
-static void paintRichText(QPainter *painter, T x, T y, T w, T h, T xinc, const List &richText,
-                          CachedFontMetrics<T> *fontMetrics);
+void paintRichText(QPainter *painter, T x, T y, T w, T h, T xinc, const List &richText,
+                   CachedFontMetrics<T> *fontMetrics);
 
 /**
  * @brief RichTextPainter::htmlRichText Convert rich text in x64dbg to HTML, for use by other

@@ -4,8 +4,8 @@
 #include "core/MainWindow.h"
 #include "CutterDockWidget.h"
 #include "common/CommandTask.h"
-#include "common/DirectionalComboBox.h"
-#include "SearchBarWidget.h"
+// #include "common/DirectionalComboBox.h"
+// #include "SearchBarWidget.h"
 #include "SearchableDockWidget.h"
 
 #include <QStringListModel>
@@ -21,6 +21,9 @@ namespace Ui {
 class ConsoleWidget;
 }
 
+/**
+ * @brief Widget for console to directly run rizin commands
+ */
 class ConsoleWidget : public SearchableDockWidget
 {
     Q_OBJECT
@@ -93,7 +96,7 @@ private:
      */
     void redirectOutput();
 
-    QSharedPointer<CommandTask> commandTask;
+    std::shared_ptr<CommandTask> commandTask;
 
     std::unique_ptr<Ui::ConsoleWidget> ui;
     QAction *actionWrapLines;

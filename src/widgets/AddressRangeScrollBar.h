@@ -4,6 +4,12 @@
 #include <QScrollBar>
 #include "CutterCommon.h"
 
+/**
+ * @brief Generic scrollbar class to be used by memory address based widgets (Disassembly, Hexdump
+ * etc)
+ *
+ * Required because memory widgets use lazy loading
+ */
 class AddressRangeScrollBar : public QScrollBar
 {
     Q_OBJECT

@@ -65,6 +65,9 @@ public:
     BreakpointProxyModel(BreakpointModel *sourceModel, QObject *parent = nullptr);
 };
 
+/**
+ * @brief Widget for seeing/editing all breakpoints
+ */
 class BreakpointWidget : public CutterDockWidget
 {
     Q_OBJECT

@@ -5,7 +5,7 @@
 #include "MemoryDockWidget.h"
 #include "common/CutterSeekable.h"
 #include "common/RefreshDeferrer.h"
-#include "common/CachedFontMetrics.h"
+// #include "common/CachedFontMetrics.h"
 
 #include <QTextEdit>
 #include <QPlainTextEdit>
@@ -20,6 +20,11 @@ class DisassemblyContextMenu;
 class DisassemblyLeftPanel;
 class AddressRangeScrollBar;
 
+/**
+ * @brief Main widget for showing disassembly of a binary
+ *
+ * @see DisassemblerGraphView
+ */
 class DisassemblyWidget : public MemoryDockWidget
 {
     Q_OBJECT

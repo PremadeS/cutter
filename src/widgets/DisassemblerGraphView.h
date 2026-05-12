@@ -16,6 +16,9 @@
 class QTextEdit;
 class FallbackSyntaxHighlighter;
 
+/**
+ * @brief Graph View widget for disassembly
+ */
 class DisassemblerGraphView : public CutterGraphView
 {
     Q_OBJECT
@@ -199,7 +202,7 @@ signals:
     void nameChanged(const QString &name);
 
 public:
-    bool isGraphEmpty() const const { return emptyGraph; }
+    bool isGraphEmpty() const { return emptyGraph; }
 };
 
 #endif // DISASSEMBLERGRAPHVIEW_H

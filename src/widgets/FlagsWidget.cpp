@@ -144,15 +144,15 @@ FlagsWidget::FlagsWidget(MainWindow *main)
     : CutterDockWidget(main),
       ui(new Ui::FlagsWidget),
       main(main),
-      flags_model(new FlagsModel(this)),
-      flags_proxy_model(new FlagsSortFilterProxyModel(flags_model, this))
+      flagsModel(new FlagsModel(this)),
+      flagsProxyModel(new FlagsSortFilterProxyModel(flagsModel, this))
 {
     ui->setupUi(this);
 
-    connect(ui->filterLineEdit, &QLineEdit::textChanged, flags_proxy_model,
+    connect(ui->filterLineEdit, &QLineEdit::textChanged, flagsProxyModel,
             &QSortFilterProxyModel::setFilterWildcard);
     ui->flagsTreeView->setMainWindow(mainWindow);
-    ui->flagsTreeView->setModel(flags_proxy_model);
+    ui->flagsTreeView->setModel(static_cast<AddressableItemModelI *>(flagsProxyModel));
     ui->flagsTreeView->sortByColumn(FlagsModel::OFFSET, Qt::AscendingOrder);
 
     // Ctrl-F to move the focus to the Filter search box
@@ -173,7 +173,7 @@ FlagsWidget::FlagsWidget(MainWindow *main)
     clearShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this,
-            [this] { ui->filterLineEdit->setItemCount(flags_proxy_model->rowCount()); });
+            [this] { ui->filterLineEdit->setItemCount(flagsProxyModel->rowCount()); });
 
     setScrollMode();
 
@@ -181,7 +181,7 @@ FlagsWidget::FlagsWidget(MainWindow *main)
     connect(Core(), &CutterCore::codeRebased, this, &FlagsWidget::flagsChanged);
     connect(Core(), &CutterCore::refreshAll, this, &FlagsWidget::refreshFlagspaces);
     connect(Core(), &CutterCore::commentsChanged, this,
-            [this]() { qhelpers::emitColumnChanged(flags_model, FlagsModel::COMMENT); });
+            [this]() { qhelpers::emitColumnChanged(flagsModel, FlagsModel::COMMENT); });
 
     auto menu = ui->flagsTreeView->getItemContextMenu();
     menu->addSeparator();
@@ -263,16 +263,16 @@ void FlagsWidget::refreshFlags()
     if (flagspaceData.isValid())
         flagspace = flagspaceData.value<FlagspaceDescription>().name;
 
-    flags_model->beginResetModel();
-    flags_model->flags = Core()->getAllFlags(flagspace);
-    flags_model->endResetModel();
+    flagsModel->beginResetModel();
+    flagsModel->flags = Core()->getAllFlags(flagspace);
+    flagsModel->endResetModel();
 
     // set the initial item count
-    ui->filterLineEdit->setItemCount(flags_proxy_model->rowCount());
+    ui->filterLineEdit->setItemCount(flagsProxyModel->rowCount());
 
     // TODO: this is not a very good place for the following:
     QStringList flagNames;
-    for (const FlagDescription &i : flags_model->flags)
+    for (const FlagDescription &i : flagsModel->flags)
         flagNames.append(i.name);
     main->refreshOmniBar(flagNames);
 }

@@ -59,9 +59,9 @@ static inline auto fromOwned(RZ_OWN RzList *data) -> UniquePtrCP<decltype(data),
 
 #define CutterRzVectorForeach(vec, it, type)                                                       \
     if ((vec) && (vec)->a)                                                                         \
-        for (it = (type *)(vec)->a;                                                                \
-             (char *)it != (char *)(vec)->a + ((vec)->len * (vec)->elem_size);                     \
-             it = (type *)((char *)it + (vec)->elem_size))
+        for (it = static_cast<type *>((vec)->a); reinterpret_cast<char *>(it)                      \
+             != static_cast<char *>((vec)->a) + ((vec)->len * (vec)->elem_size);                   \
+             it = reinterpret_cast<type *>(reinterpret_cast<char *>(it) + (vec)->elem_size))
 
 template<typename T>
 class CutterPVector

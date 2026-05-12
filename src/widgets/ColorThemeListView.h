@@ -18,6 +18,9 @@ Q_DECLARE_METATYPE(ColorOption);
 
 class ColorSettingsModel;
 
+/**
+ * @brief Manages the custom rendering of color settings
+ */
 class ColorThemeListView : public QListView
 {
     Q_OBJECT
@@ -37,6 +40,8 @@ protected slots:
 
     void mouseMoveEvent(QMouseEvent *e) override;
 
+    void changeEvent(QEvent *event) override;
+
 private slots:
     void blinkTimeout();
 
@@ -54,6 +59,9 @@ private:
 
 //==============================================
 
+/**
+ * @brief Source model for @ref ColorThemeListView
+ */
 class ColorSettingsModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -79,6 +87,9 @@ private:
     QList<ColorOption> theme;
 };
 
+/**
+ * @brief Delegate for @ref ColorThemeListView
+ */
 class ColorOptionDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
@@ -92,6 +103,9 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     QRect getResetButtonRect() const;
+
+protected:
+    void changeEvent(QEvent *event);
 
 private:
     const int margin = 12;

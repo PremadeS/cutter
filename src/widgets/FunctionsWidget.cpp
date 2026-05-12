@@ -485,7 +485,6 @@ bool FunctionSortFilterProxyModel::lessThan(const QModelIndex &left, const QMode
 
 FunctionsWidget::FunctionsWidget(MainWindow *main)
     : ListDockWidget(main),
-      functionProxyModel(new FunctionSortFilterProxyModel(functionModel, this)),
       titleContextMenu(new QMenu(this)),
       actionRename(tr("Rename"), this),
       actionUndefine(tr("Undefine"), this),
@@ -503,6 +502,7 @@ FunctionsWidget::FunctionsWidget(MainWindow *main)
     const QFont highlightFont = QFont(fontInfo.family(), fontInfo.pointSize(), QFont::Bold);
 
     functionModel = new FunctionModel(false, defaultFont, highlightFont, this);
+    functionProxyModel = new FunctionSortFilterProxyModel(functionModel, this);
 
     setModels(functionProxyModel);
     ui->treeView->sortByColumn(FunctionModel::NameColumn, Qt::AscendingOrder);
@@ -559,8 +559,8 @@ void FunctionsWidget::refreshTree()
         task->wait();
     }
 
-    task = QSharedPointer<FunctionsTask>(new FunctionsTask());
-    connect(task.data(), &FunctionsTask::fetchFinished, this,
+    task = std::shared_ptr<FunctionsTask>(new FunctionsTask());
+    connect(task.get(), &FunctionsTask::fetchFinished, this,
             [this](const QList<FunctionDescription> &functions) {
                 functionModel->beginResetModel();
 
@@ -660,9 +660,6 @@ void FunctionsWidget::onActionVerticalToggled(bool enable)
     }
 }
 
-/**
- * @brief a SLOT to set the stylesheet for a tooltip
- */
 void FunctionsWidget::setTooltipStylesheet()
 {
     setStyleSheet(DisassemblyPreview::getToolTipStyleSheet());

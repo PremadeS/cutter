@@ -3,9 +3,10 @@
 
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "widgets/ListDockWidget.h"
+#include "CutterCommon.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
@@ -21,17 +22,19 @@ class ClassesWidget;
 
 /**
  * @brief Common abstract base class for Bin and Anal classes models
+ *
+ * @see BinClassesModel, AnalysisClassesModel
  */
 class ClassesModel : public AddressableItemModel<>
 {
     Q_OBJECT
 public:
-    enum Columns { NAME = 0, REAL_NAME, TYPE, OFFSET, VTABLE, COUNT };
+    enum Columns : ut8 { NAME = 0, REAL_NAME, TYPE, OFFSET, VTABLE, COUNT };
 
     /**
      * @brief values for TypeRole data
      */
-    enum class RowType { Class = 0, Base, VTable, Method, Field };
+    enum class RowType : ut8 { Class = 0, Base, VTable, Method, Field };
 
     /**
      * @brief Offset role of data for QModelIndex
@@ -82,6 +85,9 @@ public:
 
 Q_DECLARE_METATYPE(ClassesModel::RowType)
 
+/**
+ * @brief Read-only model for class info found in the binary
+ */
 class BinClassesModel : public ClassesModel
 {
     Q_OBJECT
@@ -103,6 +109,9 @@ public:
     void setClasses(const QList<BinClassDescription> &classes);
 };
 
+/**
+ * @brief Editable model for classes created during analysis.
+ */
 class AnalysisClassesModel : public ClassesModel
 {
     Q_OBJECT
@@ -118,7 +127,7 @@ private:
      */
     struct Attribute
     {
-        enum class Type { VTable, Base, Method };
+        enum class Type : ut8 { VTable, Base, Method };
         Type type;
         QVariant data;
 
@@ -168,6 +177,9 @@ public slots:
     void classAttrsChanged(const QString &cls);
 };
 
+/**
+ * @brief Handles sorting and filtering for class lists
+ */
 class ClassesSortFilterProxyModel : public AddressableFilterProxyModel
 {
     Q_OBJECT
@@ -181,6 +193,9 @@ protected:
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
 };
 
+/**
+ * @brief Widget for browsing and managing classes
+ */
 class ClassesWidget : public ListDockWidget
 {
     Q_OBJECT
@@ -201,7 +216,7 @@ private slots:
     void updateActions();
 
 private:
-    enum class Source { BIN, ANALYSIS };
+    enum class Source : ut8 { BIN, ANALYSIS };
 
     Source getSource();
 

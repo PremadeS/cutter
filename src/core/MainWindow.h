@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "core/Cutter.h" // only needed for ut64
+// #include "core/Cutter.h" // only needed for ut64
 #include "dialogs/NewFileDialog.h"
 // #include "dialogs/WelcomeDialog.h"
 #include "common/Configuration.h"

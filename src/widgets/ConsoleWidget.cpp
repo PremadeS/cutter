@@ -8,13 +8,14 @@
 #include <QSettings>
 #include <QDir>
 #include <QUuid>
-#include <iostream>
+// #include <iostream> // IWYU pragma: keep
 #include "core/Cutter.h"
 #include "ConsoleWidget.h"
 #include "ui_ConsoleWidget.h"
 #include "common/Helpers.h"
-#include "common/SvgIconEngine.h"
+// #include "common/SvgIconEngine.h"
 #include "shortcuts/ShortcutManager.h"
+#include "SearchBarWidget.h"
 
 #ifdef Q_OS_WIN
 #    include <windows.h>
@@ -135,7 +136,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     connect(ui->inputCombo, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &ConsoleWidget::onIndexChange);
 
-    connect(Core(), &CutterCore::debugTaskStateChanged, this, [=]() {
+    connect(Core(), &CutterCore::debugTaskStateChanged, this, [=, this]() {
         if (Core()->isRedirectableDebugee()) {
             ui->inputCombo->setVisible(true);
         } else {
@@ -253,7 +254,7 @@ void ConsoleWidget::removeLastLine()
 
 void ConsoleWidget::executeCommand(const QString &command)
 {
-    if (!commandTask.isNull()) {
+    if (!commandTask) {
         return;
     }
     ui->rzInputLineEdit->setEnabled(false);
@@ -262,14 +263,14 @@ void ConsoleWidget::executeCommand(const QString &command)
     addOutput(cmdLine);
 
     RVA const oldOffset = Core()->getOffset();
-    commandTask =
-            QSharedPointer<CommandTask>(new CommandTask(command, CommandTask::ColorMode::MODE_16M));
-    connect(commandTask.data(), &CommandTask::finished, this,
+    commandTask = std::shared_ptr<CommandTask>(
+            new CommandTask(command, CommandTask::ColorMode::MODE_16M));
+    connect(commandTask.get(), &CommandTask::finished, this,
             [this, cmdLine, command, oldOffset](const QString &result) {
                 ui->outputTextEdit->appendHtml(CutterCore::ansiEscapeToHtml(result));
                 scrollOutputToEnd();
                 historyAdd(command);
-                commandTask.clear();
+                commandTask.reset();
                 ui->rzInputLineEdit->setEnabled(true);
                 ui->rzInputLineEdit->setFocus();
 

@@ -18,6 +18,9 @@ class QTextCursor;
 class DecompilerContextMenu;
 struct DecompiledCodeTextLine;
 
+/**
+ * @brief Widget to display the decompiled output from plugins like RzGhidra, JsDec etc
+ */
 class DecompilerWidget : public MemoryDockWidget
 {
     Q_OBJECT

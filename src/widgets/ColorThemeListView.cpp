@@ -33,10 +33,10 @@ extern const QMap<QString, OptionInfo> optionInfoMap;
 ColorOptionDelegate::ColorOptionDelegate(QObject *parent) : QStyledItemDelegate(parent)
 {
     resetButtonPixmap = getPixmapFromSvg(":/img/icons/reset.svg", qApp->palette().text().color());
-    connect(qApp, &QGuiApplication::paletteChanged, this, [this]() {
-        resetButtonPixmap =
-                getPixmapFromSvg(":/img/icons/reset.svg", qApp->palette().text().color());
-    });
+    // connect(qApp, &QGuiApplication::paletteChanged, this, [this]() {
+    //     resetButtonPixmap =
+    //             getPixmapFromSvg(":/img/icons/reset.svg", qApp->palette().text().color());
+    // });
 }
 
 void ColorOptionDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -191,6 +191,14 @@ QRect ColorOptionDelegate::getResetButtonRect() const
     return resetButtonRect;
 }
 
+void ColorOptionDelegate::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::ApplicationPaletteChange) {
+        resetButtonPixmap =
+                getPixmapFromSvg(":/img/icons/reset.svg", qApp->palette().text().color());
+    }
+}
+
 QPixmap ColorOptionDelegate::getPixmapFromSvg(const QString &fileName, const QColor &after) const
 {
     QFile file(fileName);
@@ -304,7 +312,7 @@ ColorSettingsModel *ColorThemeListView::colorSettingsModel() const
 
 void ColorThemeListView::blinkTimeout()
 {
-    static enum { Normal, Invisible } state = Normal;
+    static enum : ut8 { Normal, Invisible } state = Normal;
     state = state == Normal ? Invisible : Normal;
     backgroundColor.setAlphaF(1);
 
@@ -403,6 +411,7 @@ ColorThemeWorker::Theme ColorSettingsModel::getTheme() const
     return th;
 }
 
+// TODO: these should be queried from rizin
 namespace {
 const QMap<QString, OptionInfo> optionInfoMap = {
     { "comment",

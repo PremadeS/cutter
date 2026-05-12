@@ -14,6 +14,9 @@ namespace Ui {
 class EntrypointWidget;
 }
 
+/**
+ * @brief Widget that displays all entry points
+ */
 class EntrypointWidget : public CutterDockWidget
 {
     Q_OBJECT

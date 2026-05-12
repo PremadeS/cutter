@@ -17,8 +17,9 @@ int FlirtModel::columnCount(const QModelIndex &) const
 
 QVariant FlirtModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= sigdb.count())
+    if (index.row() >= sigdb.count()) {
         return QVariant();
+    }
 
     const FlirtDescription &entry = sigdb.at(index.row());
 

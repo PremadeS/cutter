@@ -27,6 +27,11 @@
 class QOpenGLWidget;
 #endif
 
+/**
+ * @brief Base class for rendering and interacting with control-flow graphs
+ *
+ * Supports both QPainter and OpenGL rendering
+ */
 class GraphView : public QAbstractScrollArea
 {
     Q_OBJECT
@@ -39,7 +44,7 @@ public:
     using GraphBlock = GraphLayout::GraphBlock;
     using GraphEdge = GraphLayout::GraphEdge;
 
-    enum class Layout {
+    enum class Layout : ut8 {
         GridNarrow,
         GridMedium,
         GridWide,

@@ -163,7 +163,7 @@ GlobalsWidget::GlobalsWidget(MainWindow *main)
 
     // Setup up the model and the proxy model
 
-    ui->treeView->setModel(globalsProxyModel);
+    ui->treeView->setModel(static_cast<AddressableItemModelI *>(globalsProxyModel));
     ui->treeView->sortByColumn(GlobalsModel::AddressColumn, Qt::AscendingOrder);
 
     // Setup custom context menu

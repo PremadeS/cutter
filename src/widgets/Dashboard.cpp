@@ -2,7 +2,7 @@
 #include "ui_Dashboard.h"
 #include "common/Helpers.h"
 #include "common/JsonModel.h"
-#include "common/TempConfig.h"
+// #include "common/TempConfig.h"
 #include "dialogs/VersionInfoDialog.h"
 
 #include "core/MainWindow.h"
@@ -192,11 +192,6 @@ void Dashboard::onVersioninfoButtonClicked()
     }
 }
 
-/**
- * @brief Set the text of a QLineEdit. If no text, then "N/A" is set.
- * @param textBox
- * @param text
- */
 void Dashboard::setPlainText(QLineEdit *textBox, const QString &text)
 {
     if (!text.isEmpty()) {
@@ -208,10 +203,6 @@ void Dashboard::setPlainText(QLineEdit *textBox, const QString &text)
     textBox->setCursorPosition(0);
 }
 
-/**
- * @brief Setting boolean values of binary information in dashboard
- * @param RzBinInfo
- */
 void Dashboard::setRzBinInfo(const RzBinInfo *binInfo)
 {
     setPlainText(ui->vaEdit, binInfo ? setBoolText(binInfo->has_va) : "");
@@ -224,10 +215,6 @@ void Dashboard::setRzBinInfo(const RzBinInfo *binInfo)
     setPlainText(ui->relocsEdit, binInfo ? setBoolText(RZ_BIN_DBG_RELOCS & binInfo->dbg_info) : "");
 }
 
-/**
- * @brief Set the text of a QLineEdit as True, False
- * @param boolean value
- */
 QString Dashboard::setBoolText(bool value)
 {
     return value ? tr("True") : tr("False");

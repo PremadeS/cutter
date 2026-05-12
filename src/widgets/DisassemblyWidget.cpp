@@ -34,13 +34,13 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
       mCtxMenu(new DisassemblyContextMenu(this, main)),
       mDisasScrollArea(new DisassemblyScrollArea(this)),
       mDisasTextEdit(new DisassemblyTextEdit(this)),
-      cursorCharOffset(0),
-      cursorLineOffset(0),
-      disasmRefresh(createReplacingRefreshDeferrer<RVA>(
-              false, [this](const RVA *offset) { refreshDisasm(offset ? *offset : RVA_INVALID); })),
       leftPanel(new DisassemblyLeftPanel(this)),
       maxLines(0),
-      seekFromCursor(false)
+      cursorLineOffset(0),
+      cursorCharOffset(0),
+      seekFromCursor(false),
+      disasmRefresh(createReplacingRefreshDeferrer<RVA>(
+              false, [this](const RVA *offset) { refreshDisasm(offset ? *offset : RVA_INVALID); }))
 {
     setObjectName(main ? main->getUniqueObjectName(getWidgetType()) : getWidgetType());
     updateWindowTitle();
@@ -775,8 +775,8 @@ void DisassemblyWidget::setupColors()
 
 DisassemblyScrollArea::DisassemblyScrollArea(QWidget *parent)
     : QAbstractScrollArea(parent),
-      accumScrollWheelDeltaY(0),
-      vScrollBar(new AddressRangeScrollBar(this))
+      vScrollBar(new AddressRangeScrollBar(this)),
+      accumScrollWheelDeltaY(0)
 {
 
     setVerticalScrollBar(vScrollBar);

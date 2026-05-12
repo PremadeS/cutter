@@ -3,21 +3,26 @@
 
 #include <QDockWidget>
 #include "CutterDockWidget.h"
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include <QTableView>
 #include <QComboBox>
 #include <AddressableItemContextMenu.h>
+
+#include <memory>
 
 namespace Ui {
 class GlibcHeapWidget;
 }
 
+/**
+ * @brief Source model for @ref GlibcHeapWidget
+ */
 class GlibcHeapModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
     explicit GlibcHeapModel(QObject *parent = nullptr);
-    enum Column { OffsetColumn = 0, SizeColumn, StatusColumn, ColumnCount };
+    enum Column : ut8 { OffsetColumn = 0, SizeColumn, StatusColumn, ColumnCount };
     void reload();
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
@@ -29,6 +34,9 @@ private:
     QVector<Chunk> values;
 };
 
+/**
+ * @brief Widget listing glibc heap during debugging/emulation
+ */
 class GlibcHeapWidget : public QWidget
 {
     Q_OBJECT
@@ -49,7 +57,7 @@ private slots:
 private:
     void updateArenas();
     void updateChunks();
-    Ui::GlibcHeapWidget *ui;
+    std::unique_ptr<Ui::GlibcHeapWidget> ui;
     QTableView *viewHeap;
     QComboBox *arenaSelectorView;
     GlibcHeapModel *modelHeap = new GlibcHeapModel(this);

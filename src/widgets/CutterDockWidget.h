@@ -3,11 +3,16 @@
 
 #include "core/CutterCommon.h"
 #include "common/RefreshDeferrer.h"
-#include "shortcuts/ShortcutManager.h"
+// #include "shortcuts/ShortcutManager.h"
 #include <QDockWidget>
 
 class MainWindow;
 
+/**
+ * @brief QDockWidget wrapper for Cutter
+ *
+ * This should serve as a base class for all dock widgets in main window
+ */
 class CUTTER_EXPORT CutterDockWidget : public QDockWidget
 {
     Q_OBJECT

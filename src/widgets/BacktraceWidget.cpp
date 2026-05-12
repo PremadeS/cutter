@@ -1,6 +1,6 @@
 #include "BacktraceWidget.h"
 #include "ui_BacktraceWidget.h"
-#include "common/JsonModel.h"
+// #include "common/JsonModel.h"
 #include "QHeaderView"
 
 #include "core/MainWindow.h"

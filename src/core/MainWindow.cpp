@@ -6,14 +6,14 @@
 #include "common/BugReporting.h"
 #include "common/Highlighter.h"
 #include "common/Helpers.h"
-#include "common/SvgIconEngine.h"
+// #include "common/SvgIconEngine.h"
 #include "widgets/ProgressIndicator.h"
 #include "common/TempConfig.h"
 #include "common/RunScriptTask.h"
-#include "common/PythonManager.h"
+// #include "common/PythonManager.h"
 #include "plugins/CutterPlugin.h"
 #include "plugins/PluginManager.h"
-#include "CutterConfig.h"
+// #include "CutterConfig.h"
 #include "CutterApplication.h"
 #include "shortcuts/ShortcutManager.h"
 
@@ -30,11 +30,11 @@
 
 // Widgets Headers
 #include "widgets/DisassemblerGraphView.h"
-#include "widgets/GraphView.h"
+// #include "widgets/GraphView.h"
 #include "widgets/GraphWidget.h"
 #include "widgets/GlobalsWidget.h"
 #include "widgets/OverviewWidget.h"
-#include "widgets/OverviewView.h"
+// #include "widgets/OverviewView.h"
 #include "widgets/FunctionsWidget.h"
 #include "widgets/SectionsWidget.h"
 #include "widgets/SegmentsWidget.h"
@@ -70,7 +70,7 @@
 #include "widgets/BacktraceWidget.h"
 #include "widgets/HexdumpWidget.h"
 #include "widgets/DecompilerWidget.h"
-#include "widgets/HexWidget.h"
+// #include "widgets/HexWidget.h"
 #include "widgets/RizinGraphWidget.h"
 #include "widgets/CallGraph.h"
 #include "widgets/HeapDockWidget.h"
@@ -1272,7 +1272,7 @@ void MainWindow::updateLayoutsMenu()
 {
     ui->menuLayouts->clear();
     for (auto it = layouts.begin(), end = layouts.end(); it != end; ++it) {
-        const QString &const name = it.key();
+        const QString &name = it.key();
         if (isBuiltinLayoutName(name)) {
             continue;
         }

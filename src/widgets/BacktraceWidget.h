@@ -5,7 +5,6 @@
 #include <QStandardItem>
 #include <QTableView>
 
-#include "core/Cutter.h"
 #include "CutterDockWidget.h"
 
 class MainWindow;
@@ -14,6 +13,9 @@ namespace Ui {
 class BacktraceWidget;
 }
 
+/**
+ * @brief Widget for showing backtraces while debugging/emulating
+ */
 class BacktraceWidget : public CutterDockWidget
 {
     Q_OBJECT

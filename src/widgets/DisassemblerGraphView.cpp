@@ -1,13 +1,12 @@
-
 #include "DisassemblerGraphView.h"
 #include "common/CutterSeekable.h"
 #include "core/Cutter.h"
 #include "core/MainWindow.h"
-#include "common/Colors.h"
+// #include "common/Colors.h"
 #include "common/Configuration.h"
 #include "common/DisassemblyPreview.h"
 #include "common/TempConfig.h"
-#include "common/SyntaxHighlighter.h"
+// #include "common/SyntaxHighlighter.h"
 #include "common/BasicBlockHighlighter.h"
 #include "common/BasicInstructionHighlighter.h"
 #include "common/Helpers.h"
@@ -30,7 +29,7 @@
 #include <QApplication>
 #include <QAction>
 
-#include <cmath>
+// #include <cmath>
 
 namespace DH = DisassemblyHelper;
 
@@ -38,7 +37,7 @@ DisassemblerGraphView::DisassemblerGraphView(QWidget *parent, CutterSeekable *se
                                              MainWindow *mainWindow,
                                              const QList<QAction *> &additionalMenuActions)
     : CutterGraphView(parent),
-      highlight_token(nullptr),
+      highlightToken(nullptr),
       blockMenu(new DisassemblyContextMenu(this, mainWindow)),
       contextMenu(new QMenu(this)),
       seekable(seekable),
@@ -172,7 +171,7 @@ DisassemblerGraphView::~DisassemblerGraphView()
 {
     qDeleteAll(shortcuts);
     shortcuts.clear();
-    delete highlight_token;
+    delete highlightToken;
 }
 
 void DisassemblerGraphView::refreshView()
@@ -194,9 +193,9 @@ void DisassemblerGraphView::loadCurrentGraph()
     disassemblyBlocks.clear();
     blocks.clear();
 
-    if (highlight_token) {
-        delete highlight_token;
-        highlight_token = nullptr;
+    if (highlightToken) {
+        delete highlightToken;
+        highlightToken = nullptr;
     }
 
     const RzAnalysisFunction *fcn = Core()->functionIn(seekable->getOffset());
@@ -470,11 +469,11 @@ void DisassemblerGraphView::drawBlock(QPainter &p, GraphView::GraphBlock &block,
         }
 
         // Highlight selected tokens
-        if (interactive && highlight_token != nullptr) {
+        if (interactive && highlightToken != nullptr) {
             int pos = -1;
-            const qreal tokenWidth = mFontMetrics->width(highlight_token->content);
-            while ((pos = instr.plainText.indexOf(highlight_token->content, pos + 1)) != -1) {
-                const int tokenEnd = pos + highlight_token->content.length();
+            const qreal tokenWidth = mFontMetrics->width(highlightToken->content);
+            while ((pos = instr.plainText.indexOf(highlightToken->content, pos + 1)) != -1) {
+                const int tokenEnd = pos + highlightToken->content.length();
 
                 if ((pos > 0 && instr.plainText[pos - 1].isLetterOrNumber())
                     || (tokenEnd < instr.plainText.length()
@@ -848,11 +847,11 @@ void DisassemblerGraphView::seekLocal(RVA addr, bool update_viewport)
 
 void DisassemblerGraphView::copySelection()
 {
-    if (!highlight_token)
+    if (!highlightToken)
         return;
 
     QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(highlight_token->content);
+    clipboard->setText(highlightToken->content);
 }
 
 DisassemblerGraphView::Token *DisassemblerGraphView::getToken(Instr *instr, int x)
@@ -902,16 +901,16 @@ void DisassemblerGraphView::blockClicked(GraphView::GraphBlock &block, QMouseEve
 
     currentBlockAddress = block.entry;
 
-    delete highlight_token;
-    highlight_token = getToken(instr, pos.x());
+    delete highlightToken;
+    highlightToken = getToken(instr, pos.x());
 
     RVA const addr = instr->addr;
     seekLocal(addr);
 
     blockMenu->setOffset(addr);
-    blockMenu->setCanCopy(highlight_token);
-    if (highlight_token) {
-        blockMenu->setCurHighlightedWord(highlight_token->content);
+    blockMenu->setCanCopy(highlightToken);
+    if (highlightToken) {
+        blockMenu->setCurHighlightedWord(highlightToken->content);
     }
     viewport()->update();
 }
@@ -980,8 +979,8 @@ void DisassemblerGraphView::blockDoubleClicked(GraphView::GraphBlock &block, QMo
 
     if (bracketValue.found) {
         ctx.word = bracketValue.content;
-    } else if (highlight_token) {
-        ctx.word = highlight_token->content;
+    } else if (highlightToken) {
+        ctx.word = highlightToken->content;
     } else {
         ctx.word = QString();
     }

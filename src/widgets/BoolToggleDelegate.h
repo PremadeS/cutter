@@ -5,6 +5,10 @@
 
 #include <QStyledItemDelegate>
 
+/**
+ * @brief Delegate that toggles boolean model values on double click instead of opening an
+ * editor
+ */
 class CUTTER_EXPORT BoolTogggleDelegate : public QStyledItemDelegate
 {
 public:

@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "menus/FlirtContextMenu.h"
 
@@ -19,6 +19,9 @@ namespace Ui {
 class FlirtWidget;
 }
 
+/**
+ * @brief Source model for @ref FlirtWidget
+ */
 class FlirtModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -26,7 +29,7 @@ class FlirtModel : public QAbstractListModel
     friend FlirtWidget;
 
 public:
-    enum Column {
+    enum Column : ut8 {
         BinTypeColumn = 0,
         ArchNameColumn,
         ArchBitsColumn,
@@ -35,7 +38,7 @@ public:
         DetailsColumn,
         ColumnCount
     };
-    enum Role { FlirtDescriptionRole = Qt::UserRole };
+    enum Role : ut16 { FlirtDescriptionRole = Qt::UserRole };
 
     FlirtModel(QObject *parent = nullptr);
 
@@ -49,6 +52,9 @@ private:
     QList<FlirtDescription> sigdb;
 };
 
+/**
+ * @brief Proxy model for @ref FlirtWidget
+ */
 class FlirtProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -61,6 +67,9 @@ protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 };
 
+/**
+ * @brief Widget for browsing and applying FLIRT signatures to identify library functions
+ */
 class FlirtWidget : public CutterDockWidget
 {
     Q_OBJECT

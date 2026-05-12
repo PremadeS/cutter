@@ -1,7 +1,7 @@
 #include "GraphGridLayout.h"
 
 #include <ranges>
-#include <unordered_set>
+// #include <unordered_set>
 #include <unordered_map>
 #include <queue>
 #include <stack>
@@ -57,7 +57,7 @@ be interpreted as every second row and column being reserved for edges. The row 
 using the first interpretation. To allow better centering of nodes one above other, each node is 2
 columns wide and 1 row high.
 
-\image html graph_grid.svg
+@image html graph_grid.svg
 
 # 1-2 Cycle removal and toposort
 
@@ -96,7 +96,7 @@ In compact mode two subtrees are placed side by side accounting for their shape.
 mode the bounding box of the shorter subtree is used instead of its exact shape. This gives slightly
 sparser layout without being too wide.
 
-\image html graph_parent_placement.svg
+@image html graph_parent_placement.svg
 
 # Edge routing
 Edge routing can be split into: main column selection, rough routing, and segment offset
@@ -151,7 +151,7 @@ tallest block within a row. One common case is a function-entry block being wide
 function name, causing wide horizontal space between branching blocks. Another case is rows in two
 parallel columns being aligned.
 
-\image html layout_compacting.svg
+@image html layout_compacting.svg
 
 Both problems are mitigated by squishing the graph. Compressing in each of the two direction is done
 separately. The process is defined as liner program. Each variable represents a position of edge
@@ -280,7 +280,7 @@ void GraphGridLayout::selectTree(GraphGridLayout::LayoutState &state)
     }
 }
 
-void GraphGridLayout::CalculateLayout(GraphLayout::Graph &blocks, ut64 entry, int &width,
+void GraphGridLayout::calculateLayout(GraphLayout::Graph &blocks, ut64 entry, int &width,
                                       int &height) const
 {
     LayoutState layoutState;
@@ -759,11 +759,11 @@ struct NodeSide
  * @param segmentSpacing The expected spacing between two segments in the same column. Actual
  * spacing may be smaller for nodes with many edges.
  */
-void calculateSegmentOffsets(std::vector<EdgeSegment> &segments, std::vector<int> &edgeOffsets,
-                             std::vector<int> &edgeColumnWidth,
-                             std::vector<NodeSide> &nodeRightSide,
-                             std::vector<NodeSide> &nodeLeftSide,
-                             const std::vector<int> &columnWidth, size_t H, int segmentSpacing)
+static void
+calculateSegmentOffsets(std::vector<EdgeSegment> &segments, std::vector<int> &edgeOffsets,
+                        std::vector<int> &edgeColumnWidth, std::vector<NodeSide> &nodeRightSide,
+                        std::vector<NodeSide> &nodeLeftSide, const std::vector<int> &columnWidth,
+                        size_t H, int segmentSpacing)
 {
     for (auto &segment : segments) {
         if (segment.y0 > segment.y1) {

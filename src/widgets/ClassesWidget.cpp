@@ -598,8 +598,8 @@ bool ClassesSortFilterProxyModel::hasChildren(const QModelIndex &parent) const
 
 ClassesWidget::ClassesWidget(MainWindow *main)
     : ListDockWidget(main),
+      proxyModel(new ClassesSortFilterProxyModel(this)),
       classSourceCombo(new QComboBox(this)),
-      proxy_model(new ClassesSortFilterProxyModel(this)),
       seekToVTableAction(tr("Seek to VTable"), this),
       editMethodAction(tr("Edit Method"), this),
       addMethodAction(tr("Add Method"), this),
@@ -612,7 +612,7 @@ ClassesWidget::ClassesWidget(MainWindow *main)
 
     ui->treeView->setIconSize(QSize(10, 10));
 
-    setModels(proxy_model);
+    setModels(proxyModel);
 
     // User an intermediate single-child layout to contain the combo box, otherwise
     // when the combo box is inserted directly, the entire vertical layout gets a
@@ -674,21 +674,21 @@ void ClassesWidget::refreshClasses()
     switch (getSource()) {
     case Source::BIN:
         if (!binModel) {
-            proxy_model->setSourceModel(static_cast<AddressableItemModelI *>(nullptr));
+            proxyModel->setSourceModel(static_cast<AddressableItemModelI *>(nullptr));
             delete analysisModel;
             analysisModel = nullptr;
             binModel = new BinClassesModel(this);
-            proxy_model->setSourceModel(static_cast<AddressableItemModelI *>(binModel));
+            proxyModel->setSourceModel(static_cast<AddressableItemModelI *>(binModel));
         }
         binModel->setClasses(Core()->getAllClassesFromBin());
         break;
     case Source::ANALYSIS:
         if (!analysisModel) {
-            proxy_model->setSourceModel(static_cast<AddressableItemModelI *>(nullptr));
+            proxyModel->setSourceModel(static_cast<AddressableItemModelI *>(nullptr));
             delete binModel;
             binModel = nullptr;
             analysisModel = new AnalysisClassesModel(this);
-            proxy_model->setSourceModel(static_cast<AddressableItemModelI *>(analysisModel));
+            proxyModel->setSourceModel(static_cast<AddressableItemModelI *>(analysisModel));
         }
         break;
     }
@@ -696,7 +696,7 @@ void ClassesWidget::refreshClasses()
     qhelpers::adjustColumns(ui->treeView, 3, 0);
 
     // set the initial item count
-    ui->quickFilterView->setItemCount(proxy_model->rowCount());
+    ui->quickFilterView->setItemCount(proxyModel->rowCount());
 
     ui->treeView->setColumnWidth(0, 200);
 }

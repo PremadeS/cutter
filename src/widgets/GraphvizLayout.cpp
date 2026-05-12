@@ -1,13 +1,15 @@
 #include "GraphvizLayout.h"
 
-#include <unordered_set>
+// #include <unordered_set>
 #include <unordered_map>
-#include <queue>
+#include <map>
+// #include <queue>
 #include <stack>
 #include <cassert>
 #include <sstream>
 #include <iomanip>
 #include <set>
+#include <QPointF>
 
 #include <gvc.h>
 
@@ -82,7 +84,7 @@ static std::set<std::pair<ut64, ut64>> selectLoopEdges(const GraphLayout::Graph 
     return result;
 }
 
-void GraphvizLayout::CalculateLayout(std::unordered_map<ut64, GraphBlock> &blocks, ut64 entry,
+void GraphvizLayout::calculateLayout(std::unordered_map<ut64, GraphBlock> &blocks, ut64 entry,
                                      int &width, int &height) const
 {
     // https://gitlab.com/graphviz/graphviz/issues/1441

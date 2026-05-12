@@ -1,9 +1,11 @@
 #ifndef GRAPHLAYOUT_H
 #define GRAPHLAYOUT_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 #include <unordered_map>
+#include "CutterCommon.h" // IWYU pragma: keep
+#include <QPolygonF>
 
 class GraphLayout
 {
@@ -12,7 +14,7 @@ public:
     {
         ut64 target;
         QPolygonF polyline;
-        enum ArrowDirection { Down, Left, Up, Right, None };
+        enum ArrowDirection : ut8 { Down, Left, Up, Right, None };
         ArrowDirection arrow = ArrowDirection::Down;
 
         explicit GraphEdge(ut64 target) : target(target) {}

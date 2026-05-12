@@ -4,7 +4,7 @@
 
 #include "common/Configuration.h"
 #include "common/Helpers.h"
-#include "common/TempConfig.h"
+// #include "common/TempConfig.h"
 #include "common/SelectionHighlight.h"
 #include "common/Decompiler.h"
 #include "common/CutterSeekable.h"
@@ -56,7 +56,7 @@ DecompilerWidget::DecompilerWidget(MainWindow *main)
         // If no decompiler was previously chosen. set rz-ghidra as default decompiler
         selectedDecompilerId = "ghidra";
     }
-    for (const Decompiler *dec : decompilers) {
+    for (const Decompiler *dec : std::as_const(decompilers)) {
         ui->decompilerComboBox->addItem(dec->getName(), dec->getId());
         if (dec->getId() == selectedDecompilerId) {
             ui->decompilerComboBox->setCurrentIndex(ui->decompilerComboBox->count() - 1);
@@ -118,11 +118,9 @@ ut64 DecompilerWidget::findReference(size_t pos)
 {
     size_t closestPos = SIZE_MAX;
     ut64 closestOffset = RVA_INVALID;
-    void *iter;
-    rz_vector_foreach(&code->annotations, iter)
+    RzCodeAnnotation *annotation = nullptr;
+    CutterRzVectorForeach(&code->annotations, annotation, RzCodeAnnotation)
     {
-        const auto *annotation = (RzCodeAnnotation *)iter;
-
         if (!(annotation->type == RZ_CODE_ANNOTATION_TYPE_GLOBAL_VARIABLE)
             || annotation->start > pos || annotation->end <= pos) {
             continue;
@@ -140,11 +138,9 @@ ut64 DecompilerWidget::offsetForPosition(size_t pos)
 {
     size_t closestPos = SIZE_MAX;
     ut64 closestOffset = mCtxMenu->getFirstOffsetInLine();
-    void *iter;
-    rz_vector_foreach(&code->annotations, iter)
+    RzCodeAnnotation *annotation;
+    CutterRzVectorForeach(&code->annotations, annotation, RzCodeAnnotation)
     {
-        const auto *annotation = (RzCodeAnnotation *)iter;
-
         if (!(annotation->type == RZ_CODE_ANNOTATION_TYPE_OFFSET) || annotation->start > pos
             || annotation->end <= pos) {
             continue;
@@ -162,10 +158,10 @@ size_t DecompilerWidget::positionForOffset(ut64 offset)
 {
     size_t closestPos = SIZE_MAX;
     ut64 closestOffset = UT64_MAX;
-    void *iter;
-    rz_vector_foreach(&code->annotations, iter)
+    RzCodeAnnotation *annotation = nullptr;
+
+    CutterRzVectorForeach(&code->annotations, annotation, RzCodeAnnotation)
     {
-        const auto *annotation = (RzCodeAnnotation *)iter;
         if (annotation->type != RZ_CODE_ANNOTATION_TYPE_OFFSET
             || annotation->offset.offset > offset) {
             continue;
@@ -331,10 +327,9 @@ void DecompilerWidget::decompilationFinished(RzAnnotatedCode *codeDecompiled)
         highlightBreakpoints();
         lowestOffsetInCode = RVA_MAX;
         highestOffsetInCode = 0;
-        void *iter;
-        rz_vector_foreach(&code->annotations, iter)
+        RzCodeAnnotation *annotation;
+        CutterRzVectorForeach(&code->annotations, annotation, RzCodeAnnotation)
         {
-            const auto *annotation = (RzCodeAnnotation *)iter;
             if (annotation->type == RZ_CODE_ANNOTATION_TYPE_OFFSET) {
                 if (lowestOffsetInCode > annotation->offset.offset) {
                     lowestOffsetInCode = annotation->offset.offset;
@@ -355,10 +350,9 @@ void DecompilerWidget::decompilationFinished(RzAnnotatedCode *codeDecompiled)
 void DecompilerWidget::setAnnotationsAtCursor(size_t pos)
 {
     RzCodeAnnotation *annotationAtPos = nullptr;
-    void *iter;
-    rz_vector_foreach(&this->code->annotations, iter)
+    RzCodeAnnotation *annotation;
+    CutterRzVectorForeach(&this->code->annotations, annotation, RzCodeAnnotation)
     {
-        auto *annotation = (RzCodeAnnotation *)iter;
         if (annotation->type == RZ_CODE_ANNOTATION_TYPE_OFFSET
             || annotation->type == RZ_CODE_ANNOTATION_TYPE_SYNTAX_HIGHLIGHT
             || annotation->start > pos || annotation->end <= pos) {
@@ -631,10 +625,9 @@ static QString remapAnnotationOffsetsToQString(RzAnnotatedCode &code)
         return it - offsets.begin();
     };
 
-    void *iter;
-    rz_vector_foreach(&code.annotations, iter)
+    RzCodeAnnotation *annotation;
+    CutterRzVectorForeach(&code.annotations, annotation, RzCodeAnnotation)
     {
-        auto *annotation = (RzCodeAnnotation *)iter;
         annotation->start = mapPos(annotation->start);
         annotation->end = mapPos(annotation->end);
     }
