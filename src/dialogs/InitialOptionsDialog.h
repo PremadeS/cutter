@@ -1,10 +1,12 @@
 #ifndef OPTIONSDIALOG_H
 #define OPTIONSDIALOG_H
 
-#include <QDialog>
-#include <QCheckBox>
-#include <memory>
 #include "common/InitialOptions.h"
+
+#include <QCheckBox>
+#include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class InitialOptionsDialog;

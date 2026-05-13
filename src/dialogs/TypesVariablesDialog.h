@@ -1,9 +1,9 @@
 #ifndef TYPESVARIABLESDIALOG_H
 #define TYPESVARIABLESDIALOG_H
 
+#include <QAbstractTableModel>
 #include <QDialog>
 #include <QSortFilterProxyModel>
-#include <QAbstractTableModel>
 
 // #include "core/Cutter.h"
 

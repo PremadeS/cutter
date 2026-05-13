@@ -1,11 +1,12 @@
 #include "BreakpointsDialog.h"
-#include "ui_BreakpointsDialog.h"
+
 #include "Cutter.h"
 #include "Helpers.h"
+#include "ui_BreakpointsDialog.h"
 
-#include <QPushButton>
-#include <QCompleter>
 #include <QCheckBox>
+#include <QCompleter>
+#include <QPushButton>
 
 BreakpointsDialog::BreakpointsDialog(bool editMode, QWidget *parent)
     : QDialog(parent), ui(new Ui::BreakpointsDialog), editMode(editMode)
@@ -107,7 +108,7 @@ BreakpointsDialog::BreakpointsDialog(RVA address, QWidget *parent)
     refreshOkButton();
 }
 
-BreakpointsDialog::~BreakpointsDialog() {}
+BreakpointsDialog::~BreakpointsDialog() { }
 
 BreakpointDescription BreakpointsDialog::getDescription()
 {

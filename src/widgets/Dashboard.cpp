@@ -1,23 +1,23 @@
 #include "Dashboard.h"
-#include "ui_Dashboard.h"
+
 #include "common/Helpers.h"
 #include "common/JsonModel.h"
+#include "ui_Dashboard.h"
 // #include "common/TempConfig.h"
+#include "CutterTreeView.h"
+#include "core/MainWindow.h"
 #include "dialogs/VersionInfoDialog.h"
 
-#include "core/MainWindow.h"
-#include "CutterTreeView.h"
-
 #include <QDebug>
-#include <QJsonArray>
-#include <QStringList>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QFile>
-#include <QLayoutItem>
-#include <QString>
-#include <QMessageBox>
 #include <QDialog>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QLayoutItem>
+#include <QMessageBox>
+#include <QString>
+#include <QStringList>
 #include <QTreeWidget>
 
 Dashboard::Dashboard(MainWindow *main) : CutterDockWidget(main), ui(new Ui::Dashboard)
@@ -27,7 +27,7 @@ Dashboard::Dashboard(MainWindow *main) : CutterDockWidget(main), ui(new Ui::Dash
     connect(Core(), &CutterCore::refreshAll, this, &Dashboard::updateContents);
 }
 
-Dashboard::~Dashboard() {}
+Dashboard::~Dashboard() { }
 
 void Dashboard::updateContents()
 {

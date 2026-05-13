@@ -1,19 +1,20 @@
 #include "SectionsWidget.h"
+
 #include "QuickFilterView.h"
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
 #include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "ui_ListDockWidget.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsTextItem>
 #include <QGraphicsView>
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QShortcut>
 #include <QToolTip>
+#include <QVBoxLayout>
 
-SectionsModel::SectionsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+SectionsModel::SectionsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int SectionsModel::rowCount(const QModelIndex &) const
 {
@@ -330,7 +331,7 @@ AbstractAddrDock::AbstractAddrDock(SectionsModel *model, QWidget *parent)
     textColor = ConfigColor("gui.dataoffset");
 }
 
-AbstractAddrDock::~AbstractAddrDock() {}
+AbstractAddrDock::~AbstractAddrDock() { }
 
 void AbstractAddrDock::updateDock()
 {
@@ -443,9 +444,9 @@ void AbstractAddrDock::drawIndicator(const QString &name, float ratio)
     addTextItem(color, QPoint(0, y - indicatorParamPosY), QString("0x%1").arg(offset, 0, 16));
 }
 
-AddrDockScene::AddrDockScene(QWidget *parent) : QGraphicsScene(parent), disableCenterOn(false) {}
+AddrDockScene::AddrDockScene(QWidget *parent) : QGraphicsScene(parent), disableCenterOn(false) { }
 
-AddrDockScene::~AddrDockScene() {}
+AddrDockScene::~AddrDockScene() { }
 
 void AddrDockScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {

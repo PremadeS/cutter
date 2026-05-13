@@ -2,16 +2,16 @@
 #define ADDRESSABLE_ITEM_LIST_H
 
 // #include <memory>
+#include "CutterDockWidget.h"
+#include "CutterTreeView.h"
+#include "common/AddressableItemModel.h"
+#include "core/Cutter.h"
+#include "menus/AddressableItemContextMenu.h"
+
 #include <QAbstractItemModel>
-#include <QSortFilterProxyModel>
 #include <QAbstractItemView>
 #include <QMenu>
-
-#include "core/Cutter.h"
-#include "common/AddressableItemModel.h"
-#include "CutterDockWidget.h"
-#include "menus/AddressableItemContextMenu.h"
-#include "CutterTreeView.h"
+#include <QSortFilterProxyModel>
 
 class MainWindow;
 

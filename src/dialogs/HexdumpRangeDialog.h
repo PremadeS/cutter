@@ -2,6 +2,7 @@
 #define HEXDUMPRANGEDIALOG_H
 
 #include "core/CutterCommon.h" // IWYU pragma: keep
+
 #include <QDialog>
 
 #include <memory>

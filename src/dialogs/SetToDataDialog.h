@@ -4,8 +4,9 @@
 #include <QDialog>
 // #include "core/Cutter.h"
 
-#include <memory>
 #include "CutterCommon.h"
+
+#include <memory>
 
 namespace Ui {
 class SetToDataDialog;

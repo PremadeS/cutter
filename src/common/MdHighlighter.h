@@ -1,11 +1,10 @@
 #ifndef MDHIGHLIGHTER_H
 #define MDHIGHLIGHTER_H
 
-#include <QSyntaxHighlighter>
-
 #include <QHash>
-#include <QTextCharFormat>
 #include <QRegularExpression>
+#include <QSyntaxHighlighter>
+#include <QTextCharFormat>
 
 class QTextDocument;
 

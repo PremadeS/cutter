@@ -2,8 +2,9 @@
 #define ABOUTDIALOG_H
 
 #include <QDialog>
-#include <memory>
 #include <QtNetwork/QNetworkReply>
+
+#include <memory>
 
 namespace Ui {
 class AboutDialog;

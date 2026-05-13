@@ -1,15 +1,15 @@
 #include "CutterGraphView.h"
 
-#include "core/Cutter.h"
-#include "common/Configuration.h"
-#include "dialogs/MultitypeFileSaveDialog.h"
 #include "TempConfig.h"
+#include "common/Configuration.h"
+#include "core/Cutter.h"
+#include "dialogs/MultitypeFileSaveDialog.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <cmath>
-
-#include <QStandardPaths>
 #include <QActionGroup>
+#include <QStandardPaths>
+
+#include <cmath>
 
 static const uint64_t bitmpaExportWarningSize = 32 * 1024 * 1024;
 
@@ -298,9 +298,9 @@ void CutterGraphView::resizeEvent(QResizeEvent *event)
     emit resized();
 }
 
-void CutterGraphView::saveCurrentBlock() {}
+void CutterGraphView::saveCurrentBlock() { }
 
-void CutterGraphView::restoreCurrentBlock() {}
+void CutterGraphView::restoreCurrentBlock() { }
 
 void CutterGraphView::mousePressEvent(QMouseEvent *event)
 {

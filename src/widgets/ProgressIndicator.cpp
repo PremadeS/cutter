@@ -15,7 +15,7 @@ ProgressIndicator::ProgressIndicator(QWidget *parent) : QWidget(parent)
     updateAnimationTimer();
 }
 
-ProgressIndicator::~ProgressIndicator() {}
+ProgressIndicator::~ProgressIndicator() { }
 
 void ProgressIndicator::setProgressIndicatorVisible(bool visible)
 {

@@ -1,16 +1,16 @@
 #ifndef FLAGSWIDGET_H
 #define FLAGSWIDGET_H
 
-#include <memory>
-
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 
+#include <memory>
+
 // #include "core/Cutter.h"
-#include "CutterDockWidget.h"
 #include "AddressableItemList.h"
 #include "AddressableItemModel.h"
+#include "CutterDockWidget.h"
 
 class MainWindow;
 class QTreeWidgetItem;

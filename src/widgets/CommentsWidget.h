@@ -6,8 +6,8 @@
 #include <QSortFilterProxyModel>
 
 // #include "core/Cutter.h"
-#include "common/AddressableItemModel.h"
 #include "CutterDockWidget.h"
+#include "common/AddressableItemModel.h"
 #include "widgets/ListDockWidget.h"
 
 class MainWindow;

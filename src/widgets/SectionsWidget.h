@@ -4,12 +4,12 @@
 // #include <memory>
 // #include <map>
 
-#include <QtWidgets/QToolButton>
 #include <QAbstractListModel>
-#include <QSortFilterProxyModel>
 #include <QGraphicsScene>
-#include <QLabel>
 #include <QHash>
+#include <QLabel>
+#include <QSortFilterProxyModel>
+#include <QtWidgets/QToolButton>
 
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"

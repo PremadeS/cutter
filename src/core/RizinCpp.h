@@ -6,7 +6,9 @@
 #define RIZINCPP_H
 
 #include "rz_core.h"
+
 #include <QString>
+
 #include <memory>
 
 static inline QString fromOwnedCharPtr(char *str)
@@ -83,8 +85,8 @@ public:
         T **p;
 
     public:
-        Iterator(T **p) : p(p) {}
-        Iterator(const Iterator &o) : p(o.p) {}
+        Iterator(T **p) : p(p) { }
+        Iterator(const Iterator &o) : p(o.p) { }
         Iterator &operator++()
         {
             p++;
@@ -101,7 +103,7 @@ public:
         T *operator*() { return *p; }
     };
 
-    CutterPVector(const RzPVector *vec) : vec(vec) {}
+    CutterPVector(const RzPVector *vec) : vec(vec) { }
     Iterator begin() const { return Iterator(reinterpret_cast<T **>(vec->v.a)); }
     Iterator end() const { return Iterator(reinterpret_cast<T **>(vec->v.a) + vec->v.len); }
 };
@@ -126,8 +128,8 @@ public:
         RzListIter *iter;
 
     public:
-        explicit Iterator(RzListIter *iter) : iter(iter) {}
-        Iterator(const Iterator &o) : iter(o.iter) {}
+        explicit Iterator(RzListIter *iter) : iter(iter) { }
+        Iterator(const Iterator &o) : iter(o.iter) { }
         Iterator &operator++()
         {
             if (!iter) {
@@ -153,7 +155,7 @@ public:
         }
     };
 
-    explicit CutterRzList(const RzList *l) : list(l) {}
+    explicit CutterRzList(const RzList *l) : list(l) { }
     Iterator begin() const
     {
         if (!list) {

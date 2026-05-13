@@ -1,9 +1,10 @@
 #include "HeadersWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
 
-HeadersModel::HeadersModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_ListDockWidget.h"
+
+HeadersModel::HeadersModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int HeadersModel::rowCount(const QModelIndex &) const
 {
@@ -131,7 +132,7 @@ HeadersWidget::HeadersWidget(MainWindow *main)
             [this] { ui->quickFilterView->setItemCount(headersProxyModel->rowCount()); });
 }
 
-HeadersWidget::~HeadersWidget() {}
+HeadersWidget::~HeadersWidget() { }
 
 void HeadersWidget::refreshHeaders()
 {

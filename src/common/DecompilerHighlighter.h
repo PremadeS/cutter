@@ -2,11 +2,13 @@
 #define DECOMPILER_HIGHLIGHTER_H
 
 #include "CutterCommon.h"
-#include <rz_util/rz_annotated_code.h>
+
 #include <QSyntaxHighlighter>
-#include <QTextDocument>
 #include <QTextCharFormat>
+#include <QTextDocument>
+
 #include <array>
+#include <rz_util/rz_annotated_code.h>
 
 /**
  * @brief SyntaxHighlighter based on annotations from decompiled code.

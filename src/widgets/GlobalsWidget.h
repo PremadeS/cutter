@@ -1,9 +1,10 @@
 #ifndef GLOBALSWIDGET_H
 #define GLOBALSWIDGET_H
 
-#include <memory>
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
+
+#include <memory>
 
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"

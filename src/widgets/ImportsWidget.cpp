@@ -1,15 +1,16 @@
 #include "ImportsWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ListDockWidget.h"
 
 #include <QPainter>
 #include <QPen>
 #include <QShortcut>
 #include <QTreeWidget>
 
-ImportsModel::ImportsModel(QObject *parent) : AddressableItemModel(parent) {}
+ImportsModel::ImportsModel(QObject *parent) : AddressableItemModel(parent) { }
 
 int ImportsModel::rowCount(const QModelIndex &parent) const
 {
@@ -189,7 +190,7 @@ ImportsWidget::ImportsWidget(MainWindow *main)
             [this]() { qhelpers::emitColumnChanged(importsModel, ImportsModel::CommentColumn); });
 }
 
-ImportsWidget::~ImportsWidget() {}
+ImportsWidget::~ImportsWidget() { }
 
 void ImportsWidget::refreshImports()
 {

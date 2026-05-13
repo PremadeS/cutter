@@ -1,12 +1,14 @@
 #include "SymbolsOptionsWidget.h"
-#include "ui_SymbolsOptionsWidget.h"
-#include <QFileDialog>
-#include <QCheckBox>
-#include <QPushButton>
-#include <QUrl>
+
+#include "PreferencesDialog.h"
 #include "core/Cutter.h"
 #include "core/MainWindow.h"
-#include "PreferencesDialog.h"
+#include "ui_SymbolsOptionsWidget.h"
+
+#include <QCheckBox>
+#include <QFileDialog>
+#include <QPushButton>
+#include <QUrl>
 
 SymbolsOptionsWidget::SymbolsOptionsWidget(PreferencesDialog *parent)
     : QDialog(parent), mainWindow(parent->getMainWindow()), ui(new Ui::SymbolsOptionsWidget)
@@ -31,7 +33,7 @@ SymbolsOptionsWidget::SymbolsOptionsWidget(PreferencesDialog *parent)
     connect(ui->reanalyzeButton, &QPushButton::clicked, this, &SymbolsOptionsWidget::reanalyze);
 }
 
-SymbolsOptionsWidget::~SymbolsOptionsWidget() {}
+SymbolsOptionsWidget::~SymbolsOptionsWidget() { }
 
 void SymbolsOptionsWidget::pdbSelectButtonClicked()
 {

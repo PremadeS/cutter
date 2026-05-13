@@ -2,8 +2,8 @@
 #define ANALYSISTASK_H
 
 #include "common/AsyncTask.h"
-#include "core/Cutter.h"
 #include "common/InitialOptions.h"
+#include "core/Cutter.h"
 
 class CutterCore;
 class MainWindow;

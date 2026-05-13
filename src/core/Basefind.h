@@ -1,11 +1,12 @@
 #ifndef BASEFIND_H
 #define BASEFIND_H
 
-#include <QThread>
 #include <QMutex>
+#include <QThread>
 
 // #include "Cutter.h"
 #include "CutterDescriptions.h"
+
 #include <rz_basefind.h>
 
 class CutterCore;

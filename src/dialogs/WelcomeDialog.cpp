@@ -1,10 +1,9 @@
-#include "core/MainWindow.h"
-#include "CutterConfig.h"
-
-#include "common/Helpers.h"
 #include "WelcomeDialog.h"
-#include "AboutDialog.h"
 
+#include "AboutDialog.h"
+#include "CutterConfig.h"
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "ui_WelcomeDialog.h"
 
 /**

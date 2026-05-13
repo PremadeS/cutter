@@ -1,14 +1,14 @@
 #ifndef VTABLESWIDGET_H
 #define VTABLESWIDGET_H
 
+#include <QSortFilterProxyModel>
+#include <QTreeView>
+
 #include <memory>
 
-#include <QTreeView>
-#include <QSortFilterProxyModel>
-
 // #include "core/Cutter.h"
-#include "CutterDockWidget.h"
 #include "CutterDescriptions.h"
+#include "CutterDockWidget.h"
 
 namespace Ui {
 class VTablesWidget;

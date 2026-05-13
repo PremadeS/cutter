@@ -4,11 +4,13 @@
 
 // #include "common/Metrics.h"
 
+#include "CutterDescriptions.h" // IWYU pragma: keep
+
+#include <QColor>
 #include <QString>
 #include <QTextDocument>
-#include <QColor>
+
 #include <vector>
-#include "CutterDescriptions.h" // IWYU pragma: keep
 
 class QFontMetricsF;
 template<typename T>

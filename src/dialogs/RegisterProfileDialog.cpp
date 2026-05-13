@@ -1,15 +1,16 @@
 #include "RegisterProfileDialog.h"
-#include "ui_RegisterProfileDialog.h"
-#include "Cutter.h"
-#include "Configuration.h"
-#include "EditRegProfileDialog.h"
 
-#include <QFileDialog>
-#include <QPushButton>
-#include <QMessageBox>
+#include "Configuration.h"
+#include "Cutter.h"
+#include "EditRegProfileDialog.h"
+#include "ui_RegisterProfileDialog.h"
+
 #include <QFile>
-#include <QTextStream>
+#include <QFileDialog>
 #include <QMenu>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QTextStream>
 
 RegisterProfileDialog::RegisterProfileDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::RegisterProfileDialog)

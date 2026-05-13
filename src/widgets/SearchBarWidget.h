@@ -1,8 +1,9 @@
 #ifndef SEARCHBARWIDGET_H
 #define SEARCHBARWIDGET_H
 
-#include <QWidget>
 #include <QSizeGrip>
+#include <QWidget>
+
 #include <memory>
 
 namespace Ui {

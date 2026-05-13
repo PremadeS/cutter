@@ -1,8 +1,9 @@
 #ifndef EDITVARIABLESDIALOG_H
 #define EDITVARIABLESDIALOG_H
 
-#include <QDialog>
 #include "CutterDescriptions.h"
+
+#include <QDialog>
 
 namespace Ui {
 class EditVariablesDialog;

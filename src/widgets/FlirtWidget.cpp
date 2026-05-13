@@ -1,9 +1,10 @@
 #include "FlirtWidget.h"
-#include "ui_FlirtWidget.h"
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
 
-FlirtModel::FlirtModel(QObject *parent) : QAbstractListModel(parent) {}
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_FlirtWidget.h"
+
+FlirtModel::FlirtModel(QObject *parent) : QAbstractListModel(parent) { }
 
 int FlirtModel::rowCount(const QModelIndex &) const
 {
@@ -142,7 +143,7 @@ FlirtWidget::FlirtWidget(MainWindow *main)
     this->addActions(this->blockMenu->actions());
 }
 
-FlirtWidget::~FlirtWidget() {}
+FlirtWidget::~FlirtWidget() { }
 
 void FlirtWidget::refreshFlirt()
 {

@@ -1,11 +1,13 @@
 #pragma once
 
 #include "core/Cutter.h"
-#include <QDialog>
-#include <memory>
+
 #include <QAbstractListModel>
+#include <QDialog>
 #include <QSortFilterProxyModel>
 #include <QTimer>
+
+#include <memory>
 
 namespace Ui {
 class AttachProcDialog;

@@ -1,12 +1,13 @@
 #include "DisassemblyPreview.h"
+
 #include "Configuration.h"
 #include "rz_types_base.h"
 #include "widgets/GraphView.h"
 
 #include <QCoreApplication>
-#include <QWidget>
-#include <QToolTip>
 #include <QProcessEnvironment>
+#include <QToolTip>
+#include <QWidget>
 
 namespace DH = DisassemblyHelper;
 

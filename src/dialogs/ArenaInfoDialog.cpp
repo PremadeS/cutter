@@ -1,4 +1,5 @@
 #include "ArenaInfoDialog.h"
+
 #include "ui_ArenaInfoDialog.h"
 
 ArenaInfoDialog::ArenaInfoDialog(Arena &arena, QWidget *parent)
@@ -19,4 +20,4 @@ void ArenaInfoDialog::updateContents()
     ui->lineEditMaxMem->setText(rzAddressString(arena.maxSystemMem));
 }
 
-ArenaInfoDialog::~ArenaInfoDialog() {}
+ArenaInfoDialog::~ArenaInfoDialog() { }

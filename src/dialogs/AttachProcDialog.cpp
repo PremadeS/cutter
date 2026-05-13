@@ -1,9 +1,9 @@
-#include "core/MainWindow.h"
-#include "core/Cutter.h"
 #include "AttachProcDialog.h"
-#include "ui_AttachProcDialog.h"
 
 #include "common/Helpers.h"
+#include "core/Cutter.h"
+#include "core/MainWindow.h"
+#include "ui_AttachProcDialog.h"
 
 #include <QScrollBar>
 
@@ -277,7 +277,7 @@ void AttachProcDialog::updateModelData()
     }
 }
 
-void AttachProcDialog::onButtonBoxAccepted() {}
+void AttachProcDialog::onButtonBoxAccepted() { }
 
 void AttachProcDialog::onButtonBoxRejected()
 {

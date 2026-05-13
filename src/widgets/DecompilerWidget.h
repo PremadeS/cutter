@@ -1,12 +1,13 @@
 #ifndef DECOMPILERWIDGET_H
 #define DECOMPILERWIDGET_H
 
-#include <QTextEdit>
-#include <memory>
-
-#include "core/Cutter.h"
-#include "MemoryDockWidget.h"
 #include "Decompiler.h"
+#include "MemoryDockWidget.h"
+#include "core/Cutter.h"
+
+#include <QTextEdit>
+
+#include <memory>
 
 namespace Ui {
 class DecompilerWidget;

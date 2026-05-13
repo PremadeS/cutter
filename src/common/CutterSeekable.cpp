@@ -1,5 +1,6 @@
-#include "core/MainWindow.h"
 #include "CutterSeekable.h"
+
+#include "core/MainWindow.h"
 
 #include <QPlainTextEdit>
 
@@ -8,7 +9,7 @@ CutterSeekable::CutterSeekable(QObject *parent) : QObject(parent)
     connect(Core(), &CutterCore::seekChanged, this, &CutterSeekable::onCoreSeekChanged);
 }
 
-CutterSeekable::~CutterSeekable() {}
+CutterSeekable::~CutterSeekable() { }
 
 void CutterSeekable::setSynchronization(bool sync)
 {

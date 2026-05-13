@@ -1,12 +1,10 @@
 #include "AnalysisOptionsWidget.h"
-#include "ui_AnalysisOptionsWidget.h"
 
 #include "PreferencesDialog.h"
-
-#include "common/Helpers.h"
 #include "common/Configuration.h"
-
+#include "common/Helpers.h"
 #include "core/MainWindow.h"
+#include "ui_AnalysisOptionsWidget.h"
 
 static const QHash<QString, const char *> analysisBoundaries {
     { "io.maps.x", QT_TRANSLATE_NOOP("AnalysisOptionsWidget", "All executable maps") },
@@ -53,7 +51,7 @@ AnalysisOptionsWidget::AnalysisOptionsWidget(PreferencesDialog *dialog)
     updateAnalysisOptionsFromVars();
 }
 
-AnalysisOptionsWidget::~AnalysisOptionsWidget() {}
+AnalysisOptionsWidget::~AnalysisOptionsWidget() { }
 
 void AnalysisOptionsWidget::checkboxEnabler(QCheckBox *checkBox, const QString &config)
 {

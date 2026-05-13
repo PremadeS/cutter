@@ -1,8 +1,9 @@
 #include "ListDockWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ListDockWidget.h"
 
 #include <QMenu>
 #include <QResizeEvent>
@@ -32,7 +33,7 @@ ListDockWidget::ListDockWidget(MainWindow *main)
     ui->treeView->setMainWindow(mainWindow);
 }
 
-ListDockWidget::~ListDockWidget() {}
+ListDockWidget::~ListDockWidget() { }
 
 void ListDockWidget::setModels(AddressableFilterProxyModel *objectFilterProxyModel)
 {

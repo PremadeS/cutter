@@ -2,10 +2,11 @@
 #define DECOMPILERCONTEXTMENU_H
 
 // #include "core/Cutter.h"
-#include <QMenu>
-#include <QKeySequence>
-
 #include "CutterCommon.h"
+
+#include <QKeySequence>
+#include <QMenu>
+
 #include <rz_util/rz_annotated_code.h>
 
 class MainWindow;

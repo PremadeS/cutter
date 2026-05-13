@@ -1,12 +1,12 @@
 #include "RemoteDebugDialog.h"
-#include "ui_RemoteDebugDialog.h"
-
-#include <QHostAddress>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QSettings>
 
 #include "CutterCommon.h" // IWYU pragma: keep
+#include "ui_RemoteDebugDialog.h"
+
+#include <QFileInfo>
+#include <QHostAddress>
+#include <QMessageBox>
+#include <QSettings>
 
 enum DbgBackendType : ut8 { GDB = 0, WINDBG = 1 };
 
@@ -45,7 +45,7 @@ RemoteDebugDialog::RemoteDebugDialog(QWidget *parent)
             &RemoteDebugDialog::itemClicked);
 }
 
-RemoteDebugDialog::~RemoteDebugDialog() {}
+RemoteDebugDialog::~RemoteDebugDialog() { }
 
 bool RemoteDebugDialog::validate()
 {
@@ -100,7 +100,7 @@ bool RemoteDebugDialog::validatePort()
     return true;
 }
 
-void RemoteDebugDialog::onButtonBoxAccepted() {}
+void RemoteDebugDialog::onButtonBoxAccepted() { }
 
 void RemoteDebugDialog::onButtonBoxRejected()
 {

@@ -1,24 +1,25 @@
-#include "common/PythonManager.h" // IWYU pragma: keep
 #include "CutterApplication.h"
-#include "plugins/PluginManager.h"
+
 #include "CutterConfig.h"
 #include "common/Decompiler.h" // IWYU pragma: keep
+#include "common/PythonManager.h" // IWYU pragma: keep
 #include "common/ResourcePaths.h"
+#include "plugins/PluginManager.h"
 
 #include <QApplication>
-#include <QFileOpenEvent>
+#include <QCommandLineParser>
+#include <QDir>
 #include <QEvent>
+#include <QFileOpenEvent>
+#include <QFontDatabase>
+#include <QLibraryInfo>
 #include <QMenu>
 #include <QMessageBox>
-#include <QCommandLineParser>
-#include <QTextCodec>
-#include <QStringList>
-#include <QProcess>
 #include <QPluginLoader>
-#include <QDir>
+#include <QProcess>
+#include <QStringList>
+#include <QTextCodec>
 #include <QTranslator>
-#include <QLibraryInfo>
-#include <QFontDatabase>
 #ifdef Q_OS_WIN
 #    include <QtNetwork/QtNetwork>
 #endif // Q_OS_WIN

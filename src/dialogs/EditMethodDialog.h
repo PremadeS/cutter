@@ -1,11 +1,12 @@
 #ifndef EDITMETHODDIALOG_H
 #define EDITMETHODDIALOG_H
 
+#include "CutterDescriptions.h"
+
 #include <QDialog>
 #include <QLabel>
-#include <memory>
 
-#include "CutterDescriptions.h"
+#include <memory>
 
 namespace Ui {
 class EditMethodDialog;

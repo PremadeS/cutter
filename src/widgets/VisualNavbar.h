@@ -1,8 +1,8 @@
 #ifndef VISUALNAVBAR_H
 #define VISUALNAVBAR_H
 
-#include <QToolBar>
 #include <QGraphicsScene>
+#include <QToolBar>
 
 // #include "core/Cutter.h"
 #include "CutterCommon.h"

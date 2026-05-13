@@ -4,16 +4,16 @@
 // #include "core/Cutter.h" // only needed for ut64
 #include "dialogs/NewFileDialog.h"
 // #include "dialogs/WelcomeDialog.h"
-#include "common/Configuration.h"
-#include "common/InitialOptions.h"
-#include "common/IOModesController.h"
-#include "common/CutterLayout.h"
 #include "MemoryDockWidget.h"
+#include "common/Configuration.h"
+#include "common/CutterLayout.h"
+#include "common/IOModesController.h"
+#include "common/InitialOptions.h"
+
+#include <QList>
+#include <QMainWindow>
 
 #include <memory>
-
-#include <QMainWindow>
-#include <QList>
 
 class CutterCore;
 class Omnibar;

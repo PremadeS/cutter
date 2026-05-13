@@ -1,13 +1,15 @@
 #include "BreakpointWidget.h"
-#include "ui_BreakpointWidget.h"
-#include "dialogs/BreakpointsDialog.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
-#include "widgets/BoolToggleDelegate.h"
+#include "core/MainWindow.h"
+#include "dialogs/BreakpointsDialog.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_BreakpointWidget.h"
+#include "widgets/BoolToggleDelegate.h"
+
+#include <QCheckBox>
 #include <QMenu>
 #include <QStyledItemDelegate>
-#include <QCheckBox>
 
 BreakpointModel::BreakpointModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent)
 {

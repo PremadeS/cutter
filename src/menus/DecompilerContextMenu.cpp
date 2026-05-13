@@ -8,13 +8,14 @@
 // #include "common/Configuration.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QtCore>
-#include <QShortcut>
-#include <QJsonArray>
-#include <QClipboard>
 #include <QApplication>
-#include <QPushButton>
+#include <QClipboard>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QPushButton>
+#include <QShortcut>
+#include <QtCore>
+
 #include <utility>
 
 DecompilerContextMenu::DecompilerContextMenu(QWidget *parent, MainWindow *mainWindow)
@@ -69,7 +70,7 @@ DecompilerContextMenu::DecompilerContextMenu(QWidget *parent, MainWindow *mainWi
             &DecompilerContextMenu::aboutToHideSlot);
 }
 
-DecompilerContextMenu::~DecompilerContextMenu() {}
+DecompilerContextMenu::~DecompilerContextMenu() { }
 
 QWidget *DecompilerContextMenu::parentForDialog()
 {

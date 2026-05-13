@@ -1,14 +1,15 @@
 #include "ColorThemeWorker.h"
 
+#include "common/Configuration.h"
+
+#include <QColor>
 #include <QDir>
 #include <QFile>
-#include <QColor>
 #include <QJsonArray>
-#include <QStandardPaths>
 #include <QRegularExpression>
-#include <rz_util/rz_path.h>
+#include <QStandardPaths>
 
-#include "common/Configuration.h"
+#include <rz_util/rz_path.h>
 
 const QStringList ColorThemeWorker::cutterSpecificOptions = {
     "wordHighlight",

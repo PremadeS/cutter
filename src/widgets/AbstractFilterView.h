@@ -1,9 +1,10 @@
 #ifndef ABSTRACTFILTERVIEW_H
 #define ABSTRACTFILTERVIEW_H
 
-#include <QWidget>
-#include <QTimer>
 #include "ItemCountLineEdit.h"
+
+#include <QTimer>
+#include <QWidget>
 
 /**
  * @brief Base class for filter widgets providing a debounced search interface

@@ -1,12 +1,13 @@
 #include "SegmentsWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "ui_ListDockWidget.h"
 
-#include <QVBoxLayout>
 #include <QShortcut>
+#include <QVBoxLayout>
 
-SegmentsModel::SegmentsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+SegmentsModel::SegmentsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int SegmentsModel::rowCount(const QModelIndex &) const
 {
@@ -156,7 +157,7 @@ SegmentsWidget::SegmentsWidget(MainWindow *main)
             [this] { ui->quickFilterView->setItemCount(proxyModel->rowCount()); });
 }
 
-SegmentsWidget::~SegmentsWidget() {}
+SegmentsWidget::~SegmentsWidget() { }
 
 void SegmentsWidget::refreshSegments()
 {

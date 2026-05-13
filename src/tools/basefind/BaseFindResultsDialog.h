@@ -1,12 +1,12 @@
 #ifndef BASEFIND_RESULTS_DIALOG_H
 #define BASEFIND_RESULTS_DIALOG_H
 
-#include <QDialog>
 #include <QAbstractListModel>
+#include <QDialog>
 #include <QSortFilterProxyModel>
-#include <memory>
 
 #include <core/Cutter.h>
+#include <memory>
 
 class BaseFindResultsDialog;
 

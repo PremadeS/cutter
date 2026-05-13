@@ -1,26 +1,27 @@
 #include "FunctionsWidget.h"
-#include "ui_ListDockWidget.h"
 
-#include "core/MainWindow.h"
 #include "common/DisassemblyPreview.h"
-#include "common/Helpers.h"
 #include "common/FunctionsTask.h"
+#include "common/Helpers.h"
 #include "common/TempConfig.h"
+#include "core/MainWindow.h"
 #include "menus/AddressableItemContextMenu.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ListDockWidget.h"
 
-#include <algorithm>
-#include <QMenu>
-#include <QDebug>
-#include <QString>
-#include <QResource>
-#include <QShortcut>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QInputDialog>
 #include <QActionGroup>
 #include <QBitmap>
+#include <QDebug>
+#include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMenu>
 #include <QPainter>
+#include <QResource>
+#include <QShortcut>
+#include <QString>
+
+#include <algorithm>
 
 namespace {
 
@@ -574,7 +575,7 @@ FunctionsWidget::FunctionsWidget(MainWindow *main)
             [this]() { qhelpers::emitColumnChanged(functionModel, FunctionModel::CommentColumn); });
 }
 
-FunctionsWidget::~FunctionsWidget() {}
+FunctionsWidget::~FunctionsWidget() { }
 
 void FunctionsWidget::refreshTree()
 {

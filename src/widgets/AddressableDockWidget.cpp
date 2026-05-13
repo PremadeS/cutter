@@ -1,10 +1,12 @@
 #include "AddressableDockWidget.h"
-#include "common/CutterSeekable.h"
+
 #include "MainWindow.h"
+#include "common/CutterSeekable.h"
+
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
-#include <QContextMenuEvent>
 
 AddressableDockWidget::AddressableDockWidget(MainWindow *parent)
     : CutterDockWidget(parent),

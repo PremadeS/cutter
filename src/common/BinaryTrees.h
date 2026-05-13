@@ -6,11 +6,11 @@
  * @brief Utilities to simplify creation of specialized augmented binary trees.
  */
 
-#include <vector>
-#include <cstdlib>
+#include <algorithm>
 #include <climits>
 #include <cstdint>
-#include <algorithm>
+#include <cstdlib>
+#include <vector>
 
 /**
  * Not really a segment tree for storing segments as referred in academic literature. Can be
@@ -34,7 +34,7 @@ public:
      * @brief Create tree with \a size leaves.
      * @param size number of leaves in the tree
      */
-    explicit SegmentTreeBase(size_t size) : size(size), nodeCount(2 * size), nodes(nodeCount) {}
+    explicit SegmentTreeBase(size_t size) : size(size), nodeCount(2 * size), nodes(nodeCount) { }
 
     /**
      * @brief Create a tree with given size and initial value.
@@ -330,7 +330,7 @@ class RangeAssignMaxTree : public LazySegmentTreeBase<int, uint8_t, RangeAssignM
 
 public:
     using ValueType = int;
-    RangeAssignMaxTree(size_t size, ValueType initialValue) : BaseType(size, initialValue, 0) {}
+    RangeAssignMaxTree(size_t size, ValueType initialValue) : BaseType(size, initialValue, 0) { }
 
     void updateFromChildren(NodeType &parent, const NodeType &left, const NodeType &right)
     {

@@ -1,4 +1,5 @@
 #include "ComboQuickFilterView.h"
+
 #include "ui_ComboQuickFilterView.h"
 
 ComboQuickFilterView::ComboQuickFilterView(QWidget *parent)
@@ -13,7 +14,7 @@ ComboQuickFilterView::ComboQuickFilterView(QWidget *parent)
             &ComboQuickFilterView::showCustomContextMenu);
 }
 
-ComboQuickFilterView::~ComboQuickFilterView() {}
+ComboQuickFilterView::~ComboQuickFilterView() { }
 
 ItemCountLineEdit *ComboQuickFilterView::lineEdit() const
 {

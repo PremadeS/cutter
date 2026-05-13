@@ -2,6 +2,7 @@
 #define RZTASK_H
 
 #include "core/Cutter.h"
+
 #include <memory>
 
 /**
@@ -14,7 +15,7 @@ class CUTTER_EXPORT RizinTask : public QObject
 protected:
     RzCoreTask *task; // TODO: the priavte visibility thing?
 
-    RizinTask() {}
+    RizinTask() { }
     void taskFinished();
 
 public:

@@ -1,11 +1,12 @@
 #include "SymbolsWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_ListDockWidget.h"
 
 #include <QShortcut>
 
-SymbolsModel::SymbolsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+SymbolsModel::SymbolsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int SymbolsModel::rowCount(const QModelIndex &) const
 {
@@ -132,7 +133,7 @@ SymbolsWidget::SymbolsWidget(MainWindow *main)
             [this]() { qhelpers::emitColumnChanged(symbolsModel, SymbolsModel::CommentColumn); });
 }
 
-SymbolsWidget::~SymbolsWidget() {}
+SymbolsWidget::~SymbolsWidget() { }
 
 void SymbolsWidget::refreshSymbols()
 {

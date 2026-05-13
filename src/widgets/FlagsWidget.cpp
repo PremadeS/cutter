@@ -1,17 +1,18 @@
 #include "FlagsWidget.h"
-#include "ui_FlagsWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_FlagsWidget.h"
 
 #include <QComboBox>
+#include <QInputDialog>
 #include <QMenu>
 #include <QShortcut>
-#include <QTreeWidget>
 #include <QStandardItemModel>
-#include <QInputDialog>
+#include <QTreeWidget>
 
-FlagsModel::FlagsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+FlagsModel::FlagsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int FlagsModel::rowCount(const QModelIndex &) const
 {
@@ -194,7 +195,7 @@ FlagsWidget::FlagsWidget(MainWindow *main)
     addAction(ui->actionDelete);
 }
 
-FlagsWidget::~FlagsWidget() {}
+FlagsWidget::~FlagsWidget() { }
 
 void FlagsWidget::onFlagspaceComboCurrentTextChanged(const QString &arg1)
 {

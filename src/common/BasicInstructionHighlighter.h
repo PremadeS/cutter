@@ -2,8 +2,10 @@
 #define BASICINSTRUCTIONHIGHLIGHTER_H
 
 #include "CutterCommon.h"
-#include <map>
+
 #include <QColor>
+
+#include <map>
 
 /**
  * @brief Contains a highlight map for basic instructions

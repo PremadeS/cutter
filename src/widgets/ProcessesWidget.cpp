@@ -1,12 +1,14 @@
-#include <QShortcut>
 #include "ProcessesWidget.h"
+
 #include "ui_ProcessesWidget.h"
+
+#include <QShortcut>
 // #include "common/JsonModel.h"
 #include "QuickFilterView.h"
-#include <rz_debug.h>
-
 #include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+
+#include <rz_debug.h>
 
 #define DEBUGGED_PID (-1)
 
@@ -61,7 +63,7 @@ ProcessesWidget::ProcessesWidget(MainWindow *main)
     connect(ui->viewProcesses, &QTableView::activated, this, &ProcessesWidget::onActivated);
 }
 
-ProcessesWidget::~ProcessesWidget() {}
+ProcessesWidget::~ProcessesWidget() { }
 
 void ProcessesWidget::updateContents()
 {

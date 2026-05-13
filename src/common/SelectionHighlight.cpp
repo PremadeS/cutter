@@ -1,14 +1,15 @@
 
 #include "SelectionHighlight.h"
-#include "Configuration.h"
-#include "Colors.h"
 
-#include <QList>
-#include <QTextEdit>
+#include "Colors.h"
+#include "Configuration.h"
+
 #include <QColor>
-#include <QTextCursor>
+#include <QList>
 #include <QPlainTextEdit>
 #include <QRegularExpression>
+#include <QTextCursor>
+#include <QTextEdit>
 
 QList<QTextEdit::ExtraSelection> createSameWordsSelections(QPlainTextEdit *textEdit,
                                                            const QString &word)

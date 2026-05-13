@@ -2,8 +2,9 @@
 #define MARKDIALOG_H
 
 #include "CutterCommon.h"
-#include <QDialog>
+
 #include <QColor>
+#include <QDialog>
 
 constexpr qreal markAlphaF = 0.5; // 50% alpha to show blending of multiple overalapping marks
 

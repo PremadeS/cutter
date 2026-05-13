@@ -1,10 +1,12 @@
 #include "MemoryDockWidget.h"
-#include "common/CutterSeekable.h"
+
 #include "MainWindow.h"
+#include "common/CutterSeekable.h"
+
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
-#include <QContextMenuEvent>
 
 MemoryDockWidget::MemoryDockWidget(MemoryWidgetType type, MainWindow *parent)
     : AddressableDockWidget(parent), type(type)

@@ -2,6 +2,7 @@
 #define GRAPHWIDGET_H
 
 #include "MemoryDockWidget.h"
+
 #include <QLineEdit>
 
 class MainWindow;
@@ -16,7 +17,7 @@ class GraphWidget : public MemoryDockWidget
 
 public:
     explicit GraphWidget(MainWindow *main);
-    ~GraphWidget() override {}
+    ~GraphWidget() override { }
 
     DisassemblerGraphView *getGraphView() const;
 

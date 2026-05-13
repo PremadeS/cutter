@@ -4,8 +4,9 @@
 #include "AddressableDockWidget.h"
 // #include "core/Cutter.h"
 
-#include <QAction>
 #include "CutterCommon.h"
+
+#include <QAction>
 
 /* Disassembly/Graph/Hexdump/Decompiler view priority */
 enum class MemoryWidgetType : ut8 {
@@ -25,7 +26,7 @@ class CUTTER_EXPORT MemoryDockWidget : public AddressableDockWidget
     Q_OBJECT
 public:
     MemoryDockWidget(MemoryWidgetType type, MainWindow *parent);
-    ~MemoryDockWidget() override {}
+    ~MemoryDockWidget() override { }
 
     bool tryRaiseMemoryWidget();
     MemoryWidgetType getType() const { return type; }

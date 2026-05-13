@@ -2,10 +2,10 @@
 #define ADDRESSABLEITEMCONTEXTMENU_H
 
 // #include "core/Cutter.h"
-#include <QMenu>
+#include "CutterCommon.h"
+
 #include <QKeySequence>
 #include <QMenu>
-#include "CutterCommon.h"
 
 class MainWindow;
 

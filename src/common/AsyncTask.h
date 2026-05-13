@@ -3,12 +3,12 @@
 
 #include "core/CutterCommon.h"
 
-#include <QRunnable>
-#include <QThreadPool>
-#include <QMutex>
 #include <QElapsedTimer>
-#include <QSharedPointer>
 #include <QList>
+#include <QMutex>
+#include <QRunnable>
+#include <QSharedPointer>
+#include <QThreadPool>
 
 class AsyncTaskManager;
 

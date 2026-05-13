@@ -2,12 +2,13 @@
 #define HEXWIDGET_H
 
 #include "Cutter.h"
-#include "dialogs/HexdumpRangeDialog.h"
 #include "common/IOModesController.h"
+#include "dialogs/HexdumpRangeDialog.h"
 
+#include <QMenu>
 #include <QScrollArea>
 #include <QTimer>
-#include <QMenu>
+
 #include <memory>
 
 /**
@@ -17,8 +18,8 @@ struct BasicCursor
 {
     uint64_t address;
     bool pastEnd;
-    explicit BasicCursor(uint64_t pos) : address(pos), pastEnd(false) {}
-    BasicCursor() : address(0), pastEnd(false) {}
+    explicit BasicCursor(uint64_t pos) : address(pos), pastEnd(false) { }
+    BasicCursor() : address(0), pastEnd(false) { }
     BasicCursor &operator+=(int64_t offset)
     {
         if (offset < 0 && uint64_t(-offset) > address) {
@@ -68,7 +69,7 @@ struct BasicCursor
  */
 struct HexCursor
 {
-    HexCursor() : isVisible(false), onAsciiArea(false) {}
+    HexCursor() : isVisible(false), onAsciiArea(false) { }
 
     bool isVisible;
     bool onAsciiArea;
@@ -117,7 +118,7 @@ public:
 
     ~BufferData() override = default;
 
-    void fetch(uint64_t, int) override {}
+    void fetch(uint64_t, int) override { }
 
     bool copy(void *out, uint64_t addr, size_t len) override
     {

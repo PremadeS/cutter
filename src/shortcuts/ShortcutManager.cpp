@@ -1,4 +1,5 @@
 #include "ShortcutManager.h"
+
 #include <QCoreApplication>
 #include <QDebug>
 #include <qglobal.h>
@@ -10,7 +11,7 @@ ShortcutManager *ShortcutManager::getInstance()
     return uniqueInstance;
 }
 
-ShortcutManager::ShortcutManager() {}
+ShortcutManager::ShortcutManager() { }
 
 QList<QKeySequence> ShortcutManager::getKeySequences(const QString &id)
 {

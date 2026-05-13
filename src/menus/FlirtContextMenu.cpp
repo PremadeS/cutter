@@ -1,12 +1,13 @@
 #include "FlirtContextMenu.h"
+
 #include "MainWindow.h"
 
-#include <QtCore>
-#include <QShortcut>
-#include <QJsonArray>
-#include <QClipboard>
 #include <QApplication>
+#include <QClipboard>
+#include <QJsonArray>
 #include <QPushButton>
+#include <QShortcut>
+#include <QtCore>
 
 FlirtContextMenu::FlirtContextMenu(QWidget *parent, MainWindow *mainWindow)
     : QMenu(parent), mainWindow(mainWindow)
@@ -25,7 +26,7 @@ FlirtContextMenu::FlirtContextMenu(QWidget *parent, MainWindow *mainWindow)
     setHasTarget(false);
 }
 
-FlirtContextMenu::~FlirtContextMenu() {}
+FlirtContextMenu::~FlirtContextMenu() { }
 
 void FlirtContextMenu::setTarget(const FlirtDescription &flirt)
 {

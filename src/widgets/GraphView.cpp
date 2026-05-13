@@ -7,18 +7,19 @@
 #include "GraphHorizontalAdapter.h"
 #include "Helpers.h"
 
-#include <vector>
-#include <QPainter>
-#include <QMouseEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainter>
 #include <QPropertyAnimation>
 #include <QSvgGenerator>
 
+#include <vector>
+
 #ifndef CUTTER_NO_OPENGL_GRAPH
 #    include <QOpenGLContext>
-#    include <QOpenGLWidget>
-#    include <QOpenGLPaintDevice>
 #    include <QOpenGLExtraFunctions>
+#    include <QOpenGLPaintDevice>
+#    include <QOpenGLWidget>
 #endif
 
 GraphView::GraphView(QWidget *parent)
@@ -41,7 +42,7 @@ GraphView::GraphView(QWidget *parent)
     setGraphLayout(makeGraphLayout(Layout::GridMedium));
 }
 
-GraphView::~GraphView() {}
+GraphView::~GraphView() { }
 
 // Callbacks
 
@@ -93,7 +94,7 @@ GraphView::EdgeConfiguration GraphView::edgeConfiguration(GraphView::GraphBlock 
     return ec;
 }
 
-void GraphView::blockContextMenuRequested(GraphView::GraphBlock &, QContextMenuEvent *, QPoint) {}
+void GraphView::blockContextMenuRequested(GraphView::GraphBlock &, QContextMenuEvent *, QPoint) { }
 
 bool GraphView::event(QEvent *event)
 {

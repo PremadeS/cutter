@@ -1,16 +1,17 @@
 #include "ClassesWidget.h"
-#include "core/MainWindow.h"
-#include "ui_ListDockWidget.h"
+
 #include "common/Helpers.h"
 #include "common/SvgIconEngine.h"
+#include "core/MainWindow.h"
 #include "dialogs/EditMethodDialog.h"
+#include "ui_ListDockWidget.h"
 
+#include <QComboBox>
+#include <QInputDialog>
 #include <QList>
 #include <QMenu>
 #include <QMouseEvent>
-#include <QInputDialog>
 #include <QShortcut>
-#include <QComboBox>
 
 QVariant ClassesModel::headerData(int section, Qt::Orientation, int role) const
 {
@@ -46,7 +47,7 @@ QString ClassesModel::name(const QModelIndex &index) const
     return data(index, nameRole).toString();
 }
 
-BinClassesModel::BinClassesModel(QObject *parent) : ClassesModel(parent) {}
+BinClassesModel::BinClassesModel(QObject *parent) : ClassesModel(parent) { }
 
 void BinClassesModel::setClasses(const QList<BinClassDescription> &classes)
 {
@@ -658,7 +659,7 @@ ClassesWidget::ClassesWidget(MainWindow *main)
     refreshClasses();
 }
 
-ClassesWidget::~ClassesWidget() {}
+ClassesWidget::~ClassesWidget() { }
 
 ClassesWidget::Source ClassesWidget::getSource()
 {

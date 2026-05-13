@@ -2,10 +2,10 @@
 #define RELOCSWIDGET_H
 
 // #include <memory>
+#include "CutterDockWidget.h"
+
 #include <QAbstractTableModel>
 #include <QSortFilterProxyModel>
-
-#include "CutterDockWidget.h"
 // #include "core/Cutter.h"
 #include "widgets/ListDockWidget.h"
 

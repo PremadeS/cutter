@@ -1,7 +1,9 @@
 #include "MemoryMapWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_ListDockWidget.h"
+
 #include <QShortcut>
 
 MemoryMapModel::MemoryMapModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent)

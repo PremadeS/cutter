@@ -1,14 +1,15 @@
 #ifndef LISTDOCKWIDGET_H
 #define LISTDOCKWIDGET_H
 
-#include <memory>
 #include <QAbstractItemModel>
-#include <QSortFilterProxyModel>
 #include <QMenu>
+#include <QSortFilterProxyModel>
+
+#include <memory>
 
 // #include "core/Cutter.h"
-#include "common/AddressableItemModel.h"
 #include "CutterDockWidget.h"
+#include "common/AddressableItemModel.h"
 #include "menus/AddressableItemContextMenu.h"
 
 class MainWindow;

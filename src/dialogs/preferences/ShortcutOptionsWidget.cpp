@@ -1,6 +1,7 @@
 #include "ShortcutOptionsWidget.h"
-#include "ui_ShortcutOptionsWidget.h"
+
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ShortcutOptionsWidget.h"
 
 ShortcutOptionsWidget::ShortcutOptionsWidget(QWidget *parent)
     : QDialog(parent), ui(new Ui::ShortcutOptionsWidget)
@@ -112,4 +113,4 @@ void ShortcutOptionsWidget::filterShortcutTree(const QString &input)
     }
 }
 
-ShortcutOptionsWidget::~ShortcutOptionsWidget() {}
+ShortcutOptionsWidget::~ShortcutOptionsWidget() { }

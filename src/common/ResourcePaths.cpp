@@ -1,10 +1,10 @@
 #include "common/ResourcePaths.h"
 
-#include <QLibraryInfo>
-#include <QDir>
-#include <QFileInfo>
 #include <QApplication>
 #include <QDebug>
+#include <QDir>
+#include <QFileInfo>
+#include <QLibraryInfo>
 #include <QStandardPaths>
 
 #ifdef APPIMAGE

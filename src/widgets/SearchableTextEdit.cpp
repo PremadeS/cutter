@@ -1,10 +1,11 @@
 #include "SearchableTextEdit.h"
-#include "CutterSearchable.h"
+
 #include "Configuration.h"
+#include "CutterSearchable.h"
 
 #include <QRegularExpression>
 
-SearchableTextEdit::SearchableTextEdit(QWidget *parent) : QPlainTextEdit(parent) {}
+SearchableTextEdit::SearchableTextEdit(QWidget *parent) : QPlainTextEdit(parent) { }
 
 QPair<int, int> SearchableTextEdit::search(const QString &string, int options)
 {

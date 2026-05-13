@@ -1,12 +1,12 @@
 #ifndef COLORTHEMELISTVIEW_H
 #define COLORTHEMELISTVIEW_H
 
-#include <QTimer>
-#include <QListView>
+#include <QAbstractListModel>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QAbstractListModel>
+#include <QListView>
 #include <QStyledItemDelegate>
+#include <QTimer>
 
 struct ColorOption
 {
@@ -26,7 +26,7 @@ class ColorThemeListView : public QListView
     Q_OBJECT
 public:
     ColorThemeListView(QWidget *parent = nullptr);
-    virtual ~ColorThemeListView() override {}
+    virtual ~ColorThemeListView() override { }
 
     ColorSettingsModel *colorSettingsModel() const;
 
@@ -67,7 +67,7 @@ class ColorSettingsModel : public QAbstractListModel
     Q_OBJECT
 public:
     ColorSettingsModel(QObject *parent = nullptr);
-    virtual ~ColorSettingsModel() override {}
+    virtual ~ColorSettingsModel() override { }
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
@@ -95,7 +95,7 @@ class ColorOptionDelegate : public QStyledItemDelegate
     Q_OBJECT
 public:
     ColorOptionDelegate(QObject *parent = nullptr);
-    ~ColorOptionDelegate() override {}
+    ~ColorOptionDelegate() override { }
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;

@@ -1,7 +1,7 @@
 #include "BaseFindDialog.h"
-#include "ui_BaseFindDialog.h"
 
 #include "BaseFindSearchDialog.h"
+#include "ui_BaseFindDialog.h"
 
 #include <core/Cutter.h>
 #include <rz_th.h>
@@ -34,7 +34,7 @@ BaseFindDialog::BaseFindDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Ba
     }
 }
 
-BaseFindDialog::~BaseFindDialog() {}
+BaseFindDialog::~BaseFindDialog() { }
 
 RzThreadNCores BaseFindDialog::getNCores() const
 {
@@ -94,4 +94,4 @@ void BaseFindDialog::onButtonBoxAccepted()
     bfs->show(&options);
 }
 
-void BaseFindDialog::onButtonBoxRejected() {}
+void BaseFindDialog::onButtonBoxRejected() { }

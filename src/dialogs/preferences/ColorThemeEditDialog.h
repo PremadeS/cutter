@@ -2,6 +2,7 @@
 #define COLORTHEMEEDITDIALOG_H
 
 #include <QDialog>
+
 #include <memory>
 
 class DisassemblyWidget;

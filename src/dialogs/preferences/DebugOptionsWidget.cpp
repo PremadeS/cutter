@@ -1,14 +1,15 @@
 #include "DebugOptionsWidget.h"
-#include "ui_DebugOptionsWidget.h"
-#include <QLabel>
-#include <QTimer>
-#include <QComboBox>
-#include <QShortcut>
-#include <QFontDialog>
-#include "PreferencesDialog.h"
 
-#include "common/Helpers.h"
+#include "PreferencesDialog.h"
 #include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "ui_DebugOptionsWidget.h"
+
+#include <QComboBox>
+#include <QFontDialog>
+#include <QLabel>
+#include <QShortcut>
+#include <QTimer>
 
 DebugOptionsWidget::DebugOptionsWidget(PreferencesDialog *dialog)
     : QDialog(dialog), ui(new Ui::DebugOptionsWidget)
@@ -21,7 +22,7 @@ DebugOptionsWidget::DebugOptionsWidget(PreferencesDialog *dialog)
             &DebugOptionsWidget::onDebugPluginChanged);
 }
 
-DebugOptionsWidget::~DebugOptionsWidget() {}
+DebugOptionsWidget::~DebugOptionsWidget() { }
 
 void DebugOptionsWidget::updateDebugPlugin()
 {

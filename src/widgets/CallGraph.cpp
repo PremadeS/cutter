@@ -2,9 +2,9 @@
 
 #include "MainWindow.h"
 
-#include <QJsonValue>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QJsonValue>
 
 CallGraphWidget::CallGraphWidget(MainWindow *main, bool global)
     : MemoryDockWidget(MemoryWidgetType::CallGraph, main),
@@ -18,7 +18,7 @@ CallGraphWidget::CallGraphWidget(MainWindow *main, bool global)
     setWidget(graphView);
 }
 
-CallGraphWidget::~CallGraphWidget() {}
+CallGraphWidget::~CallGraphWidget() { }
 
 QString CallGraphWidget::getWindowTitle() const
 {

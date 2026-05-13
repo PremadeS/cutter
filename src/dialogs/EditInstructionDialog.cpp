@@ -1,6 +1,7 @@
 #include "EditInstructionDialog.h"
-#include "ui_EditInstructionDialog.h"
+
 #include "core/Cutter.h"
+#include "ui_EditInstructionDialog.h"
 
 #include <QCheckBox>
 
@@ -21,9 +22,9 @@ EditInstructionDialog::EditInstructionDialog(InstructionEditMode editMode, QWidg
     connect(ui->lineEdit, &QLineEdit::textEdited, this, &EditInstructionDialog::updatePreview);
 }
 
-EditInstructionDialog::~EditInstructionDialog() {}
+EditInstructionDialog::~EditInstructionDialog() { }
 
-void EditInstructionDialog::onButtonBoxAccepted() {}
+void EditInstructionDialog::onButtonBoxAccepted() { }
 
 void EditInstructionDialog::onButtonBoxRejected()
 {

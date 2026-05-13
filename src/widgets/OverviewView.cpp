@@ -1,9 +1,11 @@
 #include "OverviewView.h"
-#include <QPainter>
-#include <QMouseEvent>
-#include <utility>
 
 #include "core/Cutter.h"
+
+#include <QMouseEvent>
+#include <QPainter>
+
+#include <utility>
 // #include "common/Colors.h"
 #include "common/Configuration.h"
 // #include "common/TempConfig.h"
@@ -34,7 +36,7 @@ void OverviewView::centreRect()
     initialDiff = QPointF(w / 2, h / 2);
 }
 
-OverviewView::~OverviewView() {}
+OverviewView::~OverviewView() { }
 
 void OverviewView::scaleAndCenter()
 {

@@ -1,9 +1,8 @@
 #include "ColorThemeComboBox.h"
 
-#include "core/Cutter.h"
-
 #include "common/ColorThemeWorker.h"
 #include "common/Configuration.h"
+#include "core/Cutter.h"
 
 ColorThemeComboBox::ColorThemeComboBox(QWidget *parent) : QComboBox(parent), showOnlyCustom(false)
 {

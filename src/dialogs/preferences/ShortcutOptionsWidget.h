@@ -2,6 +2,7 @@
 #define SHORTCUTOPTIONSWIDGET_H
 
 #include <QDialog>
+
 #include <memory>
 
 class QTreeWidgetItem;

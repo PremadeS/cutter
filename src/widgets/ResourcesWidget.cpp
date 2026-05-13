@@ -1,7 +1,9 @@
-#include "common/Helpers.h"
 #include "ResourcesWidget.h"
-#include "ui_ListDockWidget.h"
+
+#include "common/Helpers.h"
 #include "core/MainWindow.h"
+#include "ui_ListDockWidget.h"
+
 #include <QVBoxLayout>
 
 ResourcesModel::ResourcesModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent)

@@ -4,9 +4,9 @@
 #include <memory>
 
 // #include "core/Cutter.h"
+#include "CutterCommon.h"
 #include "CutterDockWidget.h"
 #include "widgets/ListDockWidget.h"
-#include "CutterCommon.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
@@ -74,7 +74,7 @@ public:
      */
     static const int realNameRole = Qt::UserRole + 4;
 
-    explicit ClassesModel(QObject *parent = nullptr) : AddressableItemModel(parent) {}
+    explicit ClassesModel(QObject *parent = nullptr) : AddressableItemModel(parent) { }
 
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const override;
@@ -132,7 +132,7 @@ private:
         QVariant data;
 
         Attribute() = default;
-        Attribute(Type type, const QVariant &data) : type(type), data(data) {}
+        Attribute(Type type, const QVariant &data) : type(type), data(data) { }
     };
 
     /**

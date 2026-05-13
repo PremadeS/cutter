@@ -1,17 +1,17 @@
 #include "GraphvizLayout.h"
 
 // #include <unordered_set>
-#include <unordered_map>
 #include <map>
+#include <unordered_map>
 // #include <queue>
-#include <stack>
-#include <cassert>
-#include <sstream>
-#include <iomanip>
-#include <set>
 #include <QPointF>
 
+#include <cassert>
 #include <gvc.h>
+#include <iomanip>
+#include <set>
+#include <sstream>
+#include <stack>
 
 GraphvizLayout::GraphvizLayout(LayoutType lineType, Direction direction)
     : GraphLayout({}), direction(direction), layoutType(lineType)

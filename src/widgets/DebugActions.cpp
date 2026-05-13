@@ -1,18 +1,19 @@
 #include "DebugActions.h"
+
+#include "common/Configuration.h"
+#include "common/Helpers.h"
 #include "core/MainWindow.h"
 #include "dialogs/AttachProcDialog.h"
 #include "dialogs/NativeDebugDialog.h"
-#include "common/Configuration.h"
-#include "common/Helpers.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QPainter>
-#include <QMenu>
-#include <QList>
 #include <QFileInfo>
+#include <QList>
+#include <QMenu>
+#include <QPainter>
+#include <QSettings>
 #include <QToolBar>
 #include <QToolButton>
-#include <QSettings>
 
 DebugActions::DebugActions(QToolBar *toolBar, MainWindow *main)
     : QObject(main), continueUntilButton(new QToolButton), main(main)

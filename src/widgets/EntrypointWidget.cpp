@@ -1,11 +1,11 @@
 #include "EntrypointWidget.h"
+
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "ui_EntrypointWidget.h"
 
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
-
-#include <QTreeWidget>
 #include <QPen>
+#include <QTreeWidget>
 
 EntrypointWidget::EntrypointWidget(MainWindow *main)
     : CutterDockWidget(main), ui(new Ui::EntrypointWidget)
@@ -18,7 +18,7 @@ EntrypointWidget::EntrypointWidget(MainWindow *main)
     connect(Core(), &CutterCore::refreshAll, this, &EntrypointWidget::fillEntrypoint);
 }
 
-EntrypointWidget::~EntrypointWidget() {}
+EntrypointWidget::~EntrypointWidget() { }
 
 void EntrypointWidget::fillEntrypoint()
 {

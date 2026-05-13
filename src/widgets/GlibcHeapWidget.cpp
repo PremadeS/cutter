@@ -1,10 +1,12 @@
-#include <dialogs/GlibcHeapBinsDialog.h>
-#include <dialogs/ArenaInfoDialog.h>
 #include "GlibcHeapWidget.h"
-#include "ui_GlibcHeapWidget.h"
-#include "core/MainWindow.h"
+
 #include "QHeaderView"
+#include "core/MainWindow.h"
 #include "dialogs/GlibcHeapInfoDialog.h"
+#include "ui_GlibcHeapWidget.h"
+
+#include <dialogs/ArenaInfoDialog.h>
+#include <dialogs/GlibcHeapBinsDialog.h>
 
 GlibcHeapWidget::GlibcHeapWidget(MainWindow *main, QWidget *parent)
     : QWidget(parent),
@@ -48,9 +50,9 @@ GlibcHeapWidget::GlibcHeapWidget(MainWindow *main, QWidget *parent)
     addActions(addressableItemContextMenu.actions());
 }
 
-GlibcHeapWidget::~GlibcHeapWidget() {}
+GlibcHeapWidget::~GlibcHeapWidget() { }
 
-GlibcHeapModel::GlibcHeapModel(QObject *parent) : QAbstractTableModel(parent) {}
+GlibcHeapModel::GlibcHeapModel(QObject *parent) : QAbstractTableModel(parent) { }
 
 void GlibcHeapWidget::updateArenas()
 {

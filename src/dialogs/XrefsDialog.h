@@ -1,10 +1,12 @@
 #ifndef XREFSDIALOG_H
 #define XREFSDIALOG_H
 
+#include "common/Highlighter.h"
+
 #include <QDialog>
 #include <QTreeWidgetItem>
+
 #include <memory>
-#include "common/Highlighter.h"
 // #include "core/Cutter.h"
 #include "common/AddressableItemModel.h"
 // #include "QuickFilterView.h"

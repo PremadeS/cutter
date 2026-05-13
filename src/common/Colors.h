@@ -1,8 +1,8 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-#include "core/Cutter.h"
 #include "common/RichTextPainter.h"
+#include "core/Cutter.h"
 
 /**
  * @brief Utilities for handling color logic and syntax highlighting for assembly

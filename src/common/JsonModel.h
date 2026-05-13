@@ -5,8 +5,9 @@
 // TODO: REEEEEEEEEMOOOOOOOOOVEEEEEEEEEEEE THISSSSSSSSSSSSSSSS
 // AND RUN CLANG_FROMAT ON ENTIRE PRJ WITH header sorting
 
-#include <QTreeWidgetItem>
 #include "CutterJson.h"
+
+#include <QTreeWidgetItem>
 
 namespace Cutter {
 

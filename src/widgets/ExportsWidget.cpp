@@ -1,12 +1,13 @@
 #include "ExportsWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ListDockWidget.h"
 
 #include <QShortcut>
 
-ExportsModel::ExportsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+ExportsModel::ExportsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int ExportsModel::rowCount(const QModelIndex &) const
 {
@@ -170,7 +171,7 @@ ExportsWidget::ExportsWidget(MainWindow *main)
             [this]() { qhelpers::emitColumnChanged(exportsModel, ExportsModel::CommentColumn); });
 }
 
-ExportsWidget::~ExportsWidget() {}
+ExportsWidget::~ExportsWidget() { }
 
 void ExportsWidget::refreshExports()
 {

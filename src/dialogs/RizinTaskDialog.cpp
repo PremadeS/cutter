@@ -1,9 +1,9 @@
 #include "RizinTaskDialog.h"
+
 #include "common/RizinTask.h"
+#include "ui_RizinTaskDialog.h"
 
 #include <QCloseEvent>
-
-#include "ui_RizinTaskDialog.h"
 
 RizinTaskDialog::RizinTaskDialog(const RizinTask::Ptr &task, QWidget *parent)
     : QDialog(parent), ui(new Ui::RizinTaskDialog), task(task)
@@ -21,7 +21,7 @@ RizinTaskDialog::RizinTaskDialog(const RizinTask::Ptr &task, QWidget *parent)
     updateProgressTimer();
 }
 
-RizinTaskDialog::~RizinTaskDialog() {}
+RizinTaskDialog::~RizinTaskDialog() { }
 
 void RizinTaskDialog::updateProgressTimer()
 {

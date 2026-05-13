@@ -5,8 +5,8 @@
 
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"
-#include "widgets/SimpleTextGraphView.h"
 #include "common/RefreshDeferrer.h"
+#include "widgets/SimpleTextGraphView.h"
 
 class MainWindow;
 

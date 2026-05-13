@@ -1,15 +1,16 @@
 #include "core/MainWindow.h"
+
 #include "ui_MainWindow.h"
 
 // Common Headers
 #include "common/AnalysisTask.h"
 #include "common/BugReporting.h"
-#include "common/Highlighter.h"
 #include "common/Helpers.h"
+#include "common/Highlighter.h"
 // #include "common/SvgIconEngine.h"
-#include "widgets/ProgressIndicator.h"
-#include "common/TempConfig.h"
 #include "common/RunScriptTask.h"
+#include "common/TempConfig.h"
+#include "widgets/ProgressIndicator.h"
 // #include "common/PythonManager.h"
 #include "plugins/CutterPlugin.h"
 #include "plugins/PluginManager.h"
@@ -18,62 +19,62 @@
 #include "shortcuts/ShortcutManager.h"
 
 // Dialogs
-#include "dialogs/WelcomeDialog.h"
-#include "dialogs/NewFileDialog.h"
-#include "dialogs/InitialOptionsDialog.h"
-#include "dialogs/CommentsDialog.h"
 #include "dialogs/AboutDialog.h"
-#include "dialogs/preferences/PreferencesDialog.h"
-#include "dialogs/MapFileDialog.h"
 #include "dialogs/AsyncTaskDialog.h"
+#include "dialogs/CommentsDialog.h"
+#include "dialogs/InitialOptionsDialog.h"
 #include "dialogs/LayoutManager.h"
+#include "dialogs/MapFileDialog.h"
+#include "dialogs/NewFileDialog.h"
+#include "dialogs/WelcomeDialog.h"
+#include "dialogs/preferences/PreferencesDialog.h"
 
 // Widgets Headers
 #include "widgets/DisassemblerGraphView.h"
 // #include "widgets/GraphView.h"
-#include "widgets/GraphWidget.h"
 #include "widgets/GlobalsWidget.h"
+#include "widgets/GraphWidget.h"
 #include "widgets/OverviewWidget.h"
 // #include "widgets/OverviewView.h"
+#include "widgets/BacktraceWidget.h"
+#include "widgets/BreakpointWidget.h"
+#include "widgets/ClassesWidget.h"
+#include "widgets/CommentsWidget.h"
+#include "widgets/ConsoleWidget.h"
+#include "widgets/Dashboard.h"
+#include "widgets/DebugActions.h"
+#include "widgets/DecompilerWidget.h"
+#include "widgets/DisassemblyWidget.h"
+#include "widgets/EntrypointWidget.h"
+#include "widgets/ExportsWidget.h"
+#include "widgets/FlagsWidget.h"
+#include "widgets/FlirtWidget.h"
 #include "widgets/FunctionsWidget.h"
+#include "widgets/HeadersWidget.h"
+#include "widgets/HexdumpWidget.h"
+#include "widgets/ImportsWidget.h"
+#include "widgets/MemoryMapWidget.h"
+#include "widgets/Omnibar.h"
+#include "widgets/ProcessesWidget.h"
+#include "widgets/RegisterRefsWidget.h"
+#include "widgets/RegistersWidget.h"
+#include "widgets/RelocsWidget.h"
+#include "widgets/ResourcesWidget.h"
+#include "widgets/SdbWidget.h"
+#include "widgets/SearchWidget.h"
 #include "widgets/SectionsWidget.h"
 #include "widgets/SegmentsWidget.h"
-#include "widgets/CommentsWidget.h"
-#include "widgets/ImportsWidget.h"
-#include "widgets/ExportsWidget.h"
-#include "widgets/TypesWidget.h"
-#include "widgets/SearchWidget.h"
-#include "widgets/SymbolsWidget.h"
-#include "widgets/StringsWidget.h"
-#include "widgets/RelocsWidget.h"
-#include "widgets/FlagsWidget.h"
-#include "widgets/VisualNavbar.h"
-#include "widgets/Dashboard.h"
-#include "widgets/SdbWidget.h"
-#include "widgets/Omnibar.h"
-#include "widgets/ConsoleWidget.h"
-#include "widgets/EntrypointWidget.h"
-#include "widgets/ClassesWidget.h"
-#include "widgets/ResourcesWidget.h"
-#include "widgets/VTablesWidget.h"
-#include "widgets/HeadersWidget.h"
-#include "widgets/FlirtWidget.h"
-#include "widgets/DebugActions.h"
-#include "widgets/MemoryMapWidget.h"
-#include "widgets/BreakpointWidget.h"
-#include "widgets/RegisterRefsWidget.h"
-#include "widgets/DisassemblyWidget.h"
 #include "widgets/StackWidget.h"
+#include "widgets/StringsWidget.h"
+#include "widgets/SymbolsWidget.h"
 #include "widgets/ThreadsWidget.h"
-#include "widgets/ProcessesWidget.h"
-#include "widgets/RegistersWidget.h"
-#include "widgets/BacktraceWidget.h"
-#include "widgets/HexdumpWidget.h"
-#include "widgets/DecompilerWidget.h"
+#include "widgets/TypesWidget.h"
+#include "widgets/VTablesWidget.h"
+#include "widgets/VisualNavbar.h"
 // #include "widgets/HexWidget.h"
-#include "widgets/RizinGraphWidget.h"
 #include "widgets/CallGraph.h"
 #include "widgets/HeapDockWidget.h"
+#include "widgets/RizinGraphWidget.h"
 
 // Qt Headers
 #include <QActionGroup>
@@ -88,29 +89,28 @@
 #include <QFileDialog>
 #include <QFont>
 #include <QFontDialog>
+#include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
 #include <QList>
 #include <QMessageBox>
 #include <QProcess>
 #include <QPropertyAnimation>
-#include <QSysInfo>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QInputDialog>
-
 #include <QScrollBar>
 #include <QSettings>
 #include <QShortcut>
 #include <QStringListModel>
-#include <QStyledItemDelegate>
 #include <QStyleFactory>
+#include <QStyledItemDelegate>
+#include <QSvgRenderer>
+#include <QSysInfo>
 #include <QTextCursor>
-#include <QtGlobal>
 #include <QToolButton>
 #include <QToolTip>
 #include <QTreeWidgetItem>
-#include <QSvgRenderer>
+#include <QtGlobal>
 
 // Graphics
 #include <QGraphicsEllipseItem>
@@ -140,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
     initUI();
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() { }
 
 void MainWindow::initUI()
 {

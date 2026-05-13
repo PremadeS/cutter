@@ -2,6 +2,7 @@
 #define DASHBOARD_H
 
 #include <QFormLayout>
+
 #include <memory>
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"

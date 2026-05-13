@@ -1,4 +1,5 @@
 #include "DisassemblerGraphView.h"
+
 #include "common/CutterSeekable.h"
 #include "core/Cutter.h"
 #include "core/MainWindow.h"
@@ -9,25 +10,25 @@
 // #include "common/SyntaxHighlighter.h"
 #include "common/BasicBlockHighlighter.h"
 #include "common/BasicInstructionHighlighter.h"
+#include "common/DisassemblyHelper.h"
 #include "common/Helpers.h"
 #include "shortcuts/ShortcutManager.h"
-#include "common/DisassemblyHelper.h"
 
+#include <QAction>
+#include <QApplication>
+#include <QClipboard>
 #include <QColorDialog>
-#include <QPainter>
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPropertyAnimation>
+#include <QRegularExpression>
 #include <QShortcut>
-#include <QToolTip>
 #include <QTextDocument>
 #include <QTextEdit>
+#include <QToolTip>
 #include <QVBoxLayout>
-#include <QRegularExpression>
-#include <QClipboard>
-#include <QApplication>
-#include <QAction>
 
 // #include <cmath>
 

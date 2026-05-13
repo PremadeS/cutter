@@ -1,13 +1,14 @@
 #include "SearchWidget.h"
-#include "ui_SearchWidget.h"
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
-#include "DisassemblyPreview.h"
 
-#include <QDockWidget>
-#include <QTreeWidget>
+#include "DisassemblyPreview.h"
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_SearchWidget.h"
+
 #include <QComboBox>
+#include <QDockWidget>
 #include <QShortcut>
+#include <QTreeWidget>
 
 namespace {
 const int kMaxTooltipWidth = 500;
@@ -87,7 +88,7 @@ static const SearchKindInfo &searchKindInfo(SearchKind kind)
     return searchKinds[1];
 }
 
-SearchModel::SearchModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+SearchModel::SearchModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int SearchModel::rowCount(const QModelIndex &) const
 {
@@ -270,7 +271,7 @@ SearchWidget::SearchWidget(MainWindow *main)
     connect(Config(), &Configuration::colorsUpdated, this, &SearchWidget::updateColors);
 }
 
-SearchWidget::~SearchWidget() {}
+SearchWidget::~SearchWidget() { }
 
 void SearchWidget::updateSearchBoundaries()
 {

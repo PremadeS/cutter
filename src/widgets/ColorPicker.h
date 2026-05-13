@@ -2,6 +2,7 @@
 #define COLORPICKER_H
 
 #include <QWidget>
+
 #include <memory>
 
 /**
@@ -13,8 +14,8 @@ class ColorPickWidgetAbstract : public QWidget
 {
     Q_OBJECT
 public:
-    ColorPickWidgetAbstract(QWidget *parent = nullptr) : QWidget(parent) {}
-    virtual ~ColorPickWidgetAbstract() {}
+    ColorPickWidgetAbstract(QWidget *parent = nullptr) : QWidget(parent) { }
+    virtual ~ColorPickWidgetAbstract() { }
 
 signals:
     void colorChanged(const QColor &color);
@@ -160,7 +161,7 @@ class AlphaChannelBar : public ColorPickerWidget
 {
     Q_OBJECT
 public:
-    AlphaChannelBar(QWidget *parent = nullptr) : ColorPickerWidget(parent) {}
+    AlphaChannelBar(QWidget *parent = nullptr) : ColorPickerWidget(parent) { }
 
     void setColor(const QColor &c) override;
 
@@ -181,7 +182,7 @@ class ColorValueBar : public ColorPickerWidget
 {
     Q_OBJECT
 public:
-    ColorValueBar(QWidget *parent = nullptr) : ColorPickerWidget(parent) {}
+    ColorValueBar(QWidget *parent = nullptr) : ColorPickerWidget(parent) { }
 
     void setColor(const QColor &c) override;
 

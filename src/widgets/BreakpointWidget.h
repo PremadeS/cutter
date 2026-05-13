@@ -1,13 +1,13 @@
 #pragma once
 
-#include <memory>
-
-#include "core/Cutter.h"
-#include "CutterDockWidget.h"
 #include "AddressableItemModel.h"
+#include "CutterDockWidget.h"
+#include "core/Cutter.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
+
+#include <memory>
 
 class MainWindow;
 class QTreeWidget;

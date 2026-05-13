@@ -1,19 +1,21 @@
 #include "common/Helpers.h"
+
 #include "Configuration.h"
 
-#include <cmath>
-#include <QPlainTextEdit>
-#include <QTextEdit>
-#include <QFileInfo>
-#include <QtCore>
-#include <QCryptographicHash>
-#include <QTreeWidget>
-#include <QString>
-#include <QAbstractItemView>
 #include <QAbstractButton>
-#include <QDockWidget>
-#include <QMenu>
+#include <QAbstractItemView>
 #include <QComboBox>
+#include <QCryptographicHash>
+#include <QDockWidget>
+#include <QFileInfo>
+#include <QMenu>
+#include <QPlainTextEdit>
+#include <QString>
+#include <QTextEdit>
+#include <QTreeWidget>
+#include <QtCore>
+
+#include <cmath>
 
 namespace qhelpers {
 

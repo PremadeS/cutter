@@ -1,23 +1,24 @@
 #ifndef CUTTER_H
 #define CUTTER_H
 
+#include "RizinCpp.h"
+#include "common/BasicInstructionHighlighter.h"
+#include "core/Basefind.h"
 #include "core/CutterCommon.h"
 #include "core/CutterDescriptions.h"
 #include "core/CutterJson.h"
-#include "core/Basefind.h"
-#include "common/BasicInstructionHighlighter.h"
-#include "RizinCpp.h"
 
+#include <QDebug>
+#include <QDir>
+#include <QErrorMessage>
 #include <QMap>
 #include <QMenu>
-#include <QDebug>
+#include <QMessageBox>
+#include <QMutex>
 #include <QObject>
 #include <QSharedPointer>
 #include <QStringList>
-#include <QMessageBox>
-#include <QErrorMessage>
-#include <QMutex>
-#include <QDir>
+
 #include <functional>
 // #include <memory>
 
@@ -172,7 +173,7 @@ public:
         bool empty = true;
 
     public:
-        SeekReturn(RVA returnAddress) : returnAddress(returnAddress), empty(false) {}
+        SeekReturn(RVA returnAddress) : returnAddress(returnAddress), empty(false) { }
         ~SeekReturn()
         {
             if (!empty) {

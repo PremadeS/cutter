@@ -1,7 +1,9 @@
-#include "core/MainWindow.h"
 #include "GraphWidget.h"
+
 #include "DisassemblerGraphView.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+
 #include <QVBoxLayout>
 
 GraphWidget::GraphWidget(MainWindow *main)

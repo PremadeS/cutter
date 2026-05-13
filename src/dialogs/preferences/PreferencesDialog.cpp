@@ -1,21 +1,19 @@
 #include "PreferencesDialog.h"
-#include "ui_PreferencesDialog.h"
 
+#include "AnalysisOptionsWidget.h"
 #include "AppearanceOptionsWidget.h"
 #include "AsmOptionsWidget.h"
-#include "GraphOptionsWidget.h"
 #include "DebugOptionsWidget.h"
-#include "PluginsOptionsWidget.h"
+#include "GraphOptionsWidget.h"
 #include "InitializationFileEditor.h"
-#include "AnalysisOptionsWidget.h"
+#include "InterfaceOptionsWidget.h"
+#include "PluginsOptionsWidget.h"
+#include "PreferenceCategory.h"
 #include "ShortcutOptionsWidget.h"
 #include "SymbolsOptionsWidget.h"
-#include "InterfaceOptionsWidget.h"
-
-#include "PreferenceCategory.h"
-
-#include "common/Helpers.h"
 #include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "ui_PreferencesDialog.h"
 
 #include <QDialogButtonBox>
 
@@ -66,7 +64,7 @@ PreferencesDialog::PreferencesDialog(MainWindow *parent)
     chooseThemeIcons();
 }
 
-PreferencesDialog::~PreferencesDialog() {}
+PreferencesDialog::~PreferencesDialog() { }
 
 void PreferencesDialog::showSection(PreferencesDialog::Section section)
 {

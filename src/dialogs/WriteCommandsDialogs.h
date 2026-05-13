@@ -1,8 +1,9 @@
 #ifndef WRITECOMMANDSDIALOGS_H
 #define WRITECOMMANDSDIALOGS_H
 
-#include <QDialog>
 #include "CutterCommon.h"
+
+#include <QDialog>
 
 #include <memory>
 

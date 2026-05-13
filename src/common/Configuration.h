@@ -1,8 +1,9 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#include <QSettings>
 #include <QFont>
+#include <QSettings>
+
 #include <core/Cutter.h>
 
 #define Config() (Configuration::instance())

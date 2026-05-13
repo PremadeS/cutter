@@ -2,11 +2,10 @@
 #ifndef ADDRESSABLEITEMMODEL_H
 #define ADDRESSABLEITEMMODEL_H
 
+#include "core/CutterCommon.h"
+
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
-#include <QAbstractItemModel>
-
-#include "core/CutterCommon.h"
 
 // Check are these CUTTER_EXPORT required for plugins?
 
@@ -36,8 +35,8 @@ class CUTTER_EXPORT AddressableItemModel : public ParentModel, public Addressabl
                   "ParentModel needs to inherit from QAbstractItemModel");
 
 public:
-    explicit AddressableItemModel(QObject *parent = nullptr) : ParentModel(parent) {}
-    virtual ~AddressableItemModel() {}
+    explicit AddressableItemModel(QObject *parent = nullptr) : ParentModel(parent) { }
+    virtual ~AddressableItemModel() { }
     QAbstractItemModel *asItemModel() { return this; }
 };
 

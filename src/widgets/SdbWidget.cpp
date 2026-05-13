@@ -1,11 +1,12 @@
 #include "SdbWidget.h"
-#include "ui_SdbWidget.h"
 
-#include "core/MainWindow.h"
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_SdbWidget.h"
 
 #include <QDebug>
 #include <QTreeWidget>
+
 #include <utility>
 
 SdbWidget::SdbWidget(MainWindow *main) : CutterDockWidget(main), ui(new Ui::SdbWidget)

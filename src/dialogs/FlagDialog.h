@@ -1,9 +1,11 @@
 #ifndef FLAGDIALOG_H
 #define FLAGDIALOG_H
 
-#include <QDialog>
-#include <memory>
 #include "core/CutterCommon.h"
+
+#include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class FlagDialog;

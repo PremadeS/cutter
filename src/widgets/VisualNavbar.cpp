@@ -1,23 +1,24 @@
 #include "VisualNavbar.h"
+
 #include "core/MainWindow.h"
 // #include "common/TempConfig.h"
 
-#include <QGraphicsView>
-#include <QGraphicsScene>
+#include "core/Cutter.h"
+
 #include <QComboBox>
 #include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QJsonArray>
 #include <QJsonParseError>
-#include <QToolTip>
-#include <QMouseEvent>
 #include <QLayout>
+#include <QMouseEvent>
+#include <QToolTip>
 
 #include <array>
 #include <cmath>
-
-#include "core/Cutter.h"
 
 namespace {
 const int navbarHeight = 15;

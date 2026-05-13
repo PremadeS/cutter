@@ -1,8 +1,9 @@
 #include "ItemCountLineEdit.h"
+
 #include "Configuration.h"
 
-#include <QResizeEvent>
 #include <QLabel>
+#include <QResizeEvent>
 
 namespace {
 constexpr int padding = 5;

@@ -1,5 +1,7 @@
 #include "SetToDataDialog.h"
+
 #include "ui_SetToDataDialog.h"
+
 #include <QIntValidator>
 
 SetToDataDialog::SetToDataDialog(RVA startAddr, QWidget *parent)
@@ -14,7 +16,7 @@ SetToDataDialog::SetToDataDialog(RVA startAddr, QWidget *parent)
     updateEndAddress();
 }
 
-SetToDataDialog::~SetToDataDialog() {}
+SetToDataDialog::~SetToDataDialog() { }
 
 int SetToDataDialog::getItemSize()
 {

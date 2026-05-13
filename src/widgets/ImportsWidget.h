@@ -3,16 +3,16 @@
 
 // #include <memory>
 
+#include "CutterDockWidget.h"
+
 #include <QAbstractTableModel>
-#include <QSortFilterProxyModel>
 #include <QRegularExpression>
+#include <QSortFilterProxyModel>
 #include <QStyledItemDelegate>
 #include <QTreeWidgetItem>
-
-#include "CutterDockWidget.h"
 // #include "core/Cutter.h"
-#include "widgets/ListDockWidget.h"
 #include "common/AddressableItemModel.h"
+#include "widgets/ListDockWidget.h"
 
 class MainWindow;
 class QTreeWidget;

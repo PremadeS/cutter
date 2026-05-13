@@ -1,12 +1,12 @@
 #ifndef ASYNCTASKDIALOG_H
 #define ASYNCTASKDIALOG_H
 
-#include <memory>
+#include "common/AsyncTask.h"
 
 #include <QDialog>
 #include <QTimer>
 
-#include "common/AsyncTask.h"
+#include <memory>
 
 namespace Ui {
 class AsyncTaskDialog;

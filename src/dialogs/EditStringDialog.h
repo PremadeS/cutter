@@ -1,10 +1,11 @@
 #ifndef EDITSTRINGDIALOG_H
 #define EDITSTRINGDIALOG_H
 
-#include <memory>
+#include "CutterDescriptions.h" // IWYU pragma: keep
+
 #include <QDialog>
 
-#include "CutterDescriptions.h" // IWYU pragma: keep
+#include <memory>
 
 namespace Ui {
 class EditStringDialog;

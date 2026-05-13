@@ -1,9 +1,9 @@
 #include "CommentsDialog.h"
+
+#include "core/Cutter.h"
 #include "ui_CommentsDialog.h"
 
 #include <QErrorMessage>
-
-#include "core/Cutter.h"
 
 CommentsDialog::CommentsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::CommentsDialog)
 {
@@ -14,9 +14,9 @@ CommentsDialog::CommentsDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Co
     ui->textEdit->installEventFilter(this);
 }
 
-CommentsDialog::~CommentsDialog() {}
+CommentsDialog::~CommentsDialog() { }
 
-void CommentsDialog::onButtonBoxAccepted() {}
+void CommentsDialog::onButtonBoxAccepted() { }
 
 void CommentsDialog::onButtonBoxRejected()
 {

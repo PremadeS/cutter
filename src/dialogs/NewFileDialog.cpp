@@ -1,17 +1,18 @@
-#include "InitialOptionsDialog.h"
-#include "core/MainWindow.h"
 #include "dialogs/NewFileDialog.h"
-#include "dialogs/AboutDialog.h"
-#include "ui_NewFileDialog.h"
+
+#include "InitialOptionsDialog.h"
 #include "common/Helpers.h"
 #include "common/HighDpiPixmap.h"
+#include "core/MainWindow.h"
+#include "dialogs/AboutDialog.h"
+#include "ui_NewFileDialog.h"
 
-#include <QFileDialog>
-#include <QtGui>
-#include <QMessageBox>
 #include <QDir>
-#include <QPushButton>
+#include <QFileDialog>
 #include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QtGui>
 
 const int NewFileDialog::maxRecentFiles;
 
@@ -81,7 +82,7 @@ NewFileDialog::NewFileDialog(MainWindow *main)
     updateLoadProjectButton();
 }
 
-NewFileDialog::~NewFileDialog() {}
+NewFileDialog::~NewFileDialog() { }
 
 void NewFileDialog::onLoadFileButtonClicked()
 {

@@ -1,7 +1,7 @@
 #include "MapFileDialog.h"
-#include "ui_MapFileDialog.h"
 
 #include "common/Configuration.h"
+#include "ui_MapFileDialog.h"
 
 #include <QFileDialog>
 
@@ -10,7 +10,7 @@ MapFileDialog::MapFileDialog(QWidget *parent) : QDialog(parent), ui(new Ui::MapF
     ui->setupUi(this);
 }
 
-MapFileDialog::~MapFileDialog() {}
+MapFileDialog::~MapFileDialog() { }
 
 void MapFileDialog::onSelectFileButtonClicked()
 {

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
+
 #include <memory>
 
 namespace Ui {

@@ -1,25 +1,25 @@
-#include <QScrollBar>
-#include <QMenu>
-#include <QCompleter>
 #include <QAction>
+#include <QCompleter>
+#include <QDir>
+#include <QMenu>
+#include <QScrollBar>
+#include <QSettings>
 #include <QShortcut>
 #include <QStringListModel>
 #include <QTimer>
-#include <QSettings>
-#include <QDir>
 #include <QUuid>
 // #include <iostream> // IWYU pragma: keep
-#include "core/Cutter.h"
 #include "ConsoleWidget.h"
-#include "ui_ConsoleWidget.h"
 #include "common/Helpers.h"
+#include "core/Cutter.h"
+#include "ui_ConsoleWidget.h"
 // #include "common/SvgIconEngine.h"
-#include "shortcuts/ShortcutManager.h"
 #include "SearchBarWidget.h"
+#include "shortcuts/ShortcutManager.h"
 
 #ifdef Q_OS_WIN
-#    include <windows.h>
 #    include <io.h>
+#    include <windows.h>
 #    define dup2 _dup2
 #    define dup _dup
 #    define fileno _fileno

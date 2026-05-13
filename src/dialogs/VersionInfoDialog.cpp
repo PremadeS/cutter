@@ -1,15 +1,15 @@
 #include "VersionInfoDialog.h"
-#include "ui_VersionInfoDialog.h"
 
 #include "common/Helpers.h"
+#include "ui_VersionInfoDialog.h"
 
-#include <QJsonArray>
-#include <QStringList>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QTreeWidget>
-#include <QContextMenuEvent>
 #include <QClipboard>
+#include <QContextMenuEvent>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QStringList>
+#include <QTreeWidget>
 
 VersionInfoDialog::VersionInfoDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::VersionInfoDialog)
@@ -69,7 +69,7 @@ VersionInfoDialog::VersionInfoDialog(QWidget *parent)
     ui->rightTreeWidget->addAction(selAllActionRightTreewidget);
 }
 
-VersionInfoDialog::~VersionInfoDialog() {}
+VersionInfoDialog::~VersionInfoDialog() { }
 
 void VersionInfoDialog::clearSelectionOnClose()
 {

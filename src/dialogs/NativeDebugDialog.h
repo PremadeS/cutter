@@ -1,10 +1,11 @@
 #ifndef NATIVEDEBUGDIALOG_H
 #define NATIVEDEBUGDIALOG_H
 
-#include <QDialog>
-#include <memory>
-
 #include "CutterCommon.h" // IWYU pragma: keep
+
+#include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class NativeDebugDialog;

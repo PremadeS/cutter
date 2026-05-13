@@ -1,9 +1,11 @@
 #ifndef GLOBALVARIABLEDIALOG_H
 #define GLOBALVARIABLEDIALOG_H
 
-#include <QDialog>
-#include <memory>
 #include "core/CutterCommon.h"
+
+#include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class GlobalVariableDialog;

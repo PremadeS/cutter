@@ -1,25 +1,25 @@
 #include "DisassemblyContextMenu.h"
 // #include "dialogs/preferences/PreferencesDialog.h"
-#include "dialogs/EditInstructionDialog.h"
+#include "MainWindow.h"
+#include "dialogs/BreakpointsDialog.h"
 #include "dialogs/CommentsDialog.h"
+#include "dialogs/EditFunctionDialog.h"
+#include "dialogs/EditInstructionDialog.h"
+#include "dialogs/EditStringDialog.h"
+#include "dialogs/EditVariablesDialog.h"
 #include "dialogs/FlagDialog.h"
 #include "dialogs/GlobalVariableDialog.h"
-#include "dialogs/XrefsDialog.h"
-#include "dialogs/EditVariablesDialog.h"
 #include "dialogs/SetToDataDialog.h"
-#include "dialogs/EditFunctionDialog.h"
-#include "dialogs/EditStringDialog.h"
-#include "dialogs/BreakpointsDialog.h"
+#include "dialogs/XrefsDialog.h"
 #include "shortcuts/ShortcutManager.h"
-#include "MainWindow.h"
 
-#include <QtCore>
-#include <QShortcut>
-#include <QJsonArray>
-#include <QClipboard>
 #include <QApplication>
-#include <QPushButton>
+#include <QClipboard>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QPushButton>
+#include <QShortcut>
+#include <QtCore>
 
 DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *mainWindow)
     : QMenu(parent),
@@ -160,7 +160,7 @@ DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *main
             &DisassemblyContextMenu::aboutToHideSlot);
 }
 
-DisassemblyContextMenu::~DisassemblyContextMenu() {}
+DisassemblyContextMenu::~DisassemblyContextMenu() { }
 
 QWidget *DisassemblyContextMenu::parentForDialog()
 {

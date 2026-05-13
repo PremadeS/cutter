@@ -5,8 +5,8 @@
 // #include "CutterConfig.h"
 #include "common/SettingsUpgrade.h"
 
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonObject>
 
 /**
  * @brief Attempt to connect to a parent console and configure outputs.

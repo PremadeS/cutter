@@ -1,4 +1,5 @@
 #include "BasicInstructionHighlighter.h"
+
 #include <vector>
 
 void BasicInstructionHighlighter::clear(RVA address, RVA size)

@@ -1,4 +1,5 @@
 #include "Basefind.h"
+
 #include "Cutter.h"
 
 bool Basefind::threadCallback(const RzBaseFindThreadInfo *info, void *user)

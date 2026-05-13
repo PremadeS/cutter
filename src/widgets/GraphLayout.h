@@ -3,9 +3,11 @@
 
 // #include "core/Cutter.h"
 
-#include <unordered_map>
 #include "CutterCommon.h" // IWYU pragma: keep
+
 #include <QPolygonF>
+
+#include <unordered_map>
 
 class GraphLayout
 {
@@ -17,7 +19,7 @@ public:
         enum ArrowDirection : ut8 { Down, Left, Up, Right, None };
         ArrowDirection arrow = ArrowDirection::Down;
 
-        explicit GraphEdge(ut64 target) : target(target) {}
+        explicit GraphEdge(ut64 target) : target(target) { }
     };
 
     struct GraphBlock
@@ -41,8 +43,8 @@ public:
         int edgeHorizontalSpacing = 10;
     };
 
-    GraphLayout(const LayoutConfig &layout_config) : layoutConfig(layout_config) {}
-    virtual ~GraphLayout() {}
+    GraphLayout(const LayoutConfig &layout_config) : layoutConfig(layout_config) { }
+    virtual ~GraphLayout() { }
     virtual void calculateLayout(Graph &blocks, ut64 entry, int &width, int &height) const = 0;
     virtual void setLayoutConfig(const LayoutConfig &config) { this->layoutConfig = config; };
 

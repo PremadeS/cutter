@@ -1,11 +1,11 @@
 
 #include "SvgIconEngine.h"
 
-#include <QSvgRenderer>
-#include <QPainter>
-#include <QFile>
-
 #include "Helpers.h"
+
+#include <QFile>
+#include <QPainter>
+#include <QSvgRenderer>
 
 SvgIconEngine::SvgIconEngine(const QString &filename)
 {

@@ -1,22 +1,22 @@
 #ifndef GRAPHVIEW_H
 #define GRAPHVIEW_H
 
-#include <QObject>
-#include <QPainter>
-#include <QWidget>
-#include <QAbstractScrollArea>
-#include <QScrollBar>
-#include <QElapsedTimer>
-#include <QHelpEvent>
-#include <QGestureEvent>
-
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <memory>
-
 #include "core/Cutter.h"
 #include "widgets/GraphLayout.h"
+
+#include <QAbstractScrollArea>
+#include <QElapsedTimer>
+#include <QGestureEvent>
+#include <QHelpEvent>
+#include <QObject>
+#include <QPainter>
+#include <QScrollBar>
+#include <QWidget>
+#include <queue>
+
+#include <memory>
+#include <unordered_map>
+#include <unordered_set>
 
 #if defined(QT_NO_OPENGL) || QT_VERSION < QT_VERSION_CHECK(5, 6, 0)
 // QOpenGLExtraFunctions were introduced in 5.6

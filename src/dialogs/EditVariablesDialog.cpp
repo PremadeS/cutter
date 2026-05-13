@@ -1,12 +1,11 @@
 #include "EditVariablesDialog.h"
+
+#include "Cutter.h"
 #include "ui_EditVariablesDialog.h"
 
-#include <QMetaType>
 #include <QComboBox>
 #include <QMetaType>
 #include <QPushButton>
-
-#include "Cutter.h"
 
 EditVariablesDialog::EditVariablesDialog(RVA offset, const QString &initialVar, QWidget *parent)
     : QDialog(parent), ui(new Ui::EditVariablesDialog), functionAddress(RVA_INVALID)
@@ -41,7 +40,7 @@ EditVariablesDialog::EditVariablesDialog(RVA offset, const QString &initialVar, 
     updateFields();
 }
 
-EditVariablesDialog::~EditVariablesDialog() {}
+EditVariablesDialog::~EditVariablesDialog() { }
 
 bool EditVariablesDialog::empty() const
 {

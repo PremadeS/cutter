@@ -1,14 +1,13 @@
 #include "ColorThemeEditDialog.h"
-#include "ui_ColorThemeEditDialog.h"
 
 #include "common/ColorThemeWorker.h"
 #include "common/Configuration.h"
-
+#include "ui_ColorThemeEditDialog.h"
 #include "widgets/ColorThemeListView.h"
 #include "widgets/DisassemblyWidget.h"
 
-#include <QScreen>
 #include <QKeyEvent>
+#include <QScreen>
 #include <QSortFilterProxyModel>
 
 ColorThemeEditDialog::ColorThemeEditDialog(QWidget *parent)

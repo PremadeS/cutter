@@ -1,9 +1,12 @@
 #include "MarkDialog.h"
+
 #include "Cutter.h"
 #include "CutterCommon.h"
 #include "ui_MarkDialog.h"
+
 #include <QColorDialog>
 #include <QRegularExpressionValidator>
+
 #include <utility>
 
 MarkDialog::MarkDialog(RVA start, RVA end, QWidget *parent, QString name)
@@ -88,7 +91,7 @@ void MarkDialog::accept()
     QDialog::accept();
 }
 
-MarkDialog::~MarkDialog() {}
+MarkDialog::~MarkDialog() { }
 
 void MarkDialog::onPickColor()
 {

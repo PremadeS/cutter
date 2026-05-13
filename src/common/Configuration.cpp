@@ -1,22 +1,24 @@
 #include "Configuration.h"
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QDir>
-#include <QFontDatabase>
-#include <QFile>
+
 #include <QApplication>
+#include <QDir>
+#include <QFile>
+#include <QFontDatabase>
 #include <QHash>
+#include <QJsonArray>
+#include <QJsonObject>
+
 #include <utility>
 
 #ifdef CUTTER_ENABLE_KSYNTAXHIGHLIGHTING
+#    include <KSyntaxHighlighting/Definition>
 #    include <KSyntaxHighlighting/Repository>
 #    include <KSyntaxHighlighting/Theme>
-#    include <KSyntaxHighlighting/Definition>
 #endif
 
 #include "common/ColorThemeWorker.h"
-#include "common/SyntaxHighlighter.h"
 #include "common/ResourcePaths.h"
+#include "common/SyntaxHighlighter.h"
 
 /* Map with names of themes associated with its color palette
  * (Dark or Light), so for dark interface themes will be shown only Dark color themes

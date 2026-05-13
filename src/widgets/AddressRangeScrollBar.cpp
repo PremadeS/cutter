@@ -1,4 +1,5 @@
 #include "AddressRangeScrollBar.h"
+
 #include "Cutter.h"
 
 #include <QWheelEvent>

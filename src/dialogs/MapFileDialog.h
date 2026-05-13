@@ -2,6 +2,7 @@
 #define MAPFILEDIALOG_H
 
 #include <QDialog>
+
 #include <memory>
 // #include "core/Cutter.h"
 

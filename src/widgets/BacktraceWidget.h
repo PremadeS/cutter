@@ -1,11 +1,12 @@
 #pragma once
 
+#include "CutterDockWidget.h"
+
 #include <QJsonObject>
-#include <memory>
 #include <QStandardItem>
 #include <QTableView>
 
-#include "CutterDockWidget.h"
+#include <memory>
 
 class MainWindow;
 

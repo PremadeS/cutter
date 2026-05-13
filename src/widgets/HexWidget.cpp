@@ -1,31 +1,32 @@
 #include "HexWidget.h"
-#include "Cutter.h"
+
 #include "Configuration.h"
-#include "dialogs/MarkDialog.h"
-#include "dialogs/WriteCommandsDialogs.h"
+#include "Cutter.h"
 #include "dialogs/CommentsDialog.h"
 #include "dialogs/FlagDialog.h"
-#include "widgets/AddressRangeScrollBar.h"
+#include "dialogs/MarkDialog.h"
+#include "dialogs/WriteCommandsDialogs.h"
 #include "shortcuts/ShortcutManager.h"
+#include "widgets/AddressRangeScrollBar.h"
 
-#include <QPainter>
-#include <QPaintEvent>
-#include <QResizeEvent>
-#include <QMouseEvent>
+#include <QActionGroup>
+#include <QApplication>
+#include <QClipboard>
+#include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QKeyEvent>
+#include <QMenu>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
+#include <QPushButton>
+#include <QRegularExpression>
+#include <QResizeEvent>
+#include <QScrollBar>
+#include <QToolTip>
 #include <QWheelEvent>
 #include <QtEndian>
-#include <QScrollBar>
-#include <QMenu>
-#include <QClipboard>
-#include <QApplication>
-#include <QInputDialog>
-#include <QPushButton>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QRegularExpression>
-#include <QToolTip>
-#include <QActionGroup>
 
 static constexpr uint64_t maxCopySize = 128 * 1024 * 1024;
 static constexpr int maxLineWidthPreset = 32;

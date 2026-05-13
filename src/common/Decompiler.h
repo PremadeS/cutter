@@ -3,10 +3,11 @@
 
 #include "CutterCommon.h"
 #include "RizinTask.h"
-#include <rz_util/rz_annotated_code.h>
 
-#include <QString>
 #include <QObject>
+#include <QString>
+
+#include <rz_util/rz_annotated_code.h>
 
 /**
  * @brief Implements a decompiler that can be registered using CutterCore::registerDecompiler()
@@ -31,7 +32,7 @@ public:
     virtual bool isCancelable() { return false; }
 
     virtual void decompileAt(RVA addr) = 0;
-    virtual void cancel() {}
+    virtual void cancel() { }
 
 signals:
     void finished(RzAnnotatedCode *codeDecompiled);

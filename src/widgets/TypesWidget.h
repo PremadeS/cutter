@@ -4,11 +4,11 @@
 #include <memory>
 
 // #include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
-#include "CutterDescriptions.h"
 
 class MainWindow;
 class QTreeWidget;

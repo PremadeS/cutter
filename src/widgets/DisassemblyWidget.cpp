@@ -1,27 +1,28 @@
 #include "DisassemblyWidget.h"
-#include "menus/DisassemblyContextMenu.h"
+
+#include "DisassemblyHelper.h"
+#include "common/BinaryTrees.h"
 #include "common/Configuration.h"
 #include "common/DisassemblyPreview.h"
 #include "common/Helpers.h"
-#include "common/TempConfig.h"
 #include "common/SelectionHighlight.h"
-#include "common/BinaryTrees.h"
+#include "common/TempConfig.h"
 #include "core/MainWindow.h"
-#include "widgets/AddressRangeScrollBar.h"
+#include "menus/DisassemblyContextMenu.h"
 #include "shortcuts/ShortcutManager.h"
-#include "DisassemblyHelper.h"
+#include "widgets/AddressRangeScrollBar.h"
 
 #include <QApplication>
-#include <QScrollBar>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QVBoxLayout>
-#include <QRegularExpression>
-#include <QtMath>
-#include <QTextBlockUserData>
 #include <QPainter>
 #include <QPainterPath>
+#include <QRegularExpression>
+#include <QScrollBar>
 #include <QSplitter>
+#include <QTextBlockUserData>
+#include <QVBoxLayout>
+#include <QtMath>
 
 #include <algorithm>
 #include <cmath>

@@ -1,16 +1,18 @@
-#include <QShortcut>
-#include <utility>
 #include "ThreadsWidget.h"
+
 #include "CutterCommon.h"
 #include "Helpers.h"
-#include "ui_ThreadsWidget.h"
 #include "QuickFilterView.h"
-#include <rz_debug.h>
-
 #include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ThreadsWidget.h"
 
-ThreadModel::ThreadModel(QObject *parent) : QAbstractListModel(parent) {}
+#include <QShortcut>
+
+#include <rz_debug.h>
+#include <utility>
+
+ThreadModel::ThreadModel(QObject *parent) : QAbstractListModel(parent) { }
 
 void ThreadModel::setList(QList<ThreadDescription> data)
 {
@@ -162,7 +164,7 @@ ThreadsWidget::ThreadsWidget(MainWindow *main)
     ui->viewThreads->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
 }
 
-ThreadsWidget::~ThreadsWidget() {}
+ThreadsWidget::~ThreadsWidget() { }
 
 void ThreadsWidget::updateContents()
 {

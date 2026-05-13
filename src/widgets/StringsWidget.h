@@ -4,9 +4,9 @@
 #include <memory>
 
 // #include "core/Cutter.h"
+#include "AddressableItemModel.h"
 #include "CutterDockWidget.h"
 #include "common/StringsTask.h"
-#include "AddressableItemModel.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>

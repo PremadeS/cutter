@@ -1,15 +1,14 @@
 #ifndef CUTTER_GRAPHVIEW_H
 #define CUTTER_GRAPHVIEW_H
 
-#include <QWidget>
-#include <QPainter>
-#include <QShortcut>
-#include <QLabel>
+#include "common/CachedFontMetrics.h"
+#include "widgets/GraphView.h"
 
 #include <QGestureEvent>
-
-#include "widgets/GraphView.h"
-#include "common/CachedFontMetrics.h"
+#include <QLabel>
+#include <QPainter>
+#include <QShortcut>
+#include <QWidget>
 
 /**
  * @brief Common Cutter specific graph functionality.

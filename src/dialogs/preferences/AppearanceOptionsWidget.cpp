@@ -1,27 +1,26 @@
-#include <QDir>
-#include <QFile>
-#include <QLabel>
-#include <QPainter>
-#include <QFontDialog>
-#include <QFileDialog>
-#include <QTranslator>
-#include <QInputDialog>
-#include <QSignalBlocker>
-#include <QStandardPaths>
-#include <QtSvg/QSvgRenderer>
+#include "AppearanceOptionsWidget.h"
+
+#include "PreferencesDialog.h"
+#include "common/ColorThemeWorker.h"
+#include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "dialogs/preferences/ColorThemeEditDialog.h"
+#include "ui_AppearanceOptionsWidget.h"
+#include "widgets/ColorPicker.h"
 
 #include <QComboBox>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QFontDialog>
+#include <QInputDialog>
+#include <QLabel>
+#include <QPainter>
+#include <QSignalBlocker>
+#include <QStandardPaths>
+#include <QTranslator>
+#include <QtSvg/QSvgRenderer>
 #include <QtWidgets/QSpinBox>
-#include "PreferencesDialog.h"
-#include "AppearanceOptionsWidget.h"
-#include "ui_AppearanceOptionsWidget.h"
-
-#include "common/Helpers.h"
-#include "common/Configuration.h"
-
-#include "common/ColorThemeWorker.h"
-#include "dialogs/preferences/ColorThemeEditDialog.h"
-#include "widgets/ColorPicker.h"
 
 AppearanceOptionsWidget::AppearanceOptionsWidget(PreferencesDialog *dialog)
     : QDialog(dialog), ui(new Ui::AppearanceOptionsWidget)
@@ -80,7 +79,7 @@ AppearanceOptionsWidget::AppearanceOptionsWidget(PreferencesDialog *dialog)
             [](bool checked) { Config()->enableDecompilerAnnotationHighlighter(checked); });
 }
 
-AppearanceOptionsWidget::~AppearanceOptionsWidget() {}
+AppearanceOptionsWidget::~AppearanceOptionsWidget() { }
 
 void AppearanceOptionsWidget::updateFontFromConfig()
 {

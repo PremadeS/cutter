@@ -1,8 +1,8 @@
 #ifndef LINKED_LIST_POOL_H
 #define LINKED_LIST_POOL_H
 
-#include <vector>
 #include <iterator>
+#include <vector>
 // #include <cstdint>
 
 /**
@@ -35,7 +35,7 @@ public:
     {
         IndexType index = 0;
         LinkedListPool<T> *pool = nullptr;
-        ListIterator(IndexType index, LinkedListPool<T> *pool) : index(index), pool(pool) {}
+        ListIterator(IndexType index, LinkedListPool<T> *pool) : index(index), pool(pool) { }
 
         friend class LinkedListPool<T>;
 
@@ -80,7 +80,7 @@ public:
         IndexType head = 0;
         IndexType tail = 0;
         friend class LinkedListPool;
-        List(IndexType head, IndexType tail) : head(head), tail(tail) {}
+        List(IndexType head, IndexType tail) : head(head), tail(tail) { }
 
     public:
         /**

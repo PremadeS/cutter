@@ -1,22 +1,21 @@
 #ifndef HEXDUMPWIDGET_H
 #define HEXDUMPWIDGET_H
 
-#include <QDebug>
-#include <QTextEdit>
-#include <QMouseEvent>
-#include <QAction>
-
-#include <array>
-#include <memory>
-
-#include "core/Cutter.h"
+#include "Dashboard.h"
+#include "HexWidget.h"
 #include "MemoryDockWidget.h"
 #include "common/CutterSeekable.h"
 #include "common/Highlighter.h"
 #include "common/SvgIconEngine.h"
-#include "HexWidget.h"
+#include "core/Cutter.h"
 
-#include "Dashboard.h"
+#include <QAction>
+#include <QDebug>
+#include <QMouseEvent>
+#include <QTextEdit>
+
+#include <array>
+#include <memory>
 
 namespace Ui {
 class HexdumpWidget;

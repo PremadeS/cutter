@@ -1,9 +1,10 @@
 #pragma once
 
-#include <QTextEdit>
-#include <QPlainTextEdit>
 #include <QGridLayout>
 #include <QJsonObject>
+#include <QPlainTextEdit>
+#include <QTextEdit>
+
 #include <memory>
 
 // #include "core/Cutter.h"

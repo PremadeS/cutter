@@ -2,6 +2,7 @@
 #define TYPESINTERACTIONDIALOG_H
 
 #include <QDialog>
+
 #include <memory>
 
 namespace Ui {

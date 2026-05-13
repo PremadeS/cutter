@@ -1,16 +1,18 @@
 #include "StringsWidget.h"
-#include "ui_StringsWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_StringsWidget.h"
 
 #include <QClipboard>
 #include <QMenu>
 #include <QModelIndex>
 #include <QShortcut>
+
 #include <utility>
 
-StringsModel::StringsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+StringsModel::StringsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int StringsModel::rowCount(const QModelIndex &) const
 {
@@ -216,7 +218,7 @@ StringsWidget::StringsWidget(MainWindow *main)
     header->setResizeContentsPrecision(256);
 }
 
-StringsWidget::~StringsWidget() {}
+StringsWidget::~StringsWidget() { }
 
 void StringsWidget::refreshStrings()
 {

@@ -1,10 +1,10 @@
 #ifndef SYMBOLSOPTIONSWIDGET_H
 #define SYMBOLSOPTIONSWIDGET_H
 
-#include <memory>
-
-#include <QWidget>
 #include <QDialog>
+#include <QWidget>
+
+#include <memory>
 
 class MainWindow;
 

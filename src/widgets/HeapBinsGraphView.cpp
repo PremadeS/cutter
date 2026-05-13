@@ -1,6 +1,7 @@
+#include "HeapBinsGraphView.h"
+
 #include <Configuration.h>
 #include <dialogs/GlibcHeapInfoDialog.h>
-#include "HeapBinsGraphView.h"
 
 HeapBinsGraphView::HeapBinsGraphView(QWidget *parent, RzHeapBin *bin, MainWindow *main)
     : SimpleTextGraphView(parent, main), heapBin(bin), bits(Core()->getArchBits())

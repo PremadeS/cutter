@@ -1,12 +1,13 @@
 #ifndef COLORTHEMEWORKER_H
 #define COLORTHEMEWORKER_H
 
-#include <QFile>
-#include <QColor>
-#include <QObject>
 #include "Cutter.h"
+
+#include <QColor>
+#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QObject>
 
 #define ThemeWorker() (ColorThemeWorker::instance())
 
@@ -36,7 +37,7 @@ public:
         return ex;
     }
 
-    virtual ~ColorThemeWorker() {}
+    virtual ~ColorThemeWorker() { }
 
     /**
      * @brief Copies @a srcThemeName with name @a copyThemeName.

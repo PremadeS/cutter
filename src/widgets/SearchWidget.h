@@ -1,14 +1,14 @@
 #ifndef SEARCHWIDGET_H
 #define SEARCHWIDGET_H
 
-#include <memory>
-
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 
+#include <memory>
+
 // #include "core/Cutter.h"
-#include "CutterDockWidget.h"
 #include "AddressableItemList.h"
+#include "CutterDockWidget.h"
 
 class MainWindow;
 class QTreeWidgetItem;

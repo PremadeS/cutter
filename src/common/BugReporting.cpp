@@ -1,10 +1,11 @@
 #include "BugReporting.h"
 
 #include "Cutter.h"
-#include <QUrl>
-#include <QJsonObject>
 #include "CutterConfig.h"
+
 #include <QDesktopServices>
+#include <QJsonObject>
+#include <QUrl>
 
 void openIssue()
 {

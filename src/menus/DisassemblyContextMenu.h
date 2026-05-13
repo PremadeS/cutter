@@ -3,8 +3,9 @@
 
 // #include "core/Cutter.h"
 #include "common/IOModesController.h"
-#include <QMenu>
+
 #include <QKeySequence>
+#include <QMenu>
 
 class MainWindow;
 

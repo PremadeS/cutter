@@ -1,12 +1,13 @@
 #ifndef EDITREGPROFILEDIALOG_H
 #define EDITREGPROFILEDIALOG_H
 
+#include "CutterDescriptions.h" // IWYU pragma: keep
+
 #include <QDialog>
 #include <QStandardItemModel>
 #include <QTableView>
-#include <memory>
 
-#include "CutterDescriptions.h" // IWYU pragma: keep
+#include <memory>
 
 namespace Ui {
 class EditRegProfileDialog;

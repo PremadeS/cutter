@@ -17,7 +17,7 @@ class AddressableDockWidget : public CutterDockWidget
     Q_OBJECT
 public:
     AddressableDockWidget(MainWindow *parent);
-    ~AddressableDockWidget() override {}
+    ~AddressableDockWidget() override { }
 
     CutterSeekable *getSeekable() const;
 

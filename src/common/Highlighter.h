@@ -3,10 +3,10 @@
 
 #include "core/Cutter.h"
 
-#include <QSyntaxHighlighter>
 #include <QHash>
-#include <QTextCharFormat>
 #include <QRegularExpression>
+#include <QSyntaxHighlighter>
+#include <QTextCharFormat>
 
 class QTextDocument;
 class MainWindow;

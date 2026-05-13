@@ -1,21 +1,21 @@
 #include "HexdumpWidget.h"
+
+#include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "common/SyntaxHighlighter.h"
+#include "common/TempConfig.h"
+#include "core/MainWindow.h"
 #include "ui_HexdumpWidget.h"
 
-#include "common/Helpers.h"
-#include "common/Configuration.h"
-#include "common/TempConfig.h"
-#include "common/SyntaxHighlighter.h"
-#include "core/MainWindow.h"
-
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QElapsedTimer>
-#include <QTextDocumentFragment>
-#include <QMenu>
 #include <QClipboard>
-#include <QScrollBar>
+#include <QElapsedTimer>
 #include <QInputDialog>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMenu>
+#include <QScrollBar>
 #include <QShortcut>
+#include <QTextDocumentFragment>
 
 HexdumpWidget::HexdumpWidget(MainWindow *main)
     : MemoryDockWidget(MemoryWidgetType::Hexdump, main),
@@ -110,7 +110,7 @@ void HexdumpWidget::onSeekChanged(RVA addr)
     refresh(addr);
 }
 
-HexdumpWidget::~HexdumpWidget() {}
+HexdumpWidget::~HexdumpWidget() { }
 
 QString HexdumpWidget::getWidgetType()
 {

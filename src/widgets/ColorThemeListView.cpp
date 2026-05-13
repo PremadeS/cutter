@@ -1,22 +1,22 @@
-#include <QDebug>
-#include <QJsonObject>
-#include <QMap>
-#include <QPainter>
-#include <QPainterPath>
-#include <QFontMetrics>
-#include <QScreen>
-#include <QJsonArray>
-#include <QScrollBar>
-#include <QApplication>
-#include <QSvgRenderer>
-#include <QMouseEvent>
-#include <QSortFilterProxyModel>
+#include "widgets/ColorThemeListView.h"
 
-#include "common/Configuration.h"
 #include "common/ColorThemeWorker.h"
+#include "common/Configuration.h"
 #include "common/Helpers.h"
 
-#include "widgets/ColorThemeListView.h"
+#include <QApplication>
+#include <QDebug>
+#include <QFontMetrics>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QMap>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPainterPath>
+#include <QScreen>
+#include <QScrollBar>
+#include <QSortFilterProxyModel>
+#include <QSvgRenderer>
 
 constexpr int allFieldsRole = Qt::UserRole + 2;
 
@@ -335,7 +335,7 @@ void ColorThemeListView::blinkTimeout()
     emit blink();
 }
 
-ColorSettingsModel::ColorSettingsModel(QObject *parent) : QAbstractListModel(parent) {}
+ColorSettingsModel::ColorSettingsModel(QObject *parent) : QAbstractListModel(parent) { }
 
 QVariant ColorSettingsModel::data(const QModelIndex &index, int role) const
 {

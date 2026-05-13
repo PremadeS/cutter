@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "AddressableItemModel.h"
 
 #include <stdexcept>

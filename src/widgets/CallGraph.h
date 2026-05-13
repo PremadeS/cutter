@@ -3,8 +3,8 @@
 
 // #include "core/Cutter.h"
 #include "MemoryDockWidget.h"
-#include "widgets/SimpleTextGraphView.h"
 #include "common/RefreshDeferrer.h"
+#include "widgets/SimpleTextGraphView.h"
 
 class MainWindow;
 /**

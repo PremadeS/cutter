@@ -1,9 +1,9 @@
 #ifndef PREFERENCECATEGORY_H
 #define PREFERENCECATEGORY_H
 
+#include <QStackedWidget>
 #include <QString>
 #include <QTreeWidget>
-#include <QStackedWidget>
 
 /**
  * @brief Main class for that divides the view into two sides:

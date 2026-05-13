@@ -1,12 +1,12 @@
 #include "BaseFindSearchDialog.h"
-#include "ui_BaseFindSearchDialog.h"
 
 #include "BaseFindResultsDialog.h"
-
-#include <QLabel>
-#include <QFormLayout>
-
 #include "core/Cutter.h"
+#include "ui_BaseFindSearchDialog.h"
+
+#include <QFormLayout>
+#include <QLabel>
+
 #include <rz_th.h>
 
 BaseFindSearchDialog::BaseFindSearchDialog(QWidget *parent)
@@ -16,7 +16,7 @@ BaseFindSearchDialog::BaseFindSearchDialog(QWidget *parent)
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));
 }
 
-BaseFindSearchDialog::~BaseFindSearchDialog() {}
+BaseFindSearchDialog::~BaseFindSearchDialog() { }
 
 void BaseFindSearchDialog::show(RzBaseFindOpt *opts)
 {

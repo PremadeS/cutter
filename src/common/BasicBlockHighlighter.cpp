@@ -1,6 +1,6 @@
 #include "BasicBlockHighlighter.h"
 
-BasicBlockHighlighter::BasicBlockHighlighter() {}
+BasicBlockHighlighter::BasicBlockHighlighter() { }
 
 void BasicBlockHighlighter::highlight(RVA address, const QColor &color)
 {

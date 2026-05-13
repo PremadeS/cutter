@@ -1,8 +1,9 @@
 #include "GlobalVariableDialog.h"
+
+#include "core/Cutter.h"
 #include "ui_GlobalVariableDialog.h"
 
 #include <QIntValidator>
-#include "core/Cutter.h"
 
 GlobalVariableDialog::GlobalVariableDialog(RVA offset, QWidget *parent)
     : QDialog(parent),
@@ -38,7 +39,7 @@ GlobalVariableDialog::GlobalVariableDialog(RVA offset, QWidget *parent)
             &GlobalVariableDialog::buttonBoxRejected);
 }
 
-GlobalVariableDialog::~GlobalVariableDialog() {}
+GlobalVariableDialog::~GlobalVariableDialog() { }
 
 void GlobalVariableDialog::buttonBoxAccepted()
 {

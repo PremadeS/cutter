@@ -1,11 +1,12 @@
 #include "CutterDockWidget.h"
+
 #include "core/MainWindow.h"
 
+#include <QApplication>
 #include <QEvent>
 #include <QShortcut>
-#include <QApplication>
 
-CutterDockWidget::CutterDockWidget(MainWindow *parent, QAction *) : CutterDockWidget(parent) {}
+CutterDockWidget::CutterDockWidget(MainWindow *parent, QAction *) : CutterDockWidget(parent) { }
 
 CutterDockWidget::CutterDockWidget(MainWindow *parent) : QDockWidget(parent), mainWindow(parent)
 {
@@ -50,7 +51,7 @@ QVariantMap CutterDockWidget::serializeViewProprties()
     return {};
 }
 
-void CutterDockWidget::deserializeViewProperties(const QVariantMap &) {}
+void CutterDockWidget::deserializeViewProperties(const QVariantMap &) { }
 
 void CutterDockWidget::ignoreVisibilityStatus(bool ignore)
 {

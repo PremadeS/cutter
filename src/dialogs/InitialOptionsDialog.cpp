@@ -1,21 +1,19 @@
-#include "common/AsyncTask.h"
 #include "InitialOptionsDialog.h"
-#include "ui_InitialOptionsDialog.h"
 
-#include "core/MainWindow.h"
-#include "dialogs/NewFileDialog.h"
-#include "dialogs/AsyncTaskDialog.h"
+#include "CutterApplication.h"
+#include "common/AnalysisTask.h"
+#include "common/AsyncTask.h"
 #include "common/Helpers.h"
 #include "core/Cutter.h"
+#include "core/MainWindow.h"
+#include "dialogs/AsyncTaskDialog.h"
+#include "dialogs/NewFileDialog.h"
+#include "ui_InitialOptionsDialog.h"
 
-#include <QSettings>
-#include <QFileInfo>
-#include <QFileDialog>
 #include <QCloseEvent>
-
-#include "core/Cutter.h"
-#include "common/AnalysisTask.h"
-#include "CutterApplication.h"
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QSettings>
 
 QString CommandDescription::translatedDescription() const
 {
@@ -159,7 +157,7 @@ void InitialOptionsDialog::updateDebuginfodLayout()
     ui->debuginfodWidget->setEnabled(ui->debuginfodCheckBox->isChecked());
 }
 
-InitialOptionsDialog::~InitialOptionsDialog() {}
+InitialOptionsDialog::~InitialOptionsDialog() { }
 
 void InitialOptionsDialog::updateCPUComboBox()
 {

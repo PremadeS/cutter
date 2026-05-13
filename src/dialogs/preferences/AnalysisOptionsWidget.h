@@ -1,9 +1,10 @@
 #ifndef ANALOPTIONSWIDGET_H
 #define ANALOPTIONSWIDGET_H
 
-#include <QDialog>
-#include <memory>
 #include <QCheckBox>
+#include <QDialog>
+
+#include <memory>
 
 // #include "core/Cutter.h"
 

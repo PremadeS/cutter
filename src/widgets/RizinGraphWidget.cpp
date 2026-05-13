@@ -1,9 +1,11 @@
 #include "RizinGraphWidget.h"
+
 #include "ui_RizinGraphWidget.h"
 
-#include <QJsonValue>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QJsonValue>
+
 #include <utility>
 
 RizinGraphWidget::RizinGraphWidget(MainWindow *main)
@@ -51,7 +53,7 @@ RizinGraphWidget::RizinGraphWidget(MainWindow *main)
     typeChanged();
 }
 
-RizinGraphWidget::~RizinGraphWidget() {}
+RizinGraphWidget::~RizinGraphWidget() { }
 
 void RizinGraphWidget::typeChanged()
 {

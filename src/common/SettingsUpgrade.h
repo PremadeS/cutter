@@ -2,6 +2,7 @@
 #define SETTINGS_UPGRADE_H
 
 #include <QSettings>
+
 #include <core/Cutter.h>
 
 /**

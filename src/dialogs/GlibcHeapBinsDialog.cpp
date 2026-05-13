@@ -1,9 +1,10 @@
-#include <HeapBinsGraphView.h>
 #include "GlibcHeapBinsDialog.h"
-#include "ui_GlibcHeapBinsDialog.h"
-#include "GlibcHeapInfoDialog.h"
 
 #include "Cutter.h"
+#include "GlibcHeapInfoDialog.h"
+#include "ui_GlibcHeapBinsDialog.h"
+
+#include <HeapBinsGraphView.h>
 
 GlibcHeapBinsDialog::GlibcHeapBinsDialog(RVA m_state, MainWindow *main, QWidget *parent)
     : QDialog(parent),
@@ -31,7 +32,7 @@ GlibcHeapBinsDialog::GlibcHeapBinsDialog(RVA m_state, MainWindow *main, QWidget 
     this->setWindowTitle(tr("Bins info for arena @ ") + rzAddressString(m_state));
 }
 
-GlibcHeapBinsDialog::~GlibcHeapBinsDialog() {}
+GlibcHeapBinsDialog::~GlibcHeapBinsDialog() { }
 
 void GlibcHeapBinsDialog::onCurrentChanged(const QModelIndex &current, const QModelIndex &prev)
 {

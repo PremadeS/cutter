@@ -1,8 +1,9 @@
 #ifndef PLUGINSDIALOG_H
 #define PLUGINSDIALOG_H
 
-#include <QDialog>
 #include <QAbstractTableModel>
+#include <QDialog>
+
 #include <memory>
 
 // #include "core/Cutter.h"

@@ -1,9 +1,10 @@
 #include "SettingsUpgrade.h"
-#include <QApplication>
-#include <QMessageBox>
 
 #include "Configuration.h"
 #include "common/ColorThemeWorker.h"
+
+#include <QApplication>
+#include <QMessageBox>
 
 /**
  * @brief Migrate Settings used before Cutter 1.8

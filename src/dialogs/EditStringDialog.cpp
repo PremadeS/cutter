@@ -1,4 +1,5 @@
 #include "EditStringDialog.h"
+
 #include "ui_EditStringDialog.h"
 
 EditStringDialog::EditStringDialog(QWidget *parent)
@@ -12,7 +13,7 @@ EditStringDialog::EditStringDialog(QWidget *parent)
     connect(ui->checkBoxAutoSize, &QCheckBox::toggled, ui->spinBoxSize, &QSpinBox::setDisabled);
 }
 
-EditStringDialog::~EditStringDialog() {}
+EditStringDialog::~EditStringDialog() { }
 
 void EditStringDialog::setStringStartAddress(uint64_t address)
 {

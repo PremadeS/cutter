@@ -2,7 +2,6 @@
 #define FLIRT_CONTEXTMENU_H
 
 // #include "core/Cutter.h"
-#include <QMenu>
 #include <QKeySequence>
 #include <QMenu>
 // #include "CutterCommon.h"

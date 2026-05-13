@@ -1,15 +1,15 @@
 #include "XrefsDialog.h"
+
+#include "common/Helpers.h"
+#include "common/TempConfig.h"
+#include "core/MainWindow.h"
+#include "shortcuts/ShortcutManager.h"
 #include "ui_XrefsDialog.h"
 
-#include "common/TempConfig.h"
-#include "common/Helpers.h"
-
-#include "core/MainWindow.h"
-
+#include <QApplication>
 #include <QJsonArray>
 #include <QShortcut>
-#include "shortcuts/ShortcutManager.h"
-#include <QApplication>
+
 #include <utility>
 
 XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
@@ -103,7 +103,7 @@ XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     }
 }
 
-XrefsDialog::~XrefsDialog() {}
+XrefsDialog::~XrefsDialog() { }
 
 QString XrefsDialog::normalizeAddr(const QString &addr) const
 {
@@ -264,7 +264,7 @@ QString XrefModel::xrefTypeString(const QString &type)
     return type;
 }
 
-XrefModel::XrefModel(QObject *parent) : AddressableItemModel(parent) {}
+XrefModel::XrefModel(QObject *parent) : AddressableItemModel(parent) { }
 
 void XrefModel::readForOffset(RVA offset, bool to, bool whole_function)
 {

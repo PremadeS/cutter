@@ -1,13 +1,14 @@
 #ifndef GLIBCHEAPWIDGET_H
 #define GLIBCHEAPWIDGET_H
 
-#include <QDockWidget>
 #include "CutterDockWidget.h"
-// #include "core/Cutter.h"
-#include <QTableView>
-#include <QComboBox>
-#include <AddressableItemContextMenu.h>
 
+#include <QDockWidget>
+// #include "core/Cutter.h"
+#include <QComboBox>
+#include <QTableView>
+
+#include <AddressableItemContextMenu.h>
 #include <memory>
 
 namespace Ui {

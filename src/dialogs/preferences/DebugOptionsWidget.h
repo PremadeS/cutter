@@ -1,8 +1,9 @@
 #ifndef DEBUGOPTIONSWIDGET_H
 #define DEBUGOPTIONSWIDGET_H
 
-#include <memory>
 #include <QDialog>
+
+#include <memory>
 
 // #include "core/Cutter.h"
 

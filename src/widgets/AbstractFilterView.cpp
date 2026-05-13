@@ -1,8 +1,9 @@
 #include "AbstractFilterView.h"
-#include <QMenu>
-#include <QAction>
 
-AbstractFilterView::AbstractFilterView(QWidget *parent) : QWidget(parent) {}
+#include <QAction>
+#include <QMenu>
+
+AbstractFilterView::AbstractFilterView(QWidget *parent) : QWidget(parent) { }
 
 void AbstractFilterView::setupSharedConnections()
 {

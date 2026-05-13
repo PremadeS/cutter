@@ -1,16 +1,16 @@
 #ifndef CONSOLEWIDGET_H
 #define CONSOLEWIDGET_H
 
-#include "core/MainWindow.h"
 #include "CutterDockWidget.h"
 #include "common/CommandTask.h"
+#include "core/MainWindow.h"
 // #include "common/DirectionalComboBox.h"
 // #include "SearchBarWidget.h"
 #include "SearchableDockWidget.h"
 
-#include <QStringListModel>
-#include <QSocketNotifier>
 #include <QLocalSocket>
+#include <QSocketNotifier>
+#include <QStringListModel>
 
 #include <memory>
 

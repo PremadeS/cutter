@@ -1,4 +1,5 @@
 #include "HeapDockWidget.h"
+
 #include "ui_HeapDockWidget.h"
 #include "widgets/GlibcHeapWidget.h"
 
@@ -17,7 +18,7 @@ HeapDockWidget::HeapDockWidget(MainWindow *main)
     onAllocatorSelected(0);
 }
 
-HeapDockWidget::~HeapDockWidget() {}
+HeapDockWidget::~HeapDockWidget() { }
 
 void HeapDockWidget::onAllocatorSelected(int index)
 {

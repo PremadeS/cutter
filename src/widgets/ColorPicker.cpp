@@ -1,18 +1,19 @@
 #include "ColorPicker.h"
-#include "ui_ColorPicker.h"
-#include "common/Helpers.h"
 
+#include "common/Helpers.h"
+#include "ui_ColorPicker.h"
+
+#include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPainterPath>
-#include <QMouseEvent>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #    include <QDesktopWidget>
 #else
 #    include <QWindow>
 #endif
-#include <QPixmap>
 #include <QCursor>
+#include <QPixmap>
 #include <QScreen>
 
 using namespace ColorPickerHelpers;
@@ -59,7 +60,7 @@ void ColorPickArea::setColor(const QColor &c)
     emit colorChanged(currColor);
 }
 
-ColorPickerWidget::ColorPickerWidget(QWidget *parent) : ColorPickWidgetAbstract(parent) {}
+ColorPickerWidget::ColorPickerWidget(QWidget *parent) : ColorPickWidgetAbstract(parent) { }
 
 void ColorPickerWidget::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -358,7 +359,7 @@ void ColorPicker::stopPickingFromScreen()
     }
 }
 
-ColorShowWidget::ColorShowWidget(QWidget *parent) : ColorPickWidgetAbstract(parent) {}
+ColorShowWidget::ColorShowWidget(QWidget *parent) : ColorPickWidgetAbstract(parent) { }
 
 void ColorShowWidget::setColor(const QColor &c)
 {

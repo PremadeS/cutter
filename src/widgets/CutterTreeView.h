@@ -3,9 +3,10 @@
 
 #include "core/CutterCommon.h"
 
-#include <memory>
 #include <QAbstractItemView>
 #include <QTreeView>
+
+#include <memory>
 
 namespace Ui {
 class CutterTreeView;

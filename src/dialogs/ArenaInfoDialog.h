@@ -2,6 +2,7 @@
 #define ARENAINFODIALOG_H
 
 #include <QDialog>
+
 #include <CutterDescriptions.h>
 #include <memory>
 

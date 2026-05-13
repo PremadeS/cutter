@@ -1,12 +1,12 @@
 #ifndef VERSIONINFODIALOG_H
 #define VERSIONINFODIALOG_H
 
-#include <QDialog>
-#include <memory>
-
+#include "CutterCommon.h" // IWYU pragma: keep
 #include "core/Cutter.h"
 
-#include "CutterCommon.h" // IWYU pragma: keep
+#include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class VersionInfoDialog;

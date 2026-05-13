@@ -3,11 +3,12 @@
 
 #include "core/CutterCommon.h"
 
-#include <memory>
 #include <QString>
 #include <QStringList>
-#include <utility>
+
+#include <memory>
 #include <rz_project.h>
+#include <utility>
 
 class CutterJsonOwner;
 
@@ -40,7 +41,7 @@ public:
         std::shared_ptr<CutterJsonOwner> owner;
     };
 
-    CutterJson() : value(nullptr) {}
+    CutterJson() : value(nullptr) { }
 
     CutterJson(const RzJson *value, std::shared_ptr<CutterJsonOwner> owner)
         : value(value), owner(std::move(owner))
@@ -107,7 +108,7 @@ private:
 class CUTTER_EXPORT CutterJsonOwner
 {
 public:
-    CutterJsonOwner(RzJson *value, char *text) : value(value), text(text) {}
+    CutterJsonOwner(RzJson *value, char *text) : value(value), text(text) { }
 
     virtual ~CutterJsonOwner()
     {

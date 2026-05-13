@@ -1,7 +1,9 @@
 #include "LayoutManager.h"
+
 #include "ui_LayoutManager.h"
-#include <QIntValidator>
+
 #include <QInputDialog>
+#include <QIntValidator>
 #include <QMessageBox>
 
 using namespace Cutter;
@@ -17,7 +19,7 @@ LayoutManager::LayoutManager(QMap<QString, Cutter::CutterLayout> &layouts, QWidg
     refreshNameList();
 }
 
-LayoutManager::~LayoutManager() {}
+LayoutManager::~LayoutManager() { }
 
 void LayoutManager::refreshNameList(const QString &selection)
 {

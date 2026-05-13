@@ -1,7 +1,8 @@
 #include "Colors.h"
 
-#include <utility>
 #include "common/Configuration.h"
+
+#include <utility>
 
 void Colors::colorizeAssembly(RichTextPainter::List &list, QString opcode, ut64 typeNum)
 {

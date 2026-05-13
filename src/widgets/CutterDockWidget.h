@@ -1,8 +1,8 @@
 #ifndef CUTTERWIDGET_H
 #define CUTTERWIDGET_H
 
-#include "core/CutterCommon.h"
 #include "common/RefreshDeferrer.h"
+#include "core/CutterCommon.h"
 // #include "shortcuts/ShortcutManager.h"
 #include <QDockWidget>
 

@@ -1,12 +1,13 @@
 #include "RelocsWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_ListDockWidget.h"
 
 #include <QShortcut>
 #include <QTreeWidget>
 
-RelocsModel::RelocsModel(QObject *parent) : AddressableItemModel<QAbstractTableModel>(parent) {}
+RelocsModel::RelocsModel(QObject *parent) : AddressableItemModel<QAbstractTableModel>(parent) { }
 
 int RelocsModel::rowCount(const QModelIndex &parent) const
 {
@@ -143,7 +144,7 @@ RelocsWidget::RelocsWidget(MainWindow *main)
             [this]() { qhelpers::emitColumnChanged(relocsModel, RelocsModel::CommentColumn); });
 }
 
-RelocsWidget::~RelocsWidget() {}
+RelocsWidget::~RelocsWidget() { }
 
 void RelocsWidget::refreshRelocs()
 {

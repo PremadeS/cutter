@@ -5,6 +5,7 @@
 #include "core/MainWindow.h"
 
 #include <QDialog>
+
 #include <memory>
 
 class QTreeWidgetItem;

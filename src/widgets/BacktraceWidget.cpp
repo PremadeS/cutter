@@ -1,8 +1,8 @@
 #include "BacktraceWidget.h"
+
 #include "ui_BacktraceWidget.h"
 // #include "common/JsonModel.h"
 #include "QHeaderView"
-
 #include "core/MainWindow.h"
 
 BacktraceWidget::BacktraceWidget(MainWindow *main)
@@ -31,7 +31,7 @@ BacktraceWidget::BacktraceWidget(MainWindow *main)
     connect(Config(), &Configuration::fontsUpdated, this, &BacktraceWidget::fontsUpdatedSlot);
 }
 
-BacktraceWidget::~BacktraceWidget() {}
+BacktraceWidget::~BacktraceWidget() { }
 
 void BacktraceWidget::updateContents()
 {

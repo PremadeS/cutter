@@ -1,18 +1,20 @@
 #include "TypesWidget.h"
-#include "ui_TypesWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "dialogs/TypesInteractionDialog.h"
 #include "dialogs/TypesVariablesDialog.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_TypesWidget.h"
 
-#include <QMenu>
 #include <QFileDialog>
-#include <QShortcut>
 #include <QIcon>
+#include <QMenu>
+#include <QShortcut>
+
 #include <utility>
 
-TypesModel::TypesModel(QObject *parent) : QAbstractListModel(parent) {}
+TypesModel::TypesModel(QObject *parent) : QAbstractListModel(parent) { }
 
 QVariant TypesModel::toolTipValue(const QModelIndex &index) const
 {
@@ -204,7 +206,7 @@ TypesWidget::TypesWidget(MainWindow *main)
     connect(actionShowVariables, &QAction::triggered, [this]() { showVariables(); });
 }
 
-TypesWidget::~TypesWidget() {}
+TypesWidget::~TypesWidget() { }
 
 void TypesWidget::refreshTypes()
 {

@@ -1,13 +1,14 @@
 #include "dialogs/TypesInteractionDialog.h"
-#include "ui_TypesInteractionDialog.h"
 
-#include "core/Cutter.h"
 #include "common/Configuration.h"
+#include "core/Cutter.h"
+#include "ui_TypesInteractionDialog.h"
 // #include "common/SyntaxHighlighter.h"
 // #include "widgets/TypesWidget.h"
 
 #include <QFileDialog>
 #include <QTemporaryFile>
+
 #include <utility>
 
 TypesInteractionDialog::TypesInteractionDialog(QWidget *parent, bool readOnly)
@@ -27,7 +28,7 @@ TypesInteractionDialog::TypesInteractionDialog(QWidget *parent, bool readOnly)
     ui->plainTextEdit->setReadOnly(readOnly);
 }
 
-TypesInteractionDialog::~TypesInteractionDialog() {}
+TypesInteractionDialog::~TypesInteractionDialog() { }
 
 void TypesInteractionDialog::setTypeName(QString name)
 {

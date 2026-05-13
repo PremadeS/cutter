@@ -1,10 +1,10 @@
-#include <QLabel>
-#include <QFontDialog>
-
 #include "GraphOptionsWidget.h"
-#include "ui_GraphOptionsWidget.h"
 
 #include "PreferencesDialog.h"
+#include "ui_GraphOptionsWidget.h"
+
+#include <QFontDialog>
+#include <QLabel>
 
 // #include "common/Helpers.h"
 #include "Cutter.h"
@@ -44,7 +44,7 @@ GraphOptionsWidget::GraphOptionsWidget(PreferencesDialog *dialog)
     }
 }
 
-GraphOptionsWidget::~GraphOptionsWidget() {}
+GraphOptionsWidget::~GraphOptionsWidget() { }
 
 void GraphOptionsWidget::updateOptionsFromVars()
 {

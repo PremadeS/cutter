@@ -1,8 +1,10 @@
 #pragma once
 
-#include <QDialog>
-#include <memory>
 #include "CutterDescriptions.h"
+
+#include <QDialog>
+
+#include <memory>
 
 namespace Ui {
 class BreakpointsDialog;

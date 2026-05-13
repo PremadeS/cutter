@@ -1,8 +1,8 @@
 #include "InterfaceOptionsWidget.h"
-#include "ui_InterfaceOptionsWidget.h"
 
-#include "PreferencesDialog.h"
 #include "Configuration.h"
+#include "PreferencesDialog.h"
+#include "ui_InterfaceOptionsWidget.h"
 
 InterfaceOptionsWidget::InterfaceOptionsWidget(PreferencesDialog *dialog)
     : QDialog(dialog), ui(new Ui::InterfaceOptionsWidget)
@@ -12,7 +12,7 @@ InterfaceOptionsWidget::InterfaceOptionsWidget(PreferencesDialog *dialog)
     setUpQuickFilter();
 }
 
-InterfaceOptionsWidget::~InterfaceOptionsWidget() {}
+InterfaceOptionsWidget::~InterfaceOptionsWidget() { }
 
 void InterfaceOptionsWidget::setUpQuickFilter()
 {

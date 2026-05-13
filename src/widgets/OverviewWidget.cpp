@@ -1,8 +1,9 @@
-#include "core/MainWindow.h"
-#include "shortcuts/ShortcutManager.h"
 #include "OverviewWidget.h"
+
 #include "GraphWidget.h"
 #include "OverviewView.h"
+#include "core/MainWindow.h"
+#include "shortcuts/ShortcutManager.h"
 
 OverviewWidget::OverviewWidget(MainWindow *main)
     : CutterDockWidget(main),
@@ -27,7 +28,7 @@ OverviewWidget::OverviewWidget(MainWindow *main)
     connect(shortcutZoomOut, &QShortcut::activated, this, [this]() { zoomTarget(-1); });
 }
 
-OverviewWidget::~OverviewWidget() {}
+OverviewWidget::~OverviewWidget() { }
 
 void OverviewWidget::resizeEvent(QResizeEvent *event)
 {

@@ -33,7 +33,7 @@ public:
      *
      * called during initialization of Cutter, after setupPlugin()
      */
-    virtual void registerDecompilers() {}
+    virtual void registerDecompilers() { }
 
     /**
      * @brief Shutdown the Plugin
@@ -42,7 +42,7 @@ public:
      * This method is usually only relevant for Python Plugins where there is no
      * direct equivalent of the destructor.
      */
-    virtual void terminate() {};
+    virtual void terminate() { };
 
     virtual QString getName() const = 0;
     virtual QString getAuthor() const = 0;

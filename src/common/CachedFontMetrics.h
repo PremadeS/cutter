@@ -3,9 +3,9 @@
 
 #include "common/Metrics.h"
 
-#include <QObject>
 #include <QFont>
 #include <QFontMetrics>
+#include <QObject>
 
 /**
  * @brief A cache class for font measurements

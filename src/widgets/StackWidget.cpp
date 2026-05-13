@@ -1,12 +1,12 @@
 #include "StackWidget.h"
+
 #include "ui_StackWidget.h"
 // #include "common/JsonModel.h"
-#include "common/Helpers.h"
-#include "dialogs/EditInstructionDialog.h"
-
-#include "core/MainWindow.h"
 #include "QHeaderView"
 #include "QMenu"
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "dialogs/EditInstructionDialog.h"
 
 StackWidget::StackWidget(MainWindow *main)
     : CutterDockWidget(main),
@@ -141,7 +141,7 @@ void StackWidget::onCurrentChanged(const QModelIndex &current, const QModelIndex
     }
 }
 
-StackModel::StackModel(QObject *parent) : QAbstractTableModel(parent) {}
+StackModel::StackModel(QObject *parent) : QAbstractTableModel(parent) { }
 
 void StackModel::reload()
 {

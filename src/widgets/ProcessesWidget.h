@@ -1,10 +1,11 @@
 #pragma once
 
 #include <QJsonObject>
-#include <memory>
+#include <QSortFilterProxyModel>
 #include <QStandardItem>
 #include <QTableView>
-#include <QSortFilterProxyModel>
+
+#include <memory>
 
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"

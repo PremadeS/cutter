@@ -1,11 +1,12 @@
 #include "NativeDebugDialog.h"
-#include "ui_NativeDebugDialog.h"
-#include "shortcuts/ShortcutManager.h"
-#include "ProfileDirectivesDialog.h"
 
+#include "ProfileDirectivesDialog.h"
+#include "shortcuts/ShortcutManager.h"
+#include "ui_NativeDebugDialog.h"
+
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QShortcut>
-#include <QFileDialog>
 #include <QTextStream>
 
 NativeDebugDialog::NativeDebugDialog(QWidget *parent)
@@ -27,7 +28,7 @@ NativeDebugDialog::NativeDebugDialog(QWidget *parent)
     profileCheckboxToggled(ui->profileCheckbox->isChecked());
 }
 
-NativeDebugDialog::~NativeDebugDialog() {}
+NativeDebugDialog::~NativeDebugDialog() { }
 
 QString NativeDebugDialog::getArgs() const
 {

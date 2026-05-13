@@ -1,5 +1,6 @@
 
 #include "DecompilerHighlighter.h"
+
 #include "common/Configuration.h"
 
 #include <memory>

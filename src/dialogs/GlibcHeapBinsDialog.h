@@ -1,8 +1,8 @@
 #ifndef GLIBCHEAPBINSDIALOG_H
 #define GLIBCHEAPBINSDIALOG_H
 
-#include <QDialog>
 #include <QAbstractTableModel>
+#include <QDialog>
 // #include "core/Cutter.h"
 // #include <MainWindow.h>
 #include <HeapBinsGraphView.h>

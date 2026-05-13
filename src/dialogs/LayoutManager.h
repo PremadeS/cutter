@@ -2,6 +2,7 @@
 #define LAYOUT_MANAGER_H
 
 #include <QDialog>
+
 #include <memory>
 // #include "core/Cutter.h"
 #include "common/CutterLayout.h"

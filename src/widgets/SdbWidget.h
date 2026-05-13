@@ -1,9 +1,9 @@
 #ifndef SDBWIDGET_H
 #define SDBWIDGET_H
 
-#include <memory>
-
 #include "CutterDockWidget.h"
+
+#include <memory>
 
 class MainWindow;
 class QTreeWidgetItem;

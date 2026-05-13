@@ -1,18 +1,17 @@
-#include <QLabel>
-#include <QFontDialog>
-#include <QTextEdit>
-#include <QDir>
-#include <QFile>
-#include <QTextStream>
-#include <QDialogButtonBox>
-#include <QUrl>
-
 #include "InitializationFileEditor.h"
-#include "ui_InitializationFileEditor.h"
 
 #include "PreferencesDialog.h"
-
 #include "common/Helpers.h"
+#include "ui_InitializationFileEditor.h"
+
+#include <QDialogButtonBox>
+#include <QDir>
+#include <QFile>
+#include <QFontDialog>
+#include <QLabel>
+#include <QTextEdit>
+#include <QTextStream>
+#include <QUrl>
 // #include "common/Configuration.h"
 
 InitializationFileEditor::InitializationFileEditor(PreferencesDialog *dialog)
@@ -48,7 +47,7 @@ InitializationFileEditor::InitializationFileEditor(PreferencesDialog *dialog)
     ui->saveRC->setDisabled(true);
 }
 
-InitializationFileEditor::~InitializationFileEditor() {};
+InitializationFileEditor::~InitializationFileEditor() { };
 
 void InitializationFileEditor::saveCutterRC()
 {

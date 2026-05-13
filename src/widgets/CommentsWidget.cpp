@@ -1,13 +1,14 @@
 #include "CommentsWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
 
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "ui_ListDockWidget.h"
+
+#include <QActionGroup>
 #include <QMenu>
 #include <QShortcut>
-#include <QActionGroup>
 
-CommentsModel::CommentsModel(QObject *parent) : AddressableItemModel<>(parent), nested(false) {}
+CommentsModel::CommentsModel(QObject *parent) : AddressableItemModel<>(parent), nested(false) { }
 
 bool CommentsModel::isNested() const
 {
@@ -260,7 +261,7 @@ CommentsWidget::CommentsWidget(MainWindow *main)
     connect(Core(), &CutterCore::refreshAll, this, &CommentsWidget::refreshTree);
 }
 
-CommentsWidget::~CommentsWidget() {}
+CommentsWidget::~CommentsWidget() { }
 
 void CommentsWidget::onActionHorizontalToggled(bool checked)
 {

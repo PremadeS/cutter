@@ -1,22 +1,23 @@
 #include <cassert>
 
 #ifdef CUTTER_ENABLE_PYTHON_BINDINGS
+#    include "PythonManager.h"
+
 #    include <Python.h>
 #    include <cutterbindings_python.h>
-#    include "PythonManager.h"
 #endif
 
-#include "PluginManager.h"
-#include "CutterPlugin.h"
 #include "CutterConfig.h"
+#include "CutterPlugin.h"
+#include "PluginManager.h"
 #include "common/Helpers.h"
 #include "common/ResourcePaths.h"
 
-#include <QDir>
 #include <QCoreApplication>
+#include <QDebug>
+#include <QDir>
 #include <QPluginLoader>
 #include <QStandardPaths>
-#include <QDebug>
 
 Q_GLOBAL_STATIC(PluginManager, uniqueInstance)
 
@@ -25,9 +26,9 @@ PluginManager *PluginManager::getInstance()
     return uniqueInstance;
 }
 
-PluginManager::PluginManager() {}
+PluginManager::PluginManager() { }
 
-PluginManager::~PluginManager() {}
+PluginManager::~PluginManager() { }
 
 void PluginManager::loadPlugins(bool enablePlugins)
 {

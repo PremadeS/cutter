@@ -1,8 +1,9 @@
-#include "PythonAPI.h"
 #include "QtResImporter.h"
 
-#include <QFile>
+#include "PythonAPI.h"
+
 #include <QDebug>
+#include <QFile>
 
 bool QtResExists(const char *name, QFile &file)
 {

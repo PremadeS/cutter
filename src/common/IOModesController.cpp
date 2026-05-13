@@ -1,11 +1,12 @@
 #include "IOModesController.h"
+
 #include "Cutter.h"
 
 #include <QJsonArray>
-#include <QPushButton>
-#include <QObject>
-#include <QMessageBox>
 #include <QJsonObject>
+#include <QMessageBox>
+#include <QObject>
+#include <QPushButton>
 #include <qwidget.h>
 
 IOModesController::IOModesController(QWidget *parentWindow)

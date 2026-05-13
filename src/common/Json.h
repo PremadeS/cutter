@@ -2,6 +2,7 @@
 #define JSON_H
 
 #include "CutterCommon.h"
+
 #include <QJsonValue>
 
 class QTreeWidgetItem;

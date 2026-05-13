@@ -1,14 +1,14 @@
-#include <QShortcut>
-#include <QModelIndex>
-
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
-#include "shortcuts/ShortcutManager.h"
-
 #include "VTablesWidget.h"
+
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "shortcuts/ShortcutManager.h"
 #include "ui_VTablesWidget.h"
 
-VTableModel::VTableModel(QObject *parent) : QAbstractItemModel(parent) {}
+#include <QModelIndex>
+#include <QShortcut>
+
+VTableModel::VTableModel(QObject *parent) : QAbstractItemModel(parent) { }
 
 QModelIndex VTableModel::index(int row, int column, const QModelIndex &parent) const
 {
@@ -165,7 +165,7 @@ VTablesWidget::VTablesWidget(MainWindow *main)
     connect(Core(), &CutterCore::refreshAll, this, &VTablesWidget::refreshVTables);
 }
 
-VTablesWidget::~VTablesWidget() {}
+VTablesWidget::~VTablesWidget() { }
 
 void VTablesWidget::refreshVTables()
 {

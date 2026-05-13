@@ -4,6 +4,7 @@
 class BasicBlockHighlighter;
 
 #include "Cutter.h"
+
 #include <map>
 
 /**

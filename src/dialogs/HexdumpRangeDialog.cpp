@@ -1,10 +1,12 @@
 #include "HexdumpRangeDialog.h"
+
+#include "core/Cutter.h"
 #include "ui_HexdumpRangeDialog.h"
 
-#include <QRegularExpressionValidator>
 #include <QPushButton>
+#include <QRegularExpressionValidator>
+
 #include <cstdint>
-#include "core/Cutter.h"
 
 HexdumpRangeDialog::HexdumpRangeDialog(QWidget *parent, bool allowEmpty)
     : QDialog(parent), ui(new Ui::HexdumpRangeDialog), allowEmpty(allowEmpty)
@@ -27,7 +29,7 @@ HexdumpRangeDialog::HexdumpRangeDialog(QWidget *parent, bool allowEmpty)
             &HexdumpRangeDialog::onRadioButtonClicked);
 }
 
-HexdumpRangeDialog::~HexdumpRangeDialog() {}
+HexdumpRangeDialog::~HexdumpRangeDialog() { }
 
 bool HexdumpRangeDialog::empty() const
 {

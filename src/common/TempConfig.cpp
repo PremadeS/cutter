@@ -1,8 +1,9 @@
 
-#include <cassert>
+#include "TempConfig.h"
 
 #include "core/Cutter.h"
-#include "TempConfig.h"
+
+#include <cassert>
 
 TempConfig::~TempConfig()
 {

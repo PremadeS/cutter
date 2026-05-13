@@ -1,13 +1,12 @@
-#include <QLabel>
-#include <QFontDialog>
-
 #include "AsmOptionsWidget.h"
-#include "ui_AsmOptionsWidget.h"
 
 #include "PreferencesDialog.h"
-
-#include "common/Helpers.h"
 #include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "ui_AsmOptionsWidget.h"
+
+#include <QFontDialog>
+#include <QLabel>
 
 AsmOptionsWidget::AsmOptionsWidget(PreferencesDialog *dialog)
     : QDialog(dialog), ui(new Ui::AsmOptionsWidget)
@@ -80,7 +79,7 @@ AsmOptionsWidget::AsmOptionsWidget(PreferencesDialog *dialog)
     updateAsmOptionsFromVars();
 }
 
-AsmOptionsWidget::~AsmOptionsWidget() {}
+AsmOptionsWidget::~AsmOptionsWidget() { }
 
 void AsmOptionsWidget::updateAsmOptionsFromVars()
 {

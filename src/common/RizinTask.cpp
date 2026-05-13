@@ -1,6 +1,6 @@
 #include "RizinTask.h"
-#include <rz_core.h>
 
+#include <rz_core.h>
 #include <utility>
 
 RizinTask::~RizinTask()

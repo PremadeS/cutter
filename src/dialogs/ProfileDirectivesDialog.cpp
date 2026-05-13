@@ -1,4 +1,5 @@
 #include "ProfileDirectivesDialog.h"
+
 #include "ui_ProfileDirectivesDialog.h"
 
 #include <QPushButton>
@@ -81,7 +82,7 @@ ProfileDirectivesDialog::ProfileDirectivesDialog(QWidget *parent)
     connect(ui->closeBtn, &QPushButton::clicked, this, &QDialog::close);
 }
 
-ProfileDirectivesDialog::~ProfileDirectivesDialog() {}
+ProfileDirectivesDialog::~ProfileDirectivesDialog() { }
 
 void ProfileDirectivesDialog::addDirective(const QString &key, const QString &description)
 {

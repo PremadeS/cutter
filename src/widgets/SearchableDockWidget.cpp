@@ -1,8 +1,9 @@
 #include "SearchableDockWidget.h"
+
 #include "SearchBarWidget.h"
 
-#include <QScrollBar>
 #include <QAbstractScrollArea>
+#include <QScrollBar>
 #include <QTimer>
 
 namespace {

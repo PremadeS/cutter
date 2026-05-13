@@ -5,12 +5,13 @@
 #ifndef DESCRIPTIONS_H
 #define DESCRIPTIONS_H
 
-#include <QString>
-#include <QList>
-#include <QStringList>
-#include <QMetaType>
-#include <QColor>
 #include "core/CutterCommon.h"
+
+#include <QColor>
+#include <QList>
+#include <QMetaType>
+#include <QString>
+#include <QStringList>
 
 struct FunctionDescription
 {

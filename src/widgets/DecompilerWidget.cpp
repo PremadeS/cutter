@@ -1,25 +1,25 @@
 #include "DecompilerWidget.h"
-#include "ui_DecompilerWidget.h"
-#include "menus/DecompilerContextMenu.h"
 
 #include "common/Configuration.h"
 #include "common/Helpers.h"
+#include "menus/DecompilerContextMenu.h"
+#include "ui_DecompilerWidget.h"
 // #include "common/TempConfig.h"
-#include "common/SelectionHighlight.h"
-#include "common/Decompiler.h"
 #include "common/CutterSeekable.h"
-#include "core/MainWindow.h"
+#include "common/Decompiler.h"
 #include "common/DecompilerHighlighter.h"
+#include "common/SelectionHighlight.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QTextEdit>
-#include <QPlainTextEdit>
-#include <QTextBlock>
+#include <QAbstractSlider>
 #include <QClipboard>
 #include <QObject>
-#include <QTextBlockUserData>
+#include <QPlainTextEdit>
 #include <QScrollBar>
-#include <QAbstractSlider>
+#include <QTextBlock>
+#include <QTextBlockUserData>
+#include <QTextEdit>
 
 DecompilerWidget::DecompilerWidget(MainWindow *main)
     : MemoryDockWidget(MemoryWidgetType::Decompiler, main),

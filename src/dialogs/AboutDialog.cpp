@@ -1,22 +1,22 @@
-#include "core/Cutter.h"
 #include "AboutDialog.h"
 
-#include "ui_AboutDialog.h"
+#include "CutterConfig.h"
 #include "RizinPluginsDialog.h"
-#include "common/Configuration.h"
 #include "common/BugReporting.h"
+#include "common/Configuration.h"
+#include "core/Cutter.h"
+#include "ui_AboutDialog.h"
 
-#include <QUrl>
-#include <QTimer>
 #include <QEventLoop>
 #include <QJsonObject>
 #include <QProgressBar>
 #include <QProgressDialog>
-#include <UpdateWorker.h>
-#include <QtNetwork/QNetworkRequest>
+#include <QTimer>
+#include <QUrl>
 #include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
 
-#include "CutterConfig.h"
+#include <UpdateWorker.h>
 
 AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDialog)
 {
@@ -64,7 +64,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent), ui(new Ui::AboutDia
     }
 }
 
-AboutDialog::~AboutDialog() {}
+AboutDialog::~AboutDialog() { }
 
 void AboutDialog::onButtonBoxRejected()
 {

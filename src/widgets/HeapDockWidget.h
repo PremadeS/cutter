@@ -1,8 +1,9 @@
 #ifndef HEAPDOCKWIDGET_H
 #define HEAPDOCKWIDGET_H
 
-#include <QDockWidget>
 #include "CutterDockWidget.h"
+
+#include <QDockWidget>
 
 #include <memory>
 

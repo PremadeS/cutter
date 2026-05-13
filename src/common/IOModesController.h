@@ -2,6 +2,7 @@
 #define IOMODESCONTROLLER_H
 
 #include "core/Cutter.h"
+
 #include <qwidget.h>
 
 /**

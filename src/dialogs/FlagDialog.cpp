@@ -1,9 +1,11 @@
 #include "FlagDialog.h"
+
+#include "core/Cutter.h"
 #include "ui_FlagDialog.h"
 
 #include <QIntValidator>
+
 #include <utility>
-#include "core/Cutter.h"
 
 FlagDialog::FlagDialog(RVA offset, QWidget *parent, QString flagNameHint)
     : QDialog(parent),
@@ -41,7 +43,7 @@ FlagDialog::FlagDialog(RVA offset, QWidget *parent, QString flagNameHint)
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &FlagDialog::buttonBoxRejected);
 }
 
-FlagDialog::~FlagDialog() {}
+FlagDialog::~FlagDialog() { }
 
 void FlagDialog::buttonBoxAccepted()
 {

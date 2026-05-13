@@ -1,12 +1,13 @@
 #include "Omnibar.h"
-#include "core/MainWindow.h"
+
 #include "CutterSeekable.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QStringListModel>
+#include <QAbstractItemView>
 #include <QCompleter>
 #include <QShortcut>
-#include <QAbstractItemView>
+#include <QStringListModel>
 
 Omnibar::Omnibar(MainWindow *main, QWidget *parent) : QLineEdit(parent), main(main)
 {

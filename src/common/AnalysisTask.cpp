@@ -1,14 +1,16 @@
-#include "core/Cutter.h"
 #include "common/AnalysisTask.h"
+
+#include "core/Cutter.h"
 #include "core/MainWindow.h"
 #include "dialogs/InitialOptionsDialog.h"
-#include <QJsonArray>
-#include <QDebug>
+
 #include <QCheckBox>
+#include <QDebug>
+#include <QJsonArray>
 
-AnalysisTask::AnalysisTask() : AsyncTask() {}
+AnalysisTask::AnalysisTask() : AsyncTask() { }
 
-AnalysisTask::~AnalysisTask() {}
+AnalysisTask::~AnalysisTask() { }
 
 void AnalysisTask::interrupt()
 {

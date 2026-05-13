@@ -1,8 +1,9 @@
 #ifndef DISASSEMBLYHELPER_H
 #define DISASSEMBLYHELPER_H
 
-#include <QTextBlockUserData>
 #include "core/CutterDescriptions.h"
+
+#include <QTextBlockUserData>
 
 /**
  * @brief Metadata container attached to each QTextBlock in the disassembly view

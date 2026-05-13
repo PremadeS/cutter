@@ -1,14 +1,15 @@
 #include "GlobalsWidget.h"
-#include "ui_GlobalsWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "dialogs/GlobalVariableDialog.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_GlobalsWidget.h"
 
 #include <QMenu>
 #include <QShortcut>
 
-GlobalsModel::GlobalsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
+GlobalsModel::GlobalsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) { }
 
 int GlobalsModel::rowCount(const QModelIndex &) const
 {
@@ -202,7 +203,7 @@ GlobalsWidget::GlobalsWidget(MainWindow *main)
             [this]() { qhelpers::emitColumnChanged(globalsModel, GlobalsModel::CommentColumn); });
 }
 
-GlobalsWidget::~GlobalsWidget() {}
+GlobalsWidget::~GlobalsWidget() { }
 
 void GlobalsWidget::refreshGlobals()
 {

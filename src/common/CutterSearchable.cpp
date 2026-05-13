@@ -1,9 +1,10 @@
 #include "CutterSearchable.h"
+
 #include "SearchBarWidget.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QObject>
 #include <QAbstractScrollArea>
+#include <QObject>
 #include <QScrollBar>
 
 void CutterSearchableHelper::setupConnections(QWidget *parent, SearchBarWidget *searchBar)

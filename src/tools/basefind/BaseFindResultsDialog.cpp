@@ -1,12 +1,13 @@
 #include "BaseFindResultsDialog.h"
+
 #include "ui_BaseFindResultsDialog.h"
 
 #include <QClipboard>
 #include <QMessageBox>
-#include <utility>
 
-#include <core/Cutter.h>
 #include <CutterApplication.h>
+#include <core/Cutter.h>
+#include <utility>
 
 BaseFindResultsModel::BaseFindResultsModel(QList<BasefindResultDescription> list, QObject *parent)
     : QAbstractListModel(parent), list(std::move(list))
@@ -157,6 +158,6 @@ void BaseFindResultsDialog::onActionSetMapAddr() const
     cutter->launchNewInstance(args);
 }
 
-BaseFindResultsDialog::~BaseFindResultsDialog() {}
+BaseFindResultsDialog::~BaseFindResultsDialog() { }
 
-void BaseFindResultsDialog::onButtonBoxRejected() {}
+void BaseFindResultsDialog::onButtonBoxRejected() { }

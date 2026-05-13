@@ -1,5 +1,6 @@
 
 #include "RefreshDeferrer.h"
+
 #include "widgets/CutterDockWidget.h"
 
 RefreshDeferrer::RefreshDeferrer(RefreshDeferrerAccumulator *acc, QObject *parent)

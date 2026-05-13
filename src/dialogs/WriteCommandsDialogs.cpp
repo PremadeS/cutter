@@ -1,8 +1,9 @@
 #include "WriteCommandsDialogs.h"
-#include "ui_Base64EnDecodedWriteDialog.h"
-#include "ui_IncrementDecrementDialog.h"
-#include "ui_DuplicateFromOffsetDialog.h"
+
 #include "Cutter.h"
+#include "ui_Base64EnDecodedWriteDialog.h"
+#include "ui_DuplicateFromOffsetDialog.h"
+#include "ui_IncrementDecrementDialog.h"
 
 // #include <cmath>
 #include <QFontDatabase>

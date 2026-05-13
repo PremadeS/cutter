@@ -1,15 +1,17 @@
 #include "AddressableItemContextMenu.h"
-#include "dialogs/XrefsDialog.h"
+
 #include "MainWindow.h"
 #include "dialogs/CommentsDialog.h"
+#include "dialogs/XrefsDialog.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QtCore>
-#include <QShortcut>
-#include <QJsonArray>
-#include <QClipboard>
 #include <QApplication>
+#include <QClipboard>
+#include <QJsonArray>
 #include <QPushButton>
+#include <QShortcut>
+#include <QtCore>
+
 #include <utility>
 
 AddressableItemContextMenu::AddressableItemContextMenu(QWidget *parent, MainWindow *mainWindow)
@@ -56,7 +58,7 @@ AddressableItemContextMenu::AddressableItemContextMenu(QWidget *parent, MainWind
     connect(this, &QMenu::aboutToShow, this, &AddressableItemContextMenu::aboutToShowSlot);
 }
 
-AddressableItemContextMenu::~AddressableItemContextMenu() {}
+AddressableItemContextMenu::~AddressableItemContextMenu() { }
 
 void AddressableItemContextMenu::setWholeFunction(bool wholeFunciton)
 {

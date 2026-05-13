@@ -1,28 +1,28 @@
+#include "core/Cutter.h"
+
+#include "CutterDescriptions.h"
+#include "Decompiler.h"
+#include "common/AsyncTask.h"
+#include "common/BasicInstructionHighlighter.h"
+#include "common/Configuration.h"
+#include "common/Json.h"
+#include "common/RizinTask.h"
+#include "common/TempConfig.h"
+#include "dialogs/MarkDialog.h"
+#include "dialogs/RizinTaskDialog.h"
+
+#include <QCoreApplication>
+#include <QDir>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QRegularExpression>
-#include <QDir>
-#include <QCoreApplication>
-#include <QVector>
-#include <QStringList>
 #include <QStandardPaths>
+#include <QStringList>
+#include <QVector>
 
 #include <cassert>
 #include <memory>
 #include <ranges>
-
-#include "CutterDescriptions.h"
-#include "common/TempConfig.h"
-#include "common/BasicInstructionHighlighter.h"
-#include "common/Configuration.h"
-#include "common/AsyncTask.h"
-#include "common/RizinTask.h"
-#include "dialogs/MarkDialog.h"
-#include "dialogs/RizinTaskDialog.h"
-#include "common/Json.h"
-#include "core/Cutter.h"
-#include "Decompiler.h"
-
 #include <rz_asm.h>
 #include <rz_cmd.h>
 #include <rz_socket.h>

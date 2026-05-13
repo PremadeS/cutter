@@ -2,10 +2,11 @@
 #ifndef ASMOPTIONSWIDGET_H
 #define ASMOPTIONSWIDGET_H
 
+#include <QCheckBox>
 #include <QDialog>
 #include <QPushButton>
+
 #include <memory>
-#include <QCheckBox>
 
 // #include "core/Cutter.h"
 

@@ -1,7 +1,7 @@
 #include "TypesVariablesDialog.h"
-#include "ui_TypesVariablesDialog.h"
 
 #include "Cutter.h"
+#include "ui_TypesVariablesDialog.h"
 
 QString toString(VariableScope scope)
 {
@@ -17,7 +17,7 @@ QString toString(VariableScope scope)
     }
 }
 
-TypesVariablesModel::TypesVariablesModel(QObject *parent) : QAbstractTableModel(parent) {}
+TypesVariablesModel::TypesVariablesModel(QObject *parent) : QAbstractTableModel(parent) { }
 
 int TypesVariablesModel::rowCount(const QModelIndex &) const
 {
@@ -222,4 +222,4 @@ void TypesVariablesDialog::onItemDoubleClicked(const QModelIndex &index)
     close();
 }
 
-TypesVariablesDialog::~TypesVariablesDialog() {}
+TypesVariablesDialog::~TypesVariablesDialog() { }

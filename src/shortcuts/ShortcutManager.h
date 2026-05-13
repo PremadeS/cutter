@@ -1,12 +1,13 @@
 #ifndef SHORTCUTMANAGER_H
 #define SHORTCUTMANAGER_H
 
-#include <QObject>
-#include <QWidget>
-#include <QKeySequence>
-#include <QAction>
-#include <QShortcut>
 #include "DefaultShortcuts.h"
+
+#include <QAction>
+#include <QKeySequence>
+#include <QObject>
+#include <QShortcut>
+#include <QWidget>
 
 /**
  * @brief Singleton class for registering/querying shortcuts

@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QJsonObject>
-#include <memory>
 #include <QStandardItem>
 #include <QTableView>
+
+#include <memory>
 
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"

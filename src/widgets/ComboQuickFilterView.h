@@ -2,7 +2,9 @@
 #define COMBOQUICKFILTERVIEW_H
 
 #include "AbstractFilterView.h"
+
 #include <QComboBox>
+
 #include <memory>
 
 namespace Ui {

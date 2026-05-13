@@ -2,11 +2,12 @@
 #define SYNTAXHIGHLIGHTER_H
 
 #include "CutterCommon.h"
-#include <QSyntaxHighlighter>
-#include <QVector>
-#include <QTextDocument>
+
 #include <QRegularExpression>
+#include <QSyntaxHighlighter>
 #include <QTextCharFormat>
+#include <QTextDocument>
+#include <QVector>
 
 #ifdef CUTTER_ENABLE_KSYNTAXHIGHLIGHTING
 

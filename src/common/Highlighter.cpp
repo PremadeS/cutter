@@ -1,4 +1,5 @@
 #include "Highlighter.h"
+
 #include "core/MainWindow.h"
 
 #include <QtGui>

@@ -1,12 +1,12 @@
 #ifndef CUTTERAPPLICATION_H
 #define CUTTERAPPLICATION_H
 
-#include <QEvent>
+#include "core/MainWindow.h"
+
 #include <QApplication>
+#include <QEvent>
 #include <QList>
 #include <QProxyStyle>
-
-#include "core/MainWindow.h"
 
 enum class AutomaticAnalysisLevel : ut8 { Ask, None, AAA, AAAA };
 

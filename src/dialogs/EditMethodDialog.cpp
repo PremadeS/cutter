@@ -1,8 +1,9 @@
 #include "EditMethodDialog.h"
-#include "ui_EditMethodDialog.h"
 
 #include "Cutter.h"
 #include "RizinCpp.h"
+#include "ui_EditMethodDialog.h"
+
 #include <QComboBox>
 
 EditMethodDialog::EditMethodDialog(bool classFixed, QWidget *parent)
@@ -40,9 +41,9 @@ EditMethodDialog::EditMethodDialog(bool classFixed, QWidget *parent)
     connect(ui->realNameEdit, &QLineEdit::textChanged, this, &EditMethodDialog::updateName);
 }
 
-EditMethodDialog::~EditMethodDialog() {}
+EditMethodDialog::~EditMethodDialog() { }
 
-void EditMethodDialog::onButtonBoxAccepted() {}
+void EditMethodDialog::onButtonBoxAccepted() { }
 
 void EditMethodDialog::onButtonBoxRejected()
 {

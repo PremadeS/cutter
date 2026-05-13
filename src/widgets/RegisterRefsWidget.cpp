@@ -1,15 +1,16 @@
 #include "RegisterRefsWidget.h"
-#include "ui_RegisterRefsWidget.h"
-#include "core/MainWindow.h"
-#include "common/Helpers.h"
-#include "shortcuts/ShortcutManager.h"
 
+#include "common/Helpers.h"
+#include "core/MainWindow.h"
+#include "shortcuts/ShortcutManager.h"
+#include "ui_RegisterRefsWidget.h"
+
+#include <QClipboard>
 #include <QJsonObject>
 #include <QMenu>
-#include <QClipboard>
 #include <QShortcut>
 
-RegisterRefModel::RegisterRefModel(QObject *parent) : QAbstractListModel(parent) {}
+RegisterRefModel::RegisterRefModel(QObject *parent) : QAbstractListModel(parent) { }
 
 int RegisterRefModel::rowCount(const QModelIndex &) const
 {

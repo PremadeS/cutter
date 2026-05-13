@@ -1,18 +1,19 @@
 #include "SearchBarWidget.h"
-#include "ui_SearchBarWidget.h"
+
 #include "CutterSearchable.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_SearchBarWidget.h"
 // #include "Configuration.h"
 
+#include <QBitArray>
+#include <QGraphicsDropShadowEffect>
+#include <QKeyEvent>
+#include <QMenu>
+#include <QPainter>
+#include <QSizeGrip>
 #include <QStyle>
 #include <QStyleOption>
-#include <QPainter>
-#include <QGraphicsDropShadowEffect>
 #include <QTimer>
-#include <QBitArray>
-#include <QSizeGrip>
-#include <QMenu>
-#include <QKeyEvent>
 
 SearchBarSizeGrip::SearchBarSizeGrip(QWidget *parent) : QSizeGrip(parent)
 {
@@ -128,7 +129,7 @@ SearchBarWidget::SearchBarWidget(QWidget *parent) : QWidget(parent), ui(new Ui::
     ui->searchLabel->setStyleSheet("QLabel { background: transparent; }");
 }
 
-SearchBarWidget::~SearchBarWidget() {}
+SearchBarWidget::~SearchBarWidget() { }
 
 void SearchBarWidget::setCurrentIndex(int index)
 {

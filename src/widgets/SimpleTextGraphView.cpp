@@ -1,24 +1,25 @@
 
 #include "SimpleTextGraphView.h"
+
+#include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "common/SyntaxHighlighter.h"
 #include "core/Cutter.h"
 #include "core/MainWindow.h"
-#include "common/Configuration.h"
-#include "common/SyntaxHighlighter.h"
-#include "common/Helpers.h"
 
-#include <QPainter>
-#include <QJsonObject>
+#include <QAction>
+#include <QApplication>
+#include <QClipboard>
 #include <QJsonArray>
+#include <QJsonObject>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QPropertyAnimation>
 #include <QShortcut>
-#include <QToolTip>
-#include <QTextEdit>
-#include <QVBoxLayout>
 #include <QStandardPaths>
-#include <QClipboard>
-#include <QApplication>
-#include <QAction>
+#include <QTextEdit>
+#include <QToolTip>
+#include <QVBoxLayout>
 
 #include <cmath>
 

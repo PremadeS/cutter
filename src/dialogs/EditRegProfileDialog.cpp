@@ -1,10 +1,11 @@
 #include "EditRegProfileDialog.h"
+
 #include "ui_EditRegProfileDialog.h"
 
+#include <QMenu>
+#include <QMessageBox>
 #include <QRegularExpression>
 #include <QTextStream>
-#include <QMessageBox>
-#include <QMenu>
 
 EditRegProfileDialog::EditRegProfileDialog(QWidget *parent)
     : QDialog(parent),
@@ -38,7 +39,7 @@ EditRegProfileDialog::EditRegProfileDialog(QWidget *parent)
             &EditRegProfileDialog::showContextMenu);
 }
 
-EditRegProfileDialog::~EditRegProfileDialog() {}
+EditRegProfileDialog::~EditRegProfileDialog() { }
 
 EditRegProfileDialog::TabContext EditRegProfileDialog::getActiveTab() const
 {

@@ -1,7 +1,7 @@
 
 #include "AsyncTaskDialog.h"
-#include "common/AsyncTask.h"
 
+#include "common/AsyncTask.h"
 #include "ui_AsyncTaskDialog.h"
 
 AsyncTaskDialog::AsyncTaskDialog(const AsyncTask::Ptr &task, QWidget *parent)
@@ -27,7 +27,7 @@ AsyncTaskDialog::AsyncTaskDialog(const AsyncTask::Ptr &task, QWidget *parent)
     updateProgressTimer();
 }
 
-AsyncTaskDialog::~AsyncTaskDialog() {}
+AsyncTaskDialog::~AsyncTaskDialog() { }
 
 void AsyncTaskDialog::updateLog(const QString &log)
 {

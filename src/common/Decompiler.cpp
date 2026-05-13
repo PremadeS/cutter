@@ -1,8 +1,9 @@
 #include "Decompiler.h"
+
 #include "Cutter.h"
 
-#include <QJsonObject>
 #include <QJsonArray>
+#include <QJsonObject>
 
 Decompiler::Decompiler(const QString &id, const QString &name, QObject *parent)
     : QObject(parent), id(id), name(name)

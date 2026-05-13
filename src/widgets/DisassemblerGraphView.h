@@ -3,15 +3,15 @@
 
 // Based on the DisassemblerGraphView from x64dbg
 
-#include <QWidget>
+#include "common/CutterSeekable.h"
+#include "common/RichTextPainter.h"
+#include "menus/DisassemblyContextMenu.h"
+#include "widgets/CutterGraphView.h"
+
+#include <QLabel>
 #include <QPainter>
 #include <QShortcut>
-#include <QLabel>
-
-#include "widgets/CutterGraphView.h"
-#include "menus/DisassemblyContextMenu.h"
-#include "common/RichTextPainter.h"
-#include "common/CutterSeekable.h"
+#include <QWidget>
 
 class QTextEdit;
 class FallbackSyntaxHighlighter;
@@ -27,7 +27,7 @@ class DisassemblerGraphView : public CutterGraphView
     {
         std::vector<RichTextPainter::List> lines;
 
-        Text() {}
+        Text() { }
 
         Text(const QString &text, QColor color, QColor background)
         {

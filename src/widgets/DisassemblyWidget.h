@@ -1,16 +1,16 @@
 #ifndef DISASSEMBLYWIDGET_H
 #define DISASSEMBLYWIDGET_H
 
-#include "core/Cutter.h"
 #include "MemoryDockWidget.h"
 #include "common/CutterSeekable.h"
 #include "common/RefreshDeferrer.h"
+#include "core/Cutter.h"
 // #include "common/CachedFontMetrics.h"
 
-#include <QTextEdit>
+#include <QAction>
 #include <QPlainTextEdit>
 #include <QShortcut>
-#include <QAction>
+#include <QTextEdit>
 
 #include <vector>
 

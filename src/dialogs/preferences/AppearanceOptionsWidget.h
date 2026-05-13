@@ -2,11 +2,12 @@
 #ifndef AppearanceOptionsWidget_H
 #define AppearanceOptionsWidget_H
 
+#include "core/Cutter.h"
+
 #include <QDialog>
 #include <QPushButton>
-#include <memory>
 
-#include "core/Cutter.h"
+#include <memory>
 
 class PreferencesDialog;
 

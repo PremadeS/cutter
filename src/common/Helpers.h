@@ -3,9 +3,10 @@
 
 #include "core/CutterCommon.h"
 
-#include <QString>
 #include <QColor>
 #include <QSizePolicy>
+#include <QString>
+
 #include <functional>
 
 class QIcon;

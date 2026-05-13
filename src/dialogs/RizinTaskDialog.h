@@ -1,14 +1,14 @@
 #ifndef RZTASKDIALOG_H
 #define RZTASKDIALOG_H
 
-#include <memory>
-
-#include <QDialog>
-#include <QTimer>
-#include <QElapsedTimer>
-
 #include "common/RizinTask.h"
 #include "core/CutterCommon.h"
+
+#include <QDialog>
+#include <QElapsedTimer>
+#include <QTimer>
+
+#include <memory>
 
 class RizinTask;
 namespace Ui {

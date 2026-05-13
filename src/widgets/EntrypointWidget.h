@@ -1,11 +1,12 @@
 #ifndef ENTRYPOINTWIDGET_H
 #define ENTRYPOINTWIDGET_H
 
-#include <memory>
+#include "CutterDockWidget.h"
+
 #include <QStyledItemDelegate>
 #include <QTreeWidgetItem>
 
-#include "CutterDockWidget.h"
+#include <memory>
 
 class MainWindow;
 class QTreeWidget;

@@ -1,25 +1,25 @@
 #include "UpdateWorker.h"
 
 #if CUTTER_UPDATE_WORKER_AVAILABLE
-#    include <QUrl>
-#    include <QFile>
-#    include <QTimer>
-#    include <QEventLoop>
-#    include <QDataStream>
-#    include <QJsonObject>
-#    include <QApplication>
-#    include <QJsonDocument>
-#    include <QDesktopServices>
-#    include <QtNetwork/QNetworkReply>
-#    include <QtNetwork/QNetworkRequest>
-#    include <QStandardPaths>
+#    include "CutterConfig.h"
+#    include "common/Configuration.h"
 
+#    include <QApplication>
+#    include <QDataStream>
+#    include <QDesktopServices>
+#    include <QEventLoop>
+#    include <QFile>
+#    include <QFileDialog>
+#    include <QJsonDocument>
+#    include <QJsonObject>
+#    include <QMessageBox>
 #    include <QProgressDialog>
 #    include <QPushButton>
-#    include <QFileDialog>
-#    include <QMessageBox>
-#    include "common/Configuration.h"
-#    include "CutterConfig.h"
+#    include <QStandardPaths>
+#    include <QTimer>
+#    include <QUrl>
+#    include <QtNetwork/QNetworkReply>
+#    include <QtNetwork/QNetworkRequest>
 #endif
 
 #if CUTTER_UPDATE_WORKER_AVAILABLE
