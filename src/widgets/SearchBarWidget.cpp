@@ -2,7 +2,7 @@
 #include "ui_SearchBarWidget.h"
 #include "CutterSearchable.h"
 #include "shortcuts/ShortcutManager.h"
-#include "Configuration.h"
+// #include "Configuration.h"
 
 #include <QStyle>
 #include <QStyleOption>
@@ -132,35 +132,35 @@ SearchBarWidget::~SearchBarWidget() {}
 
 void SearchBarWidget::setCurrentIndex(int index)
 {
-    mIndex = index;
+    this->index = index;
     updateLabel();
 }
 
 void SearchBarWidget::setTotalCount(int count)
 {
-    mCount = count;
+    this->count = count;
     updateLabel();
 }
 
 void SearchBarWidget::setRange(int index, int count)
 {
-    mIndex = index;
-    mCount = count;
+    this->index = index;
+    this->count = count;
     updateLabel();
 }
 
 void SearchBarWidget::clear()
 {
-    mIndex = 0;
-    mCount = 0;
+    index = 0;
+    count = 0;
     updateLabel();
 }
 
 void SearchBarWidget::updateLabel()
 {
     // indexes are 0-based
-    const int index = std::min(mIndex + 1, mCount);
-    ui->searchLabel->setText(tr("%1 of %2").arg(index).arg(mCount));
+    const int index = std::min(this->index + 1, count);
+    ui->searchLabel->setText(tr("%1 of %2").arg(index).arg(count));
 }
 
 void SearchBarWidget::showSearchBar()
@@ -184,12 +184,12 @@ void SearchBarWidget::selectText()
 
 int SearchBarWidget::totalCount() const
 {
-    return mCount;
+    return count;
 }
 
 int SearchBarWidget::currentIndex() const
 {
-    return mIndex;
+    return index;
 }
 
 QString SearchBarWidget::text() const

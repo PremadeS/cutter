@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "widgets/SimpleTextGraphView.h"
 #include "common/RefreshDeferrer.h"
@@ -51,6 +51,9 @@ private:
     QString lastShownCommand;
 };
 
+/**
+ * @brief Dock widget providing a menu to select and display graphs using Rizin commands
+ */
 class RizinGraphWidget : public CutterDockWidget
 {
     Q_OBJECT

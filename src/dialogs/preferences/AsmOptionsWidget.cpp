@@ -16,8 +16,9 @@ AsmOptionsWidget::AsmOptionsWidget(PreferencesDialog *dialog)
     ui->setupUi(this);
 
     ui->syntaxComboBox->blockSignals(true);
-    for (const auto &syntax : Core()->getConfigOptions("asm.syntax"))
+    for (const auto &syntax : Core()->getConfigOptions("asm.syntax")) {
         ui->syntaxComboBox->addItem(syntax, syntax);
+    }
     ui->syntaxComboBox->blockSignals(false);
 
     checkboxes = { { ui->describeCheckBox, "asm.describe" },
@@ -50,8 +51,13 @@ AsmOptionsWidget::AsmOptionsWidget(PreferencesDialog *dialog)
     for (confCheckbox = checkboxes.begin(); confCheckbox != checkboxes.end(); ++confCheckbox) {
         const QString val = confCheckbox->config;
         QCheckBox &cb = *confCheckbox->checkBox;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+        connect(confCheckbox->checkBox, &QCheckBox::checkStateChanged,
+                [this, val, &cb]() { checkboxEnabler(&cb, val); });
+#else
         connect(confCheckbox->checkBox, &QCheckBox::stateChanged,
                 [this, val, &cb]() { checkboxEnabler(&cb, val); });
+#endif
     }
 
     using indexSignalType = void (QComboBox::*)(int);
@@ -305,12 +311,6 @@ void AsmOptionsWidget::relOffCheckBoxToggled(bool checked)
     ui->relOffFlagsCheckBox->setEnabled(checked && Config()->getConfigBool("asm.offset"));
 }
 
-/**
- * @brief A generic signal to handle the simple cases where a checkbox is toggled
- * while it only responsible for a single independent boolean configuration eval.
- * @param checkBox - The checkbox which is responsible for the siganl
- * @param config - the configuration string to be toggled
- */
 void AsmOptionsWidget::checkboxEnabler(QCheckBox *checkBox, const QString &config)
 {
     Config()->setConfig(config, checkBox->isChecked());

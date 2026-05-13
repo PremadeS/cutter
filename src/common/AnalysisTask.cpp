@@ -39,7 +39,7 @@ void AnalysisTask::runTask()
     int perms = RZ_PERM_RX;
     if (options.writeEnabled) {
         perms |= RZ_PERM_W;
-        emit Core()->ioModeChanged();
+        emit Core() -> ioModeChanged();
     }
 
     // Need to lock Core here so avoid the use of Core()-> functions as much as possible

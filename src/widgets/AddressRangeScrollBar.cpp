@@ -19,26 +19,30 @@ AddressRangeScrollBar::AddressRangeScrollBar(QWidget *parent) : QScrollBar(paren
         // for more info.
         case QAbstractSlider::SliderSingleStepAdd:
             setSliderPosition(value());
-            if (value() == maximum())
+            if (value() == maximum()) {
                 return;
+            }
             emit scrolled(-singleStep());
             return;
         case QAbstractSlider::SliderPageStepAdd:
             setSliderPosition(value());
-            if (value() == maximum())
+            if (value() == maximum()) {
                 return;
+            }
             emit scrolled(-pageStep());
             return;
         case QAbstractSlider::SliderSingleStepSub:
             setSliderPosition(value());
-            if (value() == minimum())
+            if (value() == minimum()) {
                 return;
+            }
             emit scrolled(singleStep());
             return;
         case QAbstractSlider::SliderPageStepSub:
             setSliderPosition(value());
-            if (value() == minimum())
+            if (value() == minimum()) {
                 return;
+            }
             emit scrolled(pageStep());
             return;
         default:

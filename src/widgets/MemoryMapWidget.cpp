@@ -20,8 +20,9 @@ int MemoryMapModel::columnCount(const QModelIndex &) const
 
 QVariant MemoryMapModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= memoryMaps.count())
+    if (index.row() >= memoryMaps.count()) {
         return QVariant();
+    }
 
     const MemoryMapDescription &memoryMap = memoryMaps.at(index.row());
 

@@ -1,12 +1,17 @@
 #ifndef ADDRESSABLEITEMCONTEXTMENU_H
 #define ADDRESSABLEITEMCONTEXTMENU_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include <QMenu>
 #include <QKeySequence>
+#include <QMenu>
+#include "CutterCommon.h"
 
 class MainWindow;
 
+/**
+ * @brief Generic context menu for Addressable widgets
+ */
 class CUTTER_EXPORT AddressableItemContextMenu : public QMenu
 {
     Q_OBJECT

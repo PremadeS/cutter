@@ -28,11 +28,13 @@ QVariant ImportsModel::data(const QModelIndex &index, int role) const
     case Qt::ForegroundRole:
         if (index.column() < ImportsModel::ColumnCount) {
             // Red color for unsafe functions
-            if (banned.match(import.name).hasMatch())
+            if (banned.match(import.name).hasMatch()) {
                 return Config()->getColor("gui.item_unsafe");
+            }
             // Grey color for symbols at offset 0 which can only be filled at runtime
-            if (import.plt == 0)
+            if (import.plt == 0) {
                 return Config()->getColor("gui.item_invalid");
+            }
         }
         break;
     case Qt::DisplayRole:
@@ -128,11 +130,13 @@ bool ImportsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) con
 
 bool ImportsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    if (!left.isValid() || !right.isValid())
+    if (!left.isValid() || !right.isValid()) {
         return false;
+    }
 
-    if (left.parent().isValid() || right.parent().isValid())
+    if (left.parent().isValid() || right.parent().isValid()) {
         return false;
+    }
 
     auto leftImport = left.data(ImportsModel::ImportDescriptionRole).value<ImportDescription>();
     auto rightImport = right.data(ImportsModel::ImportDescriptionRole).value<ImportDescription>();
@@ -145,8 +149,9 @@ bool ImportsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
     case ImportsModel::SafetyColumn:
         break;
     case ImportsModel::LibraryColumn:
-        if (leftImport.libname != rightImport.libname)
+        if (leftImport.libname != rightImport.libname) {
             return leftImport.libname < rightImport.libname;
+        }
     // fallthrough
     case ImportsModel::NameColumn:
         return leftImport.name < rightImport.name;
@@ -176,7 +181,7 @@ ImportsWidget::ImportsWidget(MainWindow *main)
     // Sort by library name by default to create a solid context per each group of imports
     ui->treeView->sortByColumn(ImportsModel::LibraryColumn, Qt::AscendingOrder);
     const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Imports.toggle", main);
-    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    connect(toggleShortcut, &QShortcut::activated, this, [=, this]() { toggleDockWidget(true); });
 
     connect(Core(), &CutterCore::codeRebased, this, &ImportsWidget::refreshImports);
     connect(Core(), &CutterCore::refreshAll, this, &ImportsWidget::refreshImports);

@@ -25,8 +25,9 @@ int BaseFindResultsModel::columnCount(const QModelIndex &) const
 
 QVariant BaseFindResultsModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= list.count())
+    if (index.row() >= list.count()) {
         return QVariant();
+    }
 
     const BasefindResultDescription &entry = list.at(index.row());
 

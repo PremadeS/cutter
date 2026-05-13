@@ -38,7 +38,7 @@ void ListDockWidget::setModels(AddressableFilterProxyModel *objectFilterProxyMod
 {
     this->objectFilterProxyModel = objectFilterProxyModel;
 
-    ui->treeView->setModel(objectFilterProxyModel);
+    ui->treeView->setModel(static_cast<AddressableItemModelI *>(objectFilterProxyModel));
 
     connect(ui->quickFilterView, &QuickFilterView::filterTextChanged, objectFilterProxyModel,
             &QSortFilterProxyModel::setFilterWildcard);

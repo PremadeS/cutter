@@ -6,6 +6,12 @@
 #include <QHash>
 #include <QPair>
 
+/**
+ * @file DefaultShortcuts.h
+ * Contains all of the default shortcuts for Cutter
+ * Visually shown in @ref ShortcutOptionsWidget
+ */
+
 struct Shortcut
 {
     QList<QKeySequence> keySequences;

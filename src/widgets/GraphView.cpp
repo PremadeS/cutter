@@ -254,8 +254,9 @@ void GraphView::setViewOffsetInternal(QPoint pos, bool emitSignal)
 {
     offset = pos;
     clampViewOffset();
-    if (emitSignal)
+    if (emitSignal) {
         emit viewOffsetChanged(offset);
+    }
 }
 
 void GraphView::addViewOffset(QPoint move, bool emitSignal)

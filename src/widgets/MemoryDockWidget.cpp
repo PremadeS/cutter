@@ -7,7 +7,7 @@
 #include <QContextMenuEvent>
 
 MemoryDockWidget::MemoryDockWidget(MemoryWidgetType type, MainWindow *parent)
-    : AddressableDockWidget(parent), mType(type)
+    : AddressableDockWidget(parent), type(type)
 {
     if (parent) {
         parent->addMemoryDockWidget(this);
@@ -20,7 +20,7 @@ bool MemoryDockWidget::tryRaiseMemoryWidget()
         return false;
     }
 
-    if (mType == MemoryWidgetType::Graph && Core()->isGraphEmpty()) {
+    if (type == MemoryWidgetType::Graph && Core()->isGraphEmpty()) {
         return false;
     }
     raiseMemoryWidget();

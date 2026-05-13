@@ -6,7 +6,7 @@
 #include <QSortFilterProxyModel>
 #include <QMenu>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "common/AddressableItemModel.h"
 #include "CutterDockWidget.h"
 #include "menus/AddressableItemContextMenu.h"
@@ -19,6 +19,9 @@ namespace Ui {
 class ListDockWidget;
 }
 
+/**
+ * @brief A dockable widget that displays data in a searchable tree or list format
+ */
 class CUTTER_EXPORT ListDockWidget : public CutterDockWidget
 {
     Q_OBJECT

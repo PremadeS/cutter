@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "common/StringsTask.h"
 #include "AddressableItemModel.h"
@@ -19,6 +19,9 @@ namespace Ui {
 class StringsWidget;
 }
 
+/**
+ * @brief Source model for @ref StringsWidget
+ */
 class StringsModel : public AddressableItemModel<QAbstractListModel>
 {
     Q_OBJECT
@@ -29,7 +32,7 @@ private:
     QList<StringDescription> strings;
 
 public:
-    enum Column {
+    enum Column : ut8 {
         OffsetColumn = 0,
         StringColumn,
         TypeColumn,
@@ -54,6 +57,9 @@ public:
     const StringDescription *description(const QModelIndex &index) const;
 };
 
+/**
+ * @brief Proxy model for @ref StringsWidget
+ */
 class StringsProxyModel : public AddressableFilterProxyModel
 {
     Q_OBJECT
@@ -69,6 +75,9 @@ protected:
     QString selectedSection;
 };
 
+/**
+ * @brief Widget listing all of the strings in binary
+ */
 class StringsWidget : public CutterDockWidget
 {
     Q_OBJECT

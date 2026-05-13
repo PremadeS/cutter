@@ -5,6 +5,9 @@
 
 class MainWindow;
 
+/**
+ * @brief Main search bar at the top with auto completion
+ */
 class Omnibar : public QLineEdit
 {
     Q_OBJECT

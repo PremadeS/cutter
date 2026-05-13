@@ -9,6 +9,9 @@
 
 #include "plugins/CutterPlugin.h"
 
+/**
+ * @brief Main class for managing plugins
+ */
 class PluginManager : public QObject
 {
     Q_OBJECT

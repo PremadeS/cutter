@@ -36,8 +36,9 @@ int ProcessModel::columnCount(const QModelIndex &) const
 
 QVariant ProcessModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= processes.count())
+    if (index.row() >= processes.count()) {
         return QVariant();
+    }
 
     const ProcessDescription &proc = processes.at(index.row());
 

@@ -37,8 +37,9 @@ int TypesModel::columnCount(const QModelIndex &) const
 
 QVariant TypesModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= types.count())
+    if (index.row() >= types.count()) {
         return QVariant();
+    }
 
     const TypeDescription &exp = types.at(index.row());
 
@@ -107,12 +108,9 @@ TypesSortFilterProxyModel::TypesSortFilterProxyModel(TypesModel *source_model, Q
 
 void TypesSortFilterProxyModel::setCategory(QString category)
 {
+    beginResetModel();
     selectedCategory = std::move(category);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    invalidateFilter();
-#else
-    invalidateRowsFilter();
-#endif
+    endResetModel();
 }
 
 bool TypesSortFilterProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
@@ -149,8 +147,8 @@ bool TypesSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIn
 TypesWidget::TypesWidget(MainWindow *main)
     : CutterDockWidget(main),
       ui(new Ui::TypesWidget),
-      types_model(new TypesModel(this)),
-      types_proxy_model(new TypesSortFilterProxyModel(types_model, this))
+      typesModel(new TypesModel(this)),
+      typesProxyModel(new TypesSortFilterProxyModel(typesModel, this))
 {
     ui->setupUi(this);
     ui->quickFilterView->setLabelText(tr("Category"));
@@ -160,7 +158,7 @@ TypesWidget::TypesWidget(MainWindow *main)
 
     // Setup up the model and the proxy model
 
-    ui->typesTreeView->setModel(types_proxy_model);
+    ui->typesTreeView->setModel(typesProxyModel);
     ui->typesTreeView->sortByColumn(TypesModel::TYPE, Qt::AscendingOrder);
 
     setScrollMode();
@@ -171,11 +169,11 @@ TypesWidget::TypesWidget(MainWindow *main)
 
     ui->typesTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    connect(ui->quickFilterView, &ComboQuickFilterView::filterTextChanged, types_proxy_model,
+    connect(ui->quickFilterView, &ComboQuickFilterView::filterTextChanged, typesProxyModel,
             &QSortFilterProxyModel::setFilterWildcard);
 
     connect(ui->quickFilterView, &ComboQuickFilterView::filterTextChanged, this,
-            [this] { ui->quickFilterView->setItemCount(types_proxy_model->rowCount()); });
+            [this] { ui->quickFilterView->setItemCount(typesProxyModel->rowCount()); });
 
     QShortcut *searchShortcut = Shortcuts()->makeQShortcut("General.showFilter", this);
     connect(searchShortcut, &QShortcut::activated, ui->quickFilterView,
@@ -190,8 +188,8 @@ TypesWidget::TypesWidget(MainWindow *main)
     connect(Core(), &CutterCore::refreshAll, this, &TypesWidget::refreshTypes);
 
     connect(ui->quickFilterView->comboBox(), &QComboBox::currentTextChanged, this, [this]() {
-        types_proxy_model->setCategory(ui->quickFilterView->comboBox()->currentData().toString());
-        ui->quickFilterView->setItemCount(types_proxy_model->rowCount());
+        typesProxyModel->setCategory(ui->quickFilterView->comboBox()->currentData().toString());
+        ui->quickFilterView->setItemCount(typesProxyModel->rowCount());
     });
 
     actionViewType = new QAction(tr("View Type"), this);
@@ -210,19 +208,19 @@ TypesWidget::~TypesWidget() {}
 
 void TypesWidget::refreshTypes()
 {
-    types_model->beginResetModel();
-    types_model->types = Core()->getAllTypes();
-    types_model->endResetModel();
+    typesModel->beginResetModel();
+    typesModel->types = Core()->getAllTypes();
+    typesModel->endResetModel();
 
     QStringList categories;
-    for (const TypeDescription &exp : types_model->types) {
+    for (const TypeDescription &exp : typesModel->types) {
         categories << exp.category;
     }
     categories.removeDuplicates();
     refreshCategoryCombo(categories);
 
     // set the initial count
-    ui->quickFilterView->setItemCount(types_proxy_model->rowCount());
+    ui->quickFilterView->setItemCount(typesProxyModel->rowCount());
 
     qhelpers::adjustColumns(ui->typesTreeView, 4, 0);
 }
@@ -238,7 +236,7 @@ void TypesWidget::refreshCategoryCombo(const QStringList &categories)
         combo->addItem(category, category);
     }
 
-    types_proxy_model->setCategory(QString());
+    typesProxyModel->setCategory(QString());
 }
 
 void TypesWidget::setScrollMode()
@@ -344,7 +342,7 @@ void TypesWidget::onActionDeleteTypeTriggered()
     if (!proxyIndex.isValid()) {
         return;
     }
-    const QModelIndex index = types_proxy_model->mapToSource(proxyIndex);
+    const QModelIndex index = typesProxyModel->mapToSource(proxyIndex);
     if (!index.isValid()) {
         return;
     }
@@ -353,7 +351,7 @@ void TypesWidget::onActionDeleteTypeTriggered()
     const QMessageBox::StandardButton reply = QMessageBox::question(
             this, tr("Cutter"), tr("Are you sure you want to delete \"%1\"?").arg(exp.type));
     if (reply == QMessageBox::Yes) {
-        types_model->removeRow(index.row());
+        typesModel->removeRow(index.row());
     }
 }
 
@@ -393,25 +391,25 @@ void TypesWidget::selectTypeByName(const QString &typeName)
         return;
     }
 
-    QModelIndexList results = types_proxy_model->match(
-            types_proxy_model->index(0, 0), Qt::DisplayRole, typeName, 1, Qt::MatchExactly);
+    QModelIndexList results = typesProxyModel->match(typesProxyModel->index(0, 0), Qt::DisplayRole,
+                                                     typeName, 1, Qt::MatchExactly);
 
     // if results are empty, remove the filter and try again
     // avoids removing the filter unnecessarily
     bool isTextFilterEmpty;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    isTextFilterEmpty = types_proxy_model->filterRegExp().pattern().isEmpty();
+    isTextFilterEmpty = typesProxyModel->filterRegExp().pattern().isEmpty();
 #else
-    isTextFilterEmpty = types_proxy_model->filterRegularExpression().pattern().isEmpty();
+    isTextFilterEmpty = typesProxyModel->filterRegularExpression().pattern().isEmpty();
 #endif
     if (results.isEmpty()
         && (!isTextFilterEmpty || ui->quickFilterView->comboBox()->currentIndex() != 0)) {
 
         ui->quickFilterView->clearFilter();
         ui->quickFilterView->comboBox()->setCurrentIndex(0); // select (All)
-        types_proxy_model->setFilterFixedString("");
-        results = types_proxy_model->match(types_proxy_model->index(0, 0), Qt::DisplayRole,
-                                           typeName, 1, Qt::MatchExactly);
+        typesProxyModel->setFilterFixedString("");
+        results = typesProxyModel->match(typesProxyModel->index(0, 0), Qt::DisplayRole, typeName, 1,
+                                         Qt::MatchExactly);
     }
 
     if (results.isEmpty()) {

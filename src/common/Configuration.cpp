@@ -172,8 +172,9 @@ Configuration::Configuration() : QObject(), nativePalette(qApp->palette())
 
 Configuration *Configuration::instance()
 {
-    if (!mPtr)
+    if (!mPtr) {
         mPtr = new Configuration();
+    }
     return mPtr;
 }
 

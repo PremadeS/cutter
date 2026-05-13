@@ -12,6 +12,11 @@ namespace Ui {
 class BaseFindSearchDialog;
 }
 
+/**
+ * @brief Dialog displayed while searching in @ref BaseFindDialog
+ *
+ * Shows progress for each CPU core
+ */
 class BaseFindSearchDialog : public QDialog
 {
     Q_OBJECT

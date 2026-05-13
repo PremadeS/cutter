@@ -317,10 +317,11 @@ void DisassemblerGraphView::loadCurrentGraph()
             const int blockLength = Config()->getGraphBlockMaxChars()
                     + Core()->getConfigb("asm.bytes") * 24 + Core()->getConfigb("asm.emu") * 10;
             instr.text = Text(RichTextPainter::cropped(richText, blockLength, "...", &cropped));
-            if (cropped)
+            if (cropped) {
                 instr.fullText = richText;
-            else
+            } else {
                 instr.fullText = Text();
+            }
             db.instrs.push_back(instr);
         }
         disassemblyBlocks[db.entry] = db;
@@ -350,19 +351,23 @@ void DisassemblerGraphView::prepareGraphNode(GraphBlock &block)
     int height = 0;
     for (auto &line : db.headerText.lines) {
         int lw = 0;
-        for (auto &part : line)
+        for (auto &part : line) {
             lw += mFontMetrics->width(part.text);
-        if (lw > width)
+        }
+        if (lw > width) {
             width = lw;
+        }
         height += 1;
     }
     for (const Instr &instr : db.instrs) {
         for (auto &line : instr.text.lines) {
             int lw = 0;
-            for (auto &part : line)
+            for (auto &part : line) {
                 lw += mFontMetrics->width(part.text);
-            if (lw > width)
+            }
+            if (lw > width) {
                 width = lw;
+            }
             height += 1;
         }
     }
@@ -847,8 +852,9 @@ void DisassemblerGraphView::seekLocal(RVA addr, bool update_viewport)
 
 void DisassemblerGraphView::copySelection()
 {
-    if (!highlightToken)
+    if (!highlightToken) {
         return;
+    }
 
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(highlightToken->content);

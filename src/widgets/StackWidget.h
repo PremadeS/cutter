@@ -5,7 +5,7 @@
 #include <QStandardItem>
 #include <QTableView>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "menus/AddressableItemContextMenu.h"
 
@@ -15,6 +15,9 @@ namespace Ui {
 class StackWidget;
 }
 
+/**
+ * @brief Source model for @ref StackWidget
+ */
 class StackModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -26,8 +29,14 @@ public:
         RefDescription refDesc;
     };
 
-    enum Column { OffsetColumn = 0, ValueColumn, DescriptionColumn, CommentColumn, ColumnCount };
-    enum Role { StackDescriptionRole = Qt::UserRole };
+    enum Column : ut8 {
+        OffsetColumn = 0,
+        ValueColumn,
+        DescriptionColumn,
+        CommentColumn,
+        ColumnCount
+    };
+    enum Role : ut16 { StackDescriptionRole = Qt::UserRole };
 
     StackModel(QObject *parent = nullptr);
 
@@ -48,6 +57,9 @@ private:
 };
 Q_DECLARE_METATYPE(StackModel::Item)
 
+/**
+ * @brief Widget listing stack information during debugging/emulation
+ */
 class StackWidget : public CutterDockWidget
 {
     Q_OBJECT

@@ -6,7 +6,7 @@
 #include <QJsonObject>
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "menus/AddressableItemContextMenu.h"
 
@@ -16,6 +16,9 @@ namespace Ui {
 class RegistersWidget;
 }
 
+/**
+ * @brief Dock widget that displays CPU registers in an editable grid for debugging/emulating
+ */
 class RegistersWidget : public CutterDockWidget
 {
     Q_OBJECT

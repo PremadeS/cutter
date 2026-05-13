@@ -50,8 +50,9 @@ PyObject *qtres_exists(PyObject *self, PyObject *args)
     Q_UNUSED(self)
     char *name;
     QFile resFile;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    if (!PyArg_ParseTuple(args, "s", &name)) {
         return NULL;
+    }
     return PyBool_FromLong(QtResExists(name, resFile));
 }
 
@@ -59,11 +60,13 @@ PyObject *qtres_get_code(PyObject *self, PyObject *args)
 {
     Q_UNUSED(self)
     char *name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    if (!PyArg_ParseTuple(args, "s", &name)) {
         return NULL;
+    }
     PyObject *ret = QtResGetCode(name);
-    if (ret)
+    if (ret) {
         return ret;
+    }
     Py_RETURN_NONE;
 }
 

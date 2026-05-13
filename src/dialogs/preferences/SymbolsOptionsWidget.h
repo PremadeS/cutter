@@ -14,6 +14,9 @@ namespace Ui {
 class SymbolsOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to symbols
+ */
 class SymbolsOptionsWidget : public QDialog
 {
     Q_OBJECT

@@ -56,14 +56,18 @@ QTreeWidgetItem *appendRow(QTreeWidget *tw, const QString &str, const QString &s
     // Fill dummy hidden column
     tempItem->setText(0, "0");
     tempItem->setText(1, str);
-    if (!str2.isNull())
+    if (!str2.isNull()) {
         tempItem->setText(2, str2);
-    if (!str3.isNull())
+    }
+    if (!str3.isNull()) {
         tempItem->setText(3, str3);
-    if (!str4.isNull())
+    }
+    if (!str4.isNull()) {
         tempItem->setText(4, str4);
-    if (!str5.isNull())
+    }
+    if (!str5.isNull()) {
         tempItem->setText(5, str5);
+    }
 
     tw->insertTopLevelItem(0, tempItem);
 

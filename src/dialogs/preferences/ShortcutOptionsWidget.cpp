@@ -104,8 +104,9 @@ void ShortcutOptionsWidget::filterShortcutTree(const QString &input)
                 }
             }
             child->setHidden(!match);
-            if (match)
+            if (match) {
                 hasVisibleChildren = true;
+            }
         }
         category->setHidden(!(categoryMatches || hasVisibleChildren));
     }

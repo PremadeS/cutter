@@ -2,6 +2,9 @@
 #define CUTTER_HEAPBINSGRAPHVIEW_H
 #include "SimpleTextGraphView.h"
 
+/**
+ * @brief Dock widget providing a container to switch between different heap allocator views
+ */
 class HeapBinsGraphView : public SimpleTextGraphView
 {
     Q_OBJECT

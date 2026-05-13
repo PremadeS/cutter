@@ -22,7 +22,8 @@ class CUTTER_EXPORT RizinTaskDialog : public QDialog
 {
     Q_OBJECT
 
-public:;
+public:
+    ;
     RizinTaskDialog(const RizinTask::Ptr &task, QWidget *parent = nullptr);
     ~RizinTaskDialog();
 

@@ -1,13 +1,16 @@
 #ifndef DISASSEMBLYCONTEXTMENU_H
 #define DISASSEMBLYCONTEXTMENU_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "common/IOModesController.h"
 #include <QMenu>
 #include <QKeySequence>
 
 class MainWindow;
 
+/**
+ * @brief Context menu for @ref DisassemblyWidget and @ref DisassemblerGraphView
+ */
 class CUTTER_EXPORT DisassemblyContextMenu : public QMenu
 {
     Q_OBJECT
@@ -71,7 +74,7 @@ private slots:
      * @brief Executed on selecting an offset from the structureOffsetMenu
      * Uses the applyStructureOffset() function of CutterCore to apply the
      * structure offset
-     * \param action The action which trigered the event
+     * @param action The action which trigered the event
      */
     void structureOffsetMenuTriggered(QAction *action) const;
 
@@ -154,7 +157,7 @@ private:
     QAction *pluginActionMenuAction = nullptr;
 
     /**
-     * \return widget that should be used as parent for presenting dialogs
+     * @return widget that should be used as parent for presenting dialogs
      */
     QWidget *parentForDialog();
 
@@ -170,7 +173,7 @@ private:
     QAction *addAnonymousAction(QString name, SlotFunc slot, QKeySequence keySequence);
 
     template<typename SlotFunc>
-    void initAction(QAction *action, const const QString &&name, SlotFunc slot);
+    void initAction(QAction *action, const QString &name, SlotFunc slot);
 
     template<typename SlotFunc>
     void initAction(QAction *action, QString name, SlotFunc slot, const QKeySequence &keySequence);
@@ -191,7 +194,7 @@ private:
     void addBreakpointMenu();
     void addDebugMenu();
 
-    enum DoRenameAction {
+    enum DoRenameAction : ut8 {
         RENAME_FUNCTION,
         RENAME_FLAG,
         RENAME_ADD_FLAG,
@@ -227,7 +230,7 @@ private:
     {
         QString name;
         RVA offset;
-        enum class Type { Var, Function, Flag, Address };
+        enum class Type : ut8 { Var, Function, Flag, Address };
         Type type;
     };
     QVector<ThingUsedHere> getThingUsedHere(RVA offset);

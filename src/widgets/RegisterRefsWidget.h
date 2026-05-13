@@ -28,6 +28,9 @@ struct RegisterRefDescription
 };
 Q_DECLARE_METATYPE(RegisterRefDescription)
 
+/**
+ * @brief Source model for @ref RegisterRefModel
+ */
 class RegisterRefModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -38,8 +41,8 @@ private:
     QList<RegisterRefDescription> registerRefs;
 
 public:
-    enum Column { RegColumn = 0, ValueColumn, RefColumn, CommentColumn, ColumnCount };
-    enum Role { RegisterRefDescriptionRole = Qt::UserRole };
+    enum Column : ut8 { RegColumn = 0, ValueColumn, RefColumn, CommentColumn, ColumnCount };
+    enum Role : ut16 { RegisterRefDescriptionRole = Qt::UserRole };
 
     RegisterRefModel(QObject *parent = nullptr);
 
@@ -50,6 +53,9 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 };
 
+/**
+ * @brief Sort and Filter proxy model for @ref RegisterRefModel
+ */
 class RegisterRefProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -62,6 +68,10 @@ protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 };
 
+/**
+ * @brief Widget that lists register values, updates them as the debugger runs, and allows users to
+ * "seek" (navigate) to referenced memory
+ */
 class RegisterRefsWidget : public CutterDockWidget
 {
     Q_OBJECT

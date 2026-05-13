@@ -1,12 +1,18 @@
 #ifndef FLIRT_CONTEXTMENU_H
 #define FLIRT_CONTEXTMENU_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include <QMenu>
 #include <QKeySequence>
+#include <QMenu>
+// #include "CutterCommon.h"
+#include "CutterDescriptions.h"
 
 class MainWindow;
 
+/**
+ * @brief Context menu for @ref FlirtWidget
+ */
 class CUTTER_EXPORT FlirtContextMenu : public QMenu
 {
     Q_OBJECT

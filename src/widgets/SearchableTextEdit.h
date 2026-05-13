@@ -45,9 +45,9 @@ private:
         int length;
     };
 
-    int mCurrentIndex;
-    QList<SearchResult> mSearchResults;
-    bool mHighlightMatches;
+    int currentIndex;
+    QList<SearchResult> searchResults;
+    bool highlightMatchesEnabled;
 
     void handleMatch(const QTextCursor &currentCursor, const QTextCursor &originalCursor);
     void scrollToCurrentIndex();

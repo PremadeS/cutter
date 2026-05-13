@@ -1607,8 +1607,9 @@ void MainWindow::onActionRunScriptTriggered()
 
     const QString &fileName =
             QDir::toNativeSeparators(dialog.getOpenFileName(this, tr("Select Rizin script")));
-    if (fileName.isEmpty()) // Cancel was pressed
+    if (fileName.isEmpty()) { // Cancel was pressed
         return;
+    }
 
     auto *runScriptTask = new RunScriptTask();
     runScriptTask->setFileName(fileName);
@@ -1824,8 +1825,9 @@ void MainWindow::onActionExportAsCodeTriggered()
     dialog.setNameFilters(filters);
     dialog.selectFile("dump");
     dialog.setDefaultSuffix("c");
-    if (!dialog.exec())
+    if (!dialog.exec()) {
         return;
+    }
 
     QFile file(dialog.selectedFiles()[0]);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -1885,8 +1887,9 @@ void MainWindow::onActionCreateNewSigTriggered()
     dialog.setNameFilters(filters);
     dialog.selectFile("");
     dialog.setDefaultSuffix("sig");
-    if (!dialog.exec())
+    if (!dialog.exec()) {
         return;
+    }
 
     const QString &sigfile = QDir::toNativeSeparators(dialog.selectedFiles().first());
 

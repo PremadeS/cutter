@@ -10,6 +10,9 @@ namespace Ui {
 class ShortcutOptionsWidget;
 }
 
+/**
+ * @brief Lists default shortcuts in preferences
+ */
 class ShortcutOptionsWidget : public QDialog
 {
     Q_OBJECT

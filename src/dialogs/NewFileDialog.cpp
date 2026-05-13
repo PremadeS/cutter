@@ -348,8 +348,9 @@ void NewFileDialog::loadFile(const QString &filename)
         QList<RecentFileEntry> files = Config()->getRecentFiles();
         files.removeAll(file);
         files.prepend(file);
-        while (files.size() > maxRecentFiles)
+        while (files.size() > maxRecentFiles) {
             files.removeLast();
+        }
         Config()->setRecentFiles(files);
     }
 

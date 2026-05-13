@@ -48,7 +48,7 @@ QVariant RelocsModel::data(const QModelIndex &index, int role) const
 
 QVariant RelocsModel::headerData(int section, Qt::Orientation, int role) const
 {
-    if (role == Qt::DisplayRole)
+    if (role == Qt::DisplayRole) {
         switch (section) {
         case RelocsModel::VAddrColumn:
             return tr("Address");
@@ -59,6 +59,7 @@ QVariant RelocsModel::headerData(int section, Qt::Orientation, int role) const
         case RelocsModel::CommentColumn:
             return tr("Comment");
         }
+    }
     return QVariant();
 }
 
@@ -98,11 +99,13 @@ bool RelocsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) cons
 
 bool RelocsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    if (!left.isValid() || !right.isValid())
+    if (!left.isValid() || !right.isValid()) {
         return false;
+    }
 
-    if (left.parent().isValid() || right.parent().isValid())
+    if (left.parent().isValid() || right.parent().isValid()) {
         return false;
+    }
 
     auto leftReloc = left.data(RelocsModel::RelocDescriptionRole).value<RelocDescription>();
     auto rightReloc = right.data(RelocsModel::RelocDescriptionRole).value<RelocDescription>();

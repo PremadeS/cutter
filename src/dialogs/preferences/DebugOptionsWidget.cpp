@@ -36,8 +36,9 @@ void DebugOptionsWidget::updateDebugPlugin()
                &DebugOptionsWidget::onDebugPluginChanged);
 
     const QStringList plugins = Core()->getDebugPlugins();
-    for (const QString &str : plugins)
+    for (const QString &str : plugins) {
         ui->pluginComboBox->addItem(str);
+    }
 
     const QString plugin = Core()->getActiveDebugPlugin();
     ui->pluginComboBox->setCurrentText(plugin);

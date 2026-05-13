@@ -1,4 +1,3 @@
-
 #include <cassert>
 
 #ifdef CUTTER_ENABLE_PYTHON_BINDINGS

@@ -17,8 +17,9 @@ int HeadersModel::columnCount(const QModelIndex &) const
 
 QVariant HeadersModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= headers.count())
+    if (index.row() >= headers.count()) {
         return QVariant();
+    }
 
     const HeaderDescription &header = headers.at(index.row());
 

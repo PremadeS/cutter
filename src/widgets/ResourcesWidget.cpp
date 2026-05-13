@@ -101,8 +101,8 @@ RVA ResourcesModel::address(const QModelIndex &index) const
 
 ResourcesWidget::ResourcesWidget(MainWindow *main)
     : ListDockWidget(main),
-      filterModel(new AddressableFilterProxyModel(model, this)),
-      model(new ResourcesModel(this))
+      model(new ResourcesModel(this)),
+      filterModel(new AddressableFilterProxyModel(model, this))
 {
     setObjectName("ResourcesWidget");
 

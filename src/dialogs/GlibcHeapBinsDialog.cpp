@@ -115,8 +115,9 @@ int BinsModel::columnCount(const QModelIndex &) const
 
 QVariant BinsModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= values.count())
+    if (!index.isValid() || index.row() >= values.count()) {
         return QVariant();
+    }
 
     const auto &item = values.at(index.row());
 

@@ -6,11 +6,11 @@
 #include <QLabel>
 #include <QFormLayout>
 
-#include <core/Cutter.h>
+#include "core/Cutter.h"
 #include <rz_th.h>
 
 BaseFindSearchDialog::BaseFindSearchDialog(QWidget *parent)
-    : QDialog(parent), basefind(new Basefind(Core())), ui(new Ui::BaseFindSearchDialog)
+    : QDialog(parent), basefind(new Basefind()), ui(new Ui::BaseFindSearchDialog)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & (~Qt::WindowContextHelpButtonHint));

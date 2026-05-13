@@ -4,16 +4,21 @@
 #include <QToolBar>
 #include <QGraphicsScene>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
+#include "CutterCommon.h"
+#include "RizinCpp.h"
 
 #include <rz_core.h>
 
-#include <memory>
+// #include <memory>
 
 class MainWindow;
 class QGraphicsView;
 class QGraphicsItemGroup;
 
+/**
+ * @brief Visual navigation bar at the top for quick navigation through the binary
+ */
 class VisualNavbar : public QToolBar
 {
     Q_OBJECT

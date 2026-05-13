@@ -56,8 +56,9 @@ QModelIndex CommentsModel::parent(const QModelIndex &index) const
 
 int CommentsModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         return (isNested() ? nestedComments.size() : comments.count());
+    }
 
     if (isNested() && parent.internalId() == 0) {
         return nestedComments.at(parent.row()).comments.size();
@@ -74,8 +75,9 @@ int CommentsModel::columnCount(const QModelIndex &) const
 
 QVariant CommentsModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || (index.internalId() != 0 && !index.parent().isValid()))
+    if (!index.isValid() || (index.internalId() != 0 && !index.parent().isValid())) {
         return QVariant();
+    }
 
     int commentIndex;
     bool isSubnode;
@@ -199,11 +201,13 @@ bool CommentsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &ri
         return false;
     }
 
-    if (!left.isValid() || !right.isValid())
+    if (!left.isValid() || !right.isValid()) {
         return false;
+    }
 
-    if (left.parent().isValid() || right.parent().isValid())
+    if (left.parent().isValid() || right.parent().isValid()) {
         return false;
+    }
 
     auto leftComment = left.data(CommentsModel::CommentDescriptionRole).value<CommentDescription>();
     auto rightComment =

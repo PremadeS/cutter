@@ -1,13 +1,12 @@
 
 #include "CutterApplication.h"
-#include "core/MainWindow.h"
+// #include "core/MainWindow.h"
 #include "common/UpdateWorker.h"
-#include "CutterConfig.h"
+// #include "CutterConfig.h"
 #include "common/SettingsUpgrade.h"
 
 #include <QJsonObject>
 #include <QJsonArray>
-#include <iostream>
 
 /**
  * @brief Attempt to connect to a parent console and configure outputs.

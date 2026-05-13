@@ -25,6 +25,11 @@ class HexdumpWidget;
 class RefreshDeferrer;
 class QSyntaxHighlighter;
 
+/**
+ * @brief Hex dump widget containing a side panel for data parsing and hashing
+ *
+ * @see HexWidget
+ */
 class HexdumpWidget : public MemoryDockWidget
 {
     Q_OBJECT

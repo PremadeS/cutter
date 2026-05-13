@@ -41,8 +41,9 @@ void EntrypointWidget::setScrollMode()
 
 void EntrypointWidget::onEntrypointTreeWidgetItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    if (column < 0)
+    if (column < 0) {
         return;
+    }
 
     const auto ep = item->data(0, Qt::UserRole).value<EntrypointDescription>();
     Core()->seekAndShow(ep.vaddr);

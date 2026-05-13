@@ -1,11 +1,11 @@
 #include "DecompilerContextMenu.h"
-#include "dialogs/preferences/PreferencesDialog.h"
+// #include "dialogs/preferences/PreferencesDialog.h"
 #include "MainWindow.h"
 #include "dialogs/BreakpointsDialog.h"
 #include "dialogs/CommentsDialog.h"
 #include "dialogs/EditVariablesDialog.h"
 #include "dialogs/XrefsDialog.h"
-#include "common/Configuration.h"
+// #include "common/Configuration.h"
 #include "shortcuts/ShortcutManager.h"
 
 #include <QtCore>
@@ -114,7 +114,7 @@ void DecompilerContextMenu::setAvailableBreakpoints(QVector<RVA> offsetList)
 void DecompilerContextMenu::setupBreakpointsInLineMenu()
 {
     breakpointsInLineMenu->clear();
-    for (auto curOffset : this->availableBreakpoints) {
+    for (auto curOffset : std::as_const(this->availableBreakpoints)) {
         const QAction *action = breakpointsInLineMenu->addAction(rzAddressString(curOffset));
         connect(action, &QAction::triggered, this, [this, curOffset] {
             BreakpointsDialog::editBreakpoint(Core()->getBreakpointAt(curOffset), this);
@@ -502,15 +502,16 @@ void DecompilerContextMenu::actionToggleBreakpointTriggered()
 {
     if (!this->availableBreakpoints.isEmpty()) {
         setIsTogglingBreakpoints(true);
-        for (auto offsetToRemove : this->availableBreakpoints) {
+        for (auto offsetToRemove : std::as_const(this->availableBreakpoints)) {
             Core()->toggleBreakpoint(offsetToRemove);
         }
         this->availableBreakpoints.clear();
         setIsTogglingBreakpoints(false);
         return;
     }
-    if (this->firstOffsetInLine == RVA_MAX)
+    if (this->firstOffsetInLine == RVA_MAX) {
         return;
+    }
 
     Core()->toggleBreakpoint(this->firstOffsetInLine);
 }
@@ -562,7 +563,7 @@ void DecompilerContextMenu::addDebugMenu()
 
 void DecompilerContextMenu::updateTargetMenuActions()
 {
-    for (auto action : showTargetMenuActions) {
+    for (auto action : std::as_const(showTargetMenuActions)) {
         removeAction(action);
         auto menu = action->menu();
         if (menu) {

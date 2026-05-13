@@ -23,8 +23,9 @@ int RegisterRefModel::columnCount(const QModelIndex &) const
 
 QVariant RegisterRefModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= registerRefs.count())
+    if (index.row() >= registerRefs.count()) {
         return QVariant();
+    }
 
     const RegisterRefDescription &registerRef = registerRefs.at(index.row());
 

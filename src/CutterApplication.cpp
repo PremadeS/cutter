@@ -1,8 +1,8 @@
-#include "common/PythonManager.h"
+#include "common/PythonManager.h" // IWYU pragma: keep
 #include "CutterApplication.h"
 #include "plugins/PluginManager.h"
 #include "CutterConfig.h"
-#include "common/Decompiler.h"
+#include "common/Decompiler.h" // IWYU pragma: keep
 #include "common/ResourcePaths.h"
 
 #include <QApplication>

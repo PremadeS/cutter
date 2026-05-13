@@ -1,6 +1,6 @@
 #include "RegistersWidget.h"
 #include "ui_RegistersWidget.h"
-#include "common/JsonModel.h"
+// #include "common/JsonModel.h"
 #include "dialogs/RegisterProfileDialog.h"
 
 #include "core/MainWindow.h"

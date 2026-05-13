@@ -4,10 +4,16 @@
 #include <QDockWidget>
 #include "CutterDockWidget.h"
 
+#include <memory>
+
 namespace Ui {
 class HeapDockWidget;
 }
 
+/**
+ * @brief A container widget that serves as the primary interface for heap analysis, providing a
+ * flexible layout to switch between different memory allocator implementations.
+ */
 class HeapDockWidget : public CutterDockWidget
 {
     Q_OBJECT
@@ -19,8 +25,8 @@ private slots:
     void onAllocatorSelected(int index);
 
 private:
-    enum Allocator { Glibc = 0, AllocatorCount };
-    Ui::HeapDockWidget *ui;
+    enum Allocator : ut8 { Glibc = 0, AllocatorCount };
+    std::unique_ptr<Ui::HeapDockWidget> ui;
     MainWindow *main;
     QWidget *currentHeapWidget = nullptr;
 };

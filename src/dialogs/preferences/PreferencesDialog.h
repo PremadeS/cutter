@@ -1,8 +1,7 @@
-
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "core/MainWindow.h"
 
 #include <QDialog>
@@ -14,12 +13,15 @@ namespace Ui {
 class PreferencesDialog;
 }
 
+/**
+ * @brief Main Dialog that contains preference settings
+ */
 class PreferencesDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    enum class Section { Appearance, Disassembly };
+    enum class Section : ut8 { Appearance, Disassembly };
 
     explicit PreferencesDialog(MainWindow *parent = nullptr);
     ~PreferencesDialog();

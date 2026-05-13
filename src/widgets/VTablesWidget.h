@@ -6,8 +6,9 @@
 #include <QTreeView>
 #include <QSortFilterProxyModel>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
+#include "CutterDescriptions.h"
 
 namespace Ui {
 class VTablesWidget;
@@ -16,6 +17,9 @@ class VTablesWidget;
 class MainWindow;
 class VTablesWidget;
 
+/**
+ * @brief Source model for @ref VTablesWidget
+ */
 class VTableModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -26,7 +30,7 @@ private:
     QList<VTableDescription> vtables;
 
 public:
-    enum Columns { NAME = 0, ADDRESS, COUNT };
+    enum Columns : ut8 { NAME = 0, ADDRESS, COUNT };
     static const int vTableDescriptionRole = Qt::UserRole;
 
     VTableModel(QObject *parent = nullptr);
@@ -41,6 +45,9 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 };
 
+/**
+ * @brief Proxy model for @ref VTablesWidget
+ */
 class VTableSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
@@ -50,6 +57,9 @@ protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
 };
 
+/**
+ * @brief Widget for listing C++ Virtual Tables (vtables) and their methods
+ */
 class VTablesWidget : public CutterDockWidget
 {
     Q_OBJECT

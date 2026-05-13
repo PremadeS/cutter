@@ -5,6 +5,12 @@
 #include <QTreeWidget>
 #include <QStackedWidget>
 
+/**
+ * @brief Main class for that divides the view into two sides:
+ *
+ * Left Side: Tree containing items for all options widget
+ * Right Side: Content for selected item
+ */
 class PreferenceCategory
 {
 public:

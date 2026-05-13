@@ -4,9 +4,9 @@
 #include <utility>
 
 #include "core/Cutter.h"
-#include "common/Colors.h"
+// #include "common/Colors.h"
 #include "common/Configuration.h"
-#include "common/TempConfig.h"
+// #include "common/TempConfig.h"
 
 OverviewView::OverviewView(QWidget *parent) : GraphView(parent)
 {
@@ -130,8 +130,9 @@ GraphView::EdgeConfiguration OverviewView::edgeConfiguration(GraphView::GraphBlo
     Q_UNUSED(interactive)
     EdgeConfiguration ec;
     auto baseEcIt = edgeConfigurations.find({ from.entry, to->entry });
-    if (baseEcIt != edgeConfigurations.end())
+    if (baseEcIt != edgeConfigurations.end()) {
         ec = baseEcIt->second;
+    }
     ec.widthScale = 1.0 / getViewScale();
     return ec;
 }

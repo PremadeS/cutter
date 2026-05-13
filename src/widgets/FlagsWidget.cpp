@@ -25,8 +25,9 @@ int FlagsModel::columnCount(const QModelIndex &) const
 
 QVariant FlagsModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= flags.count())
+    if (index.row() >= flags.count()) {
         return QVariant();
+    }
 
     const FlagDescription &flag = flags.at(index.row());
 
@@ -116,12 +117,14 @@ bool FlagsSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIn
 
     switch (left.column()) {
     case FlagsModel::SIZE:
-        if (leftFlag->size != rightFlag->size)
+        if (leftFlag->size != rightFlag->size) {
             return leftFlag->size < rightFlag->size;
+        }
     // fallthrough
     case FlagsModel::OFFSET:
-        if (leftFlag->offset != rightFlag->offset)
+        if (leftFlag->offset != rightFlag->offset) {
             return leftFlag->offset < rightFlag->offset;
+        }
     // fallthrough
     case FlagsModel::NAME:
         return leftFlag->name < rightFlag->name;
@@ -233,8 +236,9 @@ void FlagsWidget::flagsChanged()
 void FlagsWidget::refreshFlagspaces()
 {
     int curIdx = ui->flagspaceCombo->currentIndex();
-    if (curIdx < 0)
+    if (curIdx < 0) {
         curIdx = 0;
+    }
 
     disableFlagRefresh =
             true; // prevent duplicate flag refresh caused by flagspaceCombo modifications
@@ -245,8 +249,9 @@ void FlagsWidget::refreshFlagspaces()
         ui->flagspaceCombo->addItem(i.name, QVariant::fromValue(i));
     }
 
-    if (curIdx > 0)
+    if (curIdx > 0) {
         ui->flagspaceCombo->setCurrentIndex(curIdx);
+    }
     disableFlagRefresh = false;
 
     refreshFlags();
@@ -260,8 +265,9 @@ void FlagsWidget::refreshFlags()
     QString flagspace;
 
     const QVariant flagspaceData = ui->flagspaceCombo->currentData();
-    if (flagspaceData.isValid())
+    if (flagspaceData.isValid()) {
         flagspace = flagspaceData.value<FlagspaceDescription>().name;
+    }
 
     flagsModel->beginResetModel();
     flagsModel->flags = Core()->getAllFlags(flagspace);
@@ -272,8 +278,9 @@ void FlagsWidget::refreshFlags()
 
     // TODO: this is not a very good place for the following:
     QStringList flagNames;
-    for (const FlagDescription &i : flagsModel->flags)
+    for (const FlagDescription &i : flagsModel->flags) {
         flagNames.append(i.name);
+    }
     main->refreshOmniBar(flagNames);
 }
 

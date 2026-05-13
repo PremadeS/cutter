@@ -4,7 +4,7 @@
 #include "PreferencesDialog.h"
 
 #include "common/Helpers.h"
-#include "common/Configuration.h"
+// #include "common/Configuration.h"
 #include "plugins/PluginManager.h"
 #include "dialogs/RizinPluginsDialog.h"
 

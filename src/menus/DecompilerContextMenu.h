@@ -1,14 +1,18 @@
 #ifndef DECOMPILERCONTEXTMENU_H
 #define DECOMPILERCONTEXTMENU_H
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include <QMenu>
 #include <QKeySequence>
 
+#include "CutterCommon.h"
 #include <rz_util/rz_annotated_code.h>
 
 class MainWindow;
 
+/**
+ * @brief Context menu for @ref DecompilerWidget
+ */
 class DecompilerContextMenu : public QMenu
 {
     Q_OBJECT

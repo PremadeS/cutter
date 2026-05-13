@@ -12,6 +12,9 @@ namespace Ui {
 class SdbWidget;
 }
 
+/**
+ * @brief SDB browser showing entries as key-value pairs
+ */
 class SdbWidget : public CutterDockWidget
 {
     Q_OBJECT

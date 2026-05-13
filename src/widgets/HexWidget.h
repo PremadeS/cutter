@@ -10,6 +10,9 @@
 #include <QMenu>
 #include <memory>
 
+/**
+ * @brief Tracks memory addresses while preventing 64-bit overflow
+ */
 struct BasicCursor
 {
     uint64_t address;
@@ -60,9 +63,12 @@ struct BasicCursor
     }
 };
 
+/**
+ * @brief Controls the cursor's visual blinking and screen location
+ */
 struct HexCursor
 {
-    HexCursor() : isVisible(false), onAsciiArea(false) : isVisible(false), onAsciiArea(false) {}
+    HexCursor() : isVisible(false), onAsciiArea(false) {}
 
     bool isVisible;
     bool onAsciiArea;
@@ -78,6 +84,9 @@ struct HexCursor
     void stopBlinking() { blinkTimer.stop(); }
 };
 
+/**
+ * @brief A blueprint for how the widget reads and writes memory data.
+ */
 class AbstractData
 {
 public:
@@ -89,6 +98,9 @@ public:
     virtual uint64_t minIndex() = 0;
 };
 
+/**
+ * @brief Handles memory operations for simple, local byte arrays
+ */
 class BufferData : public AbstractData
 {
 public:
@@ -133,6 +145,9 @@ private:
     QByteArray mBuffer;
 };
 
+/**
+ * @brief Manages live binary data using a fast block-based cache
+ */
 class MemoryData : public AbstractData
 {
 public:
@@ -144,8 +159,8 @@ public:
     {
         // FIXME: reuse data if possible
         const uint64_t blockSize = 0x1000ULL;
-        const uint64_t const alignedAddr = address & ~(blockSize - 1);
-        const int const offset = address - alignedAddr;
+        const uint64_t alignedAddr = address & ~(blockSize - 1);
+        const int offset = address - alignedAddr;
         int len = (offset + length + (blockSize - 1)) & ~(blockSize - 1);
         mFirstBlockAddr = alignedAddr;
         mLastValidAddr = length ? alignedAddr + len - 1 : 0;
@@ -170,10 +185,10 @@ public:
             return false;
         }
 
-        const int const totalOffset = addr - mFirstBlockAddr;
-        const int const blockId = totalOffset / blockSize;
-        const int const blockOffset = totalOffset % blockSize;
-        const size_t const firstPart = blockSize - blockOffset;
+        const int totalOffset = addr - mFirstBlockAddr;
+        const int blockId = totalOffset / blockSize;
+        const int blockOffset = totalOffset % blockSize;
+        const size_t firstPart = blockSize - blockOffset;
         if (firstPart >= len) {
             memcpy(out, mBlocks.at(blockId).constData() + blockOffset, len);
         } else {
@@ -187,7 +202,7 @@ public:
     void writeToCache(const uint8_t *in, uint64_t adr, size_t len)
     {
         if (adr < mFirstBlockAddr) {
-            const uint64_t const prefix = mFirstBlockAddr - adr;
+            const uint64_t prefix = mFirstBlockAddr - adr;
             if (prefix <= len) {
                 return;
             }
@@ -198,7 +213,7 @@ public:
         if (adr > mLastValidAddr) {
             return;
         }
-        const int const offset = (int)(adr - mFirstBlockAddr);
+        const int offset = (int)(adr - mFirstBlockAddr);
         int blockId = offset / blockSize;
         int blockOffset = offset % blockSize;
         while (len > 0 && blockId < mBlocks.size()) {
@@ -235,17 +250,17 @@ private:
 class HexSelection
 {
 public:
-    HexSelection() : m_empty(true) : m_empty(true) { mStart = mEnd = 0; }
+    HexSelection() : empty(true) { mStart = mEnd = 0; }
 
     inline void init(BasicCursor addr)
     {
-        m_empty = true;
+        empty = true;
         mInit = addr;
     }
 
     void set(uint64_t start, uint64_t end)
     {
-        m_empty = false;
+        empty = false;
         mInit = BasicCursor(start);
         mStart = start;
         mEnd = end;
@@ -253,39 +268,42 @@ public:
 
     void update(BasicCursor addr)
     {
-        m_empty = false;
+        empty = false;
         if (mInit < addr) {
             mStart = mInit.address;
             mEnd = addr.address;
-            if (!addr.pastEnd)
+            if (!addr.pastEnd) {
                 mEnd -= 1;
+            }
         } else if (addr < mInit) {
             mStart = addr.address;
             mEnd = mInit.address;
-            if (!mInit.pastEnd)
+            if (!mInit.pastEnd) {
                 mEnd -= 1;
+            }
         } else {
             mStart = mEnd = mInit.address;
-            m_empty = true;
+            empty = true;
         }
     }
 
-    bool intersects(uint64_t start, uint64_t end) const const
+    bool intersects(uint64_t start, uint64_t end) const
     {
-        return !m_empty && mEnd >= start && mStart <= end;
+        return !empty && mEnd >= start && mStart <= end;
     }
 
-    bool contains(uint64_t pos) const { return !m_empty && mStart <= pos && pos <= mEnd; }
+    bool contains(uint64_t pos) const { return !empty && mStart <= pos && pos <= mEnd; }
 
     uint64_t size() const
     {
         uint64_t size = 0;
-        if (!isEmpty())
+        if (!isEmpty()) {
             size = mEnd - mStart + 1;
+        }
         return size;
     }
 
-    inline bool isEmpty() const { return m_empty; }
+    inline bool isEmpty() const { return empty; }
     inline uint64_t start() const { return mStart; }
     inline uint64_t end() const { return mEnd; }
 
@@ -293,11 +311,14 @@ private:
     BasicCursor mInit;
     uint64_t mStart;
     uint64_t mEnd;
-    bool m_empty;
+    bool empty;
 };
 
 class AddressRangeScrollBar;
 
+/**
+ * @brief Widget for rendering and editing of hex and ASCII memory data
+ */
 class HexWidget : public QScrollArea
 {
     Q_OBJECT
@@ -308,18 +329,23 @@ public:
 
     void setMonospaceFont(const QFont &font);
 
-    enum AddrWidth { AddrWidth32 = 8, AddrWidth64 = 16 };
-    enum ItemSize { ItemSizeByte = 1, ItemSizeWord = 2, ItemSizeDword = 4, ItemSizeQword = 8 };
-    enum ItemFormat {
+    enum AddrWidth : ut8 { AddrWidth32 = 8, AddrWidth64 = 16 };
+    enum ItemSize : ut8 {
+        ItemSizeByte = 1,
+        ItemSizeWord = 2,
+        ItemSizeDword = 4,
+        ItemSizeQword = 8
+    };
+    enum ItemFormat : ut8 {
         ItemFormatHex,
         ItemFormatOct,
         ItemFormatDec,
         ItemFormatSignedDec,
         ItemFormatFloat
     };
-    enum class ColumnMode { Fixed, PowerOf2 };
-    enum class EditWordState { Read, WriteNotStarted, WriteNotEdited, WriteEdited };
-    enum class HexNavigationMode { Words, WordChar, AnyChar };
+    enum class ColumnMode : ut8 { Fixed, PowerOf2 };
+    enum class EditWordState : ut8 { Read, WriteNotStarted, WriteNotEdited, WriteEdited };
+    enum class HexNavigationMode : ut8 { Words, WordChar, AnyChar };
 
     void setItemSize(int nbytes);
     void setItemFormat(ItemFormat format);
@@ -410,7 +436,7 @@ private:
     void updateMetrics();
     void updateAreasPosition();
     void updateAreasHeight();
-    enum class OverflowMove { Clamp, Ignore };
+    enum class OverflowMove : ut8 { Clamp, Ignore };
     bool moveCursor(int offset, bool select = false,
                     OverflowMove overflowMove = OverflowMove::Clamp);
     void moveCursorKeepEditOffset(int byteOffset, bool select, OverflowMove overflowMove);
@@ -606,7 +632,7 @@ private:
     QString editWord;
     EditWordState editWordState = EditWordState::Read;
     HexNavigationMode navigationMode = HexNavigationMode::Words;
-    enum class EarlyEditFlush {
+    enum class EarlyEditFlush : ut8 {
         OnFinish,
         EditNibble,
         EditFixedWidthChar,

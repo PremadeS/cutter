@@ -51,8 +51,9 @@ FunctionModel::FunctionModel(bool nested, const QFont &default_font, const QFont
 
 QModelIndex FunctionModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         return createIndex(row, column, (quintptr)0); // root function nodes have id = 0
+    }
 
     return createIndex(row, column,
                        (quintptr)(parent.row() + 1)); // sub-nodes have id = function index + 1
@@ -60,34 +61,40 @@ QModelIndex FunctionModel::index(int row, int column, const QModelIndex &parent)
 
 QModelIndex FunctionModel::parent(const QModelIndex &index) const
 {
-    if (!index.isValid() || index.column() != 0)
+    if (!index.isValid() || index.column() != 0) {
         return QModelIndex();
+    }
 
-    if (index.internalId() == 0) // root function node
+    if (index.internalId() == 0) { // root function node
         return QModelIndex();
-    else // sub-node
+    } else { // sub-node
         return this->index((int)(index.internalId() - 1), 0);
+    }
 }
 
 int FunctionModel::rowCount(const QModelIndex &parent) const
 {
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         return functions.count();
+    }
 
     if (nested) {
-        if (parent.internalId() == 0)
+        if (parent.internalId() == 0) {
             return ColumnCount - 1; // sub-nodes for nested functions
+        }
         return 0;
-    } else
+    } else {
         return 0;
+    }
 }
 
 int FunctionModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    if (nested)
+    if (nested) {
         return 1;
-    else
+    } else {
         return ColumnCount;
+    }
 }
 
 bool FunctionModel::functionIsImport(ut64 addr) const
@@ -102,8 +109,9 @@ bool FunctionModel::functionIsMain(ut64 addr) const
 
 QVariant FunctionModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
     int functionIndex;
     bool subnode;
@@ -119,8 +127,9 @@ QVariant FunctionModel::data(const QModelIndex &index, int role) const
 
     const FunctionDescription &function = functions.at(functionIndex);
 
-    if (functionIndex >= functions.count())
+    if (functionIndex >= functions.count()) {
         return QVariant();
+    }
 
     switch (role) {
     case Qt::DisplayRole:
@@ -151,8 +160,9 @@ QVariant FunctionModel::data(const QModelIndex &index, int role) const
                 default:
                     return QVariant();
                 }
-            } else
+            } else {
                 return function.name;
+            }
         } else {
             switch (index.column()) {
             case NameColumn:
@@ -215,13 +225,15 @@ QVariant FunctionModel::data(const QModelIndex &index, int role) const
     }
 
     case Qt::FontRole:
-        if (currentIndex == functionIndex)
+        if (currentIndex == functionIndex) {
             return highlightFont;
+        }
         return defaultFont;
 
     case Qt::TextAlignmentRole:
-        if (index.column() == 1)
+        if (index.column() == 1) {
             return static_cast<int>(Qt::AlignRight | Qt::AlignVCenter);
+        }
         return static_cast<int>(Qt::AlignLeft | Qt::AlignVCenter);
 
     case Qt::ToolTipRole: {
@@ -249,8 +261,9 @@ QVariant FunctionModel::data(const QModelIndex &index, int role) const
                 break;
             }
         }
-        if (disasmPreview.isEmpty() && highlights.isEmpty())
+        if (disasmPreview.isEmpty() && highlights.isEmpty()) {
             return {};
+        }
 
         QString toolTipContent =
                 QString("<html><div style=\"font-family: %1; font-size: %2pt; white-space: "
@@ -259,10 +272,11 @@ QVariant FunctionModel::data(const QModelIndex &index, int role) const
                         .arg(qMax(6, fnt.pointSize() - 1)); // slightly decrease font size, to
                                                             // keep more text in the same box
 
-        if (!disasmPreview.isEmpty())
+        if (!disasmPreview.isEmpty()) {
             toolTipContent += tr("<div style=\"margin-bottom: 10px;\"><strong>Disassembly "
                                  "preview</strong>:<br>%1</div>")
                                       .arg(disasmPreview.join("<br>"));
+        }
 
         if (!highlights.isEmpty()) {
             toolTipContent += tr("<div><strong>Highlights</strong>:<br>%1</div>")
@@ -420,11 +434,13 @@ bool FunctionSortFilterProxyModel::filterAcceptsRow(int row, const QModelIndex &
 
 bool FunctionSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-    if (!left.isValid() || !right.isValid())
+    if (!left.isValid() || !right.isValid()) {
         return false;
+    }
 
-    if (left.parent().isValid() || right.parent().isValid())
+    if (left.parent().isValid() || right.parent().isValid()) {
         return false;
+    }
 
     const auto leftFunction =
             left.data(FunctionModel::functionDescriptionRole).value<FunctionDescription>();
@@ -438,39 +454,46 @@ bool FunctionSortFilterProxyModel::lessThan(const QModelIndex &left, const QMode
         case FunctionModel::OffsetColumn:
             return leftFunction.offset < rightFunction.offset;
         case FunctionModel::SizeColumn:
-            if (leftFunction.linearSize != rightFunction.linearSize)
+            if (leftFunction.linearSize != rightFunction.linearSize) {
                 return leftFunction.linearSize < rightFunction.linearSize;
+            }
             break;
         case FunctionModel::ImportColumn: {
             const bool leftIsImport = left.data(FunctionModel::isImportRole).toBool();
             const bool rightIsImport = right.data(FunctionModel::isImportRole).toBool();
-            if (!leftIsImport && rightIsImport)
+            if (!leftIsImport && rightIsImport) {
                 return true;
+            }
             break;
         }
         case FunctionModel::NameColumn:
             return leftFunction.name < rightFunction.name;
         case FunctionModel::NargsColumn:
-            if (leftFunction.nargs != rightFunction.nargs)
+            if (leftFunction.nargs != rightFunction.nargs) {
                 return leftFunction.nargs < rightFunction.nargs;
+            }
             break;
         case FunctionModel::NlocalsColumn:
-            if (leftFunction.nlocals != rightFunction.nlocals)
+            if (leftFunction.nlocals != rightFunction.nlocals) {
                 return leftFunction.nlocals < rightFunction.nlocals;
+            }
             break;
         case FunctionModel::NbbsColumn:
-            if (leftFunction.nbbs != rightFunction.nbbs)
+            if (leftFunction.nbbs != rightFunction.nbbs) {
                 return leftFunction.nbbs < rightFunction.nbbs;
+            }
             break;
         case FunctionModel::CalltypeColumn:
             return leftFunction.calltype < rightFunction.calltype;
         case FunctionModel::EdgesColumn:
-            if (leftFunction.edges != rightFunction.edges)
+            if (leftFunction.edges != rightFunction.edges) {
                 return leftFunction.edges < rightFunction.edges;
+            }
             break;
         case FunctionModel::FrameColumn:
-            if (leftFunction.stackframe != rightFunction.stackframe)
+            if (leftFunction.stackframe != rightFunction.stackframe) {
                 return leftFunction.stackframe < rightFunction.stackframe;
+            }
             break;
         case FunctionModel::CommentColumn:
             return Core()->getCommentAt(leftFunction.offset)

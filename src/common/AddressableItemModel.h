@@ -10,7 +10,6 @@
 
 // Check are these CUTTER_EXPORT required for plugins?
 
-
 /**
  * @brief An interface for QAbstractItemModel containing an address field for each index
  */

@@ -1,7 +1,7 @@
 #ifndef IMPORTSWIDGET_H
 #define IMPORTSWIDGET_H
 
-#include <memory>
+// #include <memory>
 
 #include <QAbstractTableModel>
 #include <QSortFilterProxyModel>
@@ -10,7 +10,7 @@
 #include <QTreeWidgetItem>
 
 #include "CutterDockWidget.h"
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "widgets/ListDockWidget.h"
 #include "common/AddressableItemModel.h"
 
@@ -18,6 +18,9 @@ class MainWindow;
 class QTreeWidget;
 class ImportsWidget;
 
+/**
+ * @brief Source model @ref ImportsWidget
+ */
 class ImportsModel : public AddressableItemModel<QAbstractTableModel>
 {
     Q_OBJECT
@@ -56,7 +59,7 @@ private:
     QList<ImportDescription> imports;
 
 public:
-    enum Column {
+    enum Column : ut8 {
         AddressColumn = 0,
         TypeColumn,
         LibraryColumn,
@@ -65,7 +68,7 @@ public:
         CommentColumn,
         ColumnCount
     };
-    enum Role { ImportDescriptionRole = Qt::UserRole, AddressRole };
+    enum Role : ut16 { ImportDescriptionRole = Qt::UserRole, AddressRole };
 
     ImportsModel(QObject *parent = nullptr);
 
@@ -81,6 +84,9 @@ public:
     void reload();
 };
 
+/**
+ * @brief Proxy model for @ref ImportsWidget
+ */
 class ImportsProxyModel : public AddressableFilterProxyModel
 {
     Q_OBJECT
@@ -93,6 +99,9 @@ protected:
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
 };
 
+/**
+ * @brief Widgets for visualizing imports
+ */
 class ImportsWidget : public ListDockWidget
 {
     Q_OBJECT

@@ -195,12 +195,12 @@ void HeapBinsGraphView::addBlock(GraphLayout::GraphBlock block, const QString &t
     auto lines = text.split("\n", CUTTER_QT_SKIP_EMPTY_PARTS);
 
     // width of the block is the maximum width of a line
-    for (const QString &line : lines) {
+    for (const QString &line : std::as_const(lines)) {
         width = std::max(mFontMetrics->width(line), width);
     }
     block.width = static_cast<int>(width + padding);
     block.height = (height * charHeight) * lines.length() + padding;
-    GraphView::addBlock(std::move(block));
+    GraphView::addBlock(block);
 }
 
 // overriding to support detailed heap info action in context menu

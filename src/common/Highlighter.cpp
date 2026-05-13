@@ -40,8 +40,9 @@ void Highlighter::highlightBlock(const QString &text)
     setCurrentBlockState(0);
 
     int startIndex = 0;
-    if (previousBlockState() != 1)
+    if (previousBlockState() != 1) {
         startIndex = QRegularExpression(commentStartRegularExpression).match(text).capturedStart();
+    }
 
     while (startIndex >= 0) {
         const QRegularExpressionMatch commentEndMatch =

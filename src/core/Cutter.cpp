@@ -348,8 +348,9 @@ QString CutterCore::sdbGet(const QString &path, const QString &key)
     Sdb *db = sdb_ns_path(core->sdb, path.toUtf8().constData(), 0);
     if (db) {
         const char *val = sdb_const_get(db, key.toUtf8().constData());
-        if (val && *val)
+        if (val && *val) {
             return val;
+        }
     }
     return QString();
 }
@@ -358,8 +359,9 @@ bool CutterCore::sdbSet(const QString &path, const QString &key, const QString &
 {
     CORE_LOCK();
     Sdb *db = sdb_ns_path(core->sdb, path.toUtf8().constData(), 1);
-    if (!db)
+    if (!db) {
         return false;
+    }
     return sdb_set(db, key.toUtf8().constData(), val.toUtf8().constData());
 }
 
@@ -670,8 +672,9 @@ bool CutterCore::tryFile(const QString &path, bool rw)
     rz_cons_break_clear();
     RzCoreFile *cf;
     int flags = RZ_PERM_R;
-    if (rw)
+    if (rw) {
         flags = RZ_PERM_RW;
+    }
     cf = rz_core_file_open(core, path.toUtf8().constData(), flags, 0LL);
     if (!cf) {
         return false;
@@ -719,8 +722,9 @@ void CutterCore::renameFlag(const QString &old_name, const QString &new_name)
 {
     CORE_LOCK();
     RzFlagItem *flag = rz_flag_get(core->flags, old_name.toStdString().c_str());
-    if (!flag)
+    if (!flag) {
         return;
+    }
     rz_flag_rename(core->flags, flag, new_name.toStdString().c_str());
     emit flagsChanged();
 }
@@ -1231,8 +1235,9 @@ void CutterCore::triggerGraphOptionsChanged()
 
 void CutterCore::message(const QString &msg, bool debug)
 {
-    if (msg.isEmpty())
+    if (msg.isEmpty()) {
         return;
+    }
     if (debug) {
         qDebug() << msg;
         emit newDebugMessage(msg);
@@ -3446,10 +3451,11 @@ QList<RelocDescription> CutterCore::getAllRelocs()
             desc.paddr = reloc->paddr;
             desc.type = (reloc->additive ? "ADD_" : "SET_") + QString::number(reloc->type);
 
-            if (reloc->import)
+            if (reloc->import) {
                 desc.name = reloc->import->name;
-            else
+            } else {
                 desc.name = QString("reloc_%1").arg(QString::number(reloc->vaddr, 16));
+            }
 
             ret << desc;
         }
@@ -3593,8 +3599,9 @@ QList<SectionDescription> CutterCore::getAllSections()
     }
     rz_list_push(hashnames, rz_str_dup("entropy"));
     for (const auto &sect : CutterPVector<RzBinSection>(sects)) {
-        if (RZ_STR_ISEMPTY(sect->name))
+        if (RZ_STR_ISEMPTY(sect->name)) {
             continue;
+        }
 
         SectionDescription section;
         section.name = sect->name;
@@ -4500,8 +4507,9 @@ QList<XrefDescription> CutterCore::getXRefs(RVA addr, bool to, bool whole_functi
         xd.to = xref->to;
         xd.type = rz_analysis_xrefs_type_tostring(xref->type);
 
-        if (!filterType.isNull() && filterType != xd.type)
+        if (!filterType.isNull() && filterType != xd.type) {
             continue;
+        }
         if (!whole_function && !to && xd.from != addr) {
             continue;
         }
@@ -5216,8 +5224,9 @@ QByteArray CutterCore::ioRead(RVA addr, int len)
 
     QByteArray array;
 
-    if (len <= 0)
+    if (len <= 0) {
         return array;
+    }
 
     /* Zero-copy */
     array.resize(len);

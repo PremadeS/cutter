@@ -87,13 +87,15 @@ void PreferencesDialog::showSection(PreferencesDialog::Section section)
 
 void PreferencesDialog::changePage(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-    if (!current)
+    if (!current) {
         current = previous;
+    }
 
     const int index = current->data(0, Qt::UserRole).toInt();
 
-    if (index)
+    if (index) {
         ui->configPanel->setCurrentIndex(index - 1);
+    }
 }
 
 void PreferencesDialog::chooseThemeIcons()

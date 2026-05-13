@@ -35,8 +35,9 @@ QVariant SegmentsModel::data(const QModelIndex &index, int role) const
         QColor("#95A5A6") // COBCRETE
     };
 
-    if (index.row() >= segments.count())
+    if (index.row() >= segments.count()) {
         return QVariant();
+    }
 
     const SegmentDescription &segment = segments.at(index.row());
 
@@ -59,8 +60,9 @@ QVariant SegmentsModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     case Qt::DecorationRole:
-        if (index.column() == 0)
+        if (index.column() == 0) {
             return colors[index.row() % colors.size()];
+        }
         return QVariant();
     case SegmentsModel::SegmentDescriptionRole:
         return QVariant::fromValue(segment);

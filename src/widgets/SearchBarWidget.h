@@ -66,8 +66,8 @@ signals:
 
 private:
     std::unique_ptr<Ui::SearchBarWidget> ui;
-    int mIndex = 0;
-    int mCount = 0;
+    int index = 0;
+    int count = 0;
 
     QAction *mCaseSensitiveAction;
     QAction *mWholeWordsAction;

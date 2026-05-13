@@ -1,10 +1,10 @@
 #include "VisualNavbar.h"
 #include "core/MainWindow.h"
-#include "common/TempConfig.h"
+// #include "common/TempConfig.h"
 
 #include <QGraphicsView>
-#include <QComboBox>
 #include <QGraphicsScene>
+#include <QComboBox>
 #include <QGraphicsRectItem>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -17,15 +17,19 @@
 #include <array>
 #include <cmath>
 
-static const int navbarHeight = 15;
-static const int legendHeight = 25;
-static const int totalHeight = navbarHeight + legendHeight;
+#include "core/Cutter.h"
 
-static const int legendBoxSize = 16;
-static const int legendBoxYOffset = 7; // Relative to navbar bottom
-static const int legendTextXOffset = 17;
-static const int legendTextYOffset = -5;
-static const int legendItemSpacing = 30;
+namespace {
+const int navbarHeight = 15;
+const int legendHeight = 25;
+const int totalHeight = navbarHeight + legendHeight;
+
+const int legendBoxSize = 16;
+const int legendBoxYOffset = 7; // Relative to navbar bottom
+const int legendTextXOffset = 17;
+const int legendTextYOffset = -5;
+const int legendItemSpacing = 30;
+}
 
 VisualNavbar::VisualNavbar(MainWindow *main, QWidget *parent)
     : QToolBar(main),
@@ -164,7 +168,7 @@ void VisualNavbar::fetchStats()
             rz_core_analysis_get_stats(core, from, to, RZ_MAX(1, (to + 1 - from) / blocksCount)));
 }
 
-enum class DataType : int { Signature, Code, Data, String, Import, Symbol, Unexplored, Count };
+enum class DataType : ut8 { Signature, Code, Data, String, Import, Symbol, Unexplored, Count };
 
 void VisualNavbar::updateGraphicsScene()
 {
@@ -404,7 +408,7 @@ void VisualNavbar::handleMouseAction(QMouseEvent *event, const QPoint &scenePos)
 
 RVA VisualNavbar::localXToAddress(double x)
 {
-    for (const XToAddress &x2a : xToAddress) {
+    for (const XToAddress &x2a : std::as_const(xToAddress)) {
         if ((x2a.xStart <= x) && (x <= x2a.xEnd)) {
             const double offset = (x - x2a.xStart) / (x2a.xEnd - x2a.xStart);
             const double size = x2a.addressTo - x2a.addressFrom;
@@ -416,7 +420,7 @@ RVA VisualNavbar::localXToAddress(double x)
 
 double VisualNavbar::addressToLocalX(RVA address)
 {
-    for (const XToAddress &x2a : xToAddress) {
+    for (const XToAddress &x2a : std::as_const(xToAddress)) {
         if ((x2a.addressFrom <= address) && (address < x2a.addressTo)) {
             const double offset =
                     (double)(address - x2a.addressFrom) / (double)(x2a.addressTo - x2a.addressFrom);
@@ -452,7 +456,7 @@ QString VisualNavbar::toolTipForAddress(RVA address)
     if (sections.count()) {
         ret += "\n" + tr("Sections: \n");
         bool first = true;
-        for (const QString &section : sections) {
+        for (const QString &section : std::as_const(sections)) {
             if (!first) {
                 ret.append(QLatin1Char('\n'));
             } else {

@@ -111,8 +111,9 @@ void RemoteDebugDialog::removeItem()
 {
     const QListWidgetItem *item = ui->recentsIpListWidget->currentItem();
 
-    if (item == nullptr)
+    if (item == nullptr) {
         return;
+    }
 
     const QVariant data = item->data(Qt::UserRole);
     const QString sitem = data.toString();

@@ -47,8 +47,9 @@ static QString formatHwBreakpoint(int permission)
 
 QVariant BreakpointModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= breakpoints.count())
+    if (index.row() >= breakpoints.count()) {
         return QVariant();
+    }
 
     const BreakpointDescription &breakpoint = breakpoints.at(index.row());
 
@@ -120,8 +121,9 @@ QVariant BreakpointModel::headerData(int section, Qt::Orientation, int role) con
 
 bool BreakpointModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.row() >= breakpoints.count())
+    if (index.row() >= breakpoints.count()) {
         return false;
+    }
 
     BreakpointDescription &breakpoint = breakpoints[index.row()];
 

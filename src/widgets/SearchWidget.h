@@ -6,7 +6,7 @@
 #include <QAbstractItemModel>
 #include <QSortFilterProxyModel>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 #include "AddressableItemList.h"
 
@@ -14,6 +14,9 @@ class MainWindow;
 class QTreeWidgetItem;
 class SearchWidget;
 
+/**
+ * @brief Souce model for @ref SearchWidget
+ */
 class SearchModel : public AddressableItemModel<QAbstractListModel>
 {
     Q_OBJECT
@@ -24,7 +27,7 @@ private:
     QList<SearchDescription> search;
 
 public:
-    enum Columns { OFFSET = 0, SIZE, CODE, DATA, COMMENT, COUNT };
+    enum Columns : ut8 { OFFSET = 0, SIZE, CODE, DATA, COMMENT, COUNT };
     static const int searchDescriptionRole = Qt::UserRole;
 
     SearchModel(QObject *parent = nullptr);
@@ -39,6 +42,9 @@ public:
     RVA address(const QModelIndex &index) const override;
 };
 
+/**
+ * @brief Sort and Filter proxy model for @ref SearchWidget
+ */
 class SearchSortFilterProxyModel : public AddressableFilterProxyModel
 {
     Q_OBJECT
@@ -55,6 +61,9 @@ namespace Ui {
 class SearchWidget;
 }
 
+/**
+ * @brief Widget for searching
+ */
 class SearchWidget : public CutterDockWidget
 {
     Q_OBJECT

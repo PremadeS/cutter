@@ -8,6 +8,9 @@
 #include <QShortcut>
 #include "DefaultShortcuts.h"
 
+/**
+ * @brief Singleton class for registering/querying shortcuts
+ */
 class ShortcutManager : public QObject
 {
     Q_OBJECT

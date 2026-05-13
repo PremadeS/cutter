@@ -7,6 +7,9 @@
 class MainWindow;
 class DisassemblerGraphView;
 
+/**
+ * @brief Widget holding the main @ref DisassemblerGraphView
+ */
 class GraphWidget : public MemoryDockWidget
 {
     Q_OBJECT

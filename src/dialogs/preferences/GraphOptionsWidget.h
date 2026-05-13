@@ -1,4 +1,3 @@
-
 #ifndef GRAPHOPTIONSWIDGET_H
 #define GRAPHOPTIONSWIDGET_H
 
@@ -6,7 +5,7 @@
 #include <QPushButton>
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 class PreferencesDialog;
 
@@ -14,6 +13,9 @@ namespace Ui {
 class GraphOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to graphs
+ */
 class GraphOptionsWidget : public QDialog
 {
     Q_OBJECT

@@ -291,8 +291,9 @@ void DebugActions::attachRemoteDebugger()
 void DebugActions::onAttachedRemoteDebugger(bool successfully)
 {
     // TODO(#2829): Investigate why this is happening
-    if (remoteDialog == nullptr)
+    if (remoteDialog == nullptr) {
         return;
+    }
 
     if (!successfully) {
         QMessageBox msgBox(main);

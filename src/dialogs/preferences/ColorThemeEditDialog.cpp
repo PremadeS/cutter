@@ -65,7 +65,6 @@ ColorThemeEditDialog::ColorThemeEditDialog(QWidget *parent)
 
 ColorThemeEditDialog::~ColorThemeEditDialog()
 {
-    delete ui;
     previewDisasmWidget->deleteLater();
 }
 

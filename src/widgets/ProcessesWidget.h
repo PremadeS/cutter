@@ -6,7 +6,7 @@
 #include <QTableView>
 #include <QSortFilterProxyModel>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 
 class MainWindow;
@@ -15,6 +15,9 @@ namespace Ui {
 class ProcessesWidget;
 }
 
+/**
+ * @brief Filter model for @ref ProcessesWidget
+ */
 class ProcessesFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -26,12 +29,15 @@ protected:
     bool filterAcceptsRow(int row, const QModelIndex &parent) const override;
 };
 
+/**
+ * @brief Dock widget that lists system processes during debugging/emulation
+ */
 class ProcessesWidget : public CutterDockWidget
 {
     Q_OBJECT
 
 public:
-    enum ColumnIndex {
+    enum ColumnIndex : ut8 {
         COLUMN_PID = 0,
         COLUMN_UID,
         COLUMN_STATUS,

@@ -772,10 +772,12 @@ calculateSegmentOffsets(std::vector<EdgeSegment> &segments, std::vector<int> &ed
     }
 
     std::sort(segments.begin(), segments.end(), [](const EdgeSegment &a, const EdgeSegment &b) {
-        if (a.x != b.x)
+        if (a.x != b.x) {
             return a.x < b.x;
-        if (a.kind != b.kind)
+        }
+        if (a.kind != b.kind) {
             return a.kind < b.kind;
+        }
         auto aSize = a.y1 - a.y0;
         auto bSize = b.y1 - b.y0;
         if (aSize != bSize) {
@@ -899,10 +901,12 @@ static void centerEdges(std::vector<int> &segmentOffsets, const std::vector<int>
         }
     }
     std::sort(events.begin(), events.end(), [](const Event &a, const Event &b) {
-        if (a.x != b.x)
+        if (a.x != b.x) {
             return a.x < b.x;
-        if (a.y != b.y)
+        }
+        if (a.y != b.y) {
             return a.y < b.y;
+        }
         // Process segment start events before end to ensure that activeSegmentCount doesn't go
         // negative and only reaches 0 at the end of chunk.
         return int(a.start) > int(b.start);

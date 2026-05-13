@@ -71,8 +71,9 @@ QVariant SectionsModel::data(const QModelIndex &index, int role) const
             return QVariant();
         }
     case Qt::DecorationRole:
-        if (index.column() == 0)
+        if (index.column() == 0) {
             return colors[index.row() % colors.size()];
+        }
         return QVariant();
     case SectionsModel::SectionDescriptionRole:
         return QVariant::fromValue(section);
@@ -160,8 +161,8 @@ bool SectionsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &ri
 
 SectionsWidget::SectionsWidget(MainWindow *main)
     : ListDockWidget(main),
-      dockRefreshDeferrer(createRefreshDeferrer([this]() { refreshDocks(); })),
-      sectionsRefreshDeferrer(createRefreshDeferrer([this]() { refreshSections(); }))
+      sectionsRefreshDeferrer(createRefreshDeferrer([this]() { refreshSections(); })),
+      dockRefreshDeferrer(createRefreshDeferrer([this]() { refreshDocks(); }))
 {
     setObjectName("SectionsWidget");
     setWindowTitle(tr("Sections"));
@@ -224,19 +225,19 @@ void SectionsWidget::initConnects()
 {
     connect(Core(), &CutterCore::refreshAll, this, &SectionsWidget::refreshSections);
     connect(Core(), &CutterCore::codeRebased, this, &SectionsWidget::refreshSections);
-    connect(this, &QDockWidget::visibilityChanged, this, [=](bool visibility) {
+    connect(this, &QDockWidget::visibilityChanged, this, [=, this](bool visibility) {
         if (visibility) {
             refreshSections();
         }
     });
     connect(Core(), &CutterCore::seekChanged, this, &SectionsWidget::refreshDocks);
     connect(Config(), &Configuration::colorsUpdated, this, &SectionsWidget::refreshSections);
-    connect(toggleButton, &QToolButton::clicked, this, [=] {
+    connect(toggleButton, &QToolButton::clicked, this, [=, this] {
         toggleButton->hide();
         addrDockWidget->show();
         virtualAddrDock->show();
     });
-    connect(virtualAddrDock, &QDockWidget::visibilityChanged, this, [=](bool visibility) {
+    connect(virtualAddrDock, &QDockWidget::visibilityChanged, this, [=, this](bool visibility) {
         if (!visibility) {
             updateToggle();
         }
@@ -308,13 +309,13 @@ void SectionsWidget::updateToggle()
 
 AbstractAddrDock::AbstractAddrDock(SectionsModel *model, QWidget *parent)
     : QDockWidget(parent),
-      heightDivisor(1000),
-      heightThreshold(30),
       indicatorHeight(5),
       indicatorParamPosY(20),
+      heightThreshold(30),
+      heightDivisor(1000),
       rectOffset(100),
-      rectWidthMax(400),
       rectWidthMin(80),
+      rectWidthMax(400),
       addrDockScene(new AddrDockScene(this)),
       graphicsView(new QGraphicsView(this)),
       proxyModel(new SectionsProxyModel(model, this))
@@ -474,7 +475,7 @@ RVA AddrDockScene::getAddrFromPos(int posY, bool seek)
     QHash<QString, RVA> addrMap = seek ? seekAddrMap : nameAddrMap;
     QHash<QString, RVA> addrSizeMap = seek ? seekAddrSizeMap : nameAddrSizeMap;
     for (it = namePosYMap.constBegin(); it != namePosYMap.constEnd(); ++it) {
-        const QString &const name = it.key();
+        const QString &name = it.key();
         const int y = it.value();
         const int h = nameHeightMap[name];
         if (posY >= y && y + h >= posY) {
@@ -491,7 +492,7 @@ RawAddrDock::RawAddrDock(SectionsModel *model, QWidget *parent) : AbstractAddrDo
 {
     setWindowTitle(tr("Raw"));
     connect(this, &QDockWidget::featuresChanged, this,
-            [=]() { setFeatures(QDockWidget::NoDockWidgetFeatures); });
+            [=, this]() { setFeatures(QDockWidget::NoDockWidgetFeatures); });
 }
 
 VirtualAddrDock::VirtualAddrDock(SectionsModel *model, QWidget *parent)
@@ -499,7 +500,7 @@ VirtualAddrDock::VirtualAddrDock(SectionsModel *model, QWidget *parent)
 {
     setWindowTitle(tr("Virtual"));
     connect(this, &QDockWidget::featuresChanged, this,
-            [=]() { setFeatures(QDockWidget::DockWidgetClosable); });
+            [=, this]() { setFeatures(QDockWidget::DockWidgetClosable); });
 }
 
 void RawAddrDock::updateDock()

@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <memory>
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 class PreferencesDialog;
 
@@ -12,6 +12,9 @@ namespace Ui {
 class InitializationFileEditor;
 }
 
+/**
+ * @brief An editor for Cutter initialization script
+ */
 class InitializationFileEditor : public QDialog
 {
     Q_OBJECT

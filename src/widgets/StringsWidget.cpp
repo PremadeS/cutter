@@ -24,8 +24,9 @@ int StringsModel::columnCount(const QModelIndex &) const
 
 QVariant StringsModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= strings.count())
+    if (index.row() >= strings.count()) {
         return QVariant();
+    }
 
     const StringDescription &str = strings.at(index.row());
 

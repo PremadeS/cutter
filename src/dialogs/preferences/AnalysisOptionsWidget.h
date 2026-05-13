@@ -3,8 +3,9 @@
 
 #include <QDialog>
 #include <memory>
+#include <QCheckBox>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 class MainWindow;
 
@@ -14,6 +15,9 @@ namespace Ui {
 class AnalysisOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to analysis
+ */
 class AnalysisOptionsWidget : public QDialog
 {
     Q_OBJECT

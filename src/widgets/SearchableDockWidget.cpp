@@ -11,9 +11,9 @@ constexpr int vPadding = 4;
 };
 
 SearchableDockWidget::SearchableDockWidget(MainWindow *parent)
-    : CutterDockWidget(parent), mSearchBar(new SearchBarWidget(this))
+    : CutterDockWidget(parent), searchBar(new SearchBarWidget(this))
 {
-    CutterSearchableHelper::setupConnections(this, mSearchBar);
+    CutterSearchableHelper::setupConnections(this, searchBar);
 }
 
 void SearchableDockWidget::resizeEvent(QResizeEvent *event)
@@ -24,7 +24,7 @@ void SearchableDockWidget::resizeEvent(QResizeEvent *event)
 
 void SearchableDockWidget::updateSearchBarPosition()
 {
-    CutterSearchableHelper::positionSearchBar(this, mSearchBar, searchableArea(), searchHPadding(),
+    CutterSearchableHelper::positionSearchBar(this, searchBar, searchableArea(), searchHPadding(),
                                               searchVPadding());
 }
 

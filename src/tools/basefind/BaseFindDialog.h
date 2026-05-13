@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
-#include <memory>
+// #include <memory>
 
 #include <core/Cutter.h>
 
@@ -11,6 +11,9 @@ namespace Ui {
 class BaseFindDialog;
 }
 
+/**
+ * @brief Dialog for configuring and launching the BaseFind analysis
+ */
 class BaseFindDialog : public QDialog
 {
     Q_OBJECT

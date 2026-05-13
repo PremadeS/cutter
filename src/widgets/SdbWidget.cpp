@@ -29,7 +29,7 @@ void SdbWidget::reload(QString _path)
     QList<QString> keys;
     /* key-values */
     keys = Core()->sdbListKeys(path);
-    for (const QString &key : keys) {
+    for (const QString &key : std::as_const(keys)) {
         auto *tempItem = new QTreeWidgetItem();
         tempItem->setText(0, key);
         tempItem->setText(1, Core()->sdbGet(path, key));
@@ -43,7 +43,7 @@ void SdbWidget::reload(QString _path)
     if (!path.isEmpty()) {
         keys.append("..");
     }
-    for (const QString &key : keys) {
+    for (const QString &key : std::as_const(keys)) {
         auto *tempItem = new QTreeWidgetItem();
         tempItem->setText(0, key + "/");
         tempItem->setText(1, "");
@@ -54,8 +54,9 @@ void SdbWidget::reload(QString _path)
 
 void SdbWidget::onTreeWidgetItemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    if (column < 0)
+    if (column < 0) {
         return;
+    }
 
     QString newpath;
 

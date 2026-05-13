@@ -1,5 +1,5 @@
 #include "DisassemblyContextMenu.h"
-#include "dialogs/preferences/PreferencesDialog.h"
+// #include "dialogs/preferences/PreferencesDialog.h"
 #include "dialogs/EditInstructionDialog.h"
 #include "dialogs/CommentsDialog.h"
 #include "dialogs/FlagDialog.h"
@@ -480,7 +480,7 @@ void DisassemblyContextMenu::setupRenaming()
         // itself
         if (thingAt.type == ThingUsedHere::Type::Function) {
             auto vars = Core()->getVariables(offset);
-            for (const auto &v : vars) {
+            for (const auto &v : std::as_const(vars)) {
                 if (v.name == curHighlightedWord) {
                     // This is a local variable
                     thingAt.type = ThingUsedHere::Type::Var;
@@ -522,7 +522,7 @@ void DisassemblyContextMenu::aboutToShowSlot()
                 Core()->parseJson("opex", rz_structured_data_to_json(cdb->an_op.opex), nullptr);
 
         // Loop through both the operands of the instruction
-        for (const CutterJson operand : operands) {
+        for (const auto &operand : operands) {
             if (operand["type"].toString() == "mem" && !operand["base"].toString().contains("bp")
                 && operand["disp"].toSt64() > 0) {
 
@@ -1040,9 +1040,10 @@ void DisassemblyContextMenu::initAction(QAction *action, const QString &name, Sl
     parentWidget()->addAction(action);
     action->setText(name);
 
-    if (slot != nullptr) {
-        connect(action, &QAction::triggered, this,
-                static_cast<void (DisassemblyContextMenu::*)()>(slot));
+    if constexpr (!std::is_same_v<SlotFunc, std::nullptr_t>) {
+        if (slot != nullptr) {
+            connect(action, &QAction::triggered, this, slot);
+        }
     }
 }
 
@@ -1064,8 +1065,7 @@ void DisassemblyContextMenu::initShortcutAction(QAction *action, const QString &
     Shortcuts()->setupAction(*action, id);
     action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     if (slot != nullptr) {
-        connect(action, &QAction::triggered, this,
-                static_cast<void (DisassemblyContextMenu::*)()>(slot));
+        connect(action, &QAction::triggered, this, slot);
     }
 }
 

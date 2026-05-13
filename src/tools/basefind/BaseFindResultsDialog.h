@@ -14,6 +14,9 @@ namespace Ui {
 class BaseFindResultsDialog;
 }
 
+/**
+ * @brief Source model for @ref BaseFindResultsDialog
+ */
 class BaseFindResultsModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -21,7 +24,7 @@ class BaseFindResultsModel : public QAbstractListModel
     friend BaseFindResultsDialog;
 
 public:
-    enum Column { ScoreColumn = 0, CandidateColumn, ColumnCount };
+    enum Column : ut8 { ScoreColumn = 0, CandidateColumn, ColumnCount };
 
     BaseFindResultsModel(QList<BasefindResultDescription> list, QObject *parent = nullptr);
 
@@ -35,6 +38,11 @@ private:
     QList<BasefindResultDescription> list;
 };
 
+/**
+ * @brief Dialog to display BaseFind results
+ *
+ * Contains context menu with options to reopen Cutter with base or map address at selected address
+ */
 class BaseFindResultsDialog : public QDialog
 {
     Q_OBJECT

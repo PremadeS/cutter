@@ -1,6 +1,6 @@
 #include "StackWidget.h"
 #include "ui_StackWidget.h"
-#include "common/JsonModel.h"
+// #include "common/JsonModel.h"
 #include "common/Helpers.h"
 #include "dialogs/EditInstructionDialog.h"
 
@@ -78,8 +78,9 @@ void StackWidget::fontsUpdatedSlot()
 
 void StackWidget::onDoubleClicked(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return;
+    }
     // Check if we are clicking on the offset or value columns and seek if it is the case
     const int column = index.column();
     if (column <= StackModel::ValueColumn) {
@@ -174,8 +175,9 @@ int StackModel::columnCount(const QModelIndex &) const
 
 QVariant StackModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= values.count())
+    if (!index.isValid() || index.row() >= values.count()) {
         return QVariant();
+    }
 
     const auto &item = values.at(index.row());
 

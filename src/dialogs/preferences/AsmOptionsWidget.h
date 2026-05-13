@@ -5,8 +5,9 @@
 #include <QDialog>
 #include <QPushButton>
 #include <memory>
+#include <QCheckBox>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 class PreferencesDialog;
 
@@ -14,6 +15,9 @@ namespace Ui {
 class AsmOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to disassembly
+ */
 class AsmOptionsWidget : public QDialog
 {
     Q_OBJECT
@@ -56,6 +60,13 @@ private slots:
     void asmComboBoxChanged(int index);
     void offsetCheckBoxToggled(bool checked);
     void relOffCheckBoxToggled(bool checked);
+
+    /**
+     * @brief A generic signal to handle the simple cases where a checkbox is toggled
+     * while it only responsible for a single independent boolean configuration eval.
+     * @param checkBox - The checkbox which is responsible for the siganl
+     * @param config - the configuration string to be toggled
+     */
     void checkboxEnabler(QCheckBox *checkbox, const QString &config);
 };
 

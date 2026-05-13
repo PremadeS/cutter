@@ -6,7 +6,8 @@
 
 #include "PreferencesDialog.h"
 
-#include "common/Helpers.h"
+// #include "common/Helpers.h"
+#include "Cutter.h"
 #include "common/Configuration.h"
 
 GraphOptionsWidget::GraphOptionsWidget(PreferencesDialog *dialog)
@@ -22,11 +23,17 @@ GraphOptionsWidget::GraphOptionsWidget(PreferencesDialog *dialog)
     connect<void (QDoubleSpinBox::*)(double)>(ui->bitmapGraphScale, (&QDoubleSpinBox::valueChanged),
                                               this,
                                               &GraphOptionsWidget::bitmapGraphScaleValueChanged);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    connect(ui->checkTransparent, &QCheckBox::checkStateChanged, this,
+            &GraphOptionsWidget::checkTransparentStateChanged);
+    connect(ui->blockEntryCheckBox, &QCheckBox::checkStateChanged, this,
+            &GraphOptionsWidget::checkGraphBlockEntryOffsetChanged);
+#else
     connect(ui->checkTransparent, &QCheckBox::stateChanged, this,
             &GraphOptionsWidget::checkTransparentStateChanged);
     connect(ui->blockEntryCheckBox, &QCheckBox::stateChanged, this,
             &GraphOptionsWidget::checkGraphBlockEntryOffsetChanged);
-
+#endif
     connect(Core(), &CutterCore::graphOptionsChanged, this,
             &GraphOptionsWidget::updateOptionsFromVars);
     const QSpinBox *graphSpacingWidgets[] = { ui->horizontalEdgeSpacing, ui->horizontalBlockSpacing,

@@ -1,7 +1,7 @@
 #include <QShortcut>
 #include "ProcessesWidget.h"
 #include "ui_ProcessesWidget.h"
-#include "common/JsonModel.h"
+// #include "common/JsonModel.h"
 #include "QuickFilterView.h"
 #include <rz_debug.h>
 
@@ -13,8 +13,8 @@
 ProcessesWidget::ProcessesWidget(MainWindow *main)
     : CutterDockWidget(main),
       ui(new Ui::ProcessesWidget),
-      modelFilter(new ProcessesFilterModel(this)),
       modelProcesses(new QStandardItemModel(1, 4, this)),
+      modelFilter(new ProcessesFilterModel(this)),
       refreshDeferrer(createRefreshDeferrer([this]() { updateContents(); }))
 {
     ui->setupUi(this);
@@ -151,8 +151,9 @@ void ProcessesWidget::fontsUpdatedSlot()
 
 void ProcessesWidget::onActivated(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return;
+    }
 
     const int pid =
             modelFilter->data(index.sibling(index.row(), ProcessesWidget::COLUMN_PID)).toInt();

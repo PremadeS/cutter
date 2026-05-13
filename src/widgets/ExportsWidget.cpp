@@ -20,8 +20,9 @@ int ExportsModel::columnCount(const QModelIndex &) const
 
 QVariant ExportsModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= exports.count())
+    if (index.row() >= exports.count()) {
         return QVariant();
+    }
 
     const ExportDescription &exp = exports.at(index.row());
 
@@ -105,20 +106,24 @@ bool ExportsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
 
     switch (left.column()) {
     case ExportsModel::SizeColumn:
-        if (leftExp.size != rightExp.size)
+        if (leftExp.size != rightExp.size) {
             return leftExp.size < rightExp.size;
+        }
     // fallthrough
     case ExportsModel::OffsetColumn:
-        if (leftExp.vaddr != rightExp.vaddr)
+        if (leftExp.vaddr != rightExp.vaddr) {
             return leftExp.vaddr < rightExp.vaddr;
+        }
     // fallthrough
     case ExportsModel::NameColumn:
-        if (leftExp.name != rightExp.name)
+        if (leftExp.name != rightExp.name) {
             return leftExp.name < rightExp.name;
+        }
     // fallthrough
     case ExportsModel::TypeColumn:
-        if (leftExp.type != rightExp.type)
+        if (leftExp.type != rightExp.type) {
             return leftExp.type < rightExp.type;
+        }
     // fallthrough
     case ExportsModel::CommentColumn:
         return Core()->getCommentAt(leftExp.vaddr) < Core()->getCommentAt(rightExp.vaddr);

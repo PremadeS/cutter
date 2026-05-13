@@ -78,7 +78,7 @@ HexWidget::HexWidget(QWidget *parent)
         auto *action = new QAction(QString::number(i), this);
         action->setCheckable(true);
         action->setActionGroup(sizeActionGroup);
-        connect(action, &QAction::triggered, this, [=]() { setItemSize(i); });
+        connect(action, &QAction::triggered, this, [=, this]() { setItemSize(i); });
         actionsItemSize.append(action);
     }
     actionsItemSize.at(0)->setChecked(true);
@@ -97,7 +97,7 @@ HexWidget::HexWidget(QWidget *parent)
         action->setCheckable(true);
         action->setActionGroup(formatActionGroup);
         connect(action, &QAction::triggered, this,
-                [=]() { setItemFormat(static_cast<ItemFormat>(i)); });
+                [=, this]() { setItemFormat(static_cast<ItemFormat>(i)); });
         actionsItemFormat.append(action);
     }
     actionsItemFormat.at(0)->setChecked(true);
@@ -109,7 +109,7 @@ HexWidget::HexWidget(QWidget *parent)
         auto *action = new QAction(QString::number(i), rowSizeMenu);
         action->setCheckable(true);
         action->setActionGroup(columnsActionGroup);
-        connect(action, &QAction::triggered, this, [=]() { setFixedLineSize(i); });
+        connect(action, &QAction::triggered, this, [=, this]() { setFixedLineSize(i); });
         rowSizeMenu->addAction(action);
     }
     rowSizeMenu->addSeparator();
@@ -117,7 +117,7 @@ HexWidget::HexWidget(QWidget *parent)
     actionRowSizePowerOf2->setCheckable(true);
     actionRowSizePowerOf2->setActionGroup(columnsActionGroup);
     connect(actionRowSizePowerOf2, &QAction::triggered, this,
-            [=]() { setColumnMode(ColumnMode::PowerOf2); });
+            [=, this]() { setColumnMode(ColumnMode::PowerOf2); });
     rowSizeMenu->addAction(actionRowSizePowerOf2);
 
     actionItemBigEndian = new QAction(tr("Big Endian"), this);
@@ -169,7 +169,7 @@ HexWidget::HexWidget(QWidget *parent)
 
     actionSelectRange = new QAction(tr("Select range"), this);
     connect(actionSelectRange, &QAction::triggered, this,
-            [this]() { rangeDialog.open(cursor.address); });
+            [this]() { rangeDialog.openAt(cursor.address); });
     addAction(actionSelectRange);
     connect(&rangeDialog, &QDialog::accepted, this, &HexWidget::onRangeDialogAccepted);
 
@@ -267,8 +267,9 @@ void HexWidget::setItemSize(int nbytes)
 {
     static const QVector<int> values({ 1, 2, 4, 8 });
 
-    if (!values.contains(nbytes))
+    if (!values.contains(nbytes)) {
         return;
+    }
 
     finishEditingWord();
 
@@ -299,8 +300,9 @@ void HexWidget::setItemFormat(ItemFormat format)
     itemFormat = format;
 
     bool sizeEnabled = true;
-    if (format == ItemFormatFloat)
+    if (format == ItemFormatFloat) {
         sizeEnabled = false;
+    }
     actionsItemSize.at(0)->setEnabled(sizeEnabled);
     actionsItemSize.at(1)->setEnabled(sizeEnabled);
 
@@ -497,8 +499,9 @@ void HexWidget::paintEvent(QPaintEvent *event)
     painter.setFont(monospaceFont);
 
     const int xOffset = horizontalScrollBar()->value();
-    if (xOffset > 0)
+    if (xOffset > 0) {
         painter.translate(QPoint(-xOffset, 0));
+    }
 
     if (event->rect() == cursor.screenPos.toAlignedRect()) {
         /* Cursor blink */
@@ -519,8 +522,9 @@ void HexWidget::paintEvent(QPaintEvent *event)
         painter.drawRect(warningRect);
     }
 
-    if (!cursorEnabled)
+    if (!cursorEnabled) {
         return;
+    }
 
     drawCursor(painter, true);
 }
@@ -528,10 +532,11 @@ void HexWidget::paintEvent(QPaintEvent *event)
 void HexWidget::updateWidth()
 {
     int max = (showAscii ? asciiArea.right() : itemArea.right()) - viewport()->width();
-    if (max < 0)
+    if (max < 0) {
         max = 0;
-    else
+    } else {
         max += charWidth;
+    }
     horizontalScrollBar()->setMaximum(max);
     horizontalScrollBar()->setSingleStep(charWidth);
 }
@@ -546,8 +551,9 @@ void HexWidget::resizeEvent(QResizeEvent *event)
     const int oldByteCount = bytesPerScreen();
     updateCounts();
 
-    if (event->oldSize().height() == event->size().height() && oldByteCount == bytesPerScreen())
+    if (event->oldSize().height() == event->size().height() && oldByteCount == bytesPerScreen()) {
         return;
+    }
 
     updateAreasHeight();
     fetchData(); // rowCount was changed
@@ -600,18 +606,20 @@ void HexWidget::mouseMoveEvent(QMouseEvent *event)
     }
 
     if (!updatingSelection) {
-        if (itemArea.contains(pos) || asciiArea.contains(pos))
+        if (itemArea.contains(pos) || asciiArea.contains(pos)) {
             setCursor(Qt::IBeamCursor);
-        else
+        } else {
             setCursor(Qt::ArrowCursor);
+        }
         return;
     }
 
     auto &area = currentArea();
-    if (pos.x() < area.left())
+    if (pos.x() < area.left()) {
         pos.setX(area.left());
-    else if (pos.x() > area.right())
+    } else if (pos.x() > area.right()) {
         pos.setX(area.right());
+    }
     auto addr = currentAreaPosToAddr(pos, true);
     setCursorAddr(addr, true);
 
@@ -1272,8 +1280,9 @@ void HexWidget::contextMenuEvent(QContextMenuEvent *event)
 
 void HexWidget::onCursorBlinked()
 {
-    if (!cursorEnabled)
+    if (!cursorEnabled) {
         return;
+    }
     cursor.blink();
     const QRect cursorRect = cursor.screenPos.toAlignedRect();
     viewport()->update(cursorRect.translated(-horizontalScrollBar()->value(), 0));
@@ -1292,8 +1301,9 @@ void HexWidget::onHexPairsModeEnabled(bool enable)
 
 void HexWidget::copy()
 {
-    if (selection.isEmpty() || selection.size() > maxCopySize)
+    if (selection.isEmpty() || selection.size() > maxCopySize) {
         return;
+    }
 
     auto x = cursorOnAscii
             ? Core()->getString(selection.start(), selection.size(), RZ_STRING_ENC_8BIT, true)
@@ -1686,8 +1696,9 @@ void HexWidget::updateItemLength()
         }
         break;
     case ItemFormatFloat:
-        if (itemByteLen < 4)
+        if (itemByteLen < 4) {
             itemByteLen = 4;
+        }
         // FIXME
         itemCharLen = 3 * itemByteLen;
         break;
@@ -1700,8 +1711,9 @@ void HexWidget::updateItemLength()
 
 void HexWidget::drawHeader(QPainter &painter)
 {
-    if (!showHeader)
+    if (!showHeader) {
         return;
+    }
 
     int offset = 0;
     QRectF rect(itemArea.left(), 0, itemWidth(), lineHeight);
@@ -1769,8 +1781,9 @@ void HexWidget::drawAddrArea(QPainter &painter)
     for (int line = 0; line < visibleLines && offset <= data->maxIndex();
          ++line, strRect.translate(0, lineHeight), offset += itemRowByteLen()) {
         addrString = QString("%1").arg(offset, addrCharLen, 16, QLatin1Char('0'));
-        if (showExAddr)
+        if (showExAddr) {
             addrString.prepend(hexPrefix);
+        }
         painter.drawText(strRect, Qt::AlignVCenter, addrString);
     }
 
@@ -2155,8 +2168,9 @@ void HexWidget::setCursorAddr(BasicCursor addr, bool select)
     if (!select) {
         const bool clearingSelection = !selection.isEmpty();
         selection.init(addr);
-        if (clearingSelection)
+        if (clearingSelection) {
             emit selectionChanged(getSelection());
+        }
     }
     emit positionChanged(addr.address);
 
@@ -2248,13 +2262,13 @@ QColor HexWidget::itemColor(uint8_t byte)
 {
     QColor color(defColor);
 
-    if (byte == 0x00)
+    if (byte == 0x00) {
         color = b0x00Color;
-    else if (byte == 0x7f)
+    } else if (byte == 0x7f) {
         color = b0x7fColor;
-    else if (byte == 0xff)
+    } else if (byte == 0xff) {
         color = b0xffColor;
-    else if (IS_PRINTABLE(byte)) {
+    } else if (IS_PRINTABLE(byte)) {
         color = printableColor;
     }
 
@@ -2305,44 +2319,52 @@ QVariant HexWidget::readItem(int offset, QColor *color)
     switch (itemByteLen) {
     case 1:
         byte = bytes[0];
-        if (color)
+        if (color) {
             *color = itemColor(byte);
-        if (!signedItem)
+        }
+        if (!signedItem) {
             return QVariant(static_cast<quint64>(byte));
+        }
         return QVariant(static_cast<qint64>(static_cast<qint8>(byte)));
     case 2:
-        if (itemBigEndian)
+        if (itemBigEndian) {
             word = fromBigEndian<quint16>(bytes);
-        else
+        } else {
             word = fromLittleEndian<quint16>(bytes);
+        }
 
-        if (!signedItem)
+        if (!signedItem) {
             return QVariant(static_cast<quint64>(word));
+        }
         return QVariant(static_cast<qint64>(static_cast<qint16>(word)));
     case 4:
-        if (itemBigEndian)
+        if (itemBigEndian) {
             dword = fromBigEndian<quint32>(bytes);
-        else
+        } else {
             dword = fromLittleEndian<quint32>(bytes);
+        }
 
         if (itemFormat == ItemFormatFloat) {
             memcpy(&float32, &dword, sizeof(float32));
             return QVariant(float32);
         }
-        if (!signedItem)
+        if (!signedItem) {
             return QVariant(static_cast<quint64>(dword));
+        }
         return QVariant(static_cast<qint64>(static_cast<qint32>(dword)));
     case 8:
-        if (itemBigEndian)
+        if (itemBigEndian) {
             qword = fromBigEndian<quint64>(bytes);
-        else
+        } else {
             qword = fromLittleEndian<quint64>(bytes);
+        }
         if (itemFormat == ItemFormatFloat) {
             memcpy(&float64, &qword, sizeof(float64));
             return QVariant(float64);
         }
-        if (!signedItem)
+        if (!signedItem) {
             return QVariant(qword);
+        }
         return QVariant(static_cast<qint64>(qword));
     }
 
@@ -2359,8 +2381,9 @@ QString HexWidget::renderItem(int offset, QColor *color)
     switch (itemFormat) {
     case ItemFormatHex:
         item = QString("%1").arg(itemVal.toULongLong(), itemLen, 16, QLatin1Char('0'));
-        if (itemByteLen > 1 && showExHex)
+        if (itemByteLen > 1 && showExHex) {
             item.prepend(hexPrefix);
+        }
         break;
     case ItemFormatOct:
         item = QString("%1").arg(itemVal.toULongLong(), itemLen, 8, QLatin1Char('0'));

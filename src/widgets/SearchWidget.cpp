@@ -10,11 +10,9 @@
 #include <QShortcut>
 
 namespace {
-
-static const int kMaxTooltipWidth = 500;
-static const int kMaxTooltipDisasmPreviewLines = 10;
-static const int kMaxTooltipHexdumpBytes = 64;
-
+const int kMaxTooltipWidth = 500;
+const int kMaxTooltipDisasmPreviewLines = 10;
+const int kMaxTooltipHexdumpBytes = 64;
 }
 
 static const QVector<std::pair<QString, const char *>> searchBoundaries {
@@ -103,8 +101,9 @@ int SearchModel::columnCount(const QModelIndex &) const
 
 QVariant SearchModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= search.count())
+    if (index.row() >= search.count()) {
         return QVariant();
+    }
 
     const SearchDescription &exp = search.at(index.row());
 
@@ -241,15 +240,15 @@ bool SearchSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelI
 SearchWidget::SearchWidget(MainWindow *main)
     : CutterDockWidget(main),
       ui(new Ui::SearchWidget),
-      search_model(new SearchModel(this)),
-      search_proxy_model(new SearchSortFilterProxyModel(search_model, this))
+      searchModel(new SearchModel(this)),
+      searchProxyModel(new SearchSortFilterProxyModel(searchModel, this))
 {
     ui->setupUi(this);
     setStyleSheet(QString("QToolTip { max-width: %1px; opacity: 230; }").arg(kMaxTooltipWidth));
 
     updateSearchBoundaries();
 
-    ui->searchTreeView->setModel(search_proxy_model);
+    ui->searchTreeView->setModel(static_cast<AddressableItemModelI *>(searchProxyModel));
     ui->searchTreeView->setMainWindow(main);
     ui->searchTreeView->sortByColumn(SearchModel::OFFSET, Qt::AscendingOrder);
 
@@ -258,7 +257,7 @@ SearchWidget::SearchWidget(MainWindow *main)
     connect(Core(), &CutterCore::toggleDebugView, this, &SearchWidget::updateSearchBoundaries);
     connect(Core(), &CutterCore::refreshAll, this, &SearchWidget::refreshSearchspaces);
     connect(Core(), &CutterCore::commentsChanged, this,
-            [this]() { qhelpers::emitColumnChanged(search_model, SearchModel::COMMENT); });
+            [this]() { qhelpers::emitColumnChanged(searchModel, SearchModel::COMMENT); });
 
     connect(ui->filterLineEdit, &QLineEdit::returnPressed, this, &SearchWidget::runSearch);
     connect(ui->searchButton, &QAbstractButton::clicked, this, &SearchWidget::runSearch);
@@ -303,16 +302,18 @@ void SearchWidget::searchChanged()
 void SearchWidget::refreshSearchspaces()
 {
     int curIdx = ui->searchspaceCombo->currentIndex();
-    if (curIdx < 0)
+    if (curIdx < 0) {
         curIdx = 0;
+    }
 
     ui->searchspaceCombo->clear();
     for (auto &kind : searchKinds) {
         ui->searchspaceCombo->addItem(tr(kind.name), static_cast<int>(kind.kind));
     }
 
-    if (curIdx > 0)
+    if (curIdx > 0) {
         ui->searchspaceCombo->setCurrentIndex(curIdx);
+    }
 
     refreshSearch();
 }
@@ -331,9 +332,9 @@ void SearchWidget::refreshSearch()
     auto searchSpace = static_cast<SearchKind>(ui->searchspaceCombo->currentData().toInt());
     const QString searchIn = ui->searchInCombo->currentData().toString();
 
-    search_model->beginResetModel();
-    search_model->search = Core()->getAllSearch(searchFor, searchSpace, searchIn);
-    search_model->endResetModel();
+    searchModel->beginResetModel();
+    searchModel->search = Core()->getAllSearch(searchFor, searchSpace, searchIn);
+    searchModel->endResetModel();
 
     qhelpers::adjustColumns(ui->searchTreeView, 3, 0);
 }
@@ -342,8 +343,9 @@ void SearchWidget::refreshSearch()
 // Called by &QShortcut::activated and &QAbstractButton::clicked signals
 void SearchWidget::checkSearchResultEmpty()
 {
-    if (!search_model->search.isEmpty())
+    if (!searchModel->search.isEmpty()) {
         return;
+    }
 
     const QString searchFor = ui->filterLineEdit->text();
     auto searchSpace = static_cast<SearchKind>(ui->searchspaceCombo->currentData().toInt());

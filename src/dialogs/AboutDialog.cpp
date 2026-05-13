@@ -142,12 +142,15 @@ static QString compilerString()
 #elif defined(Q_CC_GNU)
     return QLatin1String("GCC ") + QLatin1String(__VERSION__);
 #elif defined(Q_CC_MSVC)
-    if (_MSC_VER > 1999)
+    if (_MSC_VER > 1999) {
         return QLatin1String("MSVC <unknown>");
-    if (_MSC_VER >= 1910)
+    }
+    if (_MSC_VER >= 1910) {
         return QLatin1String("MSVC 2017");
-    if (_MSC_VER >= 1900)
+    }
+    if (_MSC_VER >= 1900) {
         return QLatin1String("MSVC 2015");
+    }
 #endif
     return QLatin1String("<unknown compiler>");
 }

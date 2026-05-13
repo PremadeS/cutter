@@ -31,8 +31,9 @@ int ThreadModel::columnCount(const QModelIndex &) const
 
 QVariant ThreadModel::data(const QModelIndex &index, int role) const
 {
-    if (index.row() >= threads.count())
+    if (index.row() >= threads.count()) {
         return QVariant();
+    }
 
     const ThreadDescription &thread = threads.at(index.row());
 
@@ -103,8 +104,8 @@ QVariant ThreadModel::headerData(int section, Qt::Orientation, int role) const
 ThreadsWidget::ThreadsWidget(MainWindow *main)
     : CutterDockWidget(main),
       ui(new Ui::ThreadsWidget),
-      modelFilter(new QSortFilterProxyModel(this)),
       modelThreads(new ThreadModel(this)),
+      modelFilter(new QSortFilterProxyModel(this)),
       refreshDeferrer(createRefreshDeferrer([this]() { updateContents(); })),
       menuText(this),
       addressableItemContextMenu(this, main)
@@ -216,8 +217,9 @@ void ThreadsWidget::fontsUpdatedSlot()
 
 void ThreadsWidget::onActivated(const QModelIndex &index)
 {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return;
+    }
 
     const int tid =
             modelFilter->data(index.sibling(index.row(), ThreadModel::COLUMN_PID), Qt::EditRole)

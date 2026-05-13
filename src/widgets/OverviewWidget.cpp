@@ -6,9 +6,9 @@
 
 OverviewWidget::OverviewWidget(MainWindow *main)
     : CutterDockWidget(main),
-      graphDataRefreshDeferrer(createRefreshDeferrer([this]() { updateGraphData(); })),
       graphView(new OverviewView(this)),
-      targetGraphWidget(nullptr)
+      targetGraphWidget(nullptr),
+      graphDataRefreshDeferrer(createRefreshDeferrer([this]() { updateGraphData(); }))
 {
     setWindowTitle(tr("Graph Overview"));
     setObjectName("Graph Overview");

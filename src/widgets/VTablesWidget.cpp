@@ -53,7 +53,7 @@ QVariant VTableModel::data(const QModelIndex &index, int role) const
         default:
             break;
         }
-    } else
+    } else {
         switch (role) {
         case Qt::DisplayRole:
             switch (index.column()) {
@@ -70,6 +70,7 @@ QVariant VTableModel::data(const QModelIndex &index, int role) const
         default:
             break;
         }
+    }
     return QVariant();
 }
 
@@ -107,18 +108,22 @@ VTableSortFilterProxyModel::VTableSortFilterProxyModel(VTableModel *model, QObje
 bool VTableSortFilterProxyModel::filterAcceptsRow(int source_row,
                                                   const QModelIndex &source_parent) const
 {
-    if (QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent))
+    if (QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent)) {
         return true;
-    if (source_parent.isValid())
+    }
+    if (source_parent.isValid()) {
         return QSortFilterProxyModel::filterAcceptsRow(source_parent.row(), QModelIndex());
+    }
 #if QT_VERSION < QT_VERSION_CHECK(5, 10, 0)
     else {
         QAbstractItemModel *const model = sourceModel();
         const QModelIndex source = model->index(source_row, 0, QModelIndex());
         const int rows = model->rowCount(source);
-        for (int i = 0; i < rows; ++i)
-            if (QSortFilterProxyModel::filterAcceptsRow(i, source))
+        for (int i = 0; i < rows; ++i) {
+            if (QSortFilterProxyModel::filterAcceptsRow(i, source)) {
                 return true;
+            }
+        }
     }
 #endif
     return false;

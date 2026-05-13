@@ -3,11 +3,12 @@
 
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
+#include "CutterDescriptions.h"
 
 class MainWindow;
 class QTreeWidget;
@@ -20,6 +21,9 @@ class TypesWidget;
 class MainWindow;
 class QTreeWidgetItem;
 
+/**
+ * @brief Source model for @ref TypesWidget
+ */
 class TypesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -35,7 +39,7 @@ private:
     QVariant toolTipValue(const QModelIndex &index) const;
 
 public:
-    enum Columns { TYPE = 0, SIZE, CATEGORY, FORMAT, COUNT };
+    enum Columns : ut8 { TYPE = 0, SIZE, CATEGORY, FORMAT, COUNT };
     static const int typeDescriptionRole = Qt::UserRole;
 
     TypesModel(QObject *parent = nullptr);
@@ -65,6 +69,9 @@ protected:
     QString selectedCategory;
 };
 
+/**
+ * @brief Widget for listing all types
+ */
 class TypesWidget : public CutterDockWidget
 {
     Q_OBJECT

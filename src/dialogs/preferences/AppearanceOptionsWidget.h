@@ -14,6 +14,9 @@ namespace Ui {
 class AppearanceOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to appearance
+ */
 class AppearanceOptionsWidget : public QDialog
 {
     Q_OBJECT
