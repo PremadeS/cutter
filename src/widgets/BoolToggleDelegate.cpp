@@ -2,10 +2,10 @@
 
 #include <QEvent>
 
-BoolTogggleDelegate::BoolTogggleDelegate(QObject *parent) : QStyledItemDelegate(parent) { }
+BoolToggleDelegate::BoolToggleDelegate(QObject *parent) : QStyledItemDelegate(parent) { }
 
-QWidget *BoolTogggleDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                           const QModelIndex &index) const
+QWidget *BoolToggleDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                          const QModelIndex &index) const
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     if (index.data(Qt::EditRole).typeId() == QMetaType::Bool) {
@@ -17,8 +17,8 @@ QWidget *BoolTogggleDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     return QStyledItemDelegate::createEditor(parent, option, index);
 }
 
-bool BoolTogggleDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
-                                      const QStyleOptionViewItem &option, const QModelIndex &index)
+bool BoolToggleDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+                                     const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (model->flags(index).testFlag(Qt::ItemFlag::ItemIsEditable)) {
         if (event->type() == QEvent::MouseButtonDblClick) {

@@ -7,6 +7,7 @@
 #include <memory>
 
 // #include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 #include "widgets/ListDockWidget.h"
 

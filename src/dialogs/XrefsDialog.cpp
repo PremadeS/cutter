@@ -27,8 +27,8 @@ XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     ui->toTreeWidget->setMainWindow(parent);
     ui->fromTreeWidget->setMainWindow(parent);
 
-    ui->toTreeWidget->setModel(&toProxyModel);
-    ui->fromTreeWidget->setModel(&fromProxyModel);
+    ui->toTreeWidget->setModel(static_cast<AddressableItemModelI *>(&toProxyModel));
+    ui->fromTreeWidget->setModel(static_cast<AddressableItemModelI *>(&fromProxyModel));
 
     ui->toTreeWidget->getItemContextMenu()->toggleBreakpointAction(true);
     ui->fromTreeWidget->getItemContextMenu()->toggleBreakpointAction(true);

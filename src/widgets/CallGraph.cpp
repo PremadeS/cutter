@@ -93,7 +93,7 @@ void CallGraphView::loadCurrentGraph()
     const bool usenames = Core()->getConfigb("graph.json.usenames");
 
     auto edges = std::unordered_set<ut64> {};
-    auto addFunction = [&](RzAnalysisFunction *fcn) {
+    auto addFunction = [&](const RzAnalysisFunction *fcn) {
         GraphLayout::GraphBlock block;
         block.entry = fcn->addr;
 

@@ -27,10 +27,10 @@ RizinPluginsDialog::RizinPluginsDialog(QWidget *parent)
         item->setText(1, plugin.description);
         item->setText(2, plugin.license);
         item->setText(3, plugin.permissions);
-        ui->rzIoTreeWidget->addTopLevelItem(item);
+        ui->rzIOTreeWidget->addTopLevelItem(item);
     }
-    ui->rzIoTreeWidget->sortByColumn(0, Qt::AscendingOrder);
-    qhelpers::adjustColumns(ui->rzIoTreeWidget, 0);
+    ui->rzIOTreeWidget->sortByColumn(0, Qt::AscendingOrder);
+    qhelpers::adjustColumns(ui->rzIOTreeWidget, 0);
 
     for (const auto &plugin : Core()->getRCorePluginDescriptions()) {
         auto *item = new QTreeWidgetItem();

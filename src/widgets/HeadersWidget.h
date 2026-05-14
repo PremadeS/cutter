@@ -1,9 +1,8 @@
 #ifndef HEADERSWIDGET_H
 #define HEADERSWIDGET_H
 
-// #include <memory>
-
 // #include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "ListDockWidget.h"
 
 #include <QAbstractListModel>

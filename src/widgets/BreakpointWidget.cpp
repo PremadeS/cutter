@@ -193,9 +193,9 @@ BreakpointWidget::BreakpointWidget(MainWindow *main)
 
     ui->breakpointTreeView->setMainWindow(mainWindow);
 
-    ui->breakpointTreeView->setModel(breakpointProxyModel);
+    ui->breakpointTreeView->setModel(static_cast<AddressableItemModelI *>(breakpointProxyModel));
     ui->breakpointTreeView->sortByColumn(BreakpointModel::AddrColumn, Qt::AscendingOrder);
-    ui->breakpointTreeView->setItemDelegate(new BoolTogggleDelegate(this));
+    ui->breakpointTreeView->setItemDelegate(new BoolToggleDelegate(this));
 
     setScrollMode();
 

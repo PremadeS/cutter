@@ -37,7 +37,7 @@ class QMouseEvent;
  * @brief Helpers for QT related objects
  */
 namespace qhelpers {
-CUTTER_EXPORT QString formatBytecount(const uint64_t bytecount);
+CUTTER_EXPORT QString formatByteCount(ut64 bytecount);
 CUTTER_EXPORT void adjustColumns(QTreeView *tv, int columnCount, int padding);
 CUTTER_EXPORT void adjustColumns(QTreeWidget *tw, int padding);
 

@@ -1,8 +1,8 @@
-#pragma once
-
-// #include <memory>
+#ifndef MEMORYMAPWIDGET_H
+#define MEMORYMAPWIDGET_H
 
 // #include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 #include "ListDockWidget.h"
 
@@ -91,3 +91,5 @@ private:
 
     RefreshDeferrer *refreshDeferrer;
 };
+
+#endif // MEMORYMAPWIDGET_H

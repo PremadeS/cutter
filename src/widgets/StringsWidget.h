@@ -5,6 +5,7 @@
 
 // #include "core/Cutter.h"
 #include "AddressableItemModel.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 #include "common/StringsTask.h"
 
@@ -96,7 +97,7 @@ private slots:
 private:
     std::unique_ptr<Ui::StringsWidget> ui;
 
-    QSharedPointer<StringsTask> task;
+    std::shared_ptr<StringsTask> task;
 
     StringsModel *model;
     StringsProxyModel *proxyModel;

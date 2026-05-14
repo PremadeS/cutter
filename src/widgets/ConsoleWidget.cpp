@@ -33,7 +33,7 @@
 #    define STDIN_PIPE_NAME "%1/cutter-stdin-%2"
 #endif
 
-enum InputTarget { RizinConsole = 0, Debugee = 1 };
+enum InputTarget : ut8 { RizinConsole = 0, Debugee = 1 };
 
 static const int invalidHistoryPos = -1;
 
@@ -75,7 +75,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     connect(actionClear, &QAction::triggered, this, [this] {
         ui->outputTextEdit->clear();
         ui->outputTextEdit->setExtraSelections({});
-        mSearchBar->clear();
+        searchBar->clear();
     });
     addAction(actionClear);
 
@@ -154,16 +154,16 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     }
 
     connect(ui->outputTextEdit, &SearchableTextEdit::textChanged, this, [this] {
-        if (mSearchBar && mSearchBar->isVisible()) {
+        if (searchBar && searchBar->isVisible()) {
             const QPair<int, int> range =
-                    ui->outputTextEdit->search(mSearchBar->text(), mSearchBar->options());
-            mSearchBar->setRange(range.first, range.second);
+                    ui->outputTextEdit->search(searchBar->text(), searchBar->options());
+            searchBar->setRange(range.first, range.second);
         }
     });
 
     connect(ui->outputTextEdit, &SearchableTextEdit::updateRequest, this,
             [this](const QRect &, int dy) {
-                if (mSearchBar && mSearchBar->isVisible() && dy != 0) {
+                if (searchBar && searchBar->isVisible() && dy != 0) {
                     ui->outputTextEdit->highlightMatches();
                 }
             });
@@ -202,7 +202,7 @@ bool ConsoleWidget::eventFilter(QObject *obj, QEvent *event)
         if (historyDownShortcut) {
             historyDownShortcut->setEnabled(enabled);
         }
-    } else if (mSearchBar && mSearchBar->isVisible()
+    } else if (searchBar && searchBar->isVisible()
                && obj == ui->outputTextEdit->verticalScrollBar()) {
         if (event->type() == QEvent::Show || event->type() == QEvent::Hide) {
             this->updateSearchBarPosition();
@@ -541,29 +541,29 @@ void ConsoleWidget::searchBarHidden()
 
 void ConsoleWidget::searchBarShown()
 {
-    searchChanged(mSearchBar->text(), mSearchBar->options());
+    searchChanged(searchBar->text(), searchBar->options());
 }
 
 void ConsoleWidget::findNext()
 {
     const int index = ui->outputTextEdit->findNext();
-    mSearchBar->setCurrentIndex(index);
+    searchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::findPrev()
 {
     const int index = ui->outputTextEdit->findPrev();
-    mSearchBar->setCurrentIndex(index);
+    searchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::findLast()
 {
     const int index = ui->outputTextEdit->findLast();
-    mSearchBar->setCurrentIndex(index);
+    searchBar->setCurrentIndex(index);
 }
 
 void ConsoleWidget::searchChanged(const QString &text, int options)
 {
     const QPair<int, int> range = ui->outputTextEdit->search(text, options);
-    mSearchBar->setRange(range.first, range.second);
+    searchBar->setRange(range.first, range.second);
 }

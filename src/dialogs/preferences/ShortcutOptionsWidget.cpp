@@ -44,7 +44,7 @@ void ShortcutOptionsWidget::populateShortcutTree()
     const auto shortcuts = Shortcuts()->getAllShortcuts();
     for (auto it = shortcuts.cbegin(); it != shortcuts.cend(); ++it) {
         QString name = it.key();
-        const Shortcut &const s = it.value();
+        const Shortcut &s = it.value();
         QTreeWidgetItem *parent = prefixToItem["General"];
 
         for (auto it = prefixToItem.cbegin(); it != prefixToItem.cend(); ++it) {

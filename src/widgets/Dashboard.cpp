@@ -67,7 +67,7 @@ void Dashboard::updateContents()
     setPlainText(ui->compilerEdit, binInfo ? binInfo->compiler : "");
     setPlainText(ui->bitsEdit, binInfo ? QString::number(binInfo->bits) : "");
     setPlainText(ui->baddrEdit, bf ? rzAddressString(rz_bin_file_get_baddr(bf)) : "");
-    setPlainText(ui->sizeEdit, bf ? qhelpers::formatBytecount(bf->size) : "");
+    setPlainText(ui->sizeEdit, bf ? qhelpers::formatByteCount(bf->size) : "");
     setPlainText(ui->fdEdit, bf ? QString::number(bf->fd) : "");
 
     // Setting the value of "Endianness"

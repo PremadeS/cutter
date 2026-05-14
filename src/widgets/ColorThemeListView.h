@@ -40,8 +40,6 @@ protected slots:
 
     void mouseMoveEvent(QMouseEvent *e) override;
 
-    void changeEvent(QEvent *event) override;
-
 private slots:
     void blinkTimeout();
 

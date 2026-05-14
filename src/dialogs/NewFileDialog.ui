@@ -514,17 +514,17 @@
     </layout>
    </item>
   </layout>
-  <action name="actionRemove_item">
+  <action name="actionRemoveItem">
    <property name="text">
     <string>Remove item</string>
    </property>
   </action>
-  <action name="actionClear_all">
+  <action name="actionClearAll">
    <property name="text">
     <string>Clear all</string>
    </property>
   </action>
-  <action name="actionRemove_project">
+  <action name="actionRemoveProject">
    <property name="text">
     <string>Delete project</string>
    </property>

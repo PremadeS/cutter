@@ -7,6 +7,7 @@
 #include <QSortFilterProxyModel>
 
 // #include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "widgets/ListDockWidget.h"
 
 class QAbstractItemView;

@@ -1,6 +1,6 @@
 #include "CutterGraphView.h"
 
-#include "TempConfig.h"
+// #include "TempConfig.h"
 #include "common/Configuration.h"
 #include "core/Cutter.h"
 #include "dialogs/MultitypeFileSaveDialog.h"

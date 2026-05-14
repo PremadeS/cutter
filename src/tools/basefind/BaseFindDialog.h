@@ -3,9 +3,9 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
-// #include <memory>
 
 #include <core/Cutter.h>
+#include <memory>
 
 namespace Ui {
 class BaseFindDialog;

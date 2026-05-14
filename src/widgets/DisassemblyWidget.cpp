@@ -131,16 +131,18 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
 
     connectCursorPositionChanged(false);
 
-    connect(Core(), &CutterCore::commentsChanged, this, [this]() { refreshDisasm(); });
-    connect(Core(), &CutterCore::flagsChanged, this, &DisassemblyWidget::refreshDisasm);
-    connect(Core(), &CutterCore::globalVarsChanged, this, &DisassemblyWidget::refreshDisasm);
-    connect(Core(), &CutterCore::functionsChanged, this, &DisassemblyWidget::refreshDisasm);
-    connect(Core(), &CutterCore::functionRenamed, this, [this]() { refreshDisasm(); });
-    connect(Core(), &CutterCore::varsChanged, this, &DisassemblyWidget::refreshDisasm);
-    connect(Core(), &CutterCore::asmOptionsChanged, this, &DisassemblyWidget::refreshDisasm);
+    // Avoids the "The slot requires more arguments than the signal provides" error
+    auto refresh = [this]() { refreshDisasm(); };
+    connect(Core(), &CutterCore::commentsChanged, this, refresh);
+    connect(Core(), &CutterCore::flagsChanged, this, refresh);
+    connect(Core(), &CutterCore::globalVarsChanged, this, refresh);
+    connect(Core(), &CutterCore::functionsChanged, this, refresh);
+    connect(Core(), &CutterCore::functionRenamed, this, refresh);
+    connect(Core(), &CutterCore::varsChanged, this, refresh);
+    connect(Core(), &CutterCore::asmOptionsChanged, this, refresh);
+    connect(Core(), &CutterCore::refreshCodeViews, this, refresh);
     connect(Core(), &CutterCore::instructionChanged, this, &DisassemblyWidget::instructionChanged);
     connect(Core(), &CutterCore::breakpointsChanged, this, &DisassemblyWidget::refreshIfInRange);
-    connect(Core(), &CutterCore::refreshCodeViews, this, &DisassemblyWidget::refreshDisasm);
 
     connect(Config(), &Configuration::fontsUpdated, this, &DisassemblyWidget::fontsUpdatedSlot);
     connect(Config(), &Configuration::colorsUpdated, this, &DisassemblyWidget::colorsUpdatedSlot);

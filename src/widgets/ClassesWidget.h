@@ -5,10 +5,12 @@
 
 // #include "core/Cutter.h"
 #include "CutterCommon.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 #include "widgets/ListDockWidget.h"
 
 #include <QAbstractListModel>
+#include <QComboBox>
 #include <QSortFilterProxyModel>
 
 namespace Ui {

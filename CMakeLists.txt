@@ -71,6 +71,9 @@ set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
 set(CMAKE_CXX_STANDARD 20)
 
+# To suppress "const" warnings coming from rizin function signatures
+add_compile_options(-Wno-ignored-qualifiers)
+
 include(CutterInstallDirs)
 
 if(CUTTER_USE_BUNDLED_RIZIN)

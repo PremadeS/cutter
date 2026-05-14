@@ -4,6 +4,7 @@
 // #include "core/Cutter.h"
 #include "CutterDockWidget.h"
 // #include "CutterTreeView.h"
+#include "CutterDescriptions.h"
 #include "common/AddressableItemModel.h"
 #include "widgets/ListDockWidget.h"
 

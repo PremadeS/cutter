@@ -107,7 +107,7 @@ public:
 
     AsyncTaskManager *getAsyncTaskManager() { return asyncTaskManager; }
 
-    RVA getOffset() const { return core_->offset; }
+    RVA getOffset() const { return rzCore->offset; }
 
     /* Core functions (commands) */
     /* Almost the same as core_cmd_raw,
@@ -129,7 +129,7 @@ public:
      * @param fcn the task you want to execute
      * @return execute successful?
      */
-    bool asyncTask(std::function<void *(RzCore *)> fcn, QSharedPointer<RizinTask> &task);
+    bool asyncTask(std::function<void *(RzCore *)> fcn, std::shared_ptr<RizinTask> &task);
     void functionTask(std::function<void *(RzCore *)> fcn);
 
     /**
@@ -241,8 +241,24 @@ public:
      */
     RzAnalysisFunction *functionAt(ut64 addr);
 
+    /**
+     * @brief finds the start address of a function in a given address
+     * @param addr - an address which belongs to a function
+     * @returns if function exists, return its start address. Otherwise return RVA_INVALID
+     */
     RVA getFunctionStart(RVA addr);
+    /**
+     * @brief finds the end address of a function in a given address
+     * @param addr - an address which belongs to a function
+     * @returns if function exists, return its end address. Otherwise return RVA_INVALID
+     */
     RVA getFunctionEnd(RVA addr);
+    /**
+     * @brief finds the last instruction of a function in a given address
+     * @param addr - an address which belongs to a function
+     * @returns if function exists, return the address of its last instruction. Otherwise return
+     * RVA_INVALID
+     */
     RVA getLastFunctionInstruction(RVA addr);
     QString flagAt(RVA addr, bool getClosestFlag = true);
     AddressTypeHint getAddressType(RVA addr);
@@ -254,6 +270,11 @@ public:
     void delFlag(RVA addr);
     void delFlag(const QString &name);
     void addFlag(RVA offset, QString name, RVA size);
+    /**
+     * @brief Gets all the flags present at a specific address
+     * @param addr The address to be checked
+     * @return String containing all the flags which are comma-separated
+     */
     QString listFlagsAsStringAt(RVA addr);
     /**
      * @brief Get nearest flag at or before offset.
@@ -362,6 +383,19 @@ public:
     void setAnalysisMethod(const QString &cls, const AnalysisMethodDescription &meth);
 
     /* File related methods */
+
+    /**
+     * @brief CutterCore::loadFile
+     * Load initial file.
+     * @param path File path
+     * @param baddr Base (RzBin) address
+     * @param mapaddr Map address
+     * @param perms
+     * @param va
+     * @param loadbin Load RzBin information
+     * @param forceBinPlugin
+     * @return
+     */
     bool loadFile(const QString &path, ut64 baddr = 0LL, ut64 mapaddr = 0LL, int perms = RZ_PERM_R,
                   int va = 0, bool loadbin = false, const QString &forceBinPlugin = QString());
     bool tryFile(const QString &path, bool rw);
@@ -452,6 +486,11 @@ public:
     static QString bytesToHexString(const QByteArray &bytes);
     enum class HexdumpFormats : ut8 { Normal, Half, Word, Quad, Signed, Octal };
     QString hexdump(RVA offset, int size, HexdumpFormats format);
+    /**
+     * @brief get a compact hexdump preview for tooltips
+     * @param address - the address from which to print the hexdump
+     * @param size - number of bytes to print
+     */
     QString getHexdumpPreview(RVA offset, int size);
 
     void setCPU(const QString &arch, const QString &cpu, int bits);
@@ -822,7 +861,7 @@ public:
 
     RzCoreLocked lock();
     CUTTER_DEPRECATED("Use CutterCore::lock instead")
-    RzCoreLocked rzcore();
+    RzCoreLocked core();
 
     static QString ansiEscapeToHtml(const QString &text);
     BasicBlockHighlighter *getBBHighlighter();
@@ -968,7 +1007,7 @@ private:
      * Internal reference to the RzCore.
      * NEVER use this directly! Always use the CORE_LOCK(); macro and access it like core->...
      */
-    RzCore *core_ = nullptr;
+    RzCore *rzCore = nullptr;
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     QMutex coreMutex;
 #else
@@ -988,7 +1027,7 @@ private:
     bool iocache = false;
     BasicInstructionHighlighter biHighlighter;
 
-    QSharedPointer<RizinTask> debugTask;
+    std::shared_ptr<RizinTask> debugTask;
     RizinTaskDialog *debugTaskDialog;
 
     QVector<QString> getCutterRCFilePaths() const;

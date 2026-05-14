@@ -1,6 +1,7 @@
 #include "CutterDockWidget.h"
 
 #include "core/MainWindow.h"
+#include "shortcuts/ShortcutManager.h"
 
 #include <QApplication>
 #include <QEvent>

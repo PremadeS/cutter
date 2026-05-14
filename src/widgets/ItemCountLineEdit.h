@@ -29,8 +29,8 @@ protected:
 
 private:
     QLabel *mItemCountLabel;
-    bool mItemCountVisible;
-    bool mItemCountAutoHide;
+    bool isItemCountVisible;
+    bool itemCountAutoHideEnabled;
 
     void updateLabelPosition();
 };

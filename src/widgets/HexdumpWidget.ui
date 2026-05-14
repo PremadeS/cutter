@@ -141,7 +141,7 @@
             </layout>
            </item>
            <item>
-            <widget class="QFrame" name="hexSideFrame_2">
+            <widget class="QFrame" name="hexSideFrame2">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>

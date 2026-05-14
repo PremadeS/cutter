@@ -15,6 +15,8 @@ Base64EnDecodedWriteDialog::Base64EnDecodedWriteDialog(QWidget *parent)
     ui->decodeRB->click();
 }
 
+Base64EnDecodedWriteDialog::~Base64EnDecodedWriteDialog() { }
+
 Base64EnDecodedWriteDialog::Mode Base64EnDecodedWriteDialog::getMode() const
 {
     return ui->decodeRB->isChecked() ? Decode : Encode;
@@ -37,19 +39,21 @@ IncrementDecrementDialog::IncrementDecrementDialog(QWidget *parent)
             new QRegularExpressionValidator(QRegularExpression("[0-9a-fA-Fx]{1,18}"), ui->valueLE));
 }
 
+IncrementDecrementDialog::~IncrementDecrementDialog() { }
+
 IncrementDecrementDialog::Mode IncrementDecrementDialog::getMode() const
 {
     return ui->incrementRB->isChecked() ? Increase : Decrease;
 }
 
-uint8_t IncrementDecrementDialog::getNBytes() const
+ut8 IncrementDecrementDialog::getNBytes() const
 {
     // Shift left to keep index powered by two
     // This is used to create the w1, w2, w4 and w8 commands based on the selected index.
-    return static_cast<uint8_t>(1 << ui->nBytesCB->currentIndex());
+    return static_cast<ut8>(1 << ui->nBytesCB->currentIndex());
 }
 
-uint64_t IncrementDecrementDialog::getValue() const
+ut64 IncrementDecrementDialog::getValue() const
 {
     return Core()->math(ui->valueLE->text());
 }
@@ -65,6 +69,8 @@ DuplicateFromOffsetDialog::DuplicateFromOffsetDialog(QWidget *parent)
     connect(ui->nBytesSB, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this,
             &DuplicateFromOffsetDialog::refresh);
 }
+
+DuplicateFromOffsetDialog::~DuplicateFromOffsetDialog() { }
 
 RVA DuplicateFromOffsetDialog::getOffset() const
 {

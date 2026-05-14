@@ -20,7 +20,7 @@ public:
     CutterGraphView(QWidget *parent);
     virtual bool event(QEvent *event) override;
 
-    enum class GraphExportType {
+    enum class GraphExportType : ut8 {
         Png,
         Jpeg,
         Svg,

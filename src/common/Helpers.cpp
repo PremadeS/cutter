@@ -19,7 +19,7 @@
 
 namespace qhelpers {
 
-QString formatBytecount(const ut64 bytecount)
+QString formatByteCount(ut64 bytecount)
 {
     if (bytecount == 0) {
         return "0";

@@ -10,7 +10,9 @@
 #include <QSortFilterProxyModel>
 #include <QStyledItemDelegate>
 #include <QTreeWidgetItem>
+
 // #include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "common/AddressableItemModel.h"
 #include "widgets/ListDockWidget.h"
 

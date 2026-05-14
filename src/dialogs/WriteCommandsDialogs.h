@@ -21,6 +21,7 @@ class Base64EnDecodedWriteDialog : public QDialog
     Q_OBJECT
 public:
     explicit Base64EnDecodedWriteDialog(QWidget *parent = nullptr);
+    ~Base64EnDecodedWriteDialog();
     enum Mode : ut8 { Encode, Decode };
     Mode getMode() const;
     QByteArray getData() const;
@@ -37,10 +38,11 @@ class IncrementDecrementDialog : public QDialog
     Q_OBJECT
 public:
     explicit IncrementDecrementDialog(QWidget *parent = nullptr);
+    ~IncrementDecrementDialog();
     enum Mode : ut8 { Increase, Decrease };
     Mode getMode() const;
-    uint8_t getNBytes() const;
-    uint64_t getValue() const;
+    ut8 getNBytes() const;
+    ut64 getValue() const;
 
 private:
     std::unique_ptr<Ui::IncrementDecrementDialog> ui;
@@ -54,6 +56,7 @@ class DuplicateFromOffsetDialog : public QDialog
     Q_OBJECT
 public:
     explicit DuplicateFromOffsetDialog(QWidget *parent = nullptr);
+    ~DuplicateFromOffsetDialog();
     RVA getOffset() const;
     size_t getNBytes() const;
 

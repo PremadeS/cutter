@@ -12,6 +12,9 @@ class NewFileDialog;
 
 class MainWindow;
 
+/**
+ * @brief Dialog for opening a new file or project
+ */
 class NewFileDialog : public QDialog
 {
     Q_OBJECT

@@ -12,8 +12,8 @@ constexpr int padding = 5;
 ItemCountLineEdit::ItemCountLineEdit(QWidget *parent)
     : QLineEdit(parent),
       mItemCountLabel(new QLabel(this)),
-      m_itemCountAutoHide(Config()->getItemCountAutoHide()),
-      m_itemCountVisible(Config()->getItemCountVisible())
+      isItemCountVisible(Config()->getItemCountVisible()),
+      itemCountAutoHideEnabled(Config()->getItemCountAutoHide())
 {
     // parent widget must handle the context menu
     this->setContextMenuPolicy(Qt::NoContextMenu);
@@ -25,7 +25,7 @@ ItemCountLineEdit::ItemCountLineEdit(QWidget *parent)
     connect(Config(), &Configuration::itemCountAutoHideToggled, this,
             &ItemCountLineEdit::setItemCountAutoHide);
 
-    if (!m_itemCountVisible) {
+    if (!isItemCountVisible) {
         mItemCountLabel->hide();
     }
     updateLabelPosition();
@@ -39,23 +39,23 @@ void ItemCountLineEdit::setItemCount(int count)
 
 bool ItemCountLineEdit::itemCountVisible() const
 {
-    return m_itemCountVisible;
+    return isItemCountVisible;
 }
 
 void ItemCountLineEdit::setItemCountAutoHide(bool value)
 {
-    m_itemCountAutoHide = value;
+    itemCountAutoHideEnabled = value;
     updateLabelPosition();
 }
 
 bool ItemCountLineEdit::itemCountAutoHide() const
 {
-    return m_itemCountAutoHide;
+    return itemCountAutoHideEnabled;
 }
 
 void ItemCountLineEdit::showItemCount(bool show)
 {
-    m_itemCountVisible = show;
+    isItemCountVisible = show;
     mItemCountLabel->setVisible(show);
     if (!show) {
         this->setTextMargins(0, 0, 0, 0);
@@ -71,7 +71,7 @@ void ItemCountLineEdit::resizeEvent(QResizeEvent *event)
 
 void ItemCountLineEdit::updateLabelPosition()
 {
-    if (!m_itemCountVisible) {
+    if (!isItemCountVisible) {
         return;
     }
 
@@ -80,7 +80,7 @@ void ItemCountLineEdit::updateLabelPosition()
     const int labelWidth = mItemCountLabel->sizeHint().width();
     const int x = this->width() - labelWidth - padding;
 
-    if (m_itemCountAutoHide) {
+    if (itemCountAutoHideEnabled) {
         const QFont font = this->font();
         const QFontMetrics fm(font);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)

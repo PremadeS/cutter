@@ -10,6 +10,7 @@
 // #include "core/Cutter.h"
 #include "AddressableItemList.h"
 #include "AddressableItemModel.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 
 class MainWindow;

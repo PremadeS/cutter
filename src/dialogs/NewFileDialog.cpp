@@ -268,7 +268,7 @@ static QList<RecentFileEntry> fillFilesList(QListWidget *widget,
             // Format the text
             const QString text =
                     QString("%1\n%2\nSize: %3")
-                            .arg(basename, filenameHome, qhelpers::formatBytecount(info.size()));
+                            .arg(basename, filenameHome, qhelpers::formatByteCount(info.size()));
             auto *item = new QListWidgetItem(getIconFor(basename, i++), text);
 
             // add the item to the file list

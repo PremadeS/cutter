@@ -36,7 +36,7 @@ QVariant ResourcesModel::data(const QModelIndex &index, int role) const
         case TYPE:
             return res.type;
         case SIZE:
-            return qhelpers::formatBytecount(res.size);
+            return qhelpers::formatByteCount(res.size);
         case LANG:
             return res.lang;
         case COMMENT:

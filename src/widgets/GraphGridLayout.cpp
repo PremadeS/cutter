@@ -7,6 +7,7 @@
 #include <queue>
 
 #include <cassert>
+#include <map>
 #include <stack>
 #include <unordered_map>
 

@@ -1,10 +1,12 @@
 #ifndef GLIBCHEAPWIDGET_H
 #define GLIBCHEAPWIDGET_H
 
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 
 #include <QDockWidget>
 // #include "core/Cutter.h"
+
 #include <QComboBox>
 #include <QTableView>
 

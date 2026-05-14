@@ -2,7 +2,7 @@
 #define DECOMPILER_H
 
 #include "CutterCommon.h"
-#include "RizinTask.h"
+// #include "RizinTask.h"
 
 #include <QObject>
 #include <QString>
@@ -28,8 +28,8 @@ public:
 
     QString getId() const { return id; }
     QString getName() const { return name; }
-    virtual bool isRunning() { return false; }
-    virtual bool isCancelable() { return false; }
+    virtual bool isRunning() const { return false; }
+    virtual bool isCancelable() const { return false; }
 
     virtual void decompileAt(RVA addr) = 0;
     virtual void cancel() { }

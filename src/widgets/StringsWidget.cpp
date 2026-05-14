@@ -106,12 +106,9 @@ StringsProxyModel::StringsProxyModel(StringsModel *sourceModel, QObject *parent)
 
 void StringsProxyModel::setSelectedSection(QString section)
 {
+    beginFilterChange();
     selectedSection = std::move(section);
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    invalidateFilter();
-#else
-    invalidateRowsFilter();
-#endif
+    endFilterChange();
 }
 
 bool StringsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
@@ -176,7 +173,7 @@ StringsWidget::StringsWidget(MainWindow *main)
     ui->stringsTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     ui->stringsTreeView->setMainWindow(main);
-    ui->stringsTreeView->setModel(proxyModel);
+    ui->stringsTreeView->setModel(static_cast<AddressableItemModelI *>(proxyModel));
     ui->stringsTreeView->sortByColumn(-1, Qt::AscendingOrder);
 
     //
@@ -226,8 +223,8 @@ void StringsWidget::refreshStrings()
         task->wait();
     }
 
-    task = QSharedPointer<StringsTask>(new StringsTask());
-    connect(task.data(), &StringsTask::stringSearchFinished, this,
+    task = std::shared_ptr<StringsTask>(new StringsTask());
+    connect(task.get(), &StringsTask::stringSearchFinished, this,
             &StringsWidget::stringSearchFinished);
     Core()->getAsyncTaskManager()->start(task);
 
@@ -257,7 +254,7 @@ void StringsWidget::stringSearchFinished(const QList<StringDescription> &strings
     // set the initial item count
     ui->quickFilterView->setItemCount(proxyModel->rowCount());
 
-    task.clear();
+    task.reset();
 }
 
 void StringsWidget::onActionCopy()

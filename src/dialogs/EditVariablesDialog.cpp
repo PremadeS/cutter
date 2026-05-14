@@ -56,7 +56,7 @@ void EditVariablesDialog::applyFields()
     const auto desc = ui->dropdownLocalVars->currentData().value<VariableDescription>();
 
     RzCoreLocked core(Core());
-    RzAnalysisFunction *fcn = Core()->functionIn(core->offset);
+    auto *fcn = const_cast<RzAnalysisFunction *>(Core()->functionIn(core->offset));
     if (!fcn) {
         return;
     }
@@ -66,7 +66,7 @@ void EditVariablesDialog::applyFields()
         return;
     }
 
-    char *errorMsg = nullptr;
+    char *errorMsg;
     RzType *vType = rz_type_parse_string_single(
             rz_analysis_get_type_db(core->analysis)->parser,
             ui->typeComboBox->currentText().toUtf8().constData(), &errorMsg);
