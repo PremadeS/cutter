@@ -31,36 +31,6 @@ void AsyncTask::interrupt()
     interrupted = true;
 }
 
-bool AsyncTask::isInterrupted() const
-{
-    return interrupted;
-}
-
-bool AsyncTask::isRunning() const
-{
-    return running;
-}
-
-const QString &AsyncTask::getLog()
-{
-    return logBuffer;
-}
-
-const QElapsedTimer &AsyncTask::getTimer()
-{
-    return timer;
-}
-
-qint64 AsyncTask::getElapsedTime()
-{
-    return timer.isValid() ? timer.elapsed() : 0;
-}
-
-QString AsyncTask::getTitle()
-{
-    return QString();
-}
-
 void AsyncTask::prepareRun()
 {
     interrupted = false;
@@ -76,7 +46,6 @@ void AsyncTask::run()
 
     logBuffer.clear();
     emit logChanged(logBuffer);
-
     runTask();
 
     running = false;
@@ -109,7 +78,7 @@ void AsyncTaskManager::start(const AsyncTask::Ptr &task)
 
     const std::weak_ptr<AsyncTask> weakPtr = task;
     connect(task.get(), &AsyncTask::finished, this, [this, weakPtr]() {
-        tasks.removeOne(weakPtr);
+        tasks.removeOne(weakPtr.lock());
         emit tasksChanged();
     });
     threadPool->start(task.get());

@@ -9,7 +9,7 @@
 
 void CutterSearchableHelper::setupConnections(QWidget *parent, SearchBarWidget *searchBar)
 {
-    auto *searchable = dynamic_cast<CutterSearchable *>(parent);
+    auto *searchable = dynamic_cast<CutterSearchableI *>(parent);
     if (!searchBar || !parent || !searchable) {
         return;
     }

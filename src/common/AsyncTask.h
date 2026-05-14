@@ -43,14 +43,14 @@ public:
     void wait();
     bool wait(int timeout);
     virtual void interrupt();
-    bool isInterrupted() const;
-    bool isRunning() const;
+    bool isInterrupted() const { return interrupted; }
+    bool isRunning() const { return running; }
 
-    const QString &getLog();
-    const QElapsedTimer &getTimer();
-    qint64 getElapsedTime();
+    const QString &getLog() { return logBuffer; }
+    const QElapsedTimer &getTimer() { return timer; }
+    qint64 getElapsedTime() { return timer.isValid() ? timer.elapsed() : 0; }
 
-    virtual QString getTitle() const;
+    virtual QString getTitle() const { return QString(); }
 
 protected:
     virtual void runTask() = 0;
