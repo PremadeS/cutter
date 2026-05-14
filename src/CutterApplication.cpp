@@ -4,6 +4,7 @@
 #include "common/Decompiler.h" // IWYU pragma: keep
 #include "common/PythonManager.h" // IWYU pragma: keep
 #include "common/ResourcePaths.h"
+#include "core/Cutter.h"
 #include "plugins/PluginManager.h"
 
 #include <QApplication>
@@ -517,7 +518,7 @@ bool CutterApplication::parseCommandLineOptions()
         }
         if (cmdParser.isSet(maddrOption)) {
             bool ok = false;
-            RVA const maddr = cmdParser.value(maddrOption).toULongLong(&ok, 0);
+            const RVA maddr = cmdParser.value(maddrOption).toULongLong(&ok, 0);
             if (ok) {
                 opts.fileOpenOptions.mapAddr = maddr;
             }
