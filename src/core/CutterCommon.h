@@ -37,17 +37,17 @@ typedef ut64 RVA;
 
 inline QString rzAddressString(RVA addr)
 {
-    return QString::asprintf("%#010llx", addr);
+    return QString::asprintf("%#010llx", static_cast<unsigned long long>(addr));
 }
 
 inline QString rzSizeString(RVA size)
 {
-    return QString::asprintf("%#llx", size);
+    return QString::asprintf("%#llx", static_cast<unsigned long long>(size));
 }
 
 inline QString rzHexString(RVA size)
 {
-    return QString::asprintf("%#llx", size);
+    return QString::asprintf("%#llx", static_cast<unsigned long long>(size));
 }
 
 #ifdef CUTTER_SOURCE_BUILD

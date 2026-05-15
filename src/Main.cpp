@@ -1,9 +1,9 @@
 
 #include "CutterApplication.h"
-#include "core/MainWindow.h"
-#include "common/UpdateWorker.h"
 #include "CutterConfig.h"
 #include "common/SettingsUpgrade.h"
+#include "common/UpdateWorker.h"
+#include "core/MainWindow.h" // IWYU pragma: keep
 
 #include <QJsonArray>
 #include <QJsonObject>
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 #    endif
 #endif
 
-    CutterApplication a(argc, argv);
+    const CutterApplication a(argc, argv);
 
     Cutter::migrateThemes();
 
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    int ret = a.exec();
+    const int ret = a.exec();
 
     return ret;
 }

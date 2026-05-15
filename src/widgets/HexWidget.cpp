@@ -1456,7 +1456,7 @@ void HexWidget::wWriteBytes()
         return;
     }
     {
-        auto *buf = (uint8_t *)malloc(static_cast<size_t>(bytesSize));
+        auto *buf = static_cast<uint8_t *>(malloc(static_cast<size_t>(bytesSize)));
         if (!buf) {
             return;
         }

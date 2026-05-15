@@ -209,10 +209,9 @@ void DecompilerWidget::gatherBreakpointInfo(RzAnnotatedCode &codeDecompiled, siz
                                             size_t endPos)
 {
     RVA firstOffset = RVA_MAX;
-    void *iter;
-    rz_vector_foreach(&codeDecompiled.annotations, iter)
+    RzCodeAnnotation *annotation;
+    CutterRzVectorForeach(&codeDecompiled.annotations, annotation, RzCodeAnnotation)
     {
-        const auto *annotation = (RzCodeAnnotation *)iter;
         if (annotation->type != RZ_CODE_ANNOTATION_TYPE_OFFSET) {
             continue;
         }

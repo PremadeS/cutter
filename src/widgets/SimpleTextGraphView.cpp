@@ -158,7 +158,7 @@ void SimpleTextGraphView::addBlock(GraphLayout::GraphBlock block, const QString 
     const int width = mFontMetrics->width(text);
     block.width = static_cast<int>(width + padding);
     block.height = (height * charHeight) + padding;
-    GraphView::addBlock(std::move(block));
+    GraphView::addBlock(block);
 }
 
 void SimpleTextGraphView::enableAddresses(bool enabled)

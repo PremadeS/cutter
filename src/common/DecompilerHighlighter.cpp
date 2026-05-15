@@ -21,7 +21,7 @@ void DecompilerHighlighter::setAnnotations(RzAnnotatedCode *code)
 
 void DecompilerHighlighter::setupTheme()
 {
-    struct
+    const struct
     {
         RSyntaxHighlightType type;
         QString name;
@@ -51,10 +51,8 @@ void DecompilerHighlighter::highlightBlock(const QString &)
     const size_t end = block.position() + block.length();
 
     auto annotations = fromOwned(rz_annotated_code_annotations_range(code, start, end));
-    void **iter;
-    rz_pvector_foreach(annotations.get(), iter)
-    {
-        const auto *annotation = static_cast<RzCodeAnnotation *>(*iter);
+    for (const auto *annotation : CutterPVector<RzCodeAnnotation>(annotations.get())) {
+
         if (annotation->type != RZ_CODE_ANNOTATION_TYPE_SYNTAX_HIGHLIGHT) {
             continue;
         }

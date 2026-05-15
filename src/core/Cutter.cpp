@@ -36,7 +36,7 @@ namespace RJsonKey {
 RZ_JSON_KEY(addr);
 RZ_JSON_KEY(address);
 RZ_JSON_KEY(addrs);
-RZ_JSON_KEY(addr_end);
+RZ_JSON_KEY(addr_end); // NOLINT
 RZ_JSON_KEY(arrow);
 RZ_JSON_KEY(baddr);
 RZ_JSON_KEY(bind);
@@ -56,8 +56,8 @@ RZ_JSON_KEY(ebbs);
 RZ_JSON_KEY(edges);
 RZ_JSON_KEY(enabled);
 RZ_JSON_KEY(entropy);
-RZ_JSON_KEY(fcn_addr);
-RZ_JSON_KEY(fcn_name);
+RZ_JSON_KEY(fcn_addr); // NOLINT
+RZ_JSON_KEY(fcn_name); // NOLINT
 RZ_JSON_KEY(fields);
 RZ_JSON_KEY(file);
 RZ_JSON_KEY(flag);
@@ -69,7 +69,7 @@ RZ_JSON_KEY(functions);
 RZ_JSON_KEY(graph);
 RZ_JSON_KEY(haddr);
 RZ_JSON_KEY(hw);
-RZ_JSON_KEY(in_functions);
+RZ_JSON_KEY(in_functions); // NOLINT
 RZ_JSON_KEY(index);
 RZ_JSON_KEY(jump);
 RZ_JSON_KEY(laddr);
@@ -1320,7 +1320,7 @@ QString CutterCore::disassembleSingleInstruction(RVA addr)
 RzAnalysisFunction *CutterCore::functionIn(ut64 addr)
 {
     CORE_LOCK();
-    RzAnalysisFunction *fcn = rz_analysis_get_function_at(core->analysis, addr);
+    RzAnalysisFunction *fcn = rz_analysis_get_function_at(core->analysis, addr); // NOLINT
     if (fcn) {
         return fcn;
     }
@@ -1464,7 +1464,7 @@ static inline const QString appendVar(QString &dst, const QString &val, const QS
     return val;
 }
 
-RefDescription CutterCore::formatRefDesc(const QSharedPointer<AddrRefs> &refItem)
+RefDescription CutterCore::formatRefDesc(const std::shared_ptr<AddrRefs> &refItem)
 {
     RefDescription desc;
 
@@ -1477,7 +1477,7 @@ RefDescription CutterCore::formatRefDesc(const QSharedPointer<AddrRefs> &refItem
         desc.ref = str;
         desc.refColor = ConfigColor("comment");
     } else {
-        QSharedPointer<const AddrRefs> cursor(refItem);
+        std::shared_ptr<const AddrRefs> cursor(refItem);
         QString type, string;
         while (true) {
             desc.ref += " ->";
@@ -1650,9 +1650,11 @@ AddrRefs CutterCore::getAddrRefs(RVA addr, int depth)
             buf.resize(32);
             perms += "x";
             // Instruction disassembly
-            rz_io_read_at_mapped(core->io, addr, (unsigned char *)buf.data(), buf.size());
+            rz_io_read_at_mapped(core->io, addr, reinterpret_cast<unsigned char *>(buf.data()),
+                                 buf.size());
             rz_asm_set_pc(core->rasm, addr);
-            rz_asm_disassemble(core->rasm, &op, (unsigned char *)buf.data(), buf.size());
+            rz_asm_disassemble(core->rasm, &op, reinterpret_cast<unsigned char *>(buf.data()),
+                               buf.size());
             refs.asmOp = rz_asm_op_get_asm(&op);
         }
 
@@ -1664,9 +1666,10 @@ AddrRefs CutterCore::getAddrRefs(RVA addr, int depth)
     // Try to telescope further if depth permits it
     if ((type & RZ_ANALYSIS_ADDR_TYPE_READ)) {
         buf.resize(64);
-        const ut32 *n32 = (ut32 *)buf.data();
-        const ut64 *n64 = (ut64 *)buf.data();
-        rz_io_read_at_mapped(core->io, addr, (unsigned char *)buf.data(), buf.size());
+        const ut32 *n32 = reinterpret_cast<ut32 *>(buf.data());
+        const ut64 *n64 = reinterpret_cast<ut64 *>(buf.data());
+        rz_io_read_at_mapped(core->io, addr, reinterpret_cast<unsigned char *>(buf.data()),
+                             buf.size());
         const ut64 n = (bits == 64) ? *n64 : *n32;
         // The value of the next address will serve as an indication that there's more to
         // telescope if we have reached the depth limit
@@ -1680,7 +1683,8 @@ AddrRefs CutterCore::getAddrRefs(RVA addr, int depth)
                 // might have a string in this address
                 if (ref.type.contains("ascii")) {
                     buf.resize(128);
-                    rz_io_read_at_mapped(core->io, addr, (unsigned char *)buf.data(), buf.size());
+                    rz_io_read_at_mapped(core->io, addr,
+                                         reinterpret_cast<unsigned char *>(buf.data()), buf.size());
                     QString strVal = QString(buf);
                     // Indicate that the string is longer than the printed value
                     if (strVal.size() == buf.size()) {
@@ -1688,7 +1692,7 @@ AddrRefs CutterCore::getAddrRefs(RVA addr, int depth)
                     }
                     refs.string = strVal;
                 }
-                refs.ref = QSharedPointer<AddrRefs>::create(ref);
+                refs.ref = std::make_shared<AddrRefs>(ref);
             }
         }
     }
@@ -1708,7 +1712,7 @@ QVector<Chunk> CutterCore::getHeapChunks(RVA arena_addr)
             rz_list_free(arenas);
             return chunksVector;
         }
-        mArena = ((RzArenaListItem *)rz_list_first_val(arenas))->addr;
+        mArena = (reinterpret_cast<RzArenaListItem *>(rz_list_first_val(arenas)))->addr;
         rz_list_free(arenas);
     } else {
         mArena = arena_addr;
@@ -1928,7 +1932,7 @@ QString CutterCore::getRegisterName(const QString &registerRole)
     if (!currentlyDebugging) {
         return "";
     }
-    CORE_LOCK();
+    const auto core = Core()->lock();
     return rz_reg_get_name_by_type(getReg(), registerRole.toUtf8().constData());
 }
 
@@ -2985,7 +2989,7 @@ bool CutterCore::isGraphEmpty() const
 
 void CutterCore::getRegs()
 {
-    CORE_LOCK();
+    const auto core = Core()->lock();
     this->regs = {};
     const RzList *rs = rz_reg_get_list(getReg(), RZ_REG_TYPE_ANY);
     if (!rs) {
@@ -5219,7 +5223,7 @@ QStringList CutterCore::getConfigVariableSpaces(const QString &key)
 char *CutterCore::getTextualGraphAt(RzCoreGraphType type, RzCoreGraphFormat format, RVA address)
 {
     CORE_LOCK();
-    char *string = nullptr;
+    char *string = nullptr; // NOLINT
     RzGraph *graph = rz_core_graph(core, type, address);
     if (!graph) {
         if (address == RVA_INVALID) {

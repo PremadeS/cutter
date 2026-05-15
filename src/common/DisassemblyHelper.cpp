@@ -11,8 +11,8 @@ typedef struct MmioLookupContext
 
 static bool lookupMmioAddrCb(void *user, const ut64 key, const void *value)
 {
-    auto *ctx = (mmio_lookup_context_t *)user;
-    if (ctx->selected == (const char *)value) {
+    auto *ctx = static_cast<mmio_lookup_context_t *>(user);
+    if (ctx->selected == static_cast<const char *>(value)) {
         ctx->mmioAddress = key;
         return false;
     }
@@ -37,7 +37,7 @@ DisassemblyTextBlockUserData *DisassemblyHelper::getUserData(const QTextBlock &b
 RVA DisassemblyHelper::getXRefFromWord(RVA offset, const QString &selectedWord)
 {
     RVA const selectedOffset = Core()->num(selectedWord);
-    auto xrefsTo = Core()->getXRefs(offset, true, false);
+    const auto xrefsTo = Core()->getXRefs(offset, true, false);
     for (const auto &xref : xrefsTo) {
         if (xref.from == selectedOffset) {
             return xref.from;

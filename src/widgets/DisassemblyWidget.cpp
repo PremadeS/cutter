@@ -998,7 +998,7 @@ void DisassemblyLeftPanel::paintEvent(QPaintEvent *event)
     auto fitsInScreen = [&](const Arrow &a) { return maxViewOffset - minViewOffset < a.length(); };
 
     std::sort(std::begin(arrows), std::end(arrows), [&](const Arrow &l, const Arrow &r) {
-        int lScreen = fitsInScreen(l), rScreen = fitsInScreen(r);
+        const int lScreen = fitsInScreen(l), rScreen = fitsInScreen(r);
         if (lScreen != rScreen) {
             return lScreen < rScreen;
         }

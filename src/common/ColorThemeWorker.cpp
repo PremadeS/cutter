@@ -288,7 +288,7 @@ bool ColorThemeWorker::isFileTheme(const QString &filePath, bool *ok) const
 
 QStringList ColorThemeWorker::customThemes() const
 {
-    QStringList themes = Core()->getColorThemes();
+    const QStringList themes = Core()->getColorThemes();
     QStringList ret;
     for (const auto &theme : themes) {
         if (isCustomTheme(theme)) {

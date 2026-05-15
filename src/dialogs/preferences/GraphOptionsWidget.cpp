@@ -36,8 +36,10 @@ GraphOptionsWidget::GraphOptionsWidget(PreferencesDialog *dialog)
 #endif
     connect(Core(), &CutterCore::graphOptionsChanged, this,
             &GraphOptionsWidget::updateOptionsFromVars);
-    const QSpinBox *graphSpacingWidgets[] = { ui->horizontalEdgeSpacing, ui->horizontalBlockSpacing,
-                                              ui->verticalEdgeSpacing, ui->verticalBlockSpacing };
+    const QSpinBox *const graphSpacingWidgets[] = { ui->horizontalEdgeSpacing,
+                                                    ui->horizontalBlockSpacing,
+                                                    ui->verticalEdgeSpacing,
+                                                    ui->verticalBlockSpacing };
     for (auto widget : graphSpacingWidgets) {
         connect<void (QSpinBox::*)(int)>(widget, &QSpinBox::valueChanged, this,
                                          &GraphOptionsWidget::layoutSpacingChanged);

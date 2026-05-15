@@ -255,9 +255,9 @@ std::vector<ut64> GraphGridLayout::topoSort(LayoutState &state, ut64 entry)
 }
 
 void GraphGridLayout::assignRows(GraphGridLayout::LayoutState &state,
-                                 const std::vector<unsigned long long> &blockOrder)
+                                 const std::vector<ut64> &blockOrder)
 {
-    for (unsigned long long it : std::ranges::reverse_view(blockOrder)) {
+    for (const ut64 it : std::ranges::reverse_view(blockOrder)) {
         auto &block = state.gridBlocks[it];
         const int nextLevel = block.row + 1;
         for (auto target : block.dagEdge) {
@@ -534,7 +534,7 @@ void GraphGridLayout::computeAllBlockPlacement(const std::vector<ut64> &blockOrd
         }
     }
     // Visit all nodes top to bottom, converting relative positions to absolute.
-    for (unsigned long long it : std::ranges::reverse_view(blockOrder)) {
+    for (const ut64 it : std::ranges::reverse_view(blockOrder)) {
         auto &block = layoutState.gridBlocks[it];
         assert(block.col >= 0);
         for (auto childId : block.treeEdge) {
@@ -563,7 +563,7 @@ void GraphGridLayout::calculateEdgeMainColumn(GraphGridLayout::LayoutState &stat
         ut64 blockId;
         size_t edgeId;
         int row;
-        enum Type { Edge = 0, Block = 1 } type;
+        enum Type : ut8 { Edge = 0, Block = 1 } type;
     };
     // create events
     std::vector<Event> events;

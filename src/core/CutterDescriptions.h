@@ -150,8 +150,6 @@ struct SegmentDescription
 {
     RVA vaddr;
     RVA paddr;
-    // TODO: this is not exactly correct in edge cases.
-    // rz_analysis_function_contains() does it right.
     RVA size;
     RVA vsize;
     QString name;
@@ -229,7 +227,7 @@ struct BinClassMethodDescription
 {
     QString name;
     RVA addr = RVA_INVALID;
-    st64 vtableOffset = -1;
+    qint64 vtableOffset = -1;
 };
 
 struct BinClassFieldDescription
@@ -253,7 +251,7 @@ struct AnalysisMethodDescription
     QString name;
     QString realName;
     RVA addr;
-    st64 vtableOffset;
+    qint64 vtableOffset;
 };
 
 struct AnalysisBaseClassDescription
@@ -266,17 +264,17 @@ struct AnalysisBaseClassDescription
 struct AnalysisVTableDescription
 {
     QString id;
-    ut64 offset;
-    ut64 addr;
+    quint64 offset;
+    quint64 addr;
 };
 
 struct ResourcesDescription
 {
     QString name;
     RVA vaddr;
-    ut64 index;
+    quint64 index;
     QString type;
-    ut64 size;
+    quint64 size;
     QString lang;
 };
 
@@ -296,7 +294,7 @@ struct BlockDescription
     int comments;
     int symbols;
     int strings;
-    ut8 rwx;
+    quint8 rwx;
 };
 
 struct BlockStatistics
@@ -326,7 +324,7 @@ struct BreakpointDescription
     };
 
     RVA addr = 0;
-    int64_t moduleDelta = 0;
+    qint64 moduleDelta = 0;
     int index = -1;
     PositionType type = Address;
     int size = 0;
@@ -358,8 +356,8 @@ struct ThreadDescription
     int ppid;
     RzDebugPidState status;
     QString path;
-    ut64 pc;
-    ut64 tls;
+    quint64 pc;
+    quint64 tls;
 };
 
 struct RefDescription
@@ -401,24 +399,24 @@ struct Arena
 {
     RVA offset;
     QString type;
-    ut64 top;
-    ut64 lastRemainder;
-    ut64 next;
-    ut64 nextFree;
-    ut64 systemMem;
-    ut64 maxSystemMem;
+    quint64 top;
+    quint64 lastRemainder;
+    quint64 next;
+    quint64 nextFree;
+    quint64 systemMem;
+    quint64 maxSystemMem;
 };
 
 struct BasefindCoreStatusDescription
 {
     size_t index;
-    ut32 percentage;
+    quint32 percentage;
 };
 
 struct BasefindResultDescription
 {
     RVA candidate;
-    ut32 score;
+    quint32 score;
 };
 
 struct MarkDescription
@@ -429,6 +427,15 @@ struct MarkDescription
     QString realname;
     QString comment;
     QColor color;
+};
+
+struct BacktraceDescription
+{
+    QString functionName;
+    RVA pc;
+    RVA sp;
+    QString frameSize;
+    QString description;
 };
 
 Q_DECLARE_METATYPE(FunctionDescription)
@@ -473,5 +480,6 @@ Q_DECLARE_METATYPE(VariableDescription)
 Q_DECLARE_METATYPE(BasefindCoreStatusDescription)
 Q_DECLARE_METATYPE(BasefindResultDescription)
 Q_DECLARE_METATYPE(MarkDescription)
+Q_DECLARE_METATYPE(BacktraceDescription)
 
 #endif // DESCRIPTIONS_H

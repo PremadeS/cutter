@@ -34,6 +34,7 @@ class RizinTaskDialog;
 #include "common/BasicBlockHighlighter.h"
 #include "common/Helpers.h"
 
+#include <memory>
 #include <rz_heap_glibc.h>
 #include <rz_project.h>
 
@@ -54,7 +55,7 @@ struct CUTTER_EXPORT AddrRefs
     ut64 value;
     bool hasValue;
     QString string;
-    QSharedPointer<AddrRefs> ref;
+    std::shared_ptr<AddrRefs> ref;
 };
 
 struct CUTTER_EXPORT RegisterRef
@@ -528,7 +529,7 @@ public:
      * @brief return a RefDescription with a formatted ref string and configured colors
      * @param ref the "ref" JSON node from getAddrRefs
      */
-    RefDescription formatRefDesc(const QSharedPointer<AddrRefs> &ref);
+    RefDescription formatRefDesc(const std::shared_ptr<AddrRefs> &ref);
     /**
      * @brief Get a list of a given process's threads
      * @param pid The pid of the process, -1 for the currently debugged process

@@ -274,11 +274,11 @@ void XrefModel::readForOffset(RVA offset, bool to, bool whole_function)
     endResetModel();
 }
 
-void XrefModel::readForVariable(QString nameOfVariable, bool write, RVA offset)
+void XrefModel::readForVariable(const QString &nameOfVariable, bool write, RVA offset)
 {
     beginResetModel();
     this->to = write;
-    xrefs = Core()->getXRefsForVariable(std::move(nameOfVariable), write, offset);
+    xrefs = Core()->getXRefsForVariable(nameOfVariable, write, offset);
     endResetModel();
 }
 

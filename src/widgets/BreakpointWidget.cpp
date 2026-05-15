@@ -81,7 +81,7 @@ QVariant BreakpointModel::data(const QModelIndex &index, int role) const
     case Qt::EditRole:
         switch (index.column()) {
         case AddrColumn:
-            return breakpoint.addr;
+            return static_cast<quint64>(breakpoint.addr);
         case TraceColumn:
             return breakpoint.trace;
         case EnabledColumn:

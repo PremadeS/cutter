@@ -185,7 +185,7 @@ void RegisterRefsWidget::refreshRegisterRef()
 
         desc.value = rzAddressString(reg.value);
         desc.reg = reg.name;
-        desc.refDesc = Core()->formatRefDesc(QSharedPointer<AddrRefs>::create(reg.ref));
+        desc.refDesc = Core()->formatRefDesc(std::make_shared<AddrRefs>(reg.ref));
 
         registerRefModel->registerRefs.push_back(desc);
     }

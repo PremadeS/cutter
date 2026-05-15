@@ -59,7 +59,7 @@ QVariant ImportsModel::data(const QModelIndex &index, int role) const
     case ImportsModel::ImportDescriptionRole:
         return QVariant::fromValue(import);
     case ImportsModel::AddressRole:
-        return import.plt;
+        return static_cast<quint64>(import.plt);
     default:
         break;
     }
