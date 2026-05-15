@@ -108,7 +108,7 @@ void BaseFindResultsDialog::showItemContextMenu(const QPoint &pt)
     if (index.isValid()) {
         const BasefindResultDescription &entry = model->list.at(index.row());
         candidate = entry.candidate;
-        auto addr = QString::asprintf("%#010lx", candidate);
+        auto addr = QString::asprintf("%#010llx", static_cast<unsigned long long>(candidate));
         actionCopyCandidate->setText(tr("Copy %1").arg(addr));
         actionSetLoadAddr->setText(tr("Reopen Cutter with base address as %1").arg(addr));
         actionSetMapAddr->setText(tr("Reopen Cutter with map address as %1").arg(addr));

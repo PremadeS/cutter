@@ -7,7 +7,6 @@ Checks: >
   modernize-loop-convert,
   modernize-use-auto,
   modernize-use-nullptr,
-  readability-magic-numbers,
   readability-braces-around-statements,
   readability-identifier-naming,
   readability-make-member-function-const,
