@@ -119,7 +119,7 @@ void BaseFindResultsDialog::showItemContextMenu(const QPoint &pt)
 void BaseFindResultsDialog::onActionCopyLine() const
 {
     auto clipboard = QApplication::clipboard();
-    clipboard->setText(QString::asprintf("%#010lx", candidate));
+    clipboard->setText(QString::asprintf("%#010llx", static_cast<unsigned long long>(candidate)));
 }
 
 void BaseFindResultsDialog::onActionSetLoadAddr() const
