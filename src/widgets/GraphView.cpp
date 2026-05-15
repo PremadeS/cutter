@@ -550,7 +550,7 @@ void GraphView::setLayoutConfig(const GraphLayout::LayoutConfig &config)
 std::unique_ptr<GraphLayout> GraphView::makeGraphLayout(GraphView::Layout layout, bool horizontal)
 {
     std::unique_ptr<GraphLayout> result;
-    bool needAdapter = true;
+    bool needAdapter = true; // NOLINT
 
 #ifdef CUTTER_ENABLE_GRAPHVIZ
     auto makeGraphvizLayout = [&](GraphvizLayout::LayoutType type) {
