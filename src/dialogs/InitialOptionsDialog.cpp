@@ -33,7 +33,7 @@ InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
 
     // Fill the plugins combo
     asmPlugins = Core()->getRAsmPluginDescriptions();
-    for (const auto &plugin : asmPlugins) {
+    for (const auto &plugin : std::as_const(asmPlugins)) {
         ui->archComboBox->addItem(plugin.name, plugin.name);
     }
 
@@ -130,7 +130,7 @@ InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
     updateDebuginfodLayout();
     updatePDBLayout();
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     connect(ui->pdbCheckBox, &QCheckBox::checkStateChanged, this,
             &InitialOptionsDialog::updatePDBLayout);
     connect(ui->scriptCheckBox, &QCheckBox::checkStateChanged, this,
@@ -150,6 +150,20 @@ InitialOptionsDialog::InitialOptionsDialog(MainWindow *main)
     connect(ui->cancelButton, &QPushButton::clicked, this, &InitialOptionsDialog::reject);
 
     ui->programLineEdit->setText(main->getFilename());
+
+    connect(ui->okButton, &QPushButton::clicked, this, &InitialOptionsDialog::onOkButtonClicked);
+    connect(ui->analysisSlider, &QSlider::valueChanged, this,
+            &InitialOptionsDialog::onAnalysisSliderValueChanged);
+    connect(ui->analysisCheckBox, &QCheckBox::clicked, this,
+            &InitialOptionsDialog::onAnalysisCheckBoxClicked);
+    connect(ui->advOptButton, &QToolButton::clicked, this,
+            &InitialOptionsDialog::onAdvOptButtonClicked);
+    connect(ui->archComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            &InitialOptionsDialog::onArchComboBoxCurrentIndexChanged);
+    connect(ui->pdbSelectButton, &QPushButton::clicked, this,
+            &InitialOptionsDialog::onPdbSelectButtonClicked);
+    connect(ui->scriptSelectButton, &QPushButton::clicked, this,
+            &InitialOptionsDialog::onScriptSelectButtonClicked);
 }
 
 void InitialOptionsDialog::updateDebuginfodLayout()

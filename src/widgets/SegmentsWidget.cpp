@@ -23,17 +23,17 @@ QVariant SegmentsModel::data(const QModelIndex &index, int role) const
 {
     // TODO: create unique colors, e. g. use HSV color space and rotate in H for 360/size
     static const QList<QColor> colors = {
-        QColor("#1ABC9C"), // TURQUOISE
-        QColor("#2ECC71"), // EMERALD
-        QColor("#3498DB"), // PETER RIVER
-        QColor("#9B59B6"), // AMETHYST
-        QColor("#34495E"), // WET ASPHALT
-        QColor("#F1C40F"), // SUN FLOWER
-        QColor("#E67E22"), // CARROT
-        QColor("#E74C3C"), // ALIZARIN
-        QColor("#ECF0F1"), // CLOUDS
-        QColor("#BDC3C7"), // SILVER
-        QColor("#95A5A6") // COBCRETE
+        QColor(26, 188, 156), // TURQUOISE
+        QColor(46, 204, 113), // EMERALD
+        QColor(52, 152, 219), // PETER RIVER
+        QColor(155, 89, 182), // AMETHYST
+        QColor(52, 73, 94), // WET ASPHALT
+        QColor(241, 196, 15), // SUN FLOWER
+        QColor(230, 126, 34), // CARROT
+        QColor(231, 76, 60), // ALIZARIN
+        QColor(236, 240, 241), // CLOUDS
+        QColor(189, 195, 199), // SILVER
+        QColor(149, 165, 166) // CONCRETE
     };
 
     if (index.row() >= segments.count()) {
@@ -139,8 +139,8 @@ bool SegmentsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &ri
 
 SegmentsWidget::SegmentsWidget(MainWindow *main)
     : ListDockWidget(main),
-      proxyModel(new SegmentsProxyModel(segmentsModel, this)),
-      segmentsModel(new SegmentsModel(this))
+      segmentsModel(new SegmentsModel(this)),
+      proxyModel(new SegmentsProxyModel(segmentsModel, this))
 {
     setObjectName("SegmentsWidget");
     setWindowTitle(tr("Segments"));

@@ -1,8 +1,8 @@
 
 #include "CutterApplication.h"
-// #include "core/MainWindow.h"
+#include "core/MainWindow.h"
 #include "common/UpdateWorker.h"
-// #include "CutterConfig.h"
+#include "CutterConfig.h"
 #include "common/SettingsUpgrade.h"
 
 #include <QJsonArray>
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 #    endif
 #endif
 
-    CutterApplication const a(argc, argv);
+    CutterApplication a(argc, argv);
 
     Cutter::migrateThemes();
 
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 #endif
     }
 
-    const int ret = a.exec();
+    int ret = a.exec();
 
     return ret;
 }

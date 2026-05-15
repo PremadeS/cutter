@@ -23,7 +23,7 @@ GraphOptionsWidget::GraphOptionsWidget(PreferencesDialog *dialog)
     connect<void (QDoubleSpinBox::*)(double)>(ui->bitmapGraphScale, (&QDoubleSpinBox::valueChanged),
                                               this,
                                               &GraphOptionsWidget::bitmapGraphScaleValueChanged);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     connect(ui->checkTransparent, &QCheckBox::checkStateChanged, this,
             &GraphOptionsWidget::checkTransparentStateChanged);
     connect(ui->blockEntryCheckBox, &QCheckBox::checkStateChanged, this,

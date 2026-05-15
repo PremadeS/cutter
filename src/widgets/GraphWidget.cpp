@@ -32,12 +32,12 @@ GraphWidget::GraphWidget(MainWindow *main)
     // used reliably across different compilers.
     // QShortcut *toggle_shortcut = new QShortcut(widgetShortcuts[typeid(this).name()], main);
     const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Graph.toggle", main);
-    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    connect(toggleShortcut, &QShortcut::activated, this, [=, this]() { toggleDockWidget(true); });
 
     connect(graphView, &DisassemblerGraphView::nameChanged, this,
             &MemoryDockWidget::updateWindowTitle);
 
-    connect(this, &QDockWidget::visibilityChanged, this, [=](bool visibility) {
+    connect(this, &QDockWidget::visibilityChanged, this, [=, this](bool visibility) {
         main->toggleOverview(visibility, this);
         if (visibility) {
             graphView->onSeekChanged(Core()->getOffset());
@@ -51,7 +51,7 @@ GraphWidget::GraphWidget(MainWindow *main)
             [this] { mainWindow->showMemoryWidget(MemoryWidgetType::Disassembly); });
 
     connect(graphView, &DisassemblerGraphView::graphMoved, this,
-            [=]() { main->toggleOverview(true, this); });
+            [=, this]() { main->toggleOverview(true, this); });
     connect(seekable, &CutterSeekable::seekableSeekChanged, this, &GraphWidget::prepareHeader);
     connect(Core(), &CutterCore::functionRenamed, this, &GraphWidget::prepareHeader);
     graphView->installEventFilter(this);

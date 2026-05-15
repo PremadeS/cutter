@@ -1,0 +1,1921 @@
+Enabled checks:
+    cppcoreguidelines-pro-type-cstyle-cast
+    misc-const-correctness
+    misc-unused-parameters
+    modernize-loop-convert
+    modernize-use-auto
+    modernize-use-nullptr
+    performance-enum-size
+    performance-for-range-copy
+    performance-move-const-arg
+    performance-move-constructor-init
+    performance-no-automatic-move
+    performance-noexcept-destructor
+    performance-noexcept-move-constructor
+    performance-noexcept-swap
+    performance-unnecessary-copy-initialization
+    performance-unnecessary-value-param
+    readability-braces-around-statements
+    readability-identifier-naming
+    readability-magic-numbers
+    readability-make-member-function-const
+
+Running clang-tidy for 172 files out of 178 in compilation database ...
+[  1/172][15.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/BasicInstructionHighlighter.cpp
+10613 warnings generated.
+Suppressed 10613 warnings (10613 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  2/172][25.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ProgressIndicator.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ProgressIndicator.cpp:49:18: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   49 |     return QSize(16, 16);
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ProgressIndicator.cpp:49:22: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   49 |     return QSize(16, 16);
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ProgressIndicator.cpp:54:18: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   54 |     return QSize(32, 32);
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ProgressIndicator.cpp:54:22: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   54 |     return QSize(32, 32);
+      |                      ^
+5991 warnings generated.
+Suppressed 5987 warnings (5987 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+4 warnings treated as errors
+
+[  3/172][31.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/SelectionHighlight.cpp
+13716 warnings generated.
+Suppressed 13716 warnings (13716 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  4/172][34.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ItemCountLineEdit.cpp
+13705 warnings generated.
+Suppressed 13705 warnings (13705 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  5/172][37.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/FlagDialog.cpp
+13699 warnings generated.
+Suppressed 13699 warnings (13699 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  6/172][38.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/AnalysisTask.cpp
+13755 warnings generated.
+Suppressed 13755 warnings (13755 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  7/172][38.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/CommentsDialog.cpp
+13720 warnings generated.
+Suppressed 13720 warnings (13720 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  8/172][38.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GlobalsWidget.cpp
+13718 warnings generated.
+Suppressed 13718 warnings (13718 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[  9/172][38.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphWidget.cpp
+13893 warnings generated.
+Suppressed 13893 warnings (13893 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 10/172][39.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorThemeComboBox.cpp
+13745 warnings generated.
+Suppressed 13745 warnings (13745 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 11/172][40.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyHelper.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyHelper.cpp:14:17: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+   14 |     auto *ctx = (mmio_lookup_context_t *)user;
+      |                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyHelper.cpp:15:26: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+   15 |     if (ctx->selected == (const char *)value) {
+      |                          ^
+13714 warnings generated.
+Suppressed 13712 warnings (13712 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[ 12/172][34.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditRegProfileDialog.cpp
+13312 warnings generated.
+Suppressed 13312 warnings (13312 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 13/172][52.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp:11:36: error: 236 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   11 |     regFormat.setForeground(QColor(236, 100, 75));
+      |                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp:11:41: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   11 |     regFormat.setForeground(QColor(236, 100, 75));
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp:11:46: error: 75 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   11 |     regFormat.setForeground(QColor(236, 100, 75));
+      |                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp:21:50: error: 63 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   21 |     singleLineCommentFormat.setForeground(QColor(63, 195, 128));
+      |                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp:21:54: error: 195 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   21 |     singleLineCommentFormat.setForeground(QColor(63, 195, 128));
+      |                                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Highlighter.cpp:21:59: error: 128 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   21 |     singleLineCommentFormat.setForeground(QColor(63, 195, 128));
+      |                                                           ^
+16862 warnings generated.
+Suppressed 16856 warnings (16856 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+6 warnings treated as errors
+
+[ 14/172][17.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphHorizontalAdapter.cpp
+10363 warnings generated.
+Suppressed 10363 warnings (10363 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 15/172][27.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ComboQuickFilterView.cpp
+6043 warnings generated.
+Suppressed 6043 warnings (6043 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 16/172][25.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/DirectionalComboBox.cpp
+5994 warnings generated.
+Suppressed 5994 warnings (5994 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 17/172][34.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/GlibcHeapInfoDialog.cpp
+13706 warnings generated.
+Suppressed 13706 warnings (13706 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 18/172][31.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/Json.cpp
+13316 warnings generated.
+Suppressed 13316 warnings (13316 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 19/172][38.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/InitializationFileEditor.cpp
+13738 warnings generated.
+Suppressed 13738 warnings (13738 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 20/172][38.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SegmentsWidget.cpp
+13718 warnings generated.
+Suppressed 13718 warnings (13718 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 21/172][40.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:209:34: error: 90 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  209 |     transform = transform.rotate(90);
+      |                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:216:34: error: 30 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  216 |     toggleButton->setFixedHeight(30);
+      |                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:218:37: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  218 |     toggleButton->setIconSize(QSize(16, 12));
+      |                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:218:41: error: 12 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  218 |     toggleButton->setIconSize(QSize(16, 12));
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:313:23: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  313 |       indicatorHeight(5),
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:314:26: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  314 |       indicatorParamPosY(20),
+      |                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:315:23: error: 30 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  315 |       heightThreshold(30),
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:316:21: error: 1000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  316 |       heightDivisor(1000),
+      |                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:317:18: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  317 |       rectOffset(100),
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:318:20: error: 80 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  318 |       rectWidthMin(80),
+      |                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:319:20: error: 400 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  319 |       rectWidthMax(400),
+      |                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:407:43: error: 300 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  407 |     return qBound(rectWidthMin, width() - 300, rectWidthMax);
+      |                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:412:29: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  412 |     return getRectWidth() + 200;
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SectionsWidget.cpp:444:90: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  444 |     addTextItem(color, QPoint(0, y - indicatorParamPosY), QString("0x%1").arg(offset, 0, 16));
+      |                                                                                          ^
+13786 warnings generated.
+Suppressed 13772 warnings (13772 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+14 warnings treated as errors
+
+[ 22/172][37.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/Omnibar.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Omnibar.cpp:15:28: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   15 |     this->setMinimumHeight(16);
+      |                            ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Omnibar.cpp:19:26: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   19 |     this->setTextMargins(10, 0, 0, 0);
+      |                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Omnibar.cpp:34:35: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   34 |     completer->setMaxVisibleItems(20);
+      |                                   ^
+13706 warnings generated.
+Suppressed 13703 warnings (13703 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 23/172][39.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/RegisterProfileDialog.cpp
+13721 warnings generated.
+Suppressed 13721 warnings (13721 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 24/172][33.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/RunScriptTask.cpp
+13682 warnings generated.
+Suppressed 13682 warnings (13682 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 25/172][27.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/SyntaxHighlighter.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/SyntaxHighlighter.cpp:67:40: error: 80 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   67 |     keywordFormat.setForeground(QColor(80, 200, 215));
+      |                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/SyntaxHighlighter.cpp:67:44: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   67 |     keywordFormat.setForeground(QColor(80, 200, 215));
+      |                                            ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/SyntaxHighlighter.cpp:67:49: error: 215 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   67 |     keywordFormat.setForeground(QColor(80, 200, 215));
+      |                                                 ^
+13237 warnings generated.
+Suppressed 13234 warnings (13234 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 26/172][39.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/core/Basefind.cpp
+13660 warnings generated.
+Suppressed 13660 warnings (13660 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 27/172][39.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/tools/basefind/BaseFindSearchDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/tools/basefind/BaseFindSearchDialog.cpp:34:27: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   34 |         pbar->setRange(0, 100);
+      |                           ^
+13698 warnings generated.
+Suppressed 13697 warnings (13697 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 28/172][43.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/MarkDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/MarkDialog.cpp:61:62: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   61 |     markFrom = ui->startAddressEdit->text().toULongLong(&ok, 16);
+      |                                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/MarkDialog.cpp:67:58: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   67 |     markTo = ui->endAddressEdit->text().toULongLong(&ok, 16);
+      |                                                          ^
+13709 warnings generated.
+Suppressed 13707 warnings (13707 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[ 29/172][43.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/Main.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/Main.cpp:87:5: error: variable 'a' of type 'CutterApplication' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+   87 |     CutterApplication a(argc, argv);
+      |     ^
+      |                       const 
+/home/premades/Documents/RSoC/fork/cutter/src/Main.cpp:102:43: error: 7000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  102 |         updateWorker->checkCurrentVersion(7000);
+      |                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/Main.cpp:106:5: error: variable 'ret' of type 'int' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+  106 |     int ret = a.exec();
+      |     ^
+      |         const 
+13825 warnings generated.
+Suppressed 13822 warnings (13822 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 30/172][22.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphvizLayout.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphvizLayout.cpp:24:69: error: 3.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   24 |     if (abs(direction.x()) > abs(direction.y()) * (preferVertical ? 3.0 : 1.0)) {
+      |                                                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphvizLayout.cpp:93:22: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   93 |     width = height = 10;
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphvizLayout.cpp:188:31: error: 2.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  188 |         block.x = pos.x - w / 2.0;
+      |                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphvizLayout.cpp:189:31: error: 2.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  189 |         block.y = pos.y - h / 2.0;
+      |                               ^
+11148 warnings generated.
+Suppressed 11144 warnings (11144 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+4 warnings treated as errors
+
+[ 31/172][36.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterTreeView.cpp
+13213 warnings generated.
+Suppressed 13213 warnings (13213 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 32/172][43.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/RichTextPainter.cpp
+13740 warnings generated.
+Suppressed 13740 warnings (13740 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 33/172][48.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/FlirtWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FlirtWidget.cpp:159:47: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  159 |     ui->flirtTreeView->resizeColumnToContents(5);
+      |                                               ^
+13694 warnings generated.
+Suppressed 13693 warnings (13693 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 34/172][42.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:122:35: error: 0.05 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  122 |     newScale = std::max(newScale, 0.05);
+      |                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:135:18: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  135 |     zoom(QPointF(0.5, 0.5), 1);
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:135:23: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  135 |     zoom(QPointF(0.5, 0.5), 1);
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:140:18: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  140 |     zoom(QPointF(0.5, 0.5), -1);
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:140:23: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  140 |     zoom(QPointF(0.5, 0.5), -1);
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:145:21: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  145 |     setZoom(QPointF(0.5, 0.5), 1);
+      |                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterGraphView.cpp:145:26: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  145 |     setZoom(QPointF(0.5, 0.5), 1);
+      |                          ^
+13836 warnings generated.
+Suppressed 13829 warnings (13829 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+7 warnings treated as errors
+
+[ 35/172][49.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/AttachProcDialog.cpp
+13736 warnings generated.
+Suppressed 13736 warnings (13736 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 36/172][50.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/RegisterRefsWidget.cpp
+13795 warnings generated.
+Suppressed 13795 warnings (13795 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 37/172][61.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:39:13: error: invalid case style for variable 'addr_end' [readability-identifier-naming,-warnings-as-errors]
+   39 | RZ_JSON_KEY(addr_end);
+      |             ^~~~~~~~
+      |             addrEnd
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:33:48: note: expanded from macro 'RZ_JSON_KEY'
+   33 | #define RZ_JSON_KEY(name) static const QString name = QStringLiteral(#name)
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:59:13: error: invalid case style for variable 'fcn_addr' [readability-identifier-naming,-warnings-as-errors]
+   59 | RZ_JSON_KEY(fcn_addr);
+      |             ^~~~~~~~
+      |             fcnAddr
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:33:48: note: expanded from macro 'RZ_JSON_KEY'
+   33 | #define RZ_JSON_KEY(name) static const QString name = QStringLiteral(#name)
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:60:13: error: invalid case style for variable 'fcn_name' [readability-identifier-naming,-warnings-as-errors]
+   60 | RZ_JSON_KEY(fcn_name);
+      |             ^~~~~~~~
+      |             fcnName
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:33:48: note: expanded from macro 'RZ_JSON_KEY'
+   33 | #define RZ_JSON_KEY(name) static const QString name = QStringLiteral(#name)
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:72:13: error: invalid case style for variable 'in_functions' [readability-identifier-naming,-warnings-as-errors]
+   72 | RZ_JSON_KEY(in_functions);
+      |             ^~~~~~~~~~~~
+      |             inFunctions
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:33:48: note: expanded from macro 'RZ_JSON_KEY'
+   33 | #define RZ_JSON_KEY(name) static const QString name = QStringLiteral(#name)
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:231:30: error: 0x400 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  231 |     rz_core_block_size(core, 0x400);
+      |                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:751:13: error: 128 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  751 |     ut8 buf[128];
+      |             ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1323:5: error: pointee of variable 'fcn' of type 'RzAnalysisFunction *' (aka 'rz_analysis_function_t *') can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+ 1323 |     RzAnalysisFunction *fcn = rz_analysis_get_function_at(core->analysis, addr);
+      |     ^
+      |                         const
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1570:43: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1570 |     for (int i = 0; i < size; i += base / 8) {
+      |                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1571:22: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1571 |         if ((base == 32 && addr + i >= UT32_MAX) || (base == 16 && addr + i >= UT16_MAX)) {
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1571:62: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1571 |         if ((base == 32 && addr + i >= UT32_MAX) || (base == 16 && addr + i >= UT16_MAX)) {
+      |                                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1650:24: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1650 |             buf.resize(32);
+      |                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1653:50: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1653 |             rz_io_read_at_mapped(core->io, addr, (unsigned char *)buf.data(), buf.size());
+      |                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1655:49: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1655 |             rz_asm_disassemble(core->rasm, &op, (unsigned char *)buf.data(), buf.size());
+      |                                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1666:20: error: 64 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1666 |         buf.resize(64);
+      |                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1667:27: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1667 |         const ut32 *n32 = (ut32 *)buf.data();
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1668:27: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1668 |         const ut64 *n64 = (ut64 *)buf.data();
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1669:46: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1669 |         rz_io_read_at_mapped(core->io, addr, (unsigned char *)buf.data(), buf.size());
+      |                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1682:32: error: 128 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1682 |                     buf.resize(128);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1683:58: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1683 |                     rz_io_read_at_mapped(core->io, addr, (unsigned char *)buf.data(), buf.size());
+      |                                                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1711:19: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1711 |         mArena = ((RzArenaListItem *)rz_list_first_val(arenas))->addr;
+      |                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1794:25: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1794 |     for (int i = 0; i < 10; i++) {
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1903:52: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1903 |         desc.value = "0x" + QString::number(value, 16);
+      |                                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:1931:5: error: variable 'core' of type 'RzCoreLocked' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+ 1931 |     CORE_LOCK();
+      |     ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:169:21: note: expanded from macro 'CORE_LOCK'
+  169 | #define CORE_LOCK() RzCoreLocked core(this)
+      |                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:2988:5: error: variable 'core' of type 'RzCoreLocked' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+ 2988 |     CORE_LOCK();
+      |     ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:169:21: note: expanded from macro 'CORE_LOCK'
+  169 | #define CORE_LOCK() RzCoreLocked core(this)
+      |                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:3430:83: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 3430 |                 desc.name = QString("reloc_%1").arg(QString::number(reloc->vaddr, 16));
+      |                                                                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4254:17: error: 64 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4254 |     char output[64] = { 0 };
+      |                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4256:36: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4256 |     rz_hex_bin2str(buffer, size == 32 ? 4 : 8, output);
+      |                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4256:45: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4256 |     rz_hex_bin2str(buffer, size == 32 ? 4 : 8, output);
+      |                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4319:55: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4319 |         searchFor = cutterValueAsHex(searchFor, true, 32);
+      |                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4329:56: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4329 |         searchFor = cutterValueAsHex(searchFor, false, 32);
+      |                                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4339:55: error: 64 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4339 |         searchFor = cutterValueAsHex(searchFor, true, 64);
+      |                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4349:56: error: 64 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4349 |         searchFor = cutterValueAsHex(searchFor, false, 64);
+      |                                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:4858:78: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 4858 |         res = rz_core_print_dump_str(core, RZ_OUTPUT_MODE_STANDARD, address, 8, size,
+      |                                                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:5179:30: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 5179 |             .set("hex.cols", 16);
+      |                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:5197:20: error: 0xff is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 5197 |         array.fill(0xff);
+      |                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/Cutter.cpp:5222:5: error: pointee of variable 'string' of type 'char *' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+ 5222 |     char *string = nullptr;
+      |     ^
+      |           const
+14035 warnings generated.
+Suppressed 14002 warnings (13999 in non-user code, 3 NOLINT).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+36 warnings treated as errors
+
+[ 38/172][16.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/core/CutterJson.cpp
+10362 warnings generated.
+Suppressed 10362 warnings (10362 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 39/172][38.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/InterfaceOptionsWidget.cpp
+13698 warnings generated.
+Suppressed 13698 warnings (13698 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 40/172][52.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/HexdumpWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexdumpWidget.cpp:319:85: error: 600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  319 |     if (event->oldSize().width() > event->size().width() && event->size().width() < 600) {
+      |                                                                                     ^
+13855 warnings generated.
+Suppressed 13854 warnings (13854 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 41/172][48.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/AsmOptionsWidget.cpp
+13750 warnings generated.
+Suppressed 13750 warnings (13750 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 42/172][47.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:276:58: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  276 |                                    .arg(fileVersionMs >> 16)
+      |                                                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:277:57: error: 0xFFFF is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  277 |                                    .arg(fileVersionMs & 0xFFFF)
+      |                                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:278:58: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  278 |                                    .arg(fileVersionLs >> 16)
+      |                                                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:279:57: error: 0xFFFF is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  279 |                                    .arg(fileVersionLs & 0xFFFF);
+      |                                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:283:64: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  283 |                                       .arg(productVersionMs >> 16)
+      |                                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:284:63: error: 0xFFFF is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  284 |                                       .arg(productVersionMs & 0xFFFF)
+      |                                                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:285:64: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  285 |                                       .arg(productVersionLs >> 16)
+      |                                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/VersionInfoDialog.cpp:286:63: error: 0xFFFF is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  286 |                                       .arg(productVersionLs & 0xFFFF);
+      |                                                               ^
+13817 warnings generated.
+Suppressed 13809 warnings (13809 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+8 warnings treated as errors
+
+[ 43/172][44.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SimpleTextGraphView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SimpleTextGraphView.cpp:101:32: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  101 |     p.setBrush(QColor(0, 0, 0, 100));
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SimpleTextGraphView.cpp:138:25: error: 2.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  138 |         ec.widthScale = 2.0;
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SimpleTextGraphView.cpp:161:25: error: passing result of std::move() as a const reference argument; no move will actually happen [performance-move-const-arg,-warnings-as-errors]
+  161 |     GraphView::addBlock(std::move(block));
+      |                         ^~~~~~~~~~     ~
+13969 warnings generated.
+Suppressed 13966 warnings (13966 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 44/172][47.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchWidget.cpp:158:35: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  158 |                         .arg(qMax(6, fnt.pointSize() - 1)); // slightly decrease font size, to keep
+      |                                   ^
+13750 warnings generated.
+Suppressed 13749 warnings (13749 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 45/172][39.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/EntrypointWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/EntrypointWidget.cpp:34:58: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   34 |     qhelpers::adjustColumns(ui->entrypointTreeWidget, 0, 10);
+      |                                                          ^
+13703 warnings generated.
+Suppressed 13702 warnings (13702 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 46/172][43.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditVariablesDialog.cpp
+13714 warnings generated.
+Suppressed 13714 warnings (13714 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 47/172][45.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/DecompilerWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DecompilerWidget.cpp:213:5: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+  213 |     rz_vector_foreach(&codeDecompiled.annotations, iter)
+      |     ^
+/home/premades/Documents/RSoC/fork/cutter/build/Rizin-prefix/include/librz/rz_vector.h:200:31: note: expanded from macro 'rz_vector_foreach'
+  200 |                 for (it = (void *)(vec)->a; (char *)it != (char *)(vec)->a + ((vec)->len * (vec)->elem_size); it = (void *)((char *)it + (vec)->elem_size))
+      |                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DecompilerWidget.cpp:215:34: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+  215 |         const auto *annotation = (RzCodeAnnotation *)iter;
+      |                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DecompilerWidget.cpp:615:18: error: 0xc0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  615 |         if ((c & 0xc0) == 0x80) {
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DecompilerWidget.cpp:615:27: error: 0x80 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  615 |         if ((c & 0xc0) == 0x80) {
+      |                           ^
+13766 warnings generated.
+Suppressed 13760 warnings (13760 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+4 warnings treated as errors
+
+[ 48/172][41.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/DecompilerHighlighter.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/DecompilerHighlighter.cpp:24:5: error: variable 'mapping' of type 'struct (unnamed struct at /home/premades/Documents/RSoC/fork/cutter/src/common/DecompilerHighlighter.cpp:24:5)[8]' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+   24 |     struct
+      |     ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DecompilerHighlighter.cpp:55:5: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+   55 |     rz_pvector_foreach(annotations.get(), iter)
+      |     ^
+/home/premades/Documents/RSoC/fork/cutter/build/Rizin-prefix/include/librz/rz_vector.h:393:13: note: expanded from macro 'rz_pvector_foreach'
+  393 |                 for (it = (void **)(vec)->v.a; (vec)->v.len && it != (void **)(vec)->v.a + (vec)->v.len; it++)
+      |                           ^
+13714 warnings generated.
+Suppressed 13711 warnings (13711 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[ 49/172][34.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/AsyncTaskDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/AsyncTaskDialog.cpp:23:23: error: 1000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   23 |     timer.setInterval(1000);
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/AsyncTaskDialog.cpp:49:61: error: 60 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   49 |         label += tr("%n minutes", nullptr, minutesElapsed % 60);
+      |                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/AsyncTaskDialog.cpp:52:57: error: 60 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   52 |     label += tr("%n seconds", nullptr, secondsElapsed % 60);
+      |                                                         ^
+13428 warnings generated.
+Suppressed 13425 warnings (13425 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 50/172][49.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewWidget.cpp:81:53: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   81 |     targetGraphWidget->getGraphView()->zoom(QPointF(0.5, 0.5), d);
+      |                                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewWidget.cpp:81:58: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   81 |     targetGraphWidget->getGraphView()->zoom(QPointF(0.5, 0.5), d);
+      |                                                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewWidget.cpp:120:42: error: 90 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  120 |     zoomTarget(event->angleDelta().y() / 90);
+      |                                          ^
+13894 warnings generated.
+Suppressed 13891 warnings (13891 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 51/172][28.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditFunctionDialog.cpp
+6047 warnings generated.
+Suppressed 6047 warnings (6047 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 52/172][39.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinTaskDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinTaskDialog.cpp:16:23: error: 1000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   16 |     timer.setInterval(1000);
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinTaskDialog.cpp:38:61: error: 60 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   38 |         label += tr("%n minutes", nullptr, minutesElapsed % 60);
+      |                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinTaskDialog.cpp:41:57: error: 60 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   41 |     label += tr("%n seconds", nullptr, secondsElapsed % 60);
+      |                                                         ^
+13685 warnings generated.
+Suppressed 13682 warnings (13682 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 53/172][41.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SymbolsWidget.cpp
+13717 warnings generated.
+Suppressed 13717 warnings (13717 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 54/172][29.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/ShortcutOptionsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/ShortcutOptionsWidget.cpp:20:41: error: 400 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   20 |     ui->shortcutTree->setColumnWidth(0, 400);
+      |                                         ^
+6084 warnings generated.
+Suppressed 6083 warnings (6083 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 55/172][42.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/NativeDebugDialog.cpp
+13325 warnings generated.
+Suppressed 13325 warnings (13325 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 56/172][45.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/BacktraceWidget.cpp
+13766 warnings generated.
+Suppressed 13766 warnings (13766 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 57/172][36.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/Colors.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/Colors.cpp:24:18: error: 255 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   24 |     if (alpha == 255) {
+      |                  ^
+13669 warnings generated.
+Suppressed 13668 warnings (13668 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 58/172][29.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/AddressableItemModel.cpp
+13000 warnings generated.
+Suppressed 13000 warnings (13000 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 59/172][47.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/MapFileDialog.cpp
+13697 warnings generated.
+Suppressed 13697 warnings (13697 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 60/172][43.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/HeadersWidget.cpp
+13720 warnings generated.
+Suppressed 13720 warnings (13720 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 61/172][43.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ExportsWidget.cpp
+13721 warnings generated.
+Suppressed 13721 warnings (13721 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 62/172][44.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/GlobalVariableDialog.cpp
+13701 warnings generated.
+Suppressed 13701 warnings (13701 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 63/172][43.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorThemeListView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorThemeListView.cpp:86:25: error: 0.4 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   86 |             c.setAlphaF(0.4);
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorThemeListView.cpp:105:25: error: 0.2 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  105 |             c.setAlphaF(0.2);
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorThemeListView.cpp:146:32: error: 255 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  146 |     if (currCO.color.alpha() < 255) {
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorThemeListView.cpp:240:28: error: 600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  240 |     blinkTimer.setInterval(600);
+      |                            ^
+13824 warnings generated.
+Suppressed 13820 warnings (13820 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+4 warnings treated as errors
+
+[ 64/172][37.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/ArenaInfoDialog.cpp
+13280 warnings generated.
+Suppressed 13280 warnings (13280 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 65/172][53.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/Helpers.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/Helpers.cpp:33:61: error: 1024 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   33 |     stream << qSetRealNumberPrecision(3) << bytecount / pow(1024, exp) << ' ' << suffixes[exp]
+      |                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Helpers.cpp:71:27: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   71 |         tempItem->setText(5, str5);
+      |                           ^
+16141 warnings generated.
+Suppressed 16139 warnings (16139 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[ 66/172][42.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ProcessesWidget.cpp
+13794 warnings generated.
+Suppressed 13794 warnings (13794 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 67/172][41.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/AboutDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/AboutDialog.cpp:123:38: error: 7000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  123 |     updateWorker.checkCurrentVersion(7000);
+      |                                      ^
+13806 warnings generated.
+Suppressed 13805 warnings (13805 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 68/172][41.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/CallGraph.cpp
+13942 warnings generated.
+Suppressed 13942 warnings (13942 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 69/172][53.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/menus/FlirtContextMenu.cpp
+16085 warnings generated.
+Suppressed 16085 warnings (16085 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 70/172][43.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/VisualNavbar.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/VisualNavbar.cpp:300:18: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  300 |     qreal curX = 10;
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/VisualNavbar.cpp:305:35: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  305 |         r->setPen(QPen(Qt::black, 0.5));
+      |                                   ^
+13811 warnings generated.
+Suppressed 13809 warnings (13809 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[ 71/172][36.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/BugReporting.cpp
+13731 warnings generated.
+Suppressed 13731 warnings (13731 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 72/172][46.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ClassesWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ClassesWidget.cpp:615:37: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  615 |     ui->treeView->setIconSize(QSize(10, 10));
+      |                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ClassesWidget.cpp:615:41: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  615 |     ui->treeView->setIconSize(QSize(10, 10));
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ClassesWidget.cpp:703:37: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  703 |     ui->treeView->setColumnWidth(0, 200);
+      |                                     ^
+13769 warnings generated.
+Suppressed 13766 warnings (13766 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 73/172][39.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/RemoteDebugDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/RemoteDebugDialog.cpp:95:28: error: 65535 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   95 |     if (port < 1 || port > 65535) {
+      |                            ^
+13321 warnings generated.
+Suppressed 13320 warnings (13320 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 74/172][33.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/HeapDockWidget.cpp
+13256 warnings generated.
+Suppressed 13256 warnings (13256 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 75/172][45.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:43:20: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   43 |       rowSizeBytes(16),
+      |                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:65:29: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   65 |     vScrollBar->setPageStep(10);
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:78:26: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   78 |     for (int i = 1; i <= 8; i *= 2) {
+      |                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:177:32: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  177 |     actionsWriteString.reserve(5);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:198:31: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  198 |     actionsWriteOther.reserve(5);
+      |                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:243:27: error: 1000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  243 |     cursor.setBlinkPeriod(1000);
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1459:21: error: do not use C-style cast to convert between unrelated types [cppcoreguidelines-pro-type-cstyle-cast,-warnings-as-errors]
+ 1459 |         auto *buf = (uint8_t *)malloc(static_cast<size_t>(bytesSize));
+      |                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1464:83: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1464 |             buf[j] = static_cast<uint8_t>(bytes.mid(i + offset, 2).toInt(nullptr, 16));
+      |                                                                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1665:38: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1665 |         itemCharLen = (itemByteLen * 8 + 3) / 3;
+      |                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1673:27: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1673 |             itemCharLen = 5;
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1676:27: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1676 |             itemCharLen = 10;
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1678:14: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1678 |         case 8:
+      |              ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1679:27: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1679 |             itemCharLen = 20;
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1689:27: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1689 |             itemCharLen = 6;
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1692:27: error: 11 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1692 |             itemCharLen = 11;
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1694:14: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1694 |         case 8:
+      |              ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1695:27: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1695 |             itemCharLen = 20;
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1727:54: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1727 |                              QString::number(offset, 16).toUpper());
+      |                                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1737:46: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1737 |                          QString::number(j % 16, 16).toUpper());
+      |                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1737:50: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1737 |                          QString::number(j % 16, 16).toUpper());
+      |                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1770:51: error: 0xff is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1770 |         painter.fillRect(cursor.screenPos, QColor(0xff, 0xff, 0xff));
+      |                                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1770:57: error: 0xff is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1770 |         painter.fillRect(cursor.screenPos, QColor(0xff, 0xff, 0xff));
+      |                                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1770:63: error: 0xff is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1770 |         painter.fillRect(cursor.screenPos, QColor(0xff, 0xff, 0xff));
+      |                                                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1784:61: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1784 |         addrString = QString("%1").arg(offset, addrCharLen, 16, QLatin1Char('0'));
+      |                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1851:43: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1851 |                     markerColor.setAlphaF(0.5);
+      |                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:1907:31: error: 4000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1907 |         editWordRect.setWidth(4000);
+      |                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2268:24: error: 0x7f is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2268 |     } else if (byte == 0x7f) {
+      |                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2270:24: error: 0xff is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2270 |     } else if (byte == 0xff) {
+      |                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2356:10: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2356 |     case 8:
+      |          ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2384:66: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2384 |         item = QString("%1").arg(itemVal.toULongLong(), itemLen, 16, QLatin1Char('0'));
+      |                                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2390:66: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2390 |         item = QString("%1").arg(itemVal.toULongLong(), itemLen, 8, QLatin1Char('0'));
+      |                                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2393:66: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2393 |         item = QString("%1").arg(itemVal.toULongLong(), itemLen, 10);
+      |                                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2396:65: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2396 |         item = QString("%1").arg(itemVal.toLongLong(), itemLen, 10);
+      |                                                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2399:87: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2399 |         item = QString("%1").arg(itemVal.toDouble(), itemLen, 'g', itemByteLen == 4 ? 6 : 15);
+      |                                                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2399:91: error: 15 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2399 |         item = QString("%1").arg(itemVal.toDouble(), itemLen, 'g', itemByteLen == 4 ? 6 : 15);
+      |                                                                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2494:35: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2494 |         } else if (itemByteLen == 8) {
+      |                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2512:48: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2512 |             value = word.toULongLong(&parseOk, 16);
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2515:48: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2515 |             value = word.toULongLong(&parseOk, 8);
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2518:48: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2518 |             value = word.toULongLong(&parseOk, 10);
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2522:47: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2522 |             value = word.toLongLong(&parseOk, 10);
+      |                                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2538:14: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2538 |         case 8:
+      |              ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2550:17: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2550 |     uint8_t buf[16];
+      |                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HexWidget.cpp:2645:63: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2645 |         int charPos = static_cast<int>((pt.x() / charWidth) + 0.5);
+      |                                                               ^
+13874 warnings generated.
+Suppressed 13831 warnings (13831 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+43 warnings treated as errors
+
+[ 76/172][43.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/AddressableDockWidget.cpp
+13706 warnings generated.
+Suppressed 13706 warnings (13706 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 77/172][45.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/UpdateWorker.cpp
+13778 warnings generated.
+Suppressed 13778 warnings (13778 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 78/172][42.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/DebugOptionsWidget.cpp
+13728 warnings generated.
+Suppressed 13728 warnings (13728 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 79/172][43.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SdbWidget.cpp
+13729 warnings generated.
+Suppressed 13729 warnings (13729 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 80/172][23.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphGridLayout.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphGridLayout.cpp:260:10: error: variable 'it' of type 'unsigned long long' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+  260 |     for (unsigned long long it : std::ranges::reverse_view(blockOrder)) {
+      |          ^
+      |                             const 
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphGridLayout.cpp:537:10: error: variable 'it' of type 'unsigned long long' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+  537 |     for (unsigned long long it : std::ranges::reverse_view(blockOrder)) {
+      |          ^
+      |                             const 
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphGridLayout.cpp:566:14: error: enum 'Type' uses a larger base type ('unsigned int', size: 4 bytes) than necessary for its value set, consider using 'std::uint8_t' (1 byte) as the base type to reduce its size [performance-enum-size,-warnings-as-errors]
+  566 |         enum Type { Edge = 0, Block = 1 } type;
+      |              ^
+10846 warnings generated.
+Suppressed 10843 warnings (10843 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 81/172][32.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchBarWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchBarWidget.cpp:21:25: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   21 |     this->setFixedWidth(5);
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchBarWidget.cpp:40:27: error: 15 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   40 |     shadow->setBlurRadius(15);
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchBarWidget.cpp:41:38: error: 120 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   41 |     shadow->setColor(QColor(0, 0, 0, 120));
+      |                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchBarWidget.cpp:114:32: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  114 |     debounceTimer->setInterval(200);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchBarWidget.cpp:126:43: error: 65 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  126 |     this->setMinimumWidth(this->width() + 65); // account for spacing and margins
+      |                                           ^
+6432 warnings generated.
+Suppressed 6427 warnings (6427 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+5 warnings treated as errors
+
+[ 82/172][44.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GlibcHeapWidget.cpp
+13848 warnings generated.
+Suppressed 13848 warnings (13848 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 83/172][35.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/ProfileDirectivesDialog.cpp
+6047 warnings generated.
+Suppressed 6047 warnings (6047 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 84/172][29.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/ResourcePaths.cpp
+6046 warnings generated.
+Suppressed 6046 warnings (6046 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 85/172][29.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/JsonModel.cpp
+13243 warnings generated.
+Suppressed 13243 warnings (13243 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 86/172][42.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/RizinTask.cpp
+13658 warnings generated.
+Suppressed 13658 warnings (13658 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 87/172][44.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/PreferencesDialog.cpp
+13702 warnings generated.
+Suppressed 13702 warnings (13702 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 88/172][41.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/HeapBinsGraphView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/HeapBinsGraphView.cpp:158:32: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  158 |     p.setBrush(QColor(0, 0, 0, 100));
+      |                                ^
+13862 warnings generated.
+Suppressed 13861 warnings (13861 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 89/172][43.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ListDockWidget.cpp
+13727 warnings generated.
+Suppressed 13727 warnings (13727 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 90/172][31.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/PreferenceCategory.cpp
+6009 warnings generated.
+Suppressed 6009 warnings (6009 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 91/172][47.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/ColorThemeEditDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/ColorThemeEditDialog.cpp:31:62: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   31 |         previewDisasmWidget->setMinimumSize(screen->size() * 0.5);
+      |                                                              ^
+13824 warnings generated.
+Suppressed 13823 warnings (13823 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[ 92/172][38.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/InitialOptionsDialog.cpp
+13810 warnings generated.
+Suppressed 13810 warnings (13810 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 93/172][41.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditStringDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditStringDialog.cpp:10:42: error: 150 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   10 |     ui->lineEditAddress->setMinimumWidth(150);
+      |                                          ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditStringDialog.cpp:20:59: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   20 |     ui->lineEditAddress->setText(QString::number(address, 16));
+      |                                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditStringDialog.cpp:26:67: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   26 |     returnValue = ui->lineEditAddress->text().toLongLong(&status, 16);
+      |                                                                   ^
+13294 warnings generated.
+Suppressed 13291 warnings (13291 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 94/172][39.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ResourcesWidget.cpp
+13718 warnings generated.
+Suppressed 13718 warnings (13718 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[ 95/172][51.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/CommentsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CommentsWidget.cpp:270:38: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  270 |         ui->treeView->setIndentation(8);
+      |                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/CommentsWidget.cpp:278:38: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  278 |         ui->treeView->setIndentation(20);
+      |                                      ^
+13733 warnings generated.
+Suppressed 13731 warnings (13731 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[ 96/172][45.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/RegistersWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/RegistersWidget.cpp:64:44: error: 60 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   64 |             registerLabel->setMaximumWidth(60);
+      |                                            ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/RegistersWidget.cpp:67:48: error: 140 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   67 |             registerEditValue->setMaximumWidth(140);
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/RegistersWidget.cpp:120:63: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  120 |     addressContextMenu.setTarget(address.toULongLong(nullptr, 16));
+      |                                                               ^
+13827 warnings generated.
+Suppressed 13824 warnings (13824 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[ 97/172][42.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/HexdumpRangeDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/HexdumpRangeDialog.cpp:61:69: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   61 |     ui->startAddressLineEdit->setText(QString("0x%1").arg(start, 0, 16));
+      |                                                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/HexdumpRangeDialog.cpp:84:72: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   84 |             ui->lengthLineEdit->setText(QString("0x%1").arg(length, 0, 16));
+      |                                                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/HexdumpRangeDialog.cpp:109:88: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  109 |                 ui->endAddressLineEdit->setText(QString("0x%1").arg(endAddress + 1, 0, 16));
+      |                                                                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/HexdumpRangeDialog.cpp:115:18: error: 0x25000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  115 |     if (length > 0x25000) {
+      |                  ^
+13714 warnings generated.
+Suppressed 13710 warnings (13710 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+4 warnings treated as errors
+
+[ 98/172][48.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp:46:25: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   46 |       maxHistoryEntries(100),
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp:55:41: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   55 |     ui->rzInputLineEdit->setTextMargins(10, 0, 0, 0);
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp:56:46: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   56 |     ui->debugeeInputLineEdit->setTextMargins(10, 0, 0, 0);
+      |                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp:62:36: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   62 |     consoleDocu->setDocumentMargin(10);
+      |                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp:94:35: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   94 |     completer->setMaxVisibleItems(20);
+      |                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ConsoleWidget.cpp:509:57: error: 0777 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  509 |     mkfifo(stdinFifoPath.toStdString().c_str(), (mode_t)0777);
+      |                                                         ^
+13818 warnings generated.
+Suppressed 13812 warnings (13812 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+6 warnings treated as errors
+
+[ 99/172][45.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/StackWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/StackWidget.cpp:117:61: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  117 |             Core()->editBytesEndian(offset.toULongLong(&ok, 16), bytes);
+      |                                                             ^
+13771 warnings generated.
+Suppressed 13770 warnings (13770 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[100/172][43.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/CutterSeekable.cpp
+13737 warnings generated.
+Suppressed 13737 warnings (13737 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[101/172][50.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:114:32: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  114 |     asmDocu->setDocumentMargin(10);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:787:29: error: 40 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  787 |     vScrollBar->setPageStep(40);
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:887:41: error: 15 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  887 |     int count = -(event->angleDelta() / 15).y();
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:888:27: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  888 |     count -= (count > 0 ? 5 : -5);
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:888:32: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  888 |     count -= (count > 0 ? 5 : -5);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:910:75: error: 115 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  910 |     p.fillRect(event->rect(), Config()->getColor("gui.background").darker(115));
+      |                                                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:1001:9: error: variable 'lScreen' of type 'int' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+ 1001 |         int lScreen = fitsInScreen(l), rScreen = fitsInScreen(r);
+      |         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblyWidget.cpp:1050:46: error: 2.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1050 |             pen.setWidthF((penSizePix * 3) / 2.0);
+      |                                              ^
+13876 warnings generated.
+Suppressed 13867 warnings (13867 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+8 warnings treated as errors
+
+[102/172][41.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/WelcomeDialog.cpp
+13743 warnings generated.
+Suppressed 13743 warnings (13743 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[103/172][41.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/ColorThemeWorker.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/ColorThemeWorker.cpp:291:5: error: variable 'themes' of type 'QStringList' (aka 'QList<QString>') can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+  291 |     QStringList themes = Core()->getColorThemes();
+      |     ^
+      |                 const 
+13767 warnings generated.
+Suppressed 13766 warnings (13766 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[104/172][61.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:293:29: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  293 |     spacer3->setMinimumSize(20, 20);
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:293:33: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  293 |     spacer3->setMinimumSize(20, 20);
+      |                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:294:30: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  294 |     spacer3->setMaximumWidth(100);
+      |                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:324:29: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  324 |     spacer4->setMinimumSize(10, 10);
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:324:33: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  324 |     spacer4->setMinimumSize(10, 10);
+      |                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:325:30: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  325 |     spacer4->setMaximumWidth(10);
+      |                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:336:29: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  336 |     spacer2->setMinimumSize(10, 10);
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:336:33: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  336 |     spacer2->setMinimumSize(10, 10);
+      |                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:337:30: error: 300 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  337 |     spacer2->setMaximumWidth(300);
+      |                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:344:28: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  344 |     spacer->setMinimumSize(20, 20);
+      |                            ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:344:32: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  344 |     spacer->setMinimumSize(20, 20);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:371:25: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  371 |     dockWidgets.reserve(20);
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:1180:56: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1180 |         menu->setMaximumHeight(metrics.lineSpacing() * 20);
+      |                                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:1347:36: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1347 |     functionsDock->setMaximumWidth(200);
+      |                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:1366:36: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1366 |     functionsDock->setMaximumWidth(200);
+      |                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:1367:71: error: 500 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1367 |     auto registerWidth = qhelpers::forceWidth(registersDock, std::min(500, this->width() / 4));
+      |                                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:1368:73: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1368 |     auto registerHeight = qhelpers::forceHeight(registersDock, std::max(100, height() / 2));
+      |                                                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:1398:25: error: 10000000 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 1398 |             newScore += 10000000; // prefer existing disssasembly and graph widgets
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:2019:57: error: 0.1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2019 |     Config()->setZoomFactor(Config()->getZoomFactor() + 0.1);
+      |                                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/core/MainWindow.cpp:2024:57: error: 0.1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+ 2024 |     Config()->setZoomFactor(Config()->getZoomFactor() - 0.1);
+      |                                                         ^
+14178 warnings generated.
+Suppressed 14158 warnings (14158 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+20 warnings treated as errors
+
+[105/172][26.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/RefreshDeferrer.cpp
+13178 warnings generated.
+Suppressed 13178 warnings (13178 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[106/172][44.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/VTablesWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/VTablesWidget.cpp:182:43: error: 200 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  182 |     ui->vTableTreeView->setColumnWidth(0, 200);
+      |                                           ^
+13718 warnings generated.
+Suppressed 13717 warnings (13717 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[107/172][39.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/AddressRangeScrollBar.cpp
+13679 warnings generated.
+Suppressed 13679 warnings (13679 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[108/172][49.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/RizinGraphWidget.cpp
+13946 warnings generated.
+Suppressed 13946 warnings (13946 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[109/172][39.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:43:33: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   43 |     p.drawLine(curr - QPoint(0, 8), curr + QPoint(0, 8));
+      |                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:43:54: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   43 |     p.drawLine(curr - QPoint(0, 8), curr + QPoint(0, 8));
+      |                                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:44:30: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   44 |     p.drawLine(curr - QPoint(8, 0), curr + QPoint(8, 0));
+      |                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:44:51: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   44 |     p.drawLine(curr - QPoint(8, 0), curr + QPoint(8, 0));
+      |                                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:57:31: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   57 |     repaint(QRect(p2 - QPoint(10, 10), p2 + QPoint(10, 10)));
+      |                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:57:35: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   57 |     repaint(QRect(p2 - QPoint(10, 10), p2 + QPoint(10, 10)));
+      |                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:57:52: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   57 |     repaint(QRect(p2 - QPoint(10, 10), p2 + QPoint(10, 10)));
+      |                                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:57:56: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   57 |     repaint(QRect(p2 - QPoint(10, 10), p2 + QPoint(10, 10)));
+      |                                                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:58:31: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   58 |     repaint(QRect(p1 - QPoint(10, 10), p1 + QPoint(10, 10)));
+      |                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:58:35: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   58 |     repaint(QRect(p1 - QPoint(10, 10), p1 + QPoint(10, 10)));
+      |                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:58:52: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   58 |     repaint(QRect(p1 - QPoint(10, 10), p1 + QPoint(10, 10)));
+      |                                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/ColorPicker.cpp:58:56: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   58 |     repaint(QRect(p1 - QPoint(10, 10), p1 + QPoint(10, 10)));
+      |                                                        ^
+13304 warnings generated.
+Suppressed 13292 warnings (13292 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+12 warnings treated as errors
+
+[110/172][43.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/WriteCommandsDialogs.cpp
+13739 warnings generated.
+Suppressed 13739 warnings (13739 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[111/172][57.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/menus/AddressableItemContextMenu.cpp
+16137 warnings generated.
+Suppressed 16137 warnings (16137 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[112/172][47.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:413:36: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  413 |         p.setBrush(QColor(0, 0, 0, 100));
+      |                                    ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:493:63: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  493 |                 if (textOffset + widthBefore > block.width - (10 + padding)) {
+      |                                                               ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:498:77: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  498 |                 if (textOffset + widthBefore + tokenWidth >= block.width - (10 + padding)) {
+      |                                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:499:67: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  499 |                     highlightWidth = block.width - widthBefore - (10 + 2 * padding);
+      |                                                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:533:29: error: 2.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  533 |             ec.widthScale = 2.0;
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:535:29: error: 2.0 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  535 |             ec.widthScale = 2.0;
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/DisassemblerGraphView.cpp:566:35: error: 0.8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  566 |             if (getViewScale() >= 0.8) {
+      |                                   ^
+14041 warnings generated.
+Suppressed 14034 warnings (14034 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+7 warnings treated as errors
+
+[113/172][45.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp:168:18: error: 900 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  168 |     view->resize(900, 600);
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp:168:23: error: 600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  168 |     view->resize(900, 600);
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp:174:33: error: 900 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  174 |     dialog.setMinimumSize(QSize(900, 600));
+      |                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp:174:38: error: 600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  174 |     dialog.setMinimumSize(QSize(900, 600));
+      |                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp:175:33: error: 900 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  175 |     dialog.setMaximumSize(QSize(900, 600));
+      |                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/Dashboard.cpp:175:38: error: 600 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  175 |     dialog.setMaximumSize(QSize(900, 600));
+      |                                      ^
+13934 warnings generated.
+Suppressed 13928 warnings (13928 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+6 warnings treated as errors
+
+[114/172][41.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/BasicBlockHighlighter.cpp
+13667 warnings generated.
+Suppressed 13667 warnings (13667 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[115/172][44.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/DebugActions.cpp
+13699 warnings generated.
+Suppressed 13699 warnings (13699 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[116/172][44.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/AnalysisOptionsWidget.cpp
+13790 warnings generated.
+Suppressed 13790 warnings (13790 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[117/172][40.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/TypesInteractionDialog.cpp
+13717 warnings generated.
+Suppressed 13717 warnings (13717 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[118/172][39.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/tools/basefind/BaseFindDialog.cpp
+13729 warnings generated.
+Suppressed 13729 warnings (13729 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[119/172][45.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/BreakpointsDialog.cpp
+13765 warnings generated.
+Suppressed 13765 warnings (13765 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[120/172][38.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/Decompiler.cpp
+13735 warnings generated.
+Suppressed 13735 warnings (13735 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[121/172][30.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/CutterSearchable.cpp
+6331 warnings generated.
+Suppressed 6331 warnings (6331 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[122/172][30.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/MultitypeFileSaveDialog.cpp
+6052 warnings generated.
+Suppressed 6052 warnings (6052 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[123/172][49.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/AppearanceOptionsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/AppearanceOptionsWidget.cpp:271:66: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  271 |     ui->fontZoomBox->setValue(qRound(Config()->getZoomFactor() * 100));
+      |                                                                  ^
+13820 warnings generated.
+Suppressed 13819 warnings (13819 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[124/172][49.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:38:44: error: 300 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   38 |     ui->splitter->setSizes(QList<int>() << 300 << 400);
+      |                                            ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:38:51: error: 400 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   38 |     ui->splitter->setSizes(QList<int>() << 300 << 400);
+      |                                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:42:32: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   42 |     asmDocu->setDocumentMargin(10);
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:111:25: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  111 |     if (addr.length() < 10) {
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:112:41: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  112 |         ret = ret.mid(3).rightJustified(8, QLatin1Char('0'));
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:179:62: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  179 |                 if (!rz_core_prevop_addr(core, core->offset, 20, &offset)) {
+      |                                                              ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:180:76: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  180 |                     offset = rz_core_prevop_addr_force(core, core->offset, 20);
+      |                                                                            ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:183:93: error: 40 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  183 |                 rz_core_print_disasm(core, core->offset, core->block, (int)core->blocksize, 40,
+      |                                                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:277:41: error: the parameter 'nameOfVariable' is copied for each invocation but only used as a const reference; consider making it a const reference [performance-unnecessary-value-param,-warnings-as-errors]
+  277 | void XrefModel::readForVariable(QString nameOfVariable, bool write, RVA offset)
+      |                                         ^
+      |                                 const  &
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/XrefsDialog.cpp:281:41: error: passing result of std::move() as a const reference argument; no move will actually happen [performance-move-const-arg,-warnings-as-errors]
+  281 |     xrefs = Core()->getXRefsForVariable(std::move(nameOfVariable), write, offset);
+      |                                         ^~~~~~~~~~              ~
+13853 warnings generated.
+Suppressed 13843 warnings (13843 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+10 warnings treated as errors
+
+[125/172][27.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/AsyncTask.cpp
+12797 warnings generated.
+Suppressed 12797 warnings (12797 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[126/172][13.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/shortcuts/DefaultShortcuts.cpp
+3316 warnings generated.
+Suppressed 3316 warnings (3316 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[127/172][33.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/AbstractFilterView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/AbstractFilterView.cpp:16:88: error: 150 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   16 |     connect(lineEdit(), &QLineEdit::textChanged, this, [this]() { debounceTimer->start(150); });
+      |                                                                                        ^
+6019 warnings generated.
+Suppressed 6018 warnings (6018 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[128/172][12.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/core/RizinCpp.cpp
+10038 warnings generated.
+Suppressed 10038 warnings (10038 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[129/172][33.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/LayoutManager.cpp
+6069 warnings generated.
+Suppressed 6069 warnings (6069 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[130/172][47.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/CutterApplication.cpp
+13811 warnings generated.
+Suppressed 13811 warnings (13811 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[131/172][49.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/TypesWidget.cpp
+13720 warnings generated.
+Suppressed 13720 warnings (13720 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[132/172][63.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/NewFileDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/NewFileDialog.cpp:49:23: error: 18 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   49 |     font.setPointSize(18);
+      |                       ^
+16913 warnings generated.
+Suppressed 16912 warnings (16912 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[133/172][45.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/FlagsWidget.cpp
+13734 warnings generated.
+Suppressed 13734 warnings (13734 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[134/172][58.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:226:75: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  226 |     connect(&actionSetBits16, &QAction::triggered, this, [this] { setBits(16); });
+      |                                                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:230:75: error: 32 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  230 |     connect(&actionSetBits32, &QAction::triggered, this, [this] { setBits(32); });
+      |                                                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:234:75: error: 64 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  234 |     connect(&actionSetBits64, &QAction::triggered, this, [this] { setBits(64); });
+      |                                                                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:279:82: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  279 |     connect(&actionSetToDataQword, &QAction::triggered, this, [this] { setToData(8); });
+      |                                                                                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:770:24: error: 500 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  770 |     inputDialog.resize(500, 100);
+      |                        ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:770:29: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  770 |     inputDialog.resize(500, 100);
+      |                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:921:16: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  921 |     if (size > 8 || (size && (size & (size - 1)))) {
+      |                ^
+/home/premades/Documents/RSoC/fork/cutter/src/menus/DisassemblyContextMenu.cpp:924:30: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  924 |     if (size == 0 || size == 8) {
+      |                              ^
+16154 warnings generated.
+Suppressed 16146 warnings (16146 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+8 warnings treated as errors
+
+[135/172][41.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/PluginsOptionsWidget.cpp
+13689 warnings generated.
+Suppressed 13689 warnings (13689 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[136/172][35.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/CommandTask.cpp
+13663 warnings generated.
+Suppressed 13663 warnings (13663 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[137/172][59.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/menus/DecompilerContextMenu.cpp
+16144 warnings generated.
+Suppressed 16144 warnings (16144 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[138/172][49.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchableTextEdit.cpp
+13718 warnings generated.
+Suppressed 13718 warnings (13718 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[139/172][40.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/CutterDockWidget.cpp
+13689 warnings generated.
+Suppressed 13689 warnings (13689 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[140/172][41.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/TempConfig.cpp
+13670 warnings generated.
+Suppressed 13670 warnings (13670 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[141/172][49.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:151:22: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  151 |                 case 5:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:153:22: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  153 |                 case 6:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:155:22: error: 7 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  155 |                 case 7:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:157:22: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  157 |                 case 8:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:159:22: error: 9 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  159 |                 case 9:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:273:35: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  273 |                         .arg(qMax(6, fnt.pointSize() - 1)); // slightly decrease font size, to
+      |                                   ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:674:38: error: 8 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  674 |         ui->treeView->setIndentation(8);
+      |                                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/FunctionsWidget.cpp:683:38: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  683 |         ui->treeView->setIndentation(20);
+      |                                      ^
+13876 warnings generated.
+Suppressed 13868 warnings (13868 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+8 warnings treated as errors
+
+[142/172][44.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/SymbolsOptionsWidget.cpp
+13746 warnings generated.
+Suppressed 13746 warnings (13746 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[143/172][40.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinPluginsDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinPluginsDialog.cpp:52:23: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   52 |         item->setText(5, plugin.license);
+      |                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/RizinPluginsDialog.cpp:53:23: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   53 |         item->setText(6, plugin.author);
+      |                       ^
+13710 warnings generated.
+Suppressed 13708 warnings (13708 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+2 warnings treated as errors
+
+[144/172][34.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/SearchableDockWidget.cpp
+13190 warnings generated.
+Suppressed 13190 warnings (13190 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[145/172][29.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/SvgIconEngine.cpp
+12825 warnings generated.
+Suppressed 12825 warnings (12825 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[146/172][42.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/IOModesController.cpp
+13736 warnings generated.
+Suppressed 13736 warnings (13736 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[147/172][48.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:299:77: error: 382 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  299 |     return (windowColor.red() + windowColor.green() + windowColor.blue()) < 382;
+      |                                                                             ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:424:27: error: 0.1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  424 |     return qMax(fontZoom, 0.1);
+      |                           ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:429:41: error: 0.1 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  429 |     s.setValue("zoomFactor", qMax(zoom, 0.1));
+      |                                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:793:49: error: 20 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  793 |     return s.value("graph.blockSpacing", QPoint(20, 40)).value<QPoint>();
+      |                                                 ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:793:53: error: 40 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  793 |     return s.value("graph.blockSpacing", QPoint(20, 40)).value<QPoint>();
+      |                                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:798:48: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  798 |     return s.value("graph.edgeSpacing", QPoint(10, 10)).value<QPoint>();
+      |                                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/Configuration.cpp:798:52: error: 10 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  798 |     return s.value("graph.edgeSpacing", QPoint(10, 10)).value<QPoint>();
+      |                                                    ^
+13864 warnings generated.
+Suppressed 13857 warnings (13857 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+7 warnings treated as errors
+
+[148/172][37.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/MemoryDockWidget.cpp
+13694 warnings generated.
+Suppressed 13694 warnings (13694 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[149/172][30.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/shortcuts/ShortcutManager.cpp
+6017 warnings generated.
+Suppressed 6017 warnings (6017 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[150/172][46.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/tools/basefind/BaseFindResultsDialog.cpp
+13688 warnings generated.
+Suppressed 13688 warnings (13688 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[151/172][28.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/BoolToggleDelegate.cpp
+13204 warnings generated.
+Suppressed 13204 warnings (13204 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[152/172][25.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/HighDpiPixmap.cpp
+5957 warnings generated.
+Suppressed 5957 warnings (5957 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[153/172][43.0s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditInstructionDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditInstructionDialog.cpp:12:35: error: 400 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   12 |     ui->lineEdit->setMinimumWidth(400);
+      |                                   ^
+13713 warnings generated.
+Suppressed 13712 warnings (13712 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[154/172][46.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ThreadsWidget.cpp
+13720 warnings generated.
+Suppressed 13720 warnings (13720 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[155/172][41.6s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/SettingsUpgrade.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/SettingsUpgrade.cpp:175:22: error: 5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  175 |                 case 5:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/SettingsUpgrade.cpp:178:22: error: 6 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  178 |                 case 6:
+      |                      ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/SettingsUpgrade.cpp:181:22: error: 7 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  181 |                 case 7:
+      |                      ^
+13792 warnings generated.
+Suppressed 13789 warnings (13789 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[156/172][46.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/GraphView.cpp:365:61: error: 1.01 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  365 |             if (scaleThicknessMultiplier && ec.widthScale > 1.01 && pen.widthF() * scale < 2) {
+      |                                                             ^
+14465 warnings generated.
+Suppressed 14464 warnings (14464 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[157/172][43.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/GraphOptionsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/preferences/GraphOptionsWidget.cpp:39:5: error: pointee of variable 'graphSpacingWidgets' of type 'const QSpinBox *[4]' can be declared 'const' [misc-const-correctness,-warnings-as-errors]
+   39 |     const QSpinBox *graphSpacingWidgets[] = { ui->horizontalEdgeSpacing, ui->horizontalBlockSpacing,
+      |     ^
+      |                     const
+13723 warnings generated.
+Suppressed 13722 warnings (13722 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[158/172][39.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/QuickFilterView.cpp
+13698 warnings generated.
+Suppressed 13698 warnings (13698 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[159/172][43.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp:19:18: error: 400 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   19 |             .arg(400)
+      |                  ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp:61:69: error: 3500 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   61 |         QToolTip::showText(pointOfEvent, tooltip, parent, QRect {}, 3500);
+      |                                                                     ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp:75:71: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   75 |         msg = QString("reg %1 = 0x%2").arg(ctx.word).arg(ta.value, 0, 16);
+      |                                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp:83:71: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   83 |         msg = QString("var %1 = 0x%2").arg(ctx.word).arg(ta.value, 0, 16);
+      |                                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp:98:71: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   98 |         msg = QString("%1 = 0x%2 -> 0x%3").arg(ctx.word).arg(addr, 0, 16).arg(ta.value, 0, 16);
+      |                                                                       ^
+/home/premades/Documents/RSoC/fork/cutter/src/common/DisassemblyPreview.cpp:98:92: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   98 |         msg = QString("%1 = 0x%2 -> 0x%3").arg(ctx.word).arg(addr, 0, 16).arg(ta.value, 0, 16);
+      |                                                                                            ^
+13857 warnings generated.
+Suppressed 13851 warnings (13851 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+6 warnings treated as errors
+
+[160/172][48.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/GlibcHeapBinsDialog.cpp
+13871 warnings generated.
+Suppressed 13871 warnings (13871 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[161/172][46.9s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/ImportsWidget.cpp
+13730 warnings generated.
+Suppressed 13730 warnings (13730 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[162/172][34.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/plugins/PluginManager.cpp
+13344 warnings generated.
+Suppressed 13344 warnings (13344 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[163/172][51.7s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/MdHighlighter.cpp
+9398 warnings generated.
+Suppressed 9398 warnings (9398 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[164/172][42.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/RelocsWidget.cpp
+13724 warnings generated.
+Suppressed 13724 warnings (13724 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[165/172][46.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/TypesVariablesDialog.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/dialogs/TypesVariablesDialog.cpp:190:92: error: 16 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  190 |                 newVariables.append(VariableEntry { g.name, QString("0x%1").arg(g.addr, 0, 16),
+      |                                                                                            ^
+13720 warnings generated.
+Suppressed 13718 warnings (13718 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[166/172][21.8s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/common/CutterLayout.cpp
+5793 warnings generated.
+Suppressed 5793 warnings (5793 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[167/172][44.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/StringsWidget.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/StringsWidget.cpp:215:40: error: 256 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+  215 |     header->setResizeContentsPrecision(256);
+      |                                        ^
+13736 warnings generated.
+Suppressed 13735 warnings (13735 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+1 warning treated as error
+
+[168/172][44.3s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/BreakpointWidget.cpp
+13704 warnings generated.
+Suppressed 13704 warnings (13704 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[169/172][43.4s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/EditMethodDialog.cpp
+13713 warnings generated.
+Suppressed 13713 warnings (13713 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[170/172][34.2s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewView.cpp
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewView.cpp:63:32: error: 100 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   63 |     p.setBrush(QColor(0, 0, 0, 100));
+      |                                ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewView.cpp:70:25: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   70 |         color.setAlphaF(0.5);
+      |                         ^
+/home/premades/Documents/RSoC/fork/cutter/src/widgets/OverviewView.cpp:99:30: error: 0.5 is a magic number; consider replacing it with a named constant [readability-magic-numbers,-warnings-as-errors]
+   99 |         initialDiff = size * 0.5;
+      |                              ^
+13856 warnings generated.
+Suppressed 13853 warnings (13853 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+3 warnings treated as errors
+
+[171/172][31.5s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/widgets/MemoryMapWidget.cpp
+13720 warnings generated.
+Suppressed 13720 warnings (13720 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+
+[172/172][26.1s] clang-tidy-21 -p=build /home/premades/Documents/RSoC/fork/cutter/src/dialogs/SetToDataDialog.cpp
+13233 warnings generated.
+Suppressed 13233 warnings (13233 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.
+

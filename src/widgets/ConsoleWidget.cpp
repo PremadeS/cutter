@@ -45,8 +45,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
       debugOutputEnabled(true),
       maxHistoryEntries(100),
       lastHistoryPosition(invalidHistoryPos),
-      completionActive(false),
-      completer(new QCompleter(&completionModel, this)),
+      completer(nullptr),
       historyUpShortcut(nullptr),
       historyDownShortcut(nullptr)
 {
@@ -90,7 +89,8 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     actions.append(actionWrapLines);
 
     // Completion
-
+    completionActive = false;
+    completer = new QCompleter(&completionModel, this);
     completer->setMaxVisibleItems(20);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setFilterMode(Qt::MatchStartsWith);

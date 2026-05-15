@@ -163,7 +163,7 @@ ExportsWidget::ExportsWidget(MainWindow *main)
     });
 
     const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Exports.toggle", main);
-    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    connect(toggleShortcut, &QShortcut::activated, this, [=, this]() { toggleDockWidget(true); });
 
     connect(Core(), &CutterCore::codeRebased, this, &ExportsWidget::refreshExports);
     connect(Core(), &CutterCore::refreshAll, this, &ExportsWidget::refreshExports);

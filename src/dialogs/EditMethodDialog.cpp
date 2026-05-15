@@ -26,7 +26,7 @@ EditMethodDialog::EditMethodDialog(bool classFixed, QWidget *parent)
     updateVirtualUI();
     validateInput();
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     connect(ui->virtualCheckBox, &QCheckBox::checkStateChanged, this,
             &EditMethodDialog::updateVirtualUI);
     connect(ui->autoRenameCheckBox, &QCheckBox::checkStateChanged, this,

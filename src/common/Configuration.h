@@ -95,6 +95,10 @@ public:
         QString name;
         QLocale locale;
     };
+    /**
+     * @brief this function will gather and return available translation for Cutter
+     * @return a list of locales and their names
+     */
     std::vector<LangInfo> getAvailableTranslations();
 
     // Fonts
@@ -151,6 +155,11 @@ public:
     void adjustColorThemeDarkness();
     int colorThemeDarkness(const QString &colorTheme) const;
 
+    /**
+     * @brief Configuration::setColor sets the local Cutter configuration color
+     * @param name Color Name
+     * @param color The color you want to set
+     */
     void setColor(const QString &name, const QColor &color);
     const QColor getColor(const QString &name) const;
 

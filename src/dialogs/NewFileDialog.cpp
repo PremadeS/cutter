@@ -80,6 +80,44 @@ NewFileDialog::NewFileDialog(MainWindow *main)
     ui->shellcodeText->installEventFilter(this);
 
     updateLoadProjectButton();
+
+    connect(ui->loadFileButton, &QPushButton::clicked, this,
+            &NewFileDialog::onLoadFileButtonClicked);
+    connect(ui->selectFileButton, &QPushButton::clicked, this,
+            &NewFileDialog::onSelectFileButtonClicked);
+    connect(ui->recentsListWidget, &QListWidget::itemClicked, this,
+            &NewFileDialog::onRecentsListWidgetItemClicked);
+    connect(ui->recentsListWidget, &QListWidget::currentItemChanged, this,
+            &NewFileDialog::onRecentsListWidgetCurrentItemChanged);
+    connect(ui->recentsListWidget, &QListWidget::itemDoubleClicked, this,
+            &NewFileDialog::onRecentsListWidgetItemDoubleClicked);
+    connect(ui->selectProjectFileButton, &QPushButton::clicked, this,
+            &NewFileDialog::onSelectProjectFileButtonClicked);
+    connect(ui->loadProjectButton, &QPushButton::clicked, this,
+            &NewFileDialog::onLoadProjectButtonClicked);
+    connect(ui->projectFileEdit, &QLineEdit::textChanged, this,
+            &NewFileDialog::onProjectFileEditTextChanged);
+    connect(ui->projectsListWidget, &QListWidget::itemClicked, this,
+            &NewFileDialog::onProjectsListWidgetItemClicked);
+    connect(ui->projectsListWidget, &QListWidget::itemDoubleClicked, this,
+            &NewFileDialog::onProjectsListWidgetItemDoubleClicked);
+    connect(ui->shellcodeButton, &QPushButton::clicked, this,
+            &NewFileDialog::onShellcodeButtonClicked);
+    connect(ui->aboutButton, &QPushButton::clicked, this, &NewFileDialog::onAboutButtonClicked);
+    connect(ui->tabWidget, &QTabWidget::currentChanged, this,
+            &NewFileDialog::onTabWidgetCurrentChanged);
+    connect(ui->newFileEdit, &QLineEdit::returnPressed, this,
+            &NewFileDialog::onLoadFileButtonClicked);
+    connect(ui->projectFileEdit, &QLineEdit::returnPressed, this,
+            &NewFileDialog::onLoadProjectButtonClicked);
+    connect(ui->actionRemoveItem, &QAction::triggered, this,
+            &NewFileDialog::onActionRemoveItemTriggered);
+    connect(ui->actionClearAll, &QAction::triggered, this,
+            &NewFileDialog::onActionClearAllTriggered);
+    connect(ui->actionRemoveProject, &QAction::triggered, this,
+            &NewFileDialog::onActionRemoveProjectTriggered);
+    connect(ui->actionClearProjects, &QAction::triggered, this,
+            &NewFileDialog::onActionClearProjectsTriggered);
 }
 
 NewFileDialog::~NewFileDialog() { }
@@ -237,7 +275,7 @@ void NewFileDialog::dropEvent(QDropEvent *event)
     loadFile(event->mimeData()->urls().first().toLocalFile());
 }
 
-/*
+/**
  * @brief Add the existing files from the list to the widget.
  * @return the list of files that actually exist
  */

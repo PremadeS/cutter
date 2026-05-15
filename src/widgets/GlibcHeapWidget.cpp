@@ -11,14 +11,12 @@
 GlibcHeapWidget::GlibcHeapWidget(MainWindow *main, QWidget *parent)
     : QWidget(parent),
       ui(new Ui::GlibcHeapWidget),
-      viewHeap(ui->tableView),
-      arenaSelectorView(ui->arenaSelector),
       addressableItemContextMenu(this, main),
-      refreshDeferrer(dynamic_cast<CutterDockWidget *>(parent)->createRefreshDeferrer(
-              [this]() { updateContents(); })),
       main(main)
 {
     ui->setupUi(this);
+    viewHeap = ui->tableView;
+    arenaSelectorView = ui->arenaSelector;
 
     viewHeap->setFont(Config()->getFont());
     viewHeap->setModel(modelHeap);
@@ -48,6 +46,9 @@ GlibcHeapWidget::GlibcHeapWidget(MainWindow *main, QWidget *parent)
     addressableItemContextMenu.addAction(chunkInfoAction);
     addressableItemContextMenu.addAction(binInfoAction);
     addActions(addressableItemContextMenu.actions());
+
+    refreshDeferrer = dynamic_cast<CutterDockWidget *>(parent)->createRefreshDeferrer(
+            [this]() { updateContents(); });
 }
 
 GlibcHeapWidget::~GlibcHeapWidget() { }

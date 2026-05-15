@@ -164,7 +164,7 @@ StringsWidget::StringsWidget(MainWindow *main)
 
     // Shift-F12 to toggle strings window
     const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Strings.toggle", main);
-    connect(toggleShortcut, &QShortcut::activated, this, [=]() { toggleDockWidget(true); });
+    connect(toggleShortcut, &QShortcut::activated, this, [=, this]() { toggleDockWidget(true); });
 
     connect(ui->actionCopyString, &QAction::triggered, this, &StringsWidget::onActionCopy);
 

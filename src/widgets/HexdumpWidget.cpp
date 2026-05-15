@@ -18,11 +18,7 @@
 #include <QTextDocumentFragment>
 
 HexdumpWidget::HexdumpWidget(MainWindow *main)
-    : MemoryDockWidget(MemoryWidgetType::Hexdump, main),
-      ui(new Ui::HexdumpWidget),
-      refreshDeferrer(createReplacingRefreshDeferrer<RVA>(
-              false, [this](const RVA *offset) { refresh(offset ? *offset : RVA_INVALID); })),
-      syntaxHighLighter(Config()->createSyntaxHighlighter(ui->hexDisasTextEdit->document()))
+    : MemoryDockWidget(MemoryWidgetType::Hexdump, main), ui(new Ui::HexdumpWidget)
 {
     ui->setupUi(this);
 
@@ -42,6 +38,7 @@ HexdumpWidget::HexdumpWidget(MainWindow *main)
     closeButton->setAutoRaise(true);
 
     ui->hexSideTab2->setCornerWidget(closeButton);
+    syntaxHighLighter = Config()->createSyntaxHighlighter(ui->hexDisasTextEdit->document());
 
     ui->openSideViewB->hide(); // hide button at startup since side view is visible
 
@@ -71,6 +68,9 @@ HexdumpWidget::HexdumpWidget(MainWindow *main)
                                      "  border-width : 1px;"
                                      "  border-color : #3daee9"
                                      "}");
+
+    refreshDeferrer = createReplacingRefreshDeferrer<RVA>(
+            false, [this](const RVA *offset) { refresh(offset ? *offset : RVA_INVALID); });
 
     this->ui->hexTextView->addAction(&syncAction);
 

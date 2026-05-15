@@ -305,8 +305,7 @@ void Configuration::loadNativeStylesheet()
     QFile f(":native/native.qss");
     if (!f.exists()) {
         qWarning() << "Can't find Native theme stylesheet.";
-    } else {
-        f.open(QFile::ReadOnly | QFile::Text);
+    } else if (f.open(QFile::ReadOnly | QFile::Text)) {
         QTextStream ts(&f);
         const QString stylesheet = ts.readAll();
 #ifdef Q_OS_MACOS
@@ -340,8 +339,7 @@ void Configuration::loadLightStylesheet()
     QFile f(":lightstyle/light.qss");
     if (!f.exists()) {
         qWarning() << "Can't find Light theme stylesheet.";
-    } else {
-        f.open(QFile::ReadOnly | QFile::Text);
+    } else if (f.open(QFile::ReadOnly | QFile::Text)) {
         QTextStream ts(&f);
         const QString stylesheet = ts.readAll();
 
@@ -359,8 +357,7 @@ void Configuration::loadDarkStylesheet()
     QFile f(":qdarkstyle/style.qss");
     if (!f.exists()) {
         qWarning() << "Can't find Dark theme stylesheet.";
-    } else {
-        f.open(QFile::ReadOnly | QFile::Text);
+    } else if (f.open(QFile::ReadOnly | QFile::Text)) {
         QTextStream ts(&f);
         const QString stylesheet = ts.readAll();
 #ifdef Q_OS_MACX
@@ -385,8 +382,7 @@ void Configuration::loadMidnightStylesheet()
     QFile f(":midnight/style.css");
     if (!f.exists()) {
         qWarning() << "Can't find Midnight theme stylesheet.";
-    } else {
-        f.open(QFile::ReadOnly | QFile::Text);
+    } else if (f.open(QFile::ReadOnly | QFile::Text)) {
         QTextStream ts(&f);
         const QString stylesheet = ts.readAll();
 
@@ -521,11 +517,6 @@ QString Configuration::getLogoFile()
                                : QString(":/img/cutter_plain.svg");
 }
 
-/**
- * @brief Configuration::setColor sets the local Cutter configuration color
- * @param name Color Name
- * @param color The color you want to set
- */
 void Configuration::setColor(const QString &name, const QColor &color)
 {
     s.setValue("colors." + name, color);
@@ -614,6 +605,16 @@ QVariant Configuration::getConfigVar(const QString &key)
 {
     const QHash<QString, QVariant>::const_iterator it = asmOptions.find(key);
     if (it != asmOptions.end()) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        switch (it.value().typeId()) {
+        case QMetaType::Type::Bool:
+            return Core()->getConfigb(key);
+        case QMetaType::Type::Int:
+            return Core()->getConfigi(key);
+        default:
+            return Core()->getConfig(key);
+        }
+#else
         switch (it.value().type()) {
         case QVariant::Type::Bool:
             return Core()->getConfigb(key);
@@ -622,6 +623,7 @@ QVariant Configuration::getConfigVar(const QString &key)
         default:
             return Core()->getConfig(key);
         }
+#endif
     }
     return QVariant();
 }
@@ -641,12 +643,6 @@ QString Configuration::getConfigString(const QString &key)
     return getConfigVar(key).toString();
 }
 
-/**
- * @brief Configuration::setConfig
- * Set Rizin configuration value (e.g. "asm.lines")
- * @param key
- * @param value
- */
 void Configuration::setConfig(const QString &key, const QVariant &value)
 {
     if (asmOptions.contains(key)) {
@@ -656,10 +652,6 @@ void Configuration::setConfig(const QString &key, const QVariant &value)
     Core()->setConfig(key, value);
 }
 
-/**
- * @brief this function will gather and return available translation for Cutter
- * @return a list of locales and their names
- */
 std::vector<Configuration::LangInfo> Configuration::getAvailableTranslations()
 {
     const auto &trDirs = Cutter::getTranslationsDirectories();
@@ -682,7 +674,7 @@ std::vector<Configuration::LangInfo> Configuration::getAvailableTranslations()
     QString currLanguageName;
     std::vector<Configuration::LangInfo> result;
     QHash<QString, int> langCount;
-    for (const auto &translationFile : fileNames) {
+    for (const auto &translationFile : std::as_const(fileNames)) {
         auto name = QFileInfo(translationFile).baseName();
         auto parts = name.split("_");
         if (parts.length() < 2) {

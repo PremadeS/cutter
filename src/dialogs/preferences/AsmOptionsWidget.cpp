@@ -50,7 +50,7 @@ AsmOptionsWidget::AsmOptionsWidget(PreferencesDialog *dialog)
     for (confCheckbox = checkboxes.begin(); confCheckbox != checkboxes.end(); ++confCheckbox) {
         const QString val = confCheckbox->config;
         QCheckBox &cb = *confCheckbox->checkBox;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
         connect(confCheckbox->checkBox, &QCheckBox::checkStateChanged,
                 [this, val, &cb]() { checkboxEnabler(&cb, val); });
 #else

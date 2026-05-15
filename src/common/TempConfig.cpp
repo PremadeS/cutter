@@ -8,6 +8,22 @@
 TempConfig::~TempConfig()
 {
     for (auto i = resetValues.constBegin(); i != resetValues.constEnd(); ++i) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        switch (i.value().typeId()) {
+        case QMetaType::Type::QString:
+            Core()->setConfig(i.key(), i.value().toString());
+            break;
+        case QMetaType::Type::Int:
+            Core()->setConfig(i.key(), i.value().toInt());
+            break;
+        case QMetaType::Type::Bool:
+            Core()->setConfig(i.key(), i.value().toBool());
+            break;
+        default:
+            assert(false);
+            break;
+        }
+#else
         switch (i.value().type()) {
         case QVariant::String:
             Core()->setConfig(i.key(), i.value().toString());
@@ -22,6 +38,7 @@ TempConfig::~TempConfig()
             assert(false);
             break;
         }
+#endif
     }
 }
 

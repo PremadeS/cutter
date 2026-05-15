@@ -120,9 +120,9 @@ bool RegisterRefProxyModel::lessThan(const QModelIndex &left, const QModelIndex 
 RegisterRefsWidget::RegisterRefsWidget(MainWindow *main)
     : CutterDockWidget(main),
       ui(new Ui::RegisterRefsWidget),
-      refreshDeferrer(createRefreshDeferrer([this]() { refreshRegisterRef(); })),
       registerRefModel(new RegisterRefModel(this)),
       registerRefProxyModel(new RegisterRefProxyModel(registerRefModel, this)),
+      refreshDeferrer(createRefreshDeferrer([this]() { refreshRegisterRef(); })),
       addressableItemContextMenu(this, main)
 {
     ui->setupUi(this);

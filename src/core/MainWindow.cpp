@@ -3,20 +3,20 @@
 #include "ui_MainWindow.h"
 
 // Common Headers
+#include "CutterApplication.h"
+#include "CutterConfig.h"
 #include "common/AnalysisTask.h"
 #include "common/BugReporting.h"
 #include "common/Helpers.h"
 #include "common/Highlighter.h"
-// #include "common/SvgIconEngine.h"
+#include "common/PythonManager.h"
 #include "common/RunScriptTask.h"
+#include "common/SvgIconEngine.h"
 #include "common/TempConfig.h"
-#include "widgets/ProgressIndicator.h"
-// #include "common/PythonManager.h"
 #include "plugins/CutterPlugin.h"
 #include "plugins/PluginManager.h"
-// #include "CutterConfig.h"
-#include "CutterApplication.h"
 #include "shortcuts/ShortcutManager.h"
+#include "widgets/ProgressIndicator.h"
 
 // Dialogs
 #include "dialogs/AboutDialog.h"

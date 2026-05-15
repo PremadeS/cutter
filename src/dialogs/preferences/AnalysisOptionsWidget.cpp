@@ -16,7 +16,7 @@ static const QHash<QString, const char *> analysisBoundaries {
 };
 
 AnalysisOptionsWidget::AnalysisOptionsWidget(PreferencesDialog *dialog)
-    : QDialog(dialog), mainWindow(dialog->getMainWindow()), ui(new Ui::AnalysisOptionsWidget)
+    : QDialog(dialog), ui(new Ui::AnalysisOptionsWidget), mainWindow(dialog->getMainWindow())
 {
     ui->setupUi(this);
 
@@ -32,11 +32,16 @@ AnalysisOptionsWidget::AnalysisOptionsWidget(PreferencesDialog *dialog)
     createAnalysisInOptionsList();
 
     // Connect each checkbox from "checkboxes" to the generic signal "checkboxEnabler"
-    for (const ConfigCheckbox &confCheckbox : checkboxes) {
+    for (const ConfigCheckbox &confCheckbox : std::as_const(checkboxes)) {
         const QString val = confCheckbox.config;
         QCheckBox &cb = *confCheckbox.checkBox;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+        connect(confCheckbox.checkBox, &QCheckBox::checkStateChanged, this,
+                [val, &cb]() { checkboxEnabler(&cb, val); });
+#else
         connect(confCheckbox.checkBox, &QCheckBox::stateChanged, this,
                 [val, &cb]() { checkboxEnabler(&cb, val); });
+#endif
     }
 
     ui->analyzePushButton->setToolTip(tr("Analyze the program using Rizin's \"aaa\" command"));
