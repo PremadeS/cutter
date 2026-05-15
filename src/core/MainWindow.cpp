@@ -364,6 +364,46 @@ void MainWindow::initToolBar()
                      [this]() { this->visualNavbar->updateGraphicsScene(); });
     QObject::connect(configuration, &Configuration::interfaceThemeChanged, this,
                      &MainWindow::chooseThemeIcons);
+
+    connect(ui->actionNew, &QAction::triggered, this, &MainWindow::onActionNewTriggered);
+    connect(ui->actionSave, &QAction::triggered, this, &MainWindow::onActionSaveTriggered);
+    connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::onActionSaveAsTriggered);
+    connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::onActionQuitTriggered);
+
+    connect(ui->actionBaseFind, &QAction::triggered, this, &MainWindow::onActionBaseFindTriggered);
+    connect(ui->actionBackward, &QAction::triggered, this, &MainWindow::onActionBackwardTriggered);
+    connect(ui->actionForward, &QAction::triggered, this, &MainWindow::onActionForwardTriggered);
+    connect(ui->actionRefreshContents, &QAction::triggered, this,
+            &MainWindow::onActionRefreshContentsTriggered);
+    connect(ui->actionPreferences, &QAction::triggered, this,
+            &MainWindow::onActionPreferencesTriggered);
+
+    connect(ui->actionRefreshPanels, &QAction::triggered, this,
+            &MainWindow::onActionRefreshPanelsTriggered);
+    connect(ui->actionDefaultLayout, &QAction::triggered, this,
+            &MainWindow::onActionDefaultTriggered);
+    connect(ui->actionTabsOnTop, &QAction::triggered, this,
+            &MainWindow::onActionTabsOnTopTriggered);
+    connect(ui->actionGroupedDockDragging, &QAction::toggled, this,
+            &MainWindow::onActionGroupedDockDraggingTriggered);
+
+    connect(ui->actionDisasAddComment, &QAction::triggered, this,
+            &MainWindow::onActionDisasAddCommentTriggered);
+    connect(ui->actionMap, &QAction::triggered, this, &MainWindow::onActionMapTriggered);
+    connect(ui->actionImportPdb, &QAction::triggered, this,
+            &MainWindow::onActionImportPdbTriggered);
+    connect(ui->actionExportAsCode, &QAction::triggered, this,
+            &MainWindow::onActionExportAsCodeTriggered);
+    connect(ui->actionApplySigFromFile, &QAction::triggered, this,
+            &MainWindow::onActionApplySigFromFileTriggered);
+    connect(ui->actionCreateNewSig, &QAction::triggered, this,
+            &MainWindow::onActionCreateNewSigTriggered);
+
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onActionAboutTriggered);
+    connect(ui->actionIssue, &QAction::triggered, this, &MainWindow::onActionIssueTriggered);
+    connect(ui->actionResetSettings, &QAction::triggered, this,
+            &MainWindow::onActionResetSettingsTriggered);
+    connect(ui->actionTheme, &QAction::triggered, this, &MainWindow::chooseThemeIcons);
 }
 
 void MainWindow::initDocks()

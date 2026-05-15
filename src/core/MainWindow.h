@@ -104,7 +104,7 @@ public:
         addPluginDockWidget(dockWidget);
     }
     void addPluginDockWidget(CutterDockWidget *dockWidget);
-    enum class MenuType { File, Edit, View, Windows, Debug, Help, Plugins };
+    enum class MenuType : ut8 { File, Edit, View, Windows, Debug, Help, Plugins };
     /**
      * @brief Getter for MainWindow's different menus
      * @param type The type which represents the desired menu
