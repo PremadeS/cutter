@@ -22,7 +22,6 @@
 
 #include <cassert>
 #include <memory>
-#include <ranges>
 #include <rz_asm.h>
 #include <rz_cmd.h>
 #include <rz_socket.h>
