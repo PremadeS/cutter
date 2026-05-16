@@ -624,7 +624,7 @@ bool CutterCore::loadFile(const QString &path, ut64 baddr, ut64 mapaddr, int per
             // load RzBin information
             // XXX only for sub-bins
             rz_core_bin_load(core, path.toUtf8(), baddr);
-            rz_bin_select_idx(core->bin, NULL, idx);
+            rz_bin_select_idx(core->bin, nullptr, idx);
         }
 #endif
     }
@@ -5009,7 +5009,7 @@ QString CutterCore::getVersionInformation()
         { "rz_syscall", &rz_syscall_version },
         { "rz_util", &rz_util_version },
         /* ... */
-        { NULL, NULL }
+        { nullptr, nullptr }
     };
     versionInfo.append(getRizinVersionReadable());
     versionInfo.append("\n");

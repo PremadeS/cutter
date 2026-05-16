@@ -1246,7 +1246,7 @@ void MainWindow::updateHistoryMenu(QMenu *menu, bool redo)
         const char *fname = nullptr;
         if (f) {
             if (f->offset != undo->offset) {
-                qint64 diff = undo->offset - f->offset;
+                const qint64 diff = undo->offset - f->offset;
                 fname = rz_str_newf("%s+%" PFMT64d, f->name, diff);
             } else {
                 fname = strdup(f->name);
