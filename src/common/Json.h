@@ -4,6 +4,7 @@
 #include "CutterCommon.h"
 
 #include <QJsonValue>
+#include <QVariant>
 
 class QTreeWidgetItem;
 class CutterJson;

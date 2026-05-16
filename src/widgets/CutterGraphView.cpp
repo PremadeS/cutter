@@ -93,7 +93,7 @@ void CutterGraphView::initFont()
     const QFontMetricsF metrics(font());
     baseline = int(metrics.ascent());
 #if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-    ACharWidth = metrics.width('A');
+    aCharWidth = metrics.width('A');
 #else
     aCharWidth = metrics.horizontalAdvance('A');
 #endif

@@ -4766,11 +4766,15 @@ QList<MarkDescription> CutterCore::getMarksAt(RVA addr)
 QColor CutterCore::getBlendedMarksColorAt(RVA addr)
 {
     const auto &marks = getMarksAt(addr);
+    QListIterator<MarkDescription> it(marks);
+    it.toBack();
+
     double r = 0, g = 0, b = 0, a = 0;
     bool first = true;
 
     // Iterate in reverse because the oldest/first mark is at the end
-    for (const auto &mark : std::ranges::reverse_view(marks)) {
+    while (it.hasPrevious()) {
+        const auto mark = it.previous();
         const QColor c = mark.color;
         if (!c.isValid()) {
             continue;
