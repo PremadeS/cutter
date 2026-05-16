@@ -1,13 +1,13 @@
 #ifndef VTABLESWIDGET_H
 #define VTABLESWIDGET_H
 
-#include <memory>
-
-#include <QTreeView>
-#include <QSortFilterProxyModel>
-
-#include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
+
+#include <QSortFilterProxyModel>
+#include <QTreeView>
+
+#include <memory>
 
 namespace Ui {
 class VTablesWidget;
@@ -16,6 +16,9 @@ class VTablesWidget;
 class MainWindow;
 class VTablesWidget;
 
+/**
+ * @brief Source model for @ref VTablesWidget
+ */
 class VTableModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -26,8 +29,8 @@ private:
     QList<VTableDescription> vtables;
 
 public:
-    enum Columns { NAME = 0, ADDRESS, COUNT };
-    static const int VTableDescriptionRole = Qt::UserRole;
+    enum Columns : ut8 { NAME = 0, ADDRESS, COUNT };
+    static const int vTableDescriptionRole = Qt::UserRole;
 
     VTableModel(QObject *parent = nullptr);
 
@@ -41,6 +44,9 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 };
 
+/**
+ * @brief Proxy model for @ref VTablesWidget
+ */
 class VTableSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
@@ -50,6 +56,9 @@ protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
 };
 
+/**
+ * @brief Widget for listing C++ Virtual Tables (vtables) and their methods
+ */
 class VTablesWidget : public CutterDockWidget
 {
     Q_OBJECT
@@ -60,7 +69,7 @@ public:
 
 private slots:
     void refreshVTables();
-    void on_vTableTreeView_doubleClicked(const QModelIndex &index);
+    void onVTableTreeViewDoubleClicked(const QModelIndex &index);
 
 private:
     std::unique_ptr<Ui::VTablesWidget> ui;

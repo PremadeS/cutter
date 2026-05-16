@@ -1,13 +1,13 @@
-/** \file CutterCommon.h
+/** @file CutterCommon.h
  * This file contains any definition that is useful in the whole project.
  * For example, it may contain custom types (RVA, ut64), list iterators, etc.
  */
 #ifndef CUTTERCORE_H
 #define CUTTERCORE_H
 
-#include "rz_core.h"
+#include "rz_core.h" // IWYU pragma: keep
+
 #include <QString>
-#include "RizinCpp.h"
 
 // Workaround for compile errors on Windows
 #ifdef Q_OS_WIN
@@ -46,19 +46,19 @@ typedef quint64 RVA;
  */
 #define RVA_INVALID RVA_MAX
 
-inline QString RzAddressString(RVA addr)
+inline QString rzAddressString(RVA addr)
 {
-    return QString::asprintf("%#010" PFMT64x, addr);
+    return QString::asprintf("%#010llx", static_cast<unsigned long long>(addr));
 }
 
-inline QString RzSizeString(RVA size)
+inline QString rzSizeString(RVA size)
 {
-    return QString::asprintf("%#" PFMT64x, size);
+    return QString::asprintf("%#llx", static_cast<unsigned long long>(size));
 }
 
-inline QString RzHexString(RVA size)
+inline QString rzHexString(RVA size)
 {
-    return QString::asprintf("%#" PFMT64x, size);
+    return QString::asprintf("%#llx", static_cast<unsigned long long>(size));
 }
 
 #ifdef CUTTER_SOURCE_BUILD

@@ -1,9 +1,11 @@
+#ifndef DEBUGOPTIONSWIDGET_H
+#define DEBUGOPTIONSWIDGET_H
 
-#pragma once
+#include <QDialog>
 
 #include <memory>
 
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
 
 class PreferencesDialog;
 
@@ -11,6 +13,9 @@ namespace Ui {
 class DebugOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to debugging
+ */
 class DebugOptionsWidget : public QDialog
 {
     Q_OBJECT
@@ -28,3 +33,5 @@ private slots:
     void updateStackSize();
     void onDebugPluginChanged(const QString &index);
 };
+
+#endif // DEBUGOPTIONSWIDGET_H

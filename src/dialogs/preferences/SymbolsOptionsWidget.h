@@ -1,10 +1,10 @@
 #ifndef SYMBOLSOPTIONSWIDGET_H
 #define SYMBOLSOPTIONSWIDGET_H
 
-#include <memory>
-
-#include <QWidget>
 #include <QDialog>
+#include <QWidget>
+
+#include <memory>
 
 class MainWindow;
 
@@ -14,6 +14,9 @@ namespace Ui {
 class SymbolsOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to symbols
+ */
 class SymbolsOptionsWidget : public QDialog
 {
     Q_OBJECT

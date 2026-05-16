@@ -1,11 +1,10 @@
 #pragma once
 
-#include <QSortFilterProxyModel>
-
-#include "core/Cutter.h"
 #include "AddressableItemContextMenu.h"
 #include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
+
+#include <QSortFilterProxyModel>
 
 class MainWindow;
 
@@ -13,6 +12,9 @@ namespace Ui {
 class ThreadsWidget;
 }
 
+/**
+ * @brief Source model for @ref ThreadsWidget
+ */
 class ThreadModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -23,7 +25,7 @@ private:
     QList<ThreadDescription> threads;
 
 public:
-    enum ColumnIndex {
+    enum ColumnIndex : ut8 {
         COLUMN_PID = 0,
         COLUMN_STATUS,
         COLUMN_PATH,
@@ -48,6 +50,9 @@ public:
     QString translateStatus(const char status) const;
 };
 
+/**
+ * @brief Widget listing info about threads during debugging/emulating
+ */
 class ThreadsWidget : public CutterDockWidget
 {
     Q_OBJECT

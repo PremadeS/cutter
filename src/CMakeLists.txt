@@ -24,7 +24,6 @@ set(SOURCES
     dialogs/XrefsDialog.cpp
     core/MainWindow.cpp
     common/Helpers.cpp
-    common/Highlighter.cpp
     common/MdHighlighter.cpp
     common/DirectionalComboBox.cpp
     dialogs/preferences/AsmOptionsWidget.cpp
@@ -75,7 +74,6 @@ set(SOURCES
     widgets/CutterDockWidget.cpp
     widgets/GraphWidget.cpp
     widgets/OverviewWidget.cpp
-    common/JsonModel.cpp
     dialogs/VersionInfoDialog.cpp
     widgets/FlirtWidget.cpp
     common/AsyncTask.cpp
@@ -87,7 +85,7 @@ set(SOURCES
     widgets/BacktraceWidget.cpp
     dialogs/MapFileDialog.cpp
     common/CommandTask.cpp
-    common/ProgressIndicator.cpp
+    widgets/ProgressIndicator.cpp
     common/RizinTask.cpp
     dialogs/RizinTaskDialog.cpp
     widgets/DebugActions.cpp
@@ -172,6 +170,7 @@ set(SOURCES
     widgets/ItemCountLineEdit.cpp
     widgets/AbstractFilterView.cpp
     dialogs/preferences/InterfaceOptionsWidget.cpp
+    common/Json.cpp
 )
 set(HEADER_FILES
     core/Cutter.h
@@ -197,7 +196,6 @@ set(HEADER_FILES
     dialogs/XrefsDialog.h
     common/Helpers.h
     core/MainWindow.h
-    common/Highlighter.h
     common/MdHighlighter.h
     common/DirectionalComboBox.h
     dialogs/InitialOptionsDialog.h
@@ -247,7 +245,6 @@ set(HEADER_FILES
     widgets/CutterDockWidget.h
     widgets/GraphWidget.h
     widgets/OverviewWidget.h
-    common/JsonModel.h
     dialogs/VersionInfoDialog.h
     widgets/FlirtWidget.h
     common/AsyncTask.h
@@ -261,7 +258,7 @@ set(HEADER_FILES
     common/StringsTask.h
     common/FunctionsTask.h
     common/CommandTask.h
-    common/ProgressIndicator.h
+    widgets/ProgressIndicator.h
     plugins/CutterPlugin.h
     common/RizinTask.h
     dialogs/RizinTaskDialog.h

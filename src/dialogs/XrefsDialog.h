@@ -1,13 +1,14 @@
 #ifndef XREFSDIALOG_H
 #define XREFSDIALOG_H
 
+#include "CutterCommon.h" // IWYU pragma: keep
+#include "CutterDescriptions.h"
+#include "common/AddressableItemModel.h"
+
 #include <QDialog>
 #include <QTreeWidgetItem>
+
 #include <memory>
-#include "common/Highlighter.h"
-#include "core/Cutter.h"
-#include "common/AddressableItemModel.h"
-#include "QuickFilterView.h"
 
 class XrefModel : public AddressableItemModel<QAbstractListModel>
 {
@@ -17,12 +18,12 @@ private:
     bool to;
 
 public:
-    enum Columns { OFFSET = 0, TYPE, CODE, COMMENT, COUNT };
-    static const int FlagDescriptionRole = Qt::UserRole;
+    enum Columns : ut8 { OFFSET = 0, TYPE, CODE, COMMENT, COUNT };
+    static const int flagDescriptionRole = Qt::UserRole;
 
     XrefModel(QObject *parent = nullptr);
     void readForOffset(RVA offset, bool to, bool whole_function);
-    void readForVariable(QString nameOfVariable, bool write, RVA offset);
+    void readForVariable(const QString &nameOfVariable, bool write, RVA offset);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
@@ -58,6 +59,10 @@ namespace Ui {
 class XrefsDialog;
 }
 
+/**
+ * @brief A dialog that displays X-refs to and from an address or variable, providing a live
+ * disassembly preview
+ */
 class XrefsDialog : public QDialog
 {
     Q_OBJECT
@@ -66,7 +71,7 @@ public:
     explicit XrefsDialog(MainWindow *parent, bool hideXrefFrom = false);
     ~XrefsDialog();
 
-    void fillRefsForAddress(RVA addr, QString name, bool whole_function);
+    void fillRefsForAddress(RVA addr, const QString &name, bool whole_function);
     /**
      * @brief Initializes toModel and fromModel with the details about the references to the
      * specified local variable 'nameOfVariable'.
@@ -74,7 +79,7 @@ public:
      * initialized.
      * @param offset An offset in the function in which the specified local variable exist.
      */
-    void fillRefsForVariable(QString nameOfVariable, RVA offset);
+    void fillRefsForVariable(const QString &nameOfVariable, RVA offset);
 
 private slots:
     QString normalizeAddr(const QString &addr) const;
@@ -89,7 +94,7 @@ private slots:
 
 private:
     RVA addr;
-    QString func_name;
+    QString funcName;
     XrefModel toModel;
     XrefFilterProxyModel toProxyModel;
     XrefModel fromModel;
@@ -97,8 +102,8 @@ private:
 
     std::unique_ptr<Ui::XrefsDialog> ui;
 
-    void updateLabels(QString name);
-    void updateLabelsForVariables(QString name);
+    void updateLabels(const QString &name);
+    void updateLabelsForVariables(const QString &name);
     void updatePreview(RVA addr);
     void hideXrefFromSection();
 };

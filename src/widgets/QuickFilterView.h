@@ -9,6 +9,9 @@ namespace Ui {
 class QuickFilterView;
 }
 
+/**
+ * @brief A UI bar that allows users to type text to filter items in a list or tree
+ */
 class QuickFilterView : public AbstractFilterView
 {
     Q_OBJECT

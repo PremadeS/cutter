@@ -1,18 +1,18 @@
+#include "PythonManager.h"
+
+#include "Cutter.h"
+#include "PythonAPI.h"
+
+#include <QCoreApplication>
+#include <QDebug>
+#include <QDir>
+#include <QFile>
+
 #include <cassert>
 
-#include "PythonAPI.h"
-#include "PythonManager.h"
-#include "Cutter.h"
-
-#include <QDebug>
-#include <QFile>
-#include <QDebug>
-#include <QCoreApplication>
-#include <QDir>
-
 #ifdef CUTTER_ENABLE_PYTHON_BINDINGS
-#    include <shiboken.h>
 #    include <pyside.h>
+#    include <shiboken.h>
 #    ifdef HAVE_PYSIDECLEANUP
 // This header is introduced in PySide 6
 #        include <pysidecleanup.h>

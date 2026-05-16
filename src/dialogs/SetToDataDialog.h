@@ -2,12 +2,19 @@
 #define SETTODATADIALOG_H
 
 #include <QDialog>
-#include "core/Cutter.h"
+// #include "core/Cutter.h"
+
+#include "CutterCommon.h"
+
+#include <memory>
 
 namespace Ui {
 class SetToDataDialog;
 }
 
+/**
+ * @brief A dialog for defining memory as a data type
+ */
 class SetToDataDialog : public QDialog
 {
     Q_OBJECT
@@ -20,13 +27,13 @@ public:
     int getItemCount();
 
 private slots:
-    void on_sizeEdit_textChanged(const QString &arg1);
-    void on_repeatEdit_textChanged(const QString &arg1);
+    void onSizeEditTextChanged(const QString &arg1);
+    void onRepeatEditTextChanged(const QString &arg1);
 
 private:
     void updateEndAddress();
 
-    Ui::SetToDataDialog *ui;
+    std::unique_ptr<Ui::SetToDataDialog> ui;
     RVA startAddress;
 };
 

@@ -1,13 +1,13 @@
 #ifndef TYPESWIDGET_H
 #define TYPESWIDGET_H
 
-#include <memory>
-
-#include "core/Cutter.h"
+#include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 
 #include <QAbstractListModel>
 #include <QSortFilterProxyModel>
+
+#include <memory>
 
 class MainWindow;
 class QTreeWidget;
@@ -20,6 +20,9 @@ class TypesWidget;
 class MainWindow;
 class QTreeWidgetItem;
 
+/**
+ * @brief Source model for @ref TypesWidget
+ */
 class TypesModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -35,8 +38,8 @@ private:
     QVariant toolTipValue(const QModelIndex &index) const;
 
 public:
-    enum Columns { TYPE = 0, SIZE, CATEGORY, FORMAT, COUNT };
-    static const int TypeDescriptionRole = Qt::UserRole;
+    enum Columns : ut8 { TYPE = 0, SIZE, CATEGORY, FORMAT, COUNT };
+    static const int typeDescriptionRole = Qt::UserRole;
 
     TypesModel(QObject *parent = nullptr);
 
@@ -65,6 +68,9 @@ protected:
     QString selectedCategory;
 };
 
+/**
+ * @brief Widget for listing all types
+ */
 class TypesWidget : public CutterDockWidget
 {
     Q_OBJECT
@@ -94,14 +100,14 @@ private slots:
      * It shows the user a file dialog box to select a file where the types
      * will be exported.
      */
-    void on_actionExport_Types_triggered();
+    void onActionExportTypesTriggered();
 
     /**
      * @brief Executed on clicking the Load New types option in the context menu
      * It will open the TypesInteractionDialog where the user can either enter the
      * types manually, or can select a file from where the types will be loaded
      */
-    void on_actionLoad_New_Types_triggered();
+    void onActionLoadNewTypesTriggered();
 
     /**
      * @brief Executed on clicking either the Edit Type or View Type options in the context menu
@@ -114,7 +120,7 @@ private slots:
      * @brief Executed on clicking the Delete Type option in the context menu
      * Upon confirmation from the user, it will delete the selected type.
      */
-    void on_actionDelete_Type_triggered();
+    void onActionDeleteTypeTriggered();
 
     /**
      * @brief triggers when the user double-clicks an item. This will open
@@ -131,8 +137,8 @@ private slots:
 private:
     std::unique_ptr<Ui::TypesWidget> ui;
 
-    TypesModel *types_model;
-    TypesSortFilterProxyModel *types_proxy_model;
+    TypesModel *typesModel;
+    TypesSortFilterProxyModel *typesProxyModel;
     QAction *actionViewType;
     QAction *actionEditType;
     QAction *actionShowVariables;

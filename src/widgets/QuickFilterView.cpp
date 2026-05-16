@@ -1,6 +1,7 @@
 #include "QuickFilterView.h"
-#include "ui_QuickFilterView.h"
+
 #include "Configuration.h"
+#include "ui_QuickFilterView.h"
 
 QuickFilterView::QuickFilterView(QWidget *parent)
     : AbstractFilterView(parent), ui(new Ui::QuickFilterView())

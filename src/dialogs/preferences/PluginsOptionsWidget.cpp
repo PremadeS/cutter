@@ -2,17 +2,16 @@
 #include "PluginsOptionsWidget.h"
 
 #include "PreferencesDialog.h"
-
 #include "common/Helpers.h"
-#include "common/Configuration.h"
-#include "plugins/PluginManager.h"
+// #include "common/Configuration.h"
 #include "dialogs/RizinPluginsDialog.h"
+#include "plugins/PluginManager.h"
 
 #include <QLabel>
 #include <QPushButton>
 #include <QTreeWidget>
-#include <QVBoxLayout>
 #include <QUrl>
+#include <QVBoxLayout>
 
 PluginsOptionsWidget::PluginsOptionsWidget(PreferencesDialog *dialog) : QDialog(dialog)
 {

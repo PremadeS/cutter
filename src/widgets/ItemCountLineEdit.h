@@ -28,9 +28,9 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
-    QLabel *m_itemCountLabel;
-    bool m_itemCountVisible;
-    bool m_itemCountAutoHide;
+    QLabel *itemCountLabel;
+    bool isItemCountVisible;
+    bool itemCountAutoHideEnabled;
 
     void updateLabelPosition();
 };

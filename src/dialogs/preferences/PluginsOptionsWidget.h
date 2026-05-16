@@ -6,6 +6,9 @@
 
 class PreferencesDialog;
 
+/**
+ * @brief Contains configurable options related to plugins
+ */
 class PluginsOptionsWidget : public QDialog
 {
     Q_OBJECT

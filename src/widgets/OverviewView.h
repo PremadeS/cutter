@@ -1,12 +1,16 @@
 #ifndef OVERVIEWVIEW_H
 #define OVERVIEWVIEW_H
 
-#include <QWidget>
+#include "widgets/DisassemblerGraphView.h"
+#include "widgets/GraphView.h"
+
 #include <QPainter>
 #include <QRect>
-#include "widgets/GraphView.h"
-#include "widgets/DisassemblerGraphView.h"
+#include <QWidget>
 
+/**
+ * @brief A "minimap" widget that displays a scaled-down version of the function graph
+ */
 class OverviewView : public GraphView
 {
     Q_OBJECT
@@ -39,7 +43,7 @@ public:
      * Everytime overview updates its contents, it compares this value with the one in Graph
      * if they aren't same, then Overview needs to update the pixmap cache.
      */
-    ut64 currentFcnAddr = RVA_INVALID; // TODO: make this less public
+    RVA currentFcnAddr = RVA_INVALID;
 public slots:
     /**
      * @brief scale and center all nodes in, then run update

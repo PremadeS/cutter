@@ -1,16 +1,15 @@
 #ifndef DISASSEMBLYPREVIEW_H
 #define DISASSEMBLYPREVIEW_H
 
-#include <QTextBlockUserData>
-#include "core/CutterDescriptions.h"
 #include "DisassemblyHelper.h"
+#include "core/CutterDescriptions.h"
+
+#include <QTextBlockUserData>
 
 class QWidget;
 
 /**
- * @brief Namespace to define relevant functions
- *
- * @ingroup DisassemblyPreview
+ * @namespace Namespace containing functions for showing tooltips in disassembly
  */
 namespace DisassemblyPreview {
 /*!
