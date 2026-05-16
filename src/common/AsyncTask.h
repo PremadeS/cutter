@@ -9,6 +9,8 @@
 #include <QRunnable>
 #include <QThreadPool>
 
+#include <memory>
+
 class AsyncTaskManager;
 
 /**

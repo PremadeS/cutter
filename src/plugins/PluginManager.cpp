@@ -1,11 +1,12 @@
 #include <cassert>
 
+// clang-format off
 #ifdef CUTTER_ENABLE_PYTHON_BINDINGS
-#    include "PythonManager.h"
-
 #    include <Python.h>
 #    include <cutterbindings_python.h>
+#    include "PythonManager.h"
 #endif
+// clang-format on
 
 #include "CutterConfig.h"
 #include "CutterPlugin.h"
