@@ -1,7 +1,9 @@
+// clang-format off
+#include "PythonAPI.h"
 #include "PythonManager.h"
+// clang-format on
 
 #include "Cutter.h"
-#include "PythonAPI.h"
 
 #include <QCoreApplication>
 #include <QDebug>
