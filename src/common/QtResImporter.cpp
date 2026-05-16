@@ -21,7 +21,10 @@ PyObject *QtResGetCode(const char *name)
         return nullptr;
     }
 
-    moduleFile.open(QIODevice::ReadOnly);
+    if (!moduleFile.open(QIODevice::ReadOnly)) {
+        return nullptr;
+    }
+
     QByteArray data = moduleFile.readAll();
     moduleFile.close();
 
