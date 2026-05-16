@@ -1,7 +1,6 @@
 ---
 Checks: >
   -*,
-  cppcoreguidelines-non-private-member-variables-in-classes,
   cppcoreguidelines-pro-type-cstyle-cast,
   misc-const-correctness,
   misc-unused-parameters,
