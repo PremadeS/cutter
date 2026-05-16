@@ -27,18 +27,17 @@ public:
     T width(const QChar &ch)
     {
         auto unicode = ch.unicode();
-        if (unicode >= 0xD800)
-            [[unlikely]]
-            {
-                if (unicode >= 0xE000) {
-                    unicode -= 0xE000 - 0xD800;
-                } else {
-                    // is lonely surrogate
-                    return fetchWidth(ch);
-                }
+        if (unicode >= 0xD800) [[unlikely]] {
+            if (unicode >= 0xE000) {
+                unicode -= 0xE000 - 0xD800;
+            } else {
+                // is lonely surrogate
+                return fetchWidth(ch);
             }
-        if (!charWidths[unicode])
-            [[unlikely]] { return charWidths[unicode] = fetchWidth(ch); }
+        }
+        if (!charWidths[unicode]) [[unlikely]] {
+            return charWidths[unicode] = fetchWidth(ch);
+        }
         return charWidths[unicode];
     }
 
@@ -47,12 +46,13 @@ public:
         T result = 0;
         QChar temp;
         for (const QChar &ch : text) {
-            if (ch.isHighSurrogate())
-                [[unlikely]] { temp = ch; }
-            else if (ch.isLowSurrogate())
-                [[unlikely]] { result += fetchWidth(QString(temp) + ch); }
-            else
-                [[likely]] { result += width(ch); }
+            if (ch.isHighSurrogate()) [[unlikely]] {
+                temp = ch;
+            } else if (ch.isLowSurrogate()) [[unlikely]] {
+                result += fetchWidth(QString(temp) + ch);
+            } else [[likely]] {
+                result += width(ch);
+            }
         }
         return result;
     }
@@ -67,12 +67,13 @@ public:
         for (int i = 0; i < text.length(); i++) {
             const QChar ch = text[i];
 
-            if (ch.isHighSurrogate())
-                [[unlikely]] { temp = ch; }
-            else if (ch.isLowSurrogate())
-                [[unlikely]] { curWidth += fetchWidth(QString(temp) + ch); }
-            else
-                [[likely]] { curWidth += width(ch); }
+            if (ch.isHighSurrogate()) [[unlikely]] {
+                temp = ch;
+            } else if (ch.isLowSurrogate()) [[unlikely]] {
+                curWidth += fetchWidth(QString(temp) + ch);
+            } else [[likely]] {
+                curWidth += width(ch);
+            }
             if (curWidth >= offset) {
                 return i;
             }
