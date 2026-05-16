@@ -92,12 +92,9 @@ const QHash<QString, QHash<ColorFlags, QColor>> Configuration::cutterOptionColor
     { "lineHighlight",
       { { DarkFlag, QColor(0x15, 0x1d, 0x1d, 0x96) },
         { LightFlag, QColor(0xd2, 0xd2, 0xff, 0x96) } } },
-    { "wordHighlightBg",
-      { { DarkFlag, QColor(0x3a, 0x41, 0x50, 0xff) },
-        { LightFlag, QColor(0xb3, 0x77, 0xd6, 0x50) } } },
-    { "wordHighlightFg",
-      { { DarkFlag, QColor(0x00, 0x00, 0x00, 0x00) },
-        { LightFlag, QColor(0x00, 0x00, 0x00, 0x00) } } },
+    { "wordHighlight",
+      { { DarkFlag, QColor(0x37, 0x3d, 0x4b, 0xff) },
+        { LightFlag, QColor(0xb3, 0x77, 0xd6, 0x46) } } },
     { "highlightPC",
       { { DarkFlag, QColor(0x57, 0x1a, 0x07) }, { LightFlag, QColor(0xd6, 0xff, 0xd2) } } },
     { "gui.overview.fill",
@@ -946,4 +943,89 @@ void Configuration::setNavBarLegendEnabled(bool enabled)
 bool Configuration::getNavBarLegendEnabled()
 {
     return s.value("navBarLegend").toBool();
+}
+
+void Configuration::setShowQuickFilter(bool show)
+{
+    s.setValue("showQuickFilter", show);
+    emit quickFilterOptionsChanged();
+}
+
+bool Configuration::getShowQuickFilter() const
+{
+    return s.value("showQuickFilter", true).toBool();
+}
+
+void Configuration::setItemCountVisible(bool visible)
+{
+    s.setValue("itemCountVisible", visible);
+    emit itemCountOptionsChanged();
+}
+
+bool Configuration::getItemCountVisible() const
+{
+    return s.value("itemCountVisible", true).toBool();
+}
+
+void Configuration::setItemCountAutoHide(bool value)
+{
+    s.setValue("autoHideItemCount", value);
+    emit itemCountOptionsChanged();
+}
+
+bool Configuration::getItemCountAutoHide() const
+{
+    return s.value("autoHideItemCount", false).toBool();
+}
+
+void Configuration::setTruncateFunctionNameCol(bool value)
+{
+    s.setValue("truncateFcnNameCol", value);
+    emit functionsOptionsChanged();
+}
+
+bool Configuration::getTruncateFunctionNameCol() const
+{
+    return s.value("truncateFcnNameCol", true).toBool();
+}
+
+void Configuration::setFunctionNameColWidth(int width)
+{
+    s.setValue("fcnNameColWidth", width);
+    emit functionsOptionsChanged();
+}
+
+int Configuration::getFunctionNameColWidth() const
+{
+    return s.value("fcnNameColWidth", 400).toInt();
+}
+
+void Configuration::setOmnibarLimitEntries(bool value)
+{
+    s.setValue("omnibarLimitEntries", value);
+}
+
+bool Configuration::getOmnibarLimitEntries() const
+{
+    return s.value("omnibarLimitEntries", true).toBool();
+}
+
+void Configuration::setOmnibarEntriesCount(int count)
+{
+    s.setValue("omnibarEntriesCount", count);
+}
+
+int Configuration::getOmnibarEntriesCount() const
+{
+    return s.value("omnibarEntriesCount", 100).toInt();
+}
+
+void Configuration::setOmnibarEntriesIncrement(int count)
+{
+    s.setValue("omnibarEntriesIncrement", count);
+}
+
+int Configuration::getOmnibarEntriesIncrement() const
+{
+    return s.value("omnibarEntriesIncrement", 100).toInt();
 }

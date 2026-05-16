@@ -203,6 +203,7 @@ void MainWindow::initUI()
 
     connect(core, &CutterCore::showMemoryWidgetRequested, this,
             static_cast<void (MainWindow::*)()>(&MainWindow::showMemoryWidget));
+    connect(core, &CutterCore::showAddressRequested, this, &MainWindow::showAddress);
 
     connect(core, &CutterCore::showTypeRequested, typesDock, [this](const QString &typeName) {
         typesDock->toggleDockWidget(true);
@@ -761,11 +762,6 @@ void MainWindow::showProjectSaveError(RzProjectErr err)
                           tr("Failed to save project: %1").arg(QString::fromUtf8(s)));
 }
 
-void MainWindow::refreshOmniBar(const QStringList &flags)
-{
-    omnibar->refresh(flags);
-}
-
 void MainWindow::setFilename(const QString &fn)
 {
     // Add file name to window title
@@ -1020,6 +1016,28 @@ void MainWindow::showMemoryWidget(MemoryWidgetType type)
     memoryDockWidget->raiseMemoryWidget();
 }
 
+MemoryDockWidget *MainWindow::getOrCreateMemoryWidget(MemoryWidgetType type, RVA address,
+                                                      bool synchronized)
+{
+    if (address == RVA_INVALID) {
+        address = Core()->getOffset();
+    }
+
+    for (auto &dock : dockWidgets) {
+        if (auto memoryWidget = qobject_cast<MemoryDockWidget *>(dock)) {
+            if (memoryWidget->getType() == type
+                && memoryWidget->getSeekable()->isSynchronized() == synchronized) {
+                if (address != RVA_INVALID) {
+                    memoryWidget->getSeekable()->seek(address);
+                }
+                return memoryWidget;
+            }
+        }
+    }
+
+    return addNewMemoryWidget(type, address, synchronized);
+}
+
 QMenu *MainWindow::createShowInMenu(QWidget *parent, RVA address, AddressTypeHint addressType)
 {
     QMenu *menu = new QMenu(parent);
@@ -1082,6 +1100,26 @@ void MainWindow::setCurrentMemoryWidget(MemoryDockWidget *memoryWidget)
 MemoryDockWidget *MainWindow::getLastMemoryWidget()
 {
     return lastMemoryWidget;
+}
+
+void MainWindow::showAddress(RVA addr)
+{
+    if (lastMemoryWidget && lastMemoryWidget->getType() == MemoryWidgetType::Graph) {
+        AddressTypeHint addressType = core->getAddressType(addr);
+
+        MemoryWidgetType targetType;
+        if (addressType == AddressTypeHint::Data) {
+            targetType = MemoryWidgetType::Hexdump;
+        } else if (addressType == AddressTypeHint::Function) {
+            targetType = MemoryWidgetType::Graph;
+        } else {
+            targetType = MemoryWidgetType::Disassembly;
+        }
+
+        auto memoryWidget = getOrCreateMemoryWidget(targetType, addr, true);
+        memoryWidget->tryRaiseMemoryWidget();
+        setCurrentMemoryWidget(memoryWidget);
+    }
 }
 
 MemoryDockWidget *MainWindow::addNewMemoryWidget(MemoryWidgetType type, RVA address,
@@ -1166,7 +1204,8 @@ void MainWindow::updateHistoryMenu(QMenu *menu, bool redo)
         char *fname = NULL;
         if (f) {
             if (f->offset != undo->offset) {
-                fname = rz_str_newf("%s+%" PFMT64d, f->name, undo->offset - f->offset);
+                qint64 diff = undo->offset - f->offset;
+                fname = rz_str_newf("%s+%" PFMT64d, f->name, diff);
             } else {
                 fname = strdup(f->name);
             }

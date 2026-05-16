@@ -86,7 +86,6 @@ public:
     void readSettings();
     void saveSettings();
     void setFilename(const QString &fn);
-    void refreshOmniBar(const QStringList &flags);
 
     void addWidget(CutterDockWidget *widget);
     void addMemoryDockWidget(MemoryDockWidget *widget);
@@ -116,11 +115,12 @@ public:
     QString getUniqueObjectName(const QString &widgetType) const;
     void showMemoryWidget();
     void showMemoryWidget(MemoryWidgetType type);
-    enum class AddressTypeHint { Function, Data, Unknown };
     QMenu *createShowInMenu(QWidget *parent, RVA address,
                             AddressTypeHint addressType = AddressTypeHint::Unknown);
     void setCurrentMemoryWidget(MemoryDockWidget *memoryWidget);
     MemoryDockWidget *getLastMemoryWidget();
+    MemoryDockWidget *getOrCreateMemoryWidget(MemoryWidgetType type, RVA address = RVA_INVALID,
+                                              bool synchronized = true);
 
     /* Context menu plugins */
     enum class ContextMenuType { Disassembly, Addressable };
@@ -133,6 +133,7 @@ public:
 
 public slots:
     void finalizeOpen();
+    void showAddress(RVA addr);
 
     void refreshAll();
     void seekToFunctionLastInstruction();

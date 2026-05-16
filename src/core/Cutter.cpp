@@ -1009,13 +1009,13 @@ void CutterCore::showMemoryWidget()
 void CutterCore::seekAndShow(ut64 offset)
 {
     seek(offset);
-    showMemoryWidget();
+    emit showAddressRequested(offset);
 }
 
 void CutterCore::seekAndShow(QString offset)
 {
     seek(offset);
-    showMemoryWidget();
+    emit showAddressRequested(math(offset));
 }
 
 void CutterCore::seek(QString thing)
@@ -1148,6 +1148,30 @@ void CutterCore::setConfig(const char *k, const QString &v)
 {
     CORE_LOCK();
     rz_config_set(core->config, k, v.toUtf8().constData());
+}
+
+AddressTypeHint CutterCore::getAddressType(RVA addr)
+{
+    CORE_LOCK();
+
+    if (functionIn(addr)) {
+        return AddressTypeHint::Function;
+    }
+
+    auto section = getSectionAtAddress(addr);
+    if (section.name.isEmpty()) {
+        return AddressTypeHint::Unknown;
+    }
+
+    if (section.perm.contains('x', Qt::CaseInsensitive)) {
+        return AddressTypeHint::Code;
+    }
+    if (section.perm.contains('r', Qt::CaseInsensitive)
+        || section.perm.contains('w', Qt::CaseInsensitive)) {
+        return AddressTypeHint::Data;
+    }
+
+    return AddressTypeHint::Unknown;
 }
 
 void CutterCore::setConfig(const char *k, int v)
@@ -3145,7 +3169,7 @@ QList<RzAsmPluginDescription> CutterCore::getRAsmPluginDescriptions()
     QList<RzAsmPluginDescription> ret;
 
     CutterHtSP<RzAsmPlugin>(rz_asm_get_plugins(core->rasm))
-            .ForEach([&ret](const char *k, const RzAsmPlugin *ap) {
+            .ForEach([&ret, &core, this](const char *k, const RzAsmPlugin *ap) {
                 RzAsmPluginDescription plugin;
 
                 plugin.name = ap->name;
@@ -3155,6 +3179,39 @@ QList<RzAsmPluginDescription> CutterCore::getRAsmPluginDescriptions()
                 plugin.cpus = ap->cpus;
                 plugin.description = ap->desc;
                 plugin.license = ap->license;
+
+                // Bits
+                QStringList bitsList;
+                if (ap->bits == 27) {
+                    bitsList << "27";
+                } else if (ap->bits == 0) {
+                    bitsList << "any";
+                } else {
+                    for (int bits = 4; bits <= 64; bits *= 2) {
+                        if (ap->bits & bits) {
+                            bitsList << QString::number(bits);
+                        }
+                    }
+                }
+                plugin.bits = bitsList.join(" ");
+
+                // Capabilities
+                QString caps;
+                caps += ap->assemble ? "a" : "_";
+                caps += ap->disassemble ? "d" : "_";
+
+                bool foundAnalysis = false;
+                auto analysisPlugin =
+                        CutterHtSP<RzAnalysisPlugin>(rz_analysis_get_plugins(core->analysis))
+                                .Find(ap->name, &foundAnalysis);
+                if (foundAnalysis && analysisPlugin) {
+                    caps += "A";
+                    caps += analysisPlugin->esil ? "e" : "_";
+                    caps += analysisPlugin->il_config ? "I" : "_";
+                } else {
+                    caps += "__";
+                }
+                plugin.capabilities = caps;
 
                 ret << plugin;
                 return true;
@@ -3505,6 +3562,42 @@ QList<FlagDescription> CutterCore::getAllFlags(QString flagspace)
             },
             &flags);
     return flags;
+}
+
+SectionDescription CutterCore::getSectionAtAddress(RVA addr)
+{
+    CORE_LOCK();
+    RzBinObject *o = rz_bin_cur_object(core->bin);
+    if (!o) {
+        return {};
+    }
+    RzBinSection *section = rz_bin_get_section_at(o, addr, true);
+    if (!section) {
+        return {};
+    }
+    RzList *hashnames = rz_list_newf(free);
+    if (!hashnames) {
+        return {};
+    }
+    SectionDescription desc;
+    desc.vaddr = section->vaddr;
+    desc.paddr = section->paddr;
+    desc.size = section->size;
+    desc.name = section->name;
+    desc.vsize = section->vsize;
+    desc.perm = rz_str_rwx_i(section->perm);
+    if (desc.size > 0) {
+        HtSS *digests = rz_core_bin_create_digests(core, desc.paddr, desc.size, hashnames);
+        if (!digests) {
+            return {};
+        }
+
+        const char *entropy = (const char *)ht_ss_find(digests, "entropy", NULL);
+        desc.entropy = rz_str_get(entropy);
+        ht_ss_free(digests);
+    }
+
+    return desc;
 }
 
 QList<SectionDescription> CutterCore::getAllSections()
@@ -3936,6 +4029,27 @@ QList<VTableDescription> CutterCore::getAllVTables()
     }
     rz_list_free(vtables);
     return vtableDescs;
+}
+
+QList<BacktraceDescription> CutterCore::getAllBacktraces()
+{
+    QList<BacktraceDescription> backtraces;
+
+    CORE_LOCK();
+    RzList *list = rz_core_debug_backtraces(core);
+    RzListIter *iter;
+    RzBacktrace *bt;
+    CutterRzListForeach (list, iter, RzBacktrace, bt) {
+        BacktraceDescription backtrace;
+        backtrace.functionName = bt->fcn ? bt->fcn->name : "";
+        backtrace.pc = bt->frame ? bt->frame->addr : 0;
+        backtrace.sp = bt->frame ? bt->frame->sp : 0;
+        backtrace.frameSize = QString::number(bt->frame ? bt->frame->size : 0);
+        backtrace.description = bt->desc;
+        backtraces.append(backtrace);
+    }
+    rz_list_free(list);
+    return backtraces;
 }
 
 QList<TypeDescription> CutterCore::getAllTypes()
@@ -4738,6 +4852,12 @@ void CutterCore::loadPDB(const QString &file)
 {
     CORE_LOCK();
     rz_core_bin_pdb_load(core, file.toUtf8().constData());
+}
+
+void CutterCore::applyDwarf()
+{
+    CORE_LOCK();
+    rz_core_bin_apply_dwarf(core, rz_bin_cur(core->bin));
 }
 
 QList<DisassemblyLine> CutterCore::disassembleLines(RVA offset, int lines)

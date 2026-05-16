@@ -79,6 +79,8 @@ enum class SearchKind {
     MagicSignature,
 };
 
+enum class AddressTypeHint { Function, Code, Data, Unknown };
+
 class CUTTER_EXPORT CutterCore : public QObject
 {
     Q_OBJECT
@@ -236,6 +238,7 @@ public:
     RVA getFunctionEnd(RVA addr);
     RVA getLastFunctionInstruction(RVA addr);
     QString flagAt(RVA addr, bool getClosestFlag = true);
+    AddressTypeHint getAddressType(RVA addr);
     void createFunctionAt(RVA addr);
     void createFunctionAt(RVA addr, QString name);
     QStringList getDisassemblyPreview(RVA address, int num_of_lines);
@@ -560,6 +563,12 @@ public:
     QList<RVA> getBreakpointsAddresses();
 
     /**
+     * @brief Get the section at the given address
+     * @param addr Address to get the section for
+     * @return SectionDescription of the section at the given address
+     */
+    SectionDescription getSectionAtAddress(RVA addr);
+    /**
      * @brief Sets the RzRun profile directives by writing them to a file
      * If a profile path is already set in 'dbg.profile', this method overwrites that file
      * If no path is set, it creates a temporary file and updates 'dbg.profile' to point to it
@@ -631,6 +640,7 @@ public:
     void setSettings();
 
     void loadPDB(const QString &file);
+    void applyDwarf();
 
     QByteArray ioRead(RVA addr, int len);
 
@@ -670,6 +680,7 @@ public:
     QList<BinClassDescription> getAllClassesFromFlags();
     QList<ResourcesDescription> getAllResources();
     QList<VTableDescription> getAllVTables();
+    QList<BacktraceDescription> getAllBacktraces();
 
     /**
      * @return all loaded types
@@ -924,6 +935,7 @@ signals:
     void newDebugMessage(const QString &msg);
 
     void showMemoryWidgetRequested();
+    void showAddressRequested(RVA addr);
 
     /**
      * @brief emitted when a specific type is requested to be shown in the Types Widget
