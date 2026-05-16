@@ -1,6 +1,7 @@
-#include "QtResImporter.h"
-
+// clang-format off
 #include "PythonAPI.h"
+#include "QtResImporter.h"
+// clang-format on
 
 #include <QDebug>
 #include <QFile>

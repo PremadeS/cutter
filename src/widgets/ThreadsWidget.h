@@ -1,10 +1,13 @@
-#pragma once
+#ifndef THREADSWIDGET_H
+#define THREADSWIDGET_H
 
 #include "AddressableItemContextMenu.h"
 #include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 
 #include <QSortFilterProxyModel>
+
+#include <memory>
 
 class MainWindow;
 
@@ -76,3 +79,5 @@ private:
     QAction menuText;
     AddressableItemContextMenu addressableItemContextMenu;
 };
+
+#endif // THREADSWIDGET_H
