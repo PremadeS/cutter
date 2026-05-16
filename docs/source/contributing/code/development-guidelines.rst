@@ -92,7 +92,7 @@ Similar to ``clang-format``, If your changes were done on many files across the 
 
 .. code:: bash
 
-    run-clang-tidy -p build "src/(?!(themes|bindings|fonts|img|translations|build|.*_autogen)).*\.(cpp|h)$"
+    run-clang-tidy -p build ".*src/(?!(themes|bindings|fonts|img|translations|Cutter_autogen)).*\.(cpp|h)$"
 
 ``clang-tidy`` can also attempt to fix style violations using the ``-fix`` flag. However these may not always be perfect. Make sure to verify the fixes before opening a pull request:
 

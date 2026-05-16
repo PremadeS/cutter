@@ -2,14 +2,12 @@
 Checks: >
   -*,
   cppcoreguidelines-non-private-member-variables-in-classes,
-  cppcoreguidelines-prefer-member-initializer,
   cppcoreguidelines-pro-type-cstyle-cast,
   misc-const-correctness,
   misc-unused-parameters,
   modernize-loop-convert,
   modernize-use-auto,
   modernize-use-nullptr,
-  readability-magic-numbers
   readability-braces-around-statements,
   readability-identifier-naming,
   readability-make-member-function-const,
@@ -23,8 +21,8 @@ Checks: >
   performance-unnecessary-copy-initialization,
   performance-unnecessary-value-param,
   performance-use-std-move,
-  performance-move-constructor-init,
-HeaderFilterRegex: 'src/.*'
+  performance-move-constructor-init
+HeaderFilterRegex: 'src/(?!.*autogen).*'
 WarningsAsErrors: '*'
 CheckOptions:
   - key:    readability-identifier-naming.VariableCase
