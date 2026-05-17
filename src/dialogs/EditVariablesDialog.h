@@ -5,6 +5,8 @@
 
 #include <QDialog>
 
+#include <memory>
+
 namespace Ui {
 class EditVariablesDialog;
 }

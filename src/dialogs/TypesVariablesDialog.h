@@ -7,6 +7,8 @@
 #include <QDialog>
 #include <QSortFilterProxyModel>
 
+#include <memory>
+
 namespace Ui {
 class TypesVariablesDialog;
 }
