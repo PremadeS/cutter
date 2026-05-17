@@ -6,7 +6,6 @@
 
 #include <cassert>
 #include <map>
-#include <ranges>
 #include <stack>
 #include <unordered_map>
 
@@ -256,7 +255,7 @@ std::vector<ut64> GraphGridLayout::topoSort(LayoutState &state, ut64 entry)
 void GraphGridLayout::assignRows(GraphGridLayout::LayoutState &state,
                                  const std::vector<ut64> &blockOrder)
 {
-    for (const ut64 it : std::ranges::reverse_view(blockOrder)) {
+    for (auto it = blockOrder.rbegin(), end = blockOrder.rend(); it != end; it++) {
         auto &block = state.gridBlocks[it];
         const int nextLevel = block.row + 1;
         for (auto target : block.dagEdge) {
@@ -533,7 +532,7 @@ void GraphGridLayout::computeAllBlockPlacement(const std::vector<ut64> &blockOrd
         }
     }
     // Visit all nodes top to bottom, converting relative positions to absolute.
-    for (const ut64 it : std::ranges::reverse_view(blockOrder)) {
+    for (auto it = blockOrder.rbegin(), end = blockOrder.rend(); it != end; it++) {
         auto &block = layoutState.gridBlocks[it];
         assert(block.col >= 0);
         for (auto childId : block.treeEdge) {
@@ -1456,7 +1455,7 @@ static void optimizeLinearProgramPass(size_t n, std::vector<int> objectiveFuncti
             equalities.push_back({ { g, limitingGroup }, solution[g] - solution[limitingGroup] });
         } // else do nothing if limited by variable >= 0
     }
-    for (auto &equalitie : std::ranges::reverse_view(equalities)) {
+    for (auto it = equalities.rbegin(), end = equalities.rend(); it != end; ++it) {
         solution[equalitie.first.first] = solution[equalitie.first.second] + equalitie.second;
     }
 }
