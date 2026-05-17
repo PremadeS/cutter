@@ -255,8 +255,8 @@ std::vector<ut64> GraphGridLayout::topoSort(LayoutState &state, ut64 entry)
 void GraphGridLayout::assignRows(GraphGridLayout::LayoutState &state,
                                  const std::vector<ut64> &blockOrder)
 {
-    for (auto it = blockOrder.rbegin(), end = blockOrder.rend(); it != end; it++) {
-        auto &block = state.gridBlocks[it];
+    for (auto it = blockOrder.rbegin(), end = blockOrder.rend(); it != end; it++) { // NOLINT
+        auto &block = state.gridBlocks[*it];
         const int nextLevel = block.row + 1;
         for (auto target : block.dagEdge) {
             auto &targetBlock = state.gridBlocks[target];
@@ -532,8 +532,8 @@ void GraphGridLayout::computeAllBlockPlacement(const std::vector<ut64> &blockOrd
         }
     }
     // Visit all nodes top to bottom, converting relative positions to absolute.
-    for (auto it = blockOrder.rbegin(), end = blockOrder.rend(); it != end; it++) {
-        auto &block = layoutState.gridBlocks[it];
+    for (auto it = blockOrder.rbegin(), end = blockOrder.rend(); it != end; it++) { // NOLINT
+        auto &block = layoutState.gridBlocks[*it];
         assert(block.col >= 0);
         for (auto childId : block.treeEdge) {
             auto &childBlock = layoutState.gridBlocks[childId];
@@ -1455,8 +1455,8 @@ static void optimizeLinearProgramPass(size_t n, std::vector<int> objectiveFuncti
             equalities.push_back({ { g, limitingGroup }, solution[g] - solution[limitingGroup] });
         } // else do nothing if limited by variable >= 0
     }
-    for (auto it = equalities.rbegin(), end = equalities.rend(); it != end; ++it) {
-        solution[equalitie.first.first] = solution[equalitie.first.second] + equalitie.second;
+    for (auto it = equalities.rbegin(), end = equalities.rend(); it != end; ++it) { // NOLINT
+        solution[it->first.first] = solution[it->first.second] + it->second;
     }
 }
 
