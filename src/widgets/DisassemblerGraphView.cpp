@@ -368,7 +368,7 @@ void DisassemblerGraphView::prepareGraphNode(GraphBlock &block)
         }
     }
     const int extra = static_cast<int>(2 * padding + 4);
-    const qreal indent = aCharWidth;
+    const qreal indent = charWidthA;
     block.width = static_cast<int>(width + extra + indent);
     block.height = (height * charHeight) + extra;
 }
@@ -427,13 +427,13 @@ void DisassemblerGraphView::drawBlock(QPainter &p, GraphView::GraphBlock &block,
 
     // Stop rendering text when it's too small
     auto transform = p.combinedTransform();
-    const QRect screenChar = transform.mapRect(QRect(0, 0, aCharWidth, charHeight));
+    const QRect screenChar = transform.mapRect(QRect(0, 0, charWidthA, charHeight));
 
     if (screenChar.width() < Config()->getGraphMinFontSize()) {
         return;
     }
 
-    const qreal indent = aCharWidth;
+    const qreal indent = charWidthA;
 
     // Render node text
     auto x = block.x + padding;
@@ -858,7 +858,7 @@ void DisassemblerGraphView::copySelection()
 
 DisassemblerGraphView::Token *DisassemblerGraphView::getToken(Instr *instr, int x)
 {
-    x -= static_cast<int>(padding + aCharWidth); // Ignore left margin
+    x -= static_cast<int>(padding + charWidthA); // Ignore left margin
     if (x < 0) {
         return nullptr;
     }

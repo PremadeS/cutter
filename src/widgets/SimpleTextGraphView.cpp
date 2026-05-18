@@ -111,7 +111,7 @@ void SimpleTextGraphView::drawBlock(QPainter &p, GraphView::GraphBlock &block, b
 
     // Stop rendering text when it's too small
     auto transform = p.combinedTransform();
-    const QRect screenChar = transform.mapRect(QRect(0, 0, aCharWidth, charHeight));
+    const QRect screenChar = transform.mapRect(QRect(0, 0, charWidthA, charHeight));
 
     if (screenChar.width() < Config()->getGraphMinFontSize()) {
         return;

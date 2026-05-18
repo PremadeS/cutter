@@ -35,7 +35,7 @@ struct CustomRichText
     bool highlightConnectPrev = false;
 };
 
-typedef std::vector<CustomRichTextT> List;
+typedef std::vector<CustomRichText> List;
 
 // functions
 template<typename T = qreal>

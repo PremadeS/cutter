@@ -271,7 +271,7 @@ void SectionsWidget::refreshDocks()
 
 void SectionsWidget::drawIndicatorOnAddrDocks()
 {
-    RVA const offset = Core()->getOffset();
+    const RVA offset = Core()->getOffset();
     for (int i = 0; i != virtualAddrDock->proxyModel->rowCount(); i++) {
         const QModelIndex idx = virtualAddrDock->proxyModel->index(i, 0);
         const RVA vaddr =
