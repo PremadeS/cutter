@@ -123,10 +123,9 @@ If you don't want to run manual commands, cutter also provides scripts for runni
 
 .. code:: bash
     
-    python scripts/clang-tidy.py -h               
-    usage: clang-tidy.py [-h] [-T RUN_CLANG_TIDY] [-p BUILD_PATH] [-f FILE] [-i]
+    usage: clang-tidy.py [-h] [-T RUN_CLANG_TIDY] [-p BUILD_PATH] [-j JOBS] [-r REGEX] [-i] [-q]
 
-    clang-tidy wrapper
+    clang-tidy regex wrapper
 
     options:
       -h, --help            show this help message and exit
@@ -134,9 +133,10 @@ If you don't want to run manual commands, cutter also provides scripts for runni
                             Path of run-clang-tidy binary
       -p, --build-path BUILD_PATH
                             Path to the build directory
-      -f, --file FILE       Check a specific file only
+      -j, --jobs JOBS       Number of parallel execution jobs
+      -r, --regex REGEX     Regex pattern for filtering files
       -i, --fix             Apply fixes automatically
-
+      -q, --quiet           Suppress configuration logs
 
 Below are some of the low level coding conventions that we follow
 
