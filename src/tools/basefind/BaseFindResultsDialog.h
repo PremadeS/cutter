@@ -41,7 +41,7 @@ private:
 /**
  * @brief Dialog to display BaseFind results
  *
- * Contains context menu with options to reopen Cutter with base or map address at selected address
+ * Contains context menu with options to reopen Cutter with base or map address as selected address
  */
 class BaseFindResultsDialog : public QDialog
 {

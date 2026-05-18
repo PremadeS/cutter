@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BREAKPOINTWIDGET_H
+#define BREAKPOINTWIDGET_H
 
 #include "AddressableItemModel.h"
 #include "CutterDockWidget.h"
@@ -98,3 +99,5 @@ private:
     RefreshDeferrer *refreshDeferrer;
     bool editing = false;
 };
+
+#endif // BREAKPOINTWIDGET_H

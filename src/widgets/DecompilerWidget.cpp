@@ -223,7 +223,7 @@ void DecompilerWidget::gatherBreakpointInfo(RzAnnotatedCode &codeDecompiled, siz
     mCtxMenu->setFirstOffsetInLine(firstOffset);
     const QList<RVA> functionBreakpoints = Core()->getBreakpointsInFunction(decompiledFunctionAddr);
     QVector<RVA> offsetList;
-    for (RVA const bpOffset : functionBreakpoints) {
+    for (const RVA bpOffset : functionBreakpoints) {
         const size_t pos = positionForOffset(bpOffset);
         if (startPos <= pos && pos <= endPos) {
             offsetList.push_back(bpOffset);
@@ -242,7 +242,7 @@ void DecompilerWidget::refreshIfChanged(RVA addr)
 
 void DecompilerWidget::doRefresh()
 {
-    RVA const addr = seekable->getOffset();
+    const RVA addr = seekable->getOffset();
     if (!refreshDeferrer->attemptRefresh(nullptr)) {
         return;
     }
@@ -390,7 +390,7 @@ void DecompilerWidget::cursorPositionChanged()
     setAnnotationsAtCursor(pos);
     setInfoForBreakpoints();
 
-    RVA const offset = offsetForPosition(pos);
+    const RVA offset = offsetForPosition(pos);
     if (offset != RVA_INVALID && offset != seekable->getOffset()) {
         seekFromCursor = true;
         seekable->seek(offset);
@@ -503,7 +503,7 @@ void DecompilerWidget::showDecompilerContextMenu(const QPoint &pt)
 void DecompilerWidget::seekToReference()
 {
     const size_t pos = ui->textEdit->textCursor().position();
-    RVA const offset = findReference(pos);
+    const RVA offset = findReference(pos);
     if (offset != RVA_INVALID) {
         seekable->seek(offset);
     }
@@ -532,7 +532,7 @@ bool DecompilerWidget::eventFilter(QObject *obj, QEvent *event)
 
 void DecompilerWidget::highlightPC()
 {
-    RVA const pcAddress = Core()->getProgramCounterValue();
+    const RVA pcAddress = Core()->getProgramCounterValue();
     if (pcAddress == RVA_INVALID
         || (Core()->getFunctionStart(pcAddress) != decompiledFunctionAddr)) {
         return;
@@ -549,7 +549,7 @@ void DecompilerWidget::highlightBreakpoints()
 
     const QList<RVA> functionBreakpoints = Core()->getBreakpointsInFunction(decompiledFunctionAddr);
     QTextCursor cursor;
-    for (RVA const &bp : functionBreakpoints) {
+    for (const RVA &bp : functionBreakpoints) {
         if (bp == RVA_INVALID) {
             continue;
         }

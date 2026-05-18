@@ -4,7 +4,6 @@
 #include <QDialog>
 
 #include <memory>
-// #include "core/Cutter.h"
 
 namespace Ui {
 class MapFileDialog;

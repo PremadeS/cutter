@@ -28,8 +28,6 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
-// #include <cmath>
-
 namespace DH = DisassemblyHelper;
 
 DisassemblerGraphView::DisassemblerGraphView(QWidget *parent, CutterSeekable *seekable,
@@ -43,7 +41,6 @@ DisassemblerGraphView::DisassemblerGraphView(QWidget *parent, CutterSeekable *se
       actionUnhighlight(this),
       actionUnhighlightInstruction(this)
 {
-
     auto *layout = new QVBoxLayout(this);
     setTooltipStylesheet();
 
@@ -861,7 +858,7 @@ void DisassemblerGraphView::copySelection()
 
 DisassemblerGraphView::Token *DisassemblerGraphView::getToken(Instr *instr, int x)
 {
-    x -= (int)(padding + aCharWidth); // Ignore left margin
+    x -= static_cast<int>(padding + aCharWidth); // Ignore left margin
     if (x < 0) {
         return nullptr;
     }
@@ -909,7 +906,7 @@ void DisassemblerGraphView::blockClicked(GraphView::GraphBlock &block, QMouseEve
     delete highlightToken;
     highlightToken = getToken(instr, pos.x());
 
-    RVA const addr = instr->addr;
+    const RVA addr = instr->addr;
     seekLocal(addr);
 
     blockMenu->setOffset(addr);

@@ -5,7 +5,6 @@
 #include "ui_DuplicateFromOffsetDialog.h"
 #include "ui_IncrementDecrementDialog.h"
 
-// #include <cmath>
 #include <QFontDatabase>
 
 Base64EnDecodedWriteDialog::Base64EnDecodedWriteDialog(QWidget *parent)

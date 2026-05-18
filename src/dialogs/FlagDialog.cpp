@@ -47,7 +47,7 @@ FlagDialog::~FlagDialog() {}
 
 void FlagDialog::buttonBoxAccepted()
 {
-    RVA const size = ui->sizeEdit->text().toULongLong();
+    const RVA size = ui->sizeEdit->text().toULongLong();
     const QString name = ui->nameEdit->text();
 
     if (name.isEmpty()) {

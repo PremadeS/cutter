@@ -470,7 +470,7 @@ void CutterCore::setRegisterProfile(const QString &profile)
     emit registersChanged();
 }
 
-QString CutterCore::convertGDBProfile(const QString &profilePath)
+QString CutterCore::convertGdbProfile(const QString &profilePath)
 {
     return QString::fromUtf8(rz_reg_parse_gdb_profile(profilePath.toUtf8().constData()));
 }
@@ -673,16 +673,10 @@ bool CutterCore::tryFile(const QString &path, bool rw)
     return true;
 }
 
-/**
- * @brief Maps a file using Rizin API
- * @param path Path to file
- * @param mapaddr Map Address
- * @return bool
- */
 bool CutterCore::mapFile(const QString &path, RVA mapaddr)
 {
     CORE_LOCK();
-    RVA const addr = mapaddr != RVA_INVALID ? mapaddr : 0;
+    const RVA addr = mapaddr != RVA_INVALID ? mapaddr : 0;
     const ut64 baddr = rz_bin_get_baddr(core->bin);
     if (rz_core_file_open(core, path.toUtf8().constData(), RZ_PERM_RX, addr)) {
         rz_core_bin_load(core, path.toUtf8().constData(), baddr);
@@ -923,11 +917,6 @@ void CutterCore::delComment(RVA addr)
     emit commentsChanged(addr);
 }
 
-/**
- * @brief Gets the comment present at a specific address
- * @param addr The address to be checked
- * @return String containing comment
- */
 QString CutterCore::getCommentAt(RVA addr)
 {
     CORE_LOCK();
@@ -940,7 +929,8 @@ void CutterCore::setImmediateBase(const QString &rzBaseName, RVA offset)
         offset = getOffset();
     }
     CORE_LOCK();
-    const int base = (int)rz_num_base_of_string(core->num, rzBaseName.toUtf8().constData());
+    const int base =
+            static_cast<int>(rz_num_base_of_string(core->num, rzBaseName.toUtf8().constData()));
     rz_analysis_hint_set_immbase(core->analysis, offset, base);
     emit instructionChanged(offset);
 }
@@ -1056,7 +1046,7 @@ RVA CutterCore::nextOpAddr(RVA startAddr, int count)
     auto consumed =
             rz_core_analysis_ops_size(core, core->offset, core->block, (int)core->blocksize, count);
 
-    RVA const addr = startAddr + consumed;
+    const RVA addr = startAddr + consumed;
     return addr;
 }
 
@@ -1574,7 +1564,7 @@ QList<AddrRefs> CutterCore::getStack(int size, int depth)
     }
 
     CORE_LOCK();
-    RVA const addr = rz_core_reg_getv_by_role_or_name(core, "SP");
+    const RVA addr = rz_core_reg_getv_by_role_or_name(core, "SP");
     if (addr == RVA_INVALID) {
         return stack;
     }
@@ -3062,7 +3052,6 @@ QStringList CutterCore::getAsmPluginNames()
 QStringList CutterCore::getAnalysisPluginNames()
 {
     CORE_LOCK();
-    // RzListIter *it;
     QStringList ret;
     CutterHtSP<RzAnalysisPlugin>(rz_analysis_get_plugins(core->analysis))
             .ForEach([&ret](const char * /*k*/, const RzAnalysisPlugin *ap) {
@@ -4494,7 +4483,7 @@ QList<XrefDescription> CutterCore::collectXRefsForVariable(const QString &variab
                 continue;
             }
             XrefDescription xref;
-            RVA const addr = fcn->addr + acc->offset;
+            const RVA addr = fcn->addr + acc->offset;
             xref.from = addr;
             xref.to = addr;
 
@@ -4906,12 +4895,6 @@ QList<DisassemblyLine> CutterCore::disassembleLines(RVA offset, int lines)
     return r;
 }
 
-/**
- * @brief return hexdump of <size> from an <offset> by a given formats
- * @param address - the address from which to print the hexdump
- * @param size - number of bytes to print
- * @param format - the type of hexdump (qwords, words. decimal, etc)
- */
 QString CutterCore::hexdump(RVA address, int size, HexdumpFormats format)
 {
     CORE_LOCK();

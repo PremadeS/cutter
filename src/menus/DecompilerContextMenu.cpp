@@ -407,7 +407,7 @@ void DecompilerContextMenu::actionRenameThingHereTriggered()
     auto type = annotationHere->type;
     if (type == RZ_CODE_ANNOTATION_TYPE_FUNCTION_NAME) {
         const QString currentName(annotationHere->reference.name);
-        RVA const funcAddr = annotationHere->reference.offset;
+        const RVA funcAddr = annotationHere->reference.offset;
         const RzAnalysisFunction *func = Core()->functionAt(funcAddr);
         if (func == nullptr) {
             const QString functionName = QInputDialog::getText(
@@ -426,7 +426,7 @@ void DecompilerContextMenu::actionRenameThingHereTriggered()
             }
         }
     } else if (type == RZ_CODE_ANNOTATION_TYPE_GLOBAL_VARIABLE) {
-        RVA const varAddr = annotationHere->reference.offset;
+        const RVA varAddr = annotationHere->reference.offset;
         const RzFlagItem *flagDetails = rz_flag_get_i(core->flags, varAddr);
         if (flagDetails) {
             const QString newName = QInputDialog::getText(

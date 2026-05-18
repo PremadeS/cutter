@@ -12,8 +12,7 @@ class HeapDockWidget;
 }
 
 /**
- * @brief A container widget that serves as the primary interface for heap analysis, providing a
- * flexible layout to switch between different memory allocator implementations.
+ * @brief A container widget that serves as the primary interface for heap analysis
  */
 class HeapDockWidget : public CutterDockWidget
 {

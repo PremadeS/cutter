@@ -1,5 +1,3 @@
-// #include "CutterConfig.h"
-
 #include "MultitypeFileSaveDialog.h"
 
 #include <QMessageBox>

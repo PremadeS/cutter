@@ -3,7 +3,6 @@
 #include "AboutDialog.h"
 #include "CutterConfig.h"
 #include "common/Helpers.h"
-// #include "core/MainWindow.h"
 #include "Configuration.h"
 #include "ui_WelcomeDialog.h"
 

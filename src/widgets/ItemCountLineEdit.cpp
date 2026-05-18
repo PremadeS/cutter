@@ -85,7 +85,7 @@ void ItemCountLineEdit::updateLabelPosition()
         const QFont font = this->font();
         const QFontMetrics fm(font);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-        int const textWidth = fm.horizontalAdvance(this->text());
+        const int textWidth = fm.horizontalAdvance(this->text());
 #else
         int textWidth = fm.width(this->text());
 #endif

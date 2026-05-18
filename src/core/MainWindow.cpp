@@ -30,11 +30,9 @@
 
 // Widgets Headers
 #include "widgets/DisassemblerGraphView.h"
-// #include "widgets/GraphView.h"
 #include "widgets/GlobalsWidget.h"
 #include "widgets/GraphWidget.h"
 #include "widgets/OverviewWidget.h"
-// #include "widgets/OverviewView.h"
 #include "widgets/BacktraceWidget.h"
 #include "widgets/BreakpointWidget.h"
 #include "widgets/ClassesWidget.h"
@@ -70,7 +68,6 @@
 #include "widgets/TypesWidget.h"
 #include "widgets/VTablesWidget.h"
 #include "widgets/VisualNavbar.h"
-// #include "widgets/HexWidget.h"
 #include "widgets/CallGraph.h"
 #include "widgets/HeapDockWidget.h"
 #include "widgets/RizinGraphWidget.h"
@@ -609,13 +606,6 @@ void MainWindow::openNewFileFailed()
                   "correct permissions."));
     mb.exec();
 }
-
-/**
- * @brief displays the WelocmeDialog
- *
- * Upon first execution of Cutter, the WelcomeDialog would be showed to the user.
- * The Welcome dialog would be showed after a reset of Cutter's preferences by the user.
- */
 
 void MainWindow::displayWelcomeDialog()
 {
@@ -1253,7 +1243,7 @@ void MainWindow::updateHistoryMenu(QMenu *menu, bool redo)
             }
         }
         QString name = fname;
-        RVA const offset = undo->offset;
+        const RVA offset = undo->offset;
         const bool current = undo->is_current;
         if (current) {
             history = false;
@@ -1613,10 +1603,6 @@ void MainWindow::onActionDefaultTriggered()
     }
 }
 
-/**
- * @brief MainWindow::on_actionNew_triggered
- * Open a new Cutter session.
- */
 void MainWindow::onActionNewTriggered()
 {
     // Create a new Cutter process

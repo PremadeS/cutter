@@ -1,8 +1,6 @@
 #ifndef IMPORTSWIDGET_H
 #define IMPORTSWIDGET_H
 
-// #include <memory>
-
 #include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
 #include "common/AddressableItemModel.h"

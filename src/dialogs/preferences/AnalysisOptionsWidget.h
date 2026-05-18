@@ -6,8 +6,6 @@
 
 #include <memory>
 
-// #include "core/Cutter.h"
-
 class MainWindow;
 
 class PreferencesDialog;

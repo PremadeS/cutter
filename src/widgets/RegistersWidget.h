@@ -1,4 +1,5 @@
-#pragma once
+#ifndef REGISTERSWIDGET_H
+#define REGISTERSWIDGET_H
 
 #include "CutterDockWidget.h"
 #include "menus/AddressableItemContextMenu.h"
@@ -49,3 +50,5 @@ private:
     RefreshDeferrer *refreshDeferrer;
     QString currProfilePath;
 };
+
+#endif // REGISTERSWIDGET_H

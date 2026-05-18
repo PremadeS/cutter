@@ -23,7 +23,7 @@ namespace RichTextPainter {
 // structures
 enum CustomRichTextFlags : ut8 { FlagNone, FlagColor, FlagBackground, FlagAll };
 
-struct CustomRichTextT
+struct CustomRichText
 {
     QString text;
     QColor textColor;

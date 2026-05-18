@@ -11,8 +11,6 @@ class InitialOptionsDialog;
 
 /**
  * @brief Background task for initial binary analysis and file loading
- *
- * @ingroup AsyncTask
  */
 class AnalysisTask : public AsyncTask
 {

@@ -92,7 +92,7 @@ void ColorOptionDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
             }
         } else {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
-            QColor const placeholderColor = qApp->palette().placeholderText().color();
+            const QColor placeholderColor = qApp->palette().placeholderText().color();
 #else
             QColor placeholderColor = qApp->palette().text().color();
             placeholderColor.setAlphaF(0.5);

@@ -2,7 +2,6 @@
 #define COMMANDTASK_H
 
 #include "common/AsyncTask.h"
-// #include "core/Cutter.h"
 
 /**
  * @brief Background task for running a command in rizin

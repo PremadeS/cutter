@@ -2,7 +2,6 @@
 
 #include "common/Configuration.h"
 #include "common/Helpers.h"
-// #include "common/SyntaxHighlighter.h"
 #include "common/TempConfig.h"
 #include "core/MainWindow.h"
 #include "ui_HexdumpWidget.h"

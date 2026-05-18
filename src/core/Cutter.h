@@ -360,6 +360,11 @@ public:
     /* Comments */
     void setComment(RVA addr, const QString &cmt);
     void delComment(RVA addr);
+    /**
+     * @brief Gets the comment present at a specific address
+     * @param addr The address to be checked
+     * @return String containing comment
+     */
     QString getCommentAt(RVA addr);
     void setImmediateBase(const QString &rzBaseName, RVA offset = RVA_INVALID);
     void setCurrentBits(int bits, RVA offset = RVA_INVALID);
@@ -404,6 +409,12 @@ public:
     bool loadFile(const QString &path, ut64 baddr = 0LL, ut64 mapaddr = 0LL, int perms = RZ_PERM_R,
                   int va = 0, bool loadbin = false, const QString &forceBinPlugin = QString());
     bool tryFile(const QString &path, bool rw);
+    /**
+     * @brief Maps a file using Rizin API
+     * @param path Path to file
+     * @param mapaddr Map Address
+     * @return bool
+     */
     bool mapFile(const QString &path, RVA mapaddr);
     void loadScript(const QString &scriptname);
     /**
@@ -490,6 +501,12 @@ public:
     static QByteArray hexStringToBytes(const QString &hex);
     static QString bytesToHexString(const QByteArray &bytes);
     enum class HexdumpFormats : ut8 { Normal, Half, Word, Quad, Signed, Octal };
+    /**
+     * @brief return hexdump of <size> from an <offset> by a given formats
+     * @param address - the address from which to print the hexdump
+     * @param size - number of bytes to print
+     * @param format - the type of hexdump (qwords, words. decimal, etc)
+     */
     QString hexdump(RVA offset, int size, HexdumpFormats format);
     /**
      * @brief get a compact hexdump preview for tooltips
@@ -645,7 +662,7 @@ public:
      * @param profilePath Path to the GDB profile
      * @return Converted profile string
      */
-    QString convertGDBProfile(const QString &profilePath);
+    QString convertGdbProfile(const QString &profilePath);
 
     /**
      * @brief Retrieves the current register profile string

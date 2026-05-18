@@ -267,7 +267,7 @@ void DebugActions::showDebugWarning()
 
 void DebugActions::continueUntilMain()
 {
-    RzCoreLocked core(Core()->lock());
+    auto core = Core()->lock();
     const RzFlagItem *mainFlag = rz_flag_get(core->flags, "sym.main");
     if (!mainFlag) {
         mainFlag = rz_flag_get(core->flags, "main");

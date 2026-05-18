@@ -2,7 +2,6 @@
 #define DECOMPILER_H
 
 #include "CutterCommon.h"
-// #include "RizinTask.h"
 
 #include <QObject>
 #include <QString>

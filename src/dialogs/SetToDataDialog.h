@@ -2,7 +2,6 @@
 #define SETTODATADIALOG_H
 
 #include <QDialog>
-// #include "core/Cutter.h"
 
 #include "CutterCommon.h"
 

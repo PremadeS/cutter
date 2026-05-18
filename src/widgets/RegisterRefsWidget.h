@@ -1,4 +1,5 @@
-#pragma once
+#ifndef REGISTERREFSWIDGET_H
+#define REGISTERREFSWIDGET_H
 
 #include "CutterDockWidget.h"
 #include "core/Cutter.h"
@@ -100,3 +101,5 @@ private:
     QAction *actionCopyRef;
     AddressableItemContextMenu addressableItemContextMenu;
 };
+
+#endif // REGISTERREFSWIDGET_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PROCESSESWIDGET_H
+#define PROCESSESWIDGET_H
 
 #include "CutterDockWidget.h"
 
@@ -60,3 +61,5 @@ private:
     ProcessesFilterModel *modelFilter;
     RefreshDeferrer *refreshDeferrer;
 };
+
+#endif // PROCESSESWIDGET_H

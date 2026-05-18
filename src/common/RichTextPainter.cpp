@@ -17,7 +17,7 @@ void RichTextPainter::paintRichText(QPainter *painter, T x, T y, T w, T h, T xin
     QPen pen;
     QPen highlightPen;
     QBrush brush(Qt::cyan);
-    for (const CustomRichTextT &curRichText : richText) {
+    for (const CustomRichText &curRichText : richText) {
         T textWidth = fontMetrics->width(curRichText.text);
         T backgroundWidth = textWidth;
         if (backgroundWidth + xinc > w) {
@@ -75,7 +75,7 @@ template void RichTextPainter::paintRichText<qreal>(QPainter *painter, qreal x, 
 
 void RichTextPainter::htmlRichText(const List &richText, QString &textHtml, QString &textPlain)
 {
-    for (const CustomRichTextT &curRichText : richText) {
+    for (const CustomRichText &curRichText : richText) {
         if (curRichText.text == " ") { // blank
             textHtml += " ";
             textPlain += " ";
@@ -131,7 +131,7 @@ RichTextPainter::List RichTextPainter::fromTextDocument(const QTextDocument &doc
             const QTextFragment fragment = it.fragment();
             const QTextCharFormat format = fragment.charFormat();
 
-            CustomRichTextT text;
+            CustomRichText text;
             text.text = fragment.text();
             text.textColor = format.foreground().color();
             text.textBackground = format.background().color();
@@ -172,7 +172,7 @@ RichTextPainter::List RichTextPainter::cropped(const RichTextPainter::List &rich
         } else if (cols == maxCols) {
             break;
         } else {
-            CustomRichTextT croppedText = text;
+            CustomRichText croppedText = text;
             croppedText.text.truncate(maxCols - cols);
             r.push_back(croppedText);
             cropped = true;

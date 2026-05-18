@@ -1,7 +1,6 @@
 #ifndef ADDRESSABLE_ITEM_LIST_H
 #define ADDRESSABLE_ITEM_LIST_H
 
-// #include <memory>
 #include "CutterDockWidget.h"
 #include "CutterTreeView.h"
 #include "common/AddressableItemModel.h"

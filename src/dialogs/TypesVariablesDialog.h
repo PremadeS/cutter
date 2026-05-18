@@ -32,6 +32,9 @@ struct VariableEntry
 
 Q_DECLARE_METATYPE(VariableEntry)
 
+/**
+ * @brief Source model for @ref TypesVariablesDialog
+ */
 class TypesVariablesModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -52,6 +55,9 @@ public:
     QList<VariableEntry> variables;
 };
 
+/**
+ * @brief Proxy model for @ref TypesVariablesDialog
+ */
 class TypesVariablesProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -68,6 +74,9 @@ private:
     VariableScope selectedScope = VariableScope::ALL;
 };
 
+/**
+ * @brief A dialog that lists and filters variables of a specific data type
+ */
 class TypesVariablesDialog : public QDialog
 {
     Q_OBJECT

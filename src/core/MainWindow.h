@@ -76,6 +76,11 @@ public:
 
     void openNewFile(InitialOptions &options, bool skipOptionsDialog = false);
     void displayNewFileDialog();
+    /**
+     * @brief displays the WelocmeDialog
+     * Upon first execution of Cutter, the WelcomeDialog would be showed to the user.
+     * The Welcome dialog would be showed after a reset of Cutter's preferences by the user.
+     */
     void displayWelcomeDialog();
     void closeNewFileDialog();
     bool openProject(const QString &project_name);
@@ -179,6 +184,10 @@ private slots:
 
     void onActionDefaultTriggered();
 
+    /**
+     * @brief MainWindow::on_actionNew_triggered
+     * Open a new Cutter session.
+     */
     void onActionNewTriggered();
 
     void onActionSaveTriggered();

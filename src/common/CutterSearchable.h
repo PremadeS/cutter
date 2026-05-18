@@ -1,7 +1,7 @@
 #ifndef CUTTERSEARCHABLE_H
 #define CUTTERSEARCHABLE_H
 
-#include <rz_types.h>
+#include "CutterCommon.h"
 
 class QString;
 class SearchBarWidget;

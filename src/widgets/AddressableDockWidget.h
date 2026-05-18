@@ -2,15 +2,13 @@
 #define ADDRESSABLE_DOCK_WIDGET_H
 
 #include "CutterDockWidget.h"
-// #include "core/Cutter.h"
 
 #include <QAction>
 
 class CutterSeekable;
 
 /**
- * @brief Base class for dock widgets that support synchronization with a specific address or
- * offset
+ * @brief Base class for dock widgets that support synchronization with a specific address/offset
  */
 class AddressableDockWidget : public CutterDockWidget
 {

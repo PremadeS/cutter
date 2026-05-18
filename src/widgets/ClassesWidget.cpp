@@ -562,8 +562,8 @@ bool ClassesSortFilterProxyModel::lessThan(const QModelIndex &left, const QModel
 {
     switch (left.column()) {
     case ClassesModel::OFFSET: {
-        RVA const leftOffset = left.data(ClassesModel::offsetRole).toULongLong();
-        RVA const rightOffset = right.data(ClassesModel::offsetRole).toULongLong();
+        const RVA leftOffset = left.data(ClassesModel::offsetRole).toULongLong();
+        const RVA rightOffset = right.data(ClassesModel::offsetRole).toULongLong();
         if (leftOffset != rightOffset) {
             return leftOffset < rightOffset;
         }

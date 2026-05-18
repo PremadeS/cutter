@@ -32,7 +32,7 @@ class DisassemblerGraphView : public CutterGraphView
         Text(const QString &text, QColor color, QColor background)
         {
             RichTextPainter::List richText;
-            RichTextPainter::CustomRichTextT rt;
+            RichTextPainter::CustomRichText rt;
             rt.highlight = false;
             rt.text = text;
             rt.textColor = color;

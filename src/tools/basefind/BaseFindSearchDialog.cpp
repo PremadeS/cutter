@@ -1,7 +1,6 @@
 #include "BaseFindSearchDialog.h"
 
 #include "BaseFindResultsDialog.h"
-// #include "core/Cutter.h"
 #include "ui_BaseFindSearchDialog.h"
 
 #include <QFormLayout>

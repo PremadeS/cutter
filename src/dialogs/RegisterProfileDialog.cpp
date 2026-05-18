@@ -101,7 +101,7 @@ void RegisterProfileDialog::loadGDBBtnClicked()
         return;
     }
 
-    const QString profile = Core()->convertGDBProfile(filePath);
+    const QString profile = Core()->convertGdbProfile(filePath);
     if (profile.isEmpty()) {
         return;
     }

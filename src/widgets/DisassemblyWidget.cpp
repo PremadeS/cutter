@@ -391,7 +391,7 @@ void DisassemblyWidget::highlightCurrentLine()
     highlightSelection.cursor = cursor;
     highlightSelection.cursor.movePosition(QTextCursor::Start);
     while (true) {
-        RVA const lineOffset = DH::readDisassemblyOffset(highlightSelection.cursor);
+        const RVA lineOffset = DH::readDisassemblyOffset(highlightSelection.cursor);
         if (lineOffset == seekable->getOffset()) {
             highlightSelection.format.setBackground(highlightColor);
             highlightSelection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -416,7 +416,7 @@ void DisassemblyWidget::highlightCurrentLine()
 
 void DisassemblyWidget::highlightPCLine()
 {
-    RVA const pcAddr = Core()->getProgramCounterValue();
+    const RVA pcAddr = Core()->getProgramCounterValue();
 
     const QColor highlightPCColor = ConfigColor("highlightPC");
 
@@ -426,7 +426,7 @@ void DisassemblyWidget::highlightPCLine()
     highlightSelection.cursor.movePosition(QTextCursor::Start);
     if (pcAddr != RVA_INVALID) {
         while (true) {
-            RVA const lineOffset = DH::readDisassemblyOffset(highlightSelection.cursor);
+            const RVA lineOffset = DH::readDisassemblyOffset(highlightSelection.cursor);
             if (lineOffset == pcAddr) {
                 highlightSelection.format.setBackground(highlightPCColor);
                 highlightSelection.format.setProperty(QTextFormat::FullWidthSelection, true);
@@ -464,10 +464,10 @@ RVA DisassemblyWidget::readCurrentDisassemblyOffset()
 
 void DisassemblyWidget::updateCursorPosition()
 {
-    RVA const offset = seekable->getOffset();
+    const RVA offset = seekable->getOffset();
 
     // already fine where it is?
-    RVA const currentLineOffset = readCurrentDisassemblyOffset();
+    const RVA currentLineOffset = readCurrentDisassemblyOffset();
     if (currentLineOffset == offset) {
         return;
     }
@@ -479,14 +479,14 @@ void DisassemblyWidget::updateCursorPosition()
         mDisasTextEdit->setExtraSelections(
                 createSameWordsSelections(mDisasTextEdit, curHighlightedWord));
     } else {
-        RVA const currentCursorOffset = readCurrentDisassemblyOffset();
+        const RVA currentCursorOffset = readCurrentDisassemblyOffset();
         const QTextCursor originalCursor = mDisasTextEdit->textCursor();
 
         QTextCursor cursor = originalCursor;
         cursor.movePosition(QTextCursor::Start);
 
         while (true) {
-            RVA const lineOffset = DH::readDisassemblyOffset(cursor);
+            const RVA lineOffset = DH::readDisassemblyOffset(cursor);
             if (lineOffset == offset) {
                 if (cursorLineOffset > 0) {
                     cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor,
@@ -540,7 +540,7 @@ void DisassemblyWidget::connectCursorPositionChanged(bool disconnect)
 
 void DisassemblyWidget::cursorPositionChanged()
 {
-    RVA const offset = readCurrentDisassemblyOffset();
+    const RVA offset = readCurrentDisassemblyOffset();
 
     cursorLineOffset = 0;
     QTextCursor c = mDisasTextEdit->textCursor();
@@ -622,7 +622,7 @@ void DisassemblyWidget::moveCursorRelative(bool up, bool page)
         mDisasTextEdit->moveCursor(up ? QTextCursor::Up : QTextCursor::Down);
 
         // handle cases where top instruction offsets change
-        RVA const offset = readCurrentDisassemblyOffset();
+        const RVA offset = readCurrentDisassemblyOffset();
         if (offset != seekable->getOffset()) {
             seekable->seek(offset);
             highlightCurrentLine();
@@ -633,7 +633,7 @@ void DisassemblyWidget::moveCursorRelative(bool up, bool page)
 
 void DisassemblyWidget::jumpToOffsetUnderCursor(const QTextCursor &cursor)
 {
-    RVA const offset = DH::readDisassemblyOffset(cursor);
+    const RVA offset = DH::readDisassemblyOffset(cursor);
     seekable->seekToReference(offset);
 }
 

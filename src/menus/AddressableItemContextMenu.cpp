@@ -15,10 +15,7 @@
 #include <utility>
 
 AddressableItemContextMenu::AddressableItemContextMenu(QWidget *parent, MainWindow *mainWindow)
-    : QMenu(parent),
-      pluginMenu(mainWindow->getContextMenuExtensions(MainWindow::ContextMenuType::Addressable)),
-      pluginMenuAction(addMenu(pluginMenu)),
-      mainWindow(mainWindow)
+    : QMenu(parent), mainWindow(mainWindow)
 {
     actionShowInMenu = new QAction(tr("Show in"), this);
     actionCopyAddress = Shortcuts()->makeAction("General.copyAddress", this);

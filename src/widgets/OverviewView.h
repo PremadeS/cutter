@@ -43,7 +43,7 @@ public:
      * Everytime overview updates its contents, it compares this value with the one in Graph
      * if they aren't same, then Overview needs to update the pixmap cache.
      */
-    RVA currentFcnAddr = RVA_INVALID;
+    ut64 currentFcnAddr = RVA_INVALID; // TODO: make this less public
 public slots:
     /**
      * @brief scale and center all nodes in, then run update

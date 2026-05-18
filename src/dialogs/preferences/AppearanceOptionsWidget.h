@@ -1,4 +1,3 @@
-
 #ifndef AppearanceOptionsWidget_H
 #define AppearanceOptionsWidget_H
 

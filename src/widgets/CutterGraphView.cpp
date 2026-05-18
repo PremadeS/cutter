@@ -10,7 +10,9 @@
 
 #include <cmath>
 
-static const uint64_t bitmpaExportWarningSize = 32 * 1024 * 1024;
+namespace {
+const uint64_t bitmapExportWarningSize = 32 * 1024 * 1024;
+}
 
 #ifndef NDEBUG
 #    define GRAPH_GRID_DEBUG_MODES true
@@ -93,11 +95,11 @@ void CutterGraphView::initFont()
     const QFontMetricsF metrics(font());
     baseline = int(metrics.ascent());
 #if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-    aCharWidth = metrics.width('A');
+    charWidthA = metrics.width('A');
 #else
-    aCharWidth = metrics.horizontalAdvance('A');
+    charWidthA = metrics.horizontalAdvance('A');
 #endif
-    padding = aCharWidth;
+    padding = charWidthA;
     charHeight = static_cast<int>(metrics.height());
     charOffset = 0;
     mFontMetrics.reset(new CachedFontMetrics<qreal>(font()));
@@ -449,7 +451,7 @@ void CutterGraphView::showExportGraphDialog(const QString &defaultName, RzCoreGr
 
     if (graphIsBitamp(exportType)) {
         const uint64_t bitmapSize = uint64_t(width) * uint64_t(height);
-        if (bitmapSize > bitmpaExportWarningSize) {
+        if (bitmapSize > bitmapExportWarningSize) {
             auto answer =
                     QMessageBox::question(this, tr("Graph Export"),
                                           tr("Do you really want to export %1 x %2 = %3 pixel "

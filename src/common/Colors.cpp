@@ -6,7 +6,7 @@
 
 void Colors::colorizeAssembly(RichTextPainter::List &list, QString opcode, ut64 typeNum)
 {
-    RichTextPainter::CustomRichTextT assembly;
+    RichTextPainter::CustomRichText assembly;
     assembly.highlight = false;
     assembly.flags = RichTextPainter::FlagColor;
 

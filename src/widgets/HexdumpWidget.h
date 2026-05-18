@@ -5,16 +5,12 @@
 #include "HexWidget.h"
 #include "MemoryDockWidget.h"
 #include "common/CutterSeekable.h"
-// #include "common/Highlighter.h"
-// #include "common/SvgIconEngine.h"
-// #include "core/Cutter.h"
 
 #include <QAction>
 #include <QDebug>
 #include <QMouseEvent>
 #include <QTextEdit>
 
-// #include <array>
 #include <memory>
 
 namespace Ui {

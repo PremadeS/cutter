@@ -10,8 +10,6 @@
 #include <QJsonArray>
 #include <QShortcut>
 
-// #include <utility>
-
 XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     : QDialog(parent),
       addr(0),

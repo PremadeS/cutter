@@ -1,9 +1,7 @@
-
 #include "PluginsOptionsWidget.h"
 
 #include "PreferencesDialog.h"
 #include "common/Helpers.h"
-// #include "common/Configuration.h"
 #include "dialogs/RizinPluginsDialog.h"
 #include "plugins/PluginManager.h"
 

@@ -1,4 +1,3 @@
-
 #ifndef ASMOPTIONSWIDGET_H
 #define ASMOPTIONSWIDGET_H
 
@@ -7,8 +6,6 @@
 #include <QPushButton>
 
 #include <memory>
-
-// #include "core/Cutter.h"
 
 class PreferencesDialog;
 

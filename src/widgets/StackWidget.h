@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STACKWIDGET_H
+#define STACKWIDGET_H
 
 #include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
@@ -87,3 +88,5 @@ private:
     RefreshDeferrer *refreshDeferrer;
     AddressableItemContextMenu addressableItemContextMenu;
 };
+
+#endif // STACKWIDGET_H

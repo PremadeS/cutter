@@ -28,10 +28,12 @@
 #include <QWheelEvent>
 #include <QtEndian>
 
-static constexpr uint64_t maxCopySize = 128 * 1024 * 1024;
-static constexpr int maxLineWidthPreset = 32;
-static constexpr int maxLineWidthBytes = 128 * 1024;
-static constexpr int warningTimeMs = 500;
+namespace {
+constexpr uint64_t maxCopySize = 128 * 1024 * 1024;
+constexpr int maxLineWidthPreset = 32;
+constexpr int maxLineWidthBytes = 128 * 1024;
+constexpr int warningTimeMs = 500;
+}
 
 HexWidget::HexWidget(QWidget *parent)
     : QScrollArea(parent),
@@ -1373,7 +1375,7 @@ void HexWidget::onActionDeleteMarkTriggered(const QString &name)
 
 void HexWidget::onActionEditMarkTriggered(const QString &name)
 {
-    RVA const addr = cursor.address;
+    const RVA addr = cursor.address;
     if (MarkDialog(addr, addr, this, name).exec()) {
         refresh();
     }
@@ -1561,7 +1563,7 @@ void HexWidget::wDuplFromOffset()
     if (ret == QDialog::Rejected) {
         return;
     }
-    RVA const src = d.getOffset();
+    const RVA src = d.getOffset();
     const int len = (int)d.getNBytes();
     {
         RzCoreLocked core(Core());

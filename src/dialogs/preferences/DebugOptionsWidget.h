@@ -5,8 +5,6 @@
 
 #include <memory>
 
-// #include "core/Cutter.h"
-
 class PreferencesDialog;
 
 namespace Ui {

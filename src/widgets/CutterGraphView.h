@@ -113,7 +113,7 @@ protected:
 
     // Font data
     std::unique_ptr<CachedFontMetrics<qreal>> mFontMetrics;
-    qreal aCharWidth; // width of character A
+    qreal charWidthA; // width of character A
     int charHeight;
     int charOffset;
     int baseline;

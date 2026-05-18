@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BACKTRACEWIDGET_H
+#define BACKTRACEWIDGET_H
 
 #include "CutterDescriptions.h"
 #include "CutterDockWidget.h"
@@ -54,3 +55,5 @@ private:
 
     void adjustFunctionNameCol();
 };
+
+#endif // BACKTRACEWIDGET_H

@@ -140,9 +140,6 @@ bool TypesVariablesProxyModel::lessThan(const QModelIndex &left, const QModelInd
     return QSortFilterProxyModel::lessThan(left, right);
 }
 
-/**
- * @brief A dialog that lists and filters variables of a specific data type
- */
 TypesVariablesDialog::TypesVariablesDialog(QWidget *parent, const QString &typeName)
     : QDialog(parent),
       ui(new Ui::TypesVariablesDialog),

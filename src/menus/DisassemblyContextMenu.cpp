@@ -1,5 +1,4 @@
 #include "DisassemblyContextMenu.h"
-// #include "dialogs/preferences/PreferencesDialog.h"
 #include "MainWindow.h"
 #include "dialogs/BreakpointsDialog.h"
 #include "dialogs/CommentsDialog.h"

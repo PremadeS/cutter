@@ -274,11 +274,11 @@ void SectionsWidget::drawIndicatorOnAddrDocks()
     RVA const offset = Core()->getOffset();
     for (int i = 0; i != virtualAddrDock->proxyModel->rowCount(); i++) {
         const QModelIndex idx = virtualAddrDock->proxyModel->index(i, 0);
-        RVA const vaddr =
+        const RVA vaddr =
                 idx.data(SectionsModel::SectionDescriptionRole).value<SectionDescription>().vaddr;
         const int vsize =
                 idx.data(SectionsModel::SectionDescriptionRole).value<SectionDescription>().vsize;
-        RVA const end = vaddr + vsize;
+        const RVA end = vaddr + vsize;
         if (offset < end) {
             const QString name = idx.data(SectionsModel::SectionDescriptionRole)
                                          .value<SectionDescription>()
@@ -355,8 +355,8 @@ void AbstractAddrDock::updateDock()
         addrDockScene->seekAddrMap[name] = desc.vaddr;
         addrDockScene->seekAddrSizeMap[name] = desc.vsize;
 
-        RVA const addr = getAddressOfSection(desc);
-        RVA const size = getSizeOfSection(desc);
+        const RVA addr = getAddressOfSection(desc);
+        const RVA size = getSizeOfSection(desc);
         addrDockScene->nameAddrMap[name] = addr;
         addrDockScene->nameAddrSizeMap[name] = size;
 
@@ -428,7 +428,7 @@ int AbstractAddrDock::getValidMinSize()
 
 void AbstractAddrDock::drawIndicator(const QString &name, float ratio)
 {
-    RVA const offset = Core()->getOffset();
+    const RVA offset = Core()->getOffset();
     const float padding = addrDockScene->nameHeightMap[name] * ratio;
     const int y = addrDockScene->namePosYMap[name] + (int)padding;
     const QColor color = indicatorColor;
@@ -450,11 +450,11 @@ AddrDockScene::~AddrDockScene() {}
 
 void AddrDockScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    RVA const addr = getAddrFromPos((int)event->scenePos().y(), false);
+    const RVA addr = getAddrFromPos((int)event->scenePos().y(), false);
     if (addr != RVA_INVALID) {
         QToolTip::showText(event->screenPos(), rzAddressString(addr));
         if (event->buttons() & Qt::LeftButton) {
-            RVA const seekAddr = getAddrFromPos((int)event->scenePos().y(), true);
+            const RVA seekAddr = getAddrFromPos((int)event->scenePos().y(), true);
             disableCenterOn = true;
             Core()->seekAndShow(seekAddr);
             disableCenterOn = false;
