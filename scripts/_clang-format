@@ -107,3 +107,7 @@ IncludeCategories:
     Priority:        2
   - Regex:           '.*'         
     Priority:        3
+
+# Insert braces after conditional statements/loops even if they
+# contain a single statement
+InsertBraces: true
