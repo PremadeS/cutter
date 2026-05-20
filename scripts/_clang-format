@@ -111,3 +111,6 @@ IncludeCategories:
 # Insert braces after conditional statements/loops even if they
 # contain a single statement
 InsertBraces: true
+
+# Insert space in empty braces
+SpaceInEmptyBlock: false
