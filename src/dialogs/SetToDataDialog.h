@@ -1,9 +1,9 @@
 #ifndef SETTODATADIALOG_H
 #define SETTODATADIALOG_H
 
-#include <QDialog>
-
 #include "CutterCommon.h"
+
+#include <QDialog>
 
 #include <memory>
 

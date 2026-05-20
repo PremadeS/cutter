@@ -1,9 +1,9 @@
 #include "WelcomeDialog.h"
 
 #include "AboutDialog.h"
+#include "Configuration.h"
 #include "CutterConfig.h"
 #include "common/Helpers.h"
-#include "Configuration.h"
 #include "ui_WelcomeDialog.h"
 
 #include <QMessageBox>
