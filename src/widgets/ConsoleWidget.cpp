@@ -259,7 +259,7 @@ void ConsoleWidget::removeLastLine()
 
 void ConsoleWidget::executeCommand(const QString &command)
 {
-    if (!commandTask) {
+    if (commandTask) {
         return;
     }
     ui->rzInputLineEdit->setEnabled(false);
@@ -268,8 +268,7 @@ void ConsoleWidget::executeCommand(const QString &command)
     addOutput(cmdLine);
 
     const RVA oldOffset = Core()->getOffset();
-    commandTask = std::shared_ptr<CommandTask>(
-            new CommandTask(command, CommandTask::ColorMode::MODE_16M));
+    commandTask = std::make_shared<CommandTask>(command, CommandTask::ColorMode::MODE_16M);
     connect(commandTask.get(), &CommandTask::finished, this,
             [this, cmdLine, command, oldOffset](const QString &result) {
                 ui->outputTextEdit->appendHtml(CutterCore::ansiEscapeToHtml(result));
@@ -325,6 +324,11 @@ void ConsoleWidget::onRzInputLineEditReturnPressed()
 {
     const QString input = ui->rzInputLineEdit->text();
     if (input.isEmpty()) {
+        return;
+    }
+    if (input == "clear" || input == "cls") {
+        ui->outputTextEdit->clear();
+        ui->rzInputLineEdit->clear();
         return;
     }
     executeCommand(input);
