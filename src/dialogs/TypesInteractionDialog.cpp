@@ -1,39 +1,46 @@
 #include "dialogs/TypesInteractionDialog.h"
-#include "ui_TypesInteractionDialog.h"
 
-#include "core/Cutter.h"
 #include "common/Configuration.h"
-#include "common/SyntaxHighlighter.h"
-#include "widgets/TypesWidget.h"
+#include "core/Cutter.h"
+#include "ui_TypesInteractionDialog.h"
 
 #include <QFileDialog>
 #include <QTemporaryFile>
 
+#include <utility>
+
 TypesInteractionDialog::TypesInteractionDialog(QWidget *parent, bool readOnly)
-    : QDialog(parent), ui(new Ui::TypesInteractionDialog)
+    : QDialog(parent),
+      ui(new Ui::TypesInteractionDialog),
+      syntaxHighLighter(Config()->createSyntaxHighlighter(ui->plainTextEdit->document()))
 {
     ui->setupUi(this);
-    QFont font = Config()->getBaseFont();
+    const QFont font = Config()->getBaseFont();
     ui->plainTextEdit->setFont(font);
     ui->plainTextEdit->setPlainText("");
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     ui->plainTextEdit->setTabStopDistance(4 * QFontMetrics(font).horizontalAdvance(' '));
 #endif
-    syntaxHighLighter = Config()->createSyntaxHighlighter(ui->plainTextEdit->document());
+
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     ui->plainTextEdit->setReadOnly(readOnly);
+
+    connect(ui->selectFileButton, &QPushButton::clicked, this,
+            &TypesInteractionDialog::onSelectFileButtonClicked);
+    connect(ui->plainTextEdit, &QPlainTextEdit::textChanged, this,
+            &TypesInteractionDialog::onPlainTextEditTextChanged);
 }
 
 TypesInteractionDialog::~TypesInteractionDialog() {}
 
 void TypesInteractionDialog::setTypeName(QString name)
 {
-    this->typeName = name;
+    this->typeName = std::move(name);
 }
 
-void TypesInteractionDialog::on_selectFileButton_clicked()
+void TypesInteractionDialog::onSelectFileButtonClicked()
 {
-    QString filename =
+    const QString filename =
             QFileDialog::getOpenFileName(this, tr("Select file"), Config()->getRecentFolder(),
                                          "Header files (*.h *.hpp);;All files (*)");
     if (filename.isEmpty()) {
@@ -43,14 +50,14 @@ void TypesInteractionDialog::on_selectFileButton_clicked()
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::critical(this, tr("Error"), file.errorString());
-        on_selectFileButton_clicked();
+        onSelectFileButtonClicked();
         return;
     }
     ui->filenameLineEdit->setText(filename);
     ui->plainTextEdit->setPlainText(file.readAll());
 }
 
-void TypesInteractionDialog::on_plainTextEdit_textChanged()
+void TypesInteractionDialog::onPlainTextEditTextChanged()
 {
     if (ui->plainTextEdit->toPlainText().isEmpty()) {
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -70,14 +77,14 @@ void TypesInteractionDialog::done(int r)
                     typedb, this->typeName.toUtf8().constData(),
                     ui->plainTextEdit->toPlainText().toUtf8().constData());
         } else {
-            char *error_msg = NULL;
+            char *errorMsg = nullptr;
             success = rz_type_parse_string_stateless(
                               typedb->parser, ui->plainTextEdit->toPlainText().toUtf8().constData(),
-                              &error_msg)
+                              &errorMsg)
                     == 0;
-            if (error_msg) {
-                RZ_LOG_ERROR("%s\n", error_msg);
-                rz_mem_free(error_msg);
+            if (errorMsg) {
+                RZ_LOG_ERROR("%s\n", errorMsg);
+                rz_mem_free(errorMsg);
             }
         }
         if (success) {
@@ -96,7 +103,7 @@ void TypesInteractionDialog::done(int r)
     }
 }
 
-void TypesInteractionDialog::fillTextArea(QString content)
+void TypesInteractionDialog::fillTextArea(const QString &content)
 {
     ui->layoutWidget->hide();
     ui->plainTextEdit->setPlainText(content);

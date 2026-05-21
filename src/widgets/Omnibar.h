@@ -1,8 +1,10 @@
 #ifndef OMNIBAR_H
 #define OMNIBAR_H
 
-#include <QLineEdit>
+#include "CutterCommon.h"
+
 #include <QCompleter>
+#include <QLineEdit>
 
 class MainWindow;
 class QStandardItemModel;
@@ -25,6 +27,9 @@ public:
     QString pathFromIndex(const QModelIndex &index) const override;
 };
 
+/**
+ * @brief Main search bar at the top with auto completion
+ */
 class Omnibar : public QLineEdit
 {
     Q_OBJECT
@@ -33,12 +38,9 @@ public:
 
     void refresh();
 
-    enum ItemType { Standard = 0, ShowMore = 1, ShowAll = 2 };
+    enum ItemType : ut8 { Standard = 0, ShowMore = 1, ShowAll = 2 };
 
 private slots:
-    /**
-     * @brief Seeks to the address of selected entry/flag and shows it in the last memory widget
-     */
     void goToEntry();
 
     /**
@@ -65,16 +67,16 @@ private:
     void handleShowAll(int currentRow);
 
     MainWindow *main;
-    QStringList m_flags;
+    QStringList flags;
 
-    QStringList m_filteredFlags;
-    QStandardItemModel *m_completerModel;
-    QCompleter *m_completer;
+    QStringList filteredFlags;
+    QStandardItemModel *completerModel;
+    QCompleter *completer;
 
-    QString m_searchedText;
-    int m_maxShownItems;
-    int m_lastIndex;
-    int m_matchCount;
+    QString searchedText;
+    int maxShownItems;
+    int lastIndex;
+    int matchCount;
 };
 
 #endif // OMNIBAR_H

@@ -1,8 +1,9 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-#include <QSettings>
 #include <QFont>
+#include <QSettings>
+
 #include <core/Cutter.h>
 
 #define Config() (Configuration::instance())
@@ -18,7 +19,7 @@ class Theme;
 class QSyntaxHighlighter;
 class QTextDocument;
 
-enum ColorFlags {
+enum ColorFlags : ut8 {
     LightFlag = 1,
     DarkFlag = 2,
     DualColor = LightFlag | DarkFlag,
@@ -41,13 +42,16 @@ struct RecentFileEntry
     }
 };
 
+/**
+ * @brief Singleton class to save and load all of the configuration values
+ */
 class CUTTER_EXPORT Configuration : public QObject
 {
     Q_OBJECT
 private:
     QPalette nativePalette;
     QSettings s;
-    static Configuration *mPtr;
+    static Configuration *ptr;
 
 #ifdef CUTTER_ENABLE_KSYNTAXHIGHLIGHTING
     KSyntaxHighlighting::Repository *kSyntaxHighlightingRepository;
@@ -91,6 +95,10 @@ public:
         QString name;
         QLocale locale;
     };
+    /**
+     * @brief this function will gather and return available translation for Cutter
+     * @return a list of locales and their names
+     */
     std::vector<LangInfo> getAvailableTranslations();
 
     // Fonts
@@ -147,6 +155,11 @@ public:
     void adjustColorThemeDarkness();
     int colorThemeDarkness(const QString &colorTheme) const;
 
+    /**
+     * @brief Configuration::setColor sets the local Cutter configuration color
+     * @param name Color Name
+     * @param color The color you want to set
+     */
     void setColor(const QString &name, const QColor &color);
     const QColor getColor(const QString &name) const;
 
@@ -232,11 +245,15 @@ public:
     void setPreviewValue(bool checked);
     bool getPreviewValue() const;
 
+    // Tooltip
+
     /**
      * @brief Show tooltips for known values of registers, variables, and memory when debugging
      */
     void setShowVarTooltips(bool enabled);
     bool getShowVarTooltips() const;
+
+    // Recent Items
 
     /**
      * @brief Recently opened binaries, as shown in NewFileDialog.
@@ -274,7 +291,7 @@ public:
      */
     void removeRecentRegProfile(const QString &profile);
 
-    // Functions Widget Layout
+    // Interface
 
     /**
      * @brief Get the layout of the Functions widget.

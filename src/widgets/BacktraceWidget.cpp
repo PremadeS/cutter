@@ -1,8 +1,8 @@
 #include "BacktraceWidget.h"
-#include "ui_BacktraceWidget.h"
-#include <QTreeView>
 
+#include "QHeaderView"
 #include "core/MainWindow.h"
+#include "ui_BacktraceWidget.h"
 
 BacktraceModel::BacktraceModel(QObject *parent) : QAbstractListModel(parent) {}
 
@@ -28,9 +28,9 @@ QVariant BacktraceModel::data(const QModelIndex &index, int role) const
         case Column::Function:
             return backtraces[index.row()].functionName;
         case Column::PC:
-            return RzAddressString(backtraces[index.row()].pc);
+            return rzAddressString(backtraces[index.row()].pc);
         case Column::SP:
-            return RzAddressString(backtraces[index.row()].sp);
+            return rzAddressString(backtraces[index.row()].sp);
         case Column::FrameSize:
             return backtraces[index.row()].frameSize;
         case Column::Description:

@@ -1,12 +1,14 @@
 #include "SymbolsOptionsWidget.h"
-#include "ui_SymbolsOptionsWidget.h"
-#include <QFileDialog>
-#include <QCheckBox>
-#include <QPushButton>
-#include <QUrl>
+
+#include "PreferencesDialog.h"
 #include "core/Cutter.h"
 #include "core/MainWindow.h"
-#include "PreferencesDialog.h"
+#include "ui_SymbolsOptionsWidget.h"
+
+#include <QCheckBox>
+#include <QFileDialog>
+#include <QPushButton>
+#include <QUrl>
 
 SymbolsOptionsWidget::SymbolsOptionsWidget(PreferencesDialog *parent)
     : QDialog(parent), mainWindow(parent->getMainWindow()), ui(new Ui::SymbolsOptionsWidget)
@@ -19,7 +21,7 @@ SymbolsOptionsWidget::SymbolsOptionsWidget(PreferencesDialog *parent)
     ui->debuginfodCheckBox->setChecked(Core()->getConfigb("bin.dbginfo.debuginfod"));
     ui->debuginfodLineEdit->setText(Core()->getConfig("bin.dbginfo.debuginfod_urls"));
     updateDebuginfodLayout();
-#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     connect(ui->debuginfodCheckBox, &QCheckBox::checkStateChanged, this,
             &SymbolsOptionsWidget::updateDebuginfodLayout);
 #else
@@ -54,10 +56,10 @@ void SymbolsOptionsWidget::reanalyze()
     Core()->setConfig("bin.dbginfo.debuginfod_urls", ui->debuginfodLineEdit->text());
     Core()->setConfig("pdb.server", ui->pdbServerEdit->text());
 
-    mainWindow->on_actionAnalyze_triggered();
-    QUrl pdbFile = QUrl::fromUserInput(ui->pdbLineEdit->text());
+    mainWindow->onActionAnalyzeTriggered();
+    const QUrl pdbFile = QUrl::fromUserInput(ui->pdbLineEdit->text());
     if (pdbFile.isValid() && pdbFile.isLocalFile()) {
-        QFileInfo pdbFileInfo(pdbFile.toLocalFile());
+        const QFileInfo pdbFileInfo(pdbFile.toLocalFile());
         if (pdbFileInfo.exists() && pdbFileInfo.isFile()) {
             Core()->loadPDB(ui->pdbLineEdit->text());
             mainWindow->refreshAll();

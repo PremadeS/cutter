@@ -2,13 +2,20 @@
 #define COMBOQUICKFILTERVIEW_H
 
 #include "AbstractFilterView.h"
+
 #include <QComboBox>
+
 #include <memory>
 
 namespace Ui {
 class ComboQuickFilterView;
 }
 
+/**
+ * @brief Quick filter view class containing a combo box
+ *
+ * @see QuickFilterView
+ */
 class ComboQuickFilterView : public AbstractFilterView
 {
     Q_OBJECT

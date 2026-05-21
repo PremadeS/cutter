@@ -1,14 +1,15 @@
 #include "CutterSearchable.h"
+
 #include "SearchBarWidget.h"
 #include "shortcuts/ShortcutManager.h"
 
-#include <QObject>
 #include <QAbstractScrollArea>
+#include <QObject>
 #include <QScrollBar>
 
 void CutterSearchableHelper::setupConnections(QWidget *parent, SearchBarWidget *searchBar)
 {
-    CutterSearchable *searchable = dynamic_cast<CutterSearchable *>(parent);
+    auto *searchable = dynamic_cast<CutterSearchableI *>(parent);
     if (!searchBar || !parent || !searchable) {
         return;
     }
@@ -49,8 +50,8 @@ void CutterSearchableHelper::setupConnections(QWidget *parent, SearchBarWidget *
             searchBar->showSearchBar();
 
             QWidget *searchArea = searchable->searchableArea();
-            int hPadding = searchable->searchHPadding();
-            int vPadding = searchable->searchVPadding();
+            const int hPadding = searchable->searchHPadding();
+            const int vPadding = searchable->searchVPadding();
 
             positionSearchBar(parent, searchBar, searchArea, hPadding, vPadding);
         }
@@ -66,13 +67,14 @@ void CutterSearchableHelper::positionSearchBar(QWidget *parent, SearchBarWidget 
 
     int searchBarWidth = 0;
     if (auto *scrollArea = qobject_cast<QAbstractScrollArea *>(searchArea)) {
-        QScrollBar *scrollBar = scrollArea->verticalScrollBar();
+        const QScrollBar *scrollBar = scrollArea->verticalScrollBar();
         searchBarWidth = (scrollBar && scrollBar->isVisible()) ? scrollBar->width() : 0;
     }
 
-    QPoint areaPos = searchArea->mapTo(parent, QPoint(0, 0));
-    int x = areaPos.x() + searchArea->width() - searchBarWidth - searchBar->width() - hPadding;
-    int y = areaPos.y() + vPadding;
+    const QPoint areaPos = searchArea->mapTo(parent, QPoint(0, 0));
+    const int x =
+            areaPos.x() + searchArea->width() - searchBarWidth - searchBar->width() - hPadding;
+    const int y = areaPos.y() + vPadding;
 
     searchBar->move(x, y);
 }

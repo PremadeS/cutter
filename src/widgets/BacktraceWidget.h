@@ -1,12 +1,15 @@
-#pragma once
+#ifndef BACKTRACEWIDGET_H
+#define BACKTRACEWIDGET_H
+
+#include "CutterDescriptions.h"
+#include "CutterDockWidget.h"
 
 #include <QJsonObject>
-#include <memory>
 #include <QStandardItem>
 #include <QTableView>
+#include <QTreeView>
 
-#include "core/Cutter.h"
-#include "CutterDockWidget.h"
+#include <memory>
 
 class MainWindow;
 
@@ -19,7 +22,7 @@ class BacktraceModel : public QAbstractListModel
 public:
     explicit BacktraceModel(QObject *parent = nullptr);
 
-    enum Column { Function = 0, PC, SP, FrameSize, Description, Count };
+    enum Column : ut8 { Function = 0, PC, SP, FrameSize, Description, Count };
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
@@ -52,3 +55,5 @@ private:
 
     void adjustFunctionNameCol();
 };
+
+#endif // BACKTRACEWIDGET_H

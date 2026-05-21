@@ -1,21 +1,19 @@
 #include "PreferencesDialog.h"
-#include "ui_PreferencesDialog.h"
 
+#include "AnalysisOptionsWidget.h"
 #include "AppearanceOptionsWidget.h"
 #include "AsmOptionsWidget.h"
-#include "GraphOptionsWidget.h"
 #include "DebugOptionsWidget.h"
-#include "PluginsOptionsWidget.h"
+#include "GraphOptionsWidget.h"
 #include "InitializationFileEditor.h"
-#include "AnalysisOptionsWidget.h"
+#include "InterfaceOptionsWidget.h"
+#include "PluginsOptionsWidget.h"
+#include "PreferenceCategory.h"
 #include "ShortcutOptionsWidget.h"
 #include "SymbolsOptionsWidget.h"
-#include "InterfaceOptionsWidget.h"
-
-#include "PreferenceCategory.h"
-
-#include "common/Helpers.h"
 #include "common/Configuration.h"
+#include "common/Helpers.h"
+#include "ui_PreferencesDialog.h"
 
 #include <QDialogButtonBox>
 
@@ -87,13 +85,15 @@ void PreferencesDialog::showSection(PreferencesDialog::Section section)
 
 void PreferencesDialog::changePage(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-    if (!current)
+    if (!current) {
         current = previous;
+    }
 
-    int index = current->data(0, Qt::UserRole).toInt();
+    const int index = current->data(0, Qt::UserRole).toInt();
 
-    if (index)
+    if (index) {
         ui->configPanel->setCurrentIndex(index - 1);
+    }
 }
 
 void PreferencesDialog::chooseThemeIcons()

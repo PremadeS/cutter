@@ -1,8 +1,9 @@
 #include "ListDockWidget.h"
-#include "ui_ListDockWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_ListDockWidget.h"
 
 #include <QMenu>
 #include <QResizeEvent>
@@ -38,7 +39,7 @@ void ListDockWidget::setModels(AddressableFilterProxyModel *objectFilterProxyMod
 {
     this->objectFilterProxyModel = objectFilterProxyModel;
 
-    ui->treeView->setModel(objectFilterProxyModel);
+    ui->treeView->setModel(static_cast<AddressableItemModelI *>(objectFilterProxyModel));
 
     connect(ui->quickFilterView, &QuickFilterView::filterTextChanged, objectFilterProxyModel,
             &QSortFilterProxyModel::setFilterWildcard);

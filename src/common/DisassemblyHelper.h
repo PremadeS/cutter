@@ -1,8 +1,9 @@
 #ifndef DISASSEMBLYHELPER_H
 #define DISASSEMBLYHELPER_H
 
-#include <QTextBlockUserData>
 #include "core/CutterDescriptions.h"
+
+#include <QTextBlockUserData>
 
 /**
  * @brief Metadata container attached to each QTextBlock in the disassembly view
@@ -25,7 +26,7 @@ namespace DisassemblyHelper {
 /**
  * @brief Identifies what kind of item was clicked or hovered
  */
-enum class TargetType {
+enum class TargetType : ut8 {
     VariableXRef,
     VariableValue,
     TypeName,
@@ -60,7 +61,7 @@ struct TargetAction
 /**
  * @brief Filter to control how deep the search goes
  */
-enum TargetFilter {
+enum TargetFilter : ut8 {
     XRefComments = 1 << 0,
     VariableXrefs = 1 << 1,
     VariableValues = 1 << 2,
@@ -116,13 +117,13 @@ bool isXRefFromComment(RVA offset, const QString &line);
  * @brief Reads the offset for the cursor position
  * @return The disassembly offset of the hovered asm text
  */
-RVA readDisassemblyOffset(QTextCursor tc);
+RVA readDisassemblyOffset(const QTextCursor &tc);
 
 /*!
  * @brief Reads the arrow offset for the cursor position
  * @return Offset the arrow points to
  */
-RVA readDisassemblyArrow(QTextCursor tc);
+RVA readDisassemblyArrow(const QTextCursor &tc);
 
 /**
  * @brief Gets the text and address at the current cursor position

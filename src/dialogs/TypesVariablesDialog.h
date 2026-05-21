@@ -1,17 +1,19 @@
 #ifndef TYPESVARIABLESDIALOG_H
 #define TYPESVARIABLESDIALOG_H
 
+#include "CutterCommon.h"
+
+#include <QAbstractTableModel>
 #include <QDialog>
 #include <QSortFilterProxyModel>
-#include <QAbstractTableModel>
 
-#include "core/Cutter.h"
+#include <memory>
 
 namespace Ui {
 class TypesVariablesDialog;
 }
 
-enum VariableScope { ALL = 0, GLOBAL, LOCAL };
+enum VariableScope : ut8 { ALL = 0, GLOBAL, LOCAL };
 /**
  * @brief Get a string representation of the given Scope.
  * @param scope The scope to convert.
@@ -30,13 +32,16 @@ struct VariableEntry
 
 Q_DECLARE_METATYPE(VariableEntry)
 
+/**
+ * @brief Source model for @ref TypesVariablesDialog
+ */
 class TypesVariablesModel : public QAbstractTableModel
 {
     Q_OBJECT
 
 public:
-    enum Column { NAME = 0, ADDRESS, SCOPE, FUNCTION, COUNT };
-    static const int TypeVariableRole = Qt::UserRole;
+    enum Column : ut8 { NAME = 0, ADDRESS, SCOPE, FUNCTION, COUNT };
+    static const int typeVariableRole = Qt::UserRole;
 
     explicit TypesVariablesModel(QObject *parent = nullptr);
 
@@ -50,6 +55,9 @@ public:
     QList<VariableEntry> variables;
 };
 
+/**
+ * @brief Proxy model for @ref TypesVariablesDialog
+ */
 class TypesVariablesProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -66,6 +74,9 @@ private:
     VariableScope selectedScope = VariableScope::ALL;
 };
 
+/**
+ * @brief A dialog that lists and filters variables of a specific data type
+ */
 class TypesVariablesDialog : public QDialog
 {
     Q_OBJECT

@@ -1,12 +1,10 @@
 #include "AnalysisOptionsWidget.h"
-#include "ui_AnalysisOptionsWidget.h"
 
 #include "PreferencesDialog.h"
-
-#include "common/Helpers.h"
 #include "common/Configuration.h"
-
+#include "common/Helpers.h"
 #include "core/MainWindow.h"
+#include "ui_AnalysisOptionsWidget.h"
 
 static const QHash<QString, const char *> analysisBoundaries {
     { "io.maps.x", QT_TRANSLATE_NOOP("AnalysisOptionsWidget", "All executable maps") },
@@ -18,7 +16,7 @@ static const QHash<QString, const char *> analysisBoundaries {
 };
 
 AnalysisOptionsWidget::AnalysisOptionsWidget(PreferencesDialog *dialog)
-    : QDialog(dialog), mainWindow(dialog->getMainWindow()), ui(new Ui::AnalysisOptionsWidget)
+    : QDialog(dialog), ui(new Ui::AnalysisOptionsWidget), mainWindow(dialog->getMainWindow())
 {
     ui->setupUi(this);
 
@@ -34,16 +32,21 @@ AnalysisOptionsWidget::AnalysisOptionsWidget(PreferencesDialog *dialog)
     createAnalysisInOptionsList();
 
     // Connect each checkbox from "checkboxes" to the generic signal "checkboxEnabler"
-    for (ConfigCheckbox &confCheckbox : checkboxes) {
-        QString val = confCheckbox.config;
+    for (const ConfigCheckbox &confCheckbox : std::as_const(checkboxes)) {
+        const QString val = confCheckbox.config;
         QCheckBox &cb = *confCheckbox.checkBox;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+        connect(confCheckbox.checkBox, &QCheckBox::checkStateChanged, this,
+                [val, &cb]() { checkboxEnabler(&cb, val); });
+#else
         connect(confCheckbox.checkBox, &QCheckBox::stateChanged, this,
                 [val, &cb]() { checkboxEnabler(&cb, val); });
+#endif
     }
 
     ui->analyzePushButton->setToolTip(tr("Analyze the program using Rizin's \"aaa\" command"));
     connect(ui->analyzePushButton, &QPushButton::clicked, mainWindow,
-            &MainWindow::on_actionAnalyze_triggered);
+            &MainWindow::onActionAnalyzeTriggered);
     connect<void (QComboBox::*)(int)>(ui->analysisInComboBox, &QComboBox::currentIndexChanged, this,
                                       &AnalysisOptionsWidget::updateAnalysisIn);
     connect<void (QSpinBox::*)(int)>(ui->ptrDepthSpinBox, &QSpinBox::valueChanged, this,
@@ -62,7 +65,7 @@ void AnalysisOptionsWidget::checkboxEnabler(QCheckBox *checkBox, const QString &
 
 void AnalysisOptionsWidget::updateAnalysisOptionsFromVars()
 {
-    for (ConfigCheckbox &confCheckbox : checkboxes) {
+    for (const ConfigCheckbox &confCheckbox : checkboxes) {
         qhelpers::setCheckedWithoutSignals(confCheckbox.checkBox,
                                            Core()->getConfigb(confCheckbox.config));
     }

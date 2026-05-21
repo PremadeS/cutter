@@ -1,16 +1,17 @@
-/** \file CutterDescriptions.h
+/** @file CutterDescriptions.h
  * This file contains every structure description that are used in widgets.
  * The descriptions are used for the Qt metatypes.
  */
 #ifndef DESCRIPTIONS_H
 #define DESCRIPTIONS_H
 
-#include <QString>
-#include <QList>
-#include <QStringList>
-#include <QMetaType>
-#include <QColor>
 #include "core/CutterCommon.h"
+
+#include <QColor>
+#include <QList>
+#include <QMetaType>
+#include <QString>
+#include <QStringList>
 
 struct FunctionDescription
 {
@@ -49,7 +50,7 @@ struct ExportDescription
     RVA size;
     QString type;
     QString name;
-    QString flag_name;
+    QString flagName;
 };
 
 struct HeaderDescription
@@ -62,14 +63,14 @@ struct HeaderDescription
 
 struct FlirtDescription
 {
-    QString bin_name;
-    QString arch_name;
-    QString arch_bits;
-    QString base_name;
-    QString short_path;
-    QString file_path;
+    QString binName;
+    QString archName;
+    QString archBits;
+    QString baseName;
+    QString shortPath;
+    QString filePath;
     QString details;
-    QString n_modules;
+    QString nModules;
 };
 
 struct TypeDescription
@@ -168,9 +169,9 @@ struct EntrypointDescription
 struct XrefDescription
 {
     RVA from;
-    QString from_str;
+    QString fromStr;
     RVA to;
-    QString to_str;
+    QString toStr;
     QString type;
 };
 
@@ -318,7 +319,7 @@ struct MemoryMapDescription
 
 struct BreakpointDescription
 {
-    enum PositionType {
+    enum PositionType : ut8 {
         Address,
         Named,
         Module,
@@ -401,11 +402,11 @@ struct Arena
     RVA offset;
     QString type;
     quint64 top;
-    quint64 last_remainder;
+    quint64 lastRemainder;
     quint64 next;
-    quint64 next_free;
-    quint64 system_mem;
-    quint64 max_system_mem;
+    quint64 nextFree;
+    quint64 systemMem;
+    quint64 maxSystemMem;
 };
 
 struct BasefindCoreStatusDescription

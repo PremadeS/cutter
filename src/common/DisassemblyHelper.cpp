@@ -1,18 +1,19 @@
 #include "DisassemblyHelper.h"
+
 #include "Cutter.h"
 #include "rz_types_base.h"
 
-typedef struct mmio_lookup_context
+typedef struct MmioLookupContext
 {
     QString selected;
-    RVA mmio_address;
+    RVA mmioAddress;
 } mmio_lookup_context_t;
 
-static bool lookup_mmio_addr_cb(void *user, const ut64 key, const void *value)
+static bool lookupMmioAddrCb(void *user, const ut64 key, const void *value)
 {
-    mmio_lookup_context_t *ctx = (mmio_lookup_context_t *)user;
-    if (ctx->selected == (const char *)value) {
-        ctx->mmio_address = key;
+    auto *ctx = static_cast<mmio_lookup_context_t *>(user);
+    if (ctx->selected == static_cast<const char *>(value)) {
+        ctx->mmioAddress = key;
         return false;
     }
     return true;
@@ -35,8 +36,8 @@ DisassemblyTextBlockUserData *DisassemblyHelper::getUserData(const QTextBlock &b
 
 RVA DisassemblyHelper::getXRefFromWord(RVA offset, const QString &selectedWord)
 {
-    RVA selectedOffset = Core()->num(selectedWord);
-    auto xrefsTo = Core()->getXRefs(offset, true, false);
+    const RVA selectedOffset = Core()->num(selectedWord);
+    const auto xrefsTo = Core()->getXRefs(offset, true, false);
     for (const auto &xref : xrefsTo) {
         if (xref.from == selectedOffset) {
             return xref.from;
@@ -50,7 +51,7 @@ bool DisassemblyHelper::isXRefFromComment(RVA offset, const QString &line)
     return Core()->getXRefCommentAt(offset).simplified().contains(line.simplified());
 }
 
-RVA DisassemblyHelper::readDisassemblyOffset(QTextCursor tc)
+RVA DisassemblyHelper::readDisassemblyOffset(const QTextCursor &tc)
 {
     auto userData = DisassemblyHelper::getUserData(tc.block());
     if (!userData) {
@@ -60,7 +61,7 @@ RVA DisassemblyHelper::readDisassemblyOffset(QTextCursor tc)
     return userData->line.offset;
 }
 
-RVA DisassemblyHelper::readDisassemblyArrow(QTextCursor tc)
+RVA DisassemblyHelper::readDisassemblyArrow(const QTextCursor &tc)
 {
     auto userData = getUserData(tc.block());
     if (!userData) {
@@ -74,8 +75,8 @@ DisassemblyHelper::BracketResult DisassemblyHelper::findBracketRange(const QStri
                                                                      int posInLine)
 {
     BracketResult res;
-    int openBracket = line.lastIndexOf('[', posInLine);
-    int closeBracket = line.indexOf(']', posInLine);
+    const int openBracket = line.lastIndexOf('[', posInLine);
+    const int closeBracket = line.indexOf(']', posInLine);
 
     if (openBracket != -1 && closeBracket != -1) {
         bool isInside = true;
@@ -106,12 +107,12 @@ DisassemblyHelper::BracketResult DisassemblyHelper::findBracketRange(const QStri
 
 DisassemblyHelper::TargetContext DisassemblyHelper::getContextFromCursor(QTextCursor tc)
 {
-    int originalPos = tc.position();
+    const int originalPos = tc.position();
     tc.select(QTextCursor::WordUnderCursor);
     QString word = tc.selectedText();
-    QString line = tc.block().text();
-    int lineStart = tc.block().position();
-    int posInLine = originalPos - lineStart;
+    const QString line = tc.block().text();
+    const int lineStart = tc.block().position();
+    const int posInLine = originalPos - lineStart;
 
     auto bracketRes = findBracketRange(line, posInLine);
     if (bracketRes.found) {
@@ -135,7 +136,7 @@ DisassemblyHelper::TargetAction DisassemblyHelper::resolveTarget(const TargetCon
 
     // Xref comments need special handling to show preview for each caller offset
     if (filter & TargetFilter::XRefComments) {
-        bool showXRefComments = Core()->getConfigb("asm.xrefs");
+        const bool showXRefComments = Core()->getConfigb("asm.xrefs");
         if (showXRefComments && isXRefFromComment(ctx.offset, ctx.line)) {
             res.value = getXRefFromWord(ctx.offset, ctx.word);
             res.type = TargetType::XRefComment;
@@ -162,8 +163,8 @@ DisassemblyHelper::TargetAction DisassemblyHelper::resolveTarget(const TargetCon
     }
 
     if (filter & TargetFilter::VariableXrefs) {
-        XrefDescription xref = Core()->getFirstXRefForVariable(ctx.word, ctx.offset);
-        if (!xref.from_str.isEmpty() || !xref.to_str.isEmpty()) {
+        const XrefDescription xref = Core()->getFirstXRefForVariable(ctx.word, ctx.offset);
+        if (!xref.fromStr.isEmpty() || !xref.toStr.isEmpty()) {
             res.value = xref.from;
             res.type = TargetType::VariableXRef;
             return res;
@@ -196,16 +197,16 @@ DisassemblyHelper::TargetAction DisassemblyHelper::resolveTarget(const TargetCon
         }
 
         if (filter & TargetFilter::MMIO) {
-            mmio_lookup_context_t mmio_ctx;
-            mmio_ctx.selected = ctx.word;
-            mmio_ctx.mmio_address = RVA_INVALID;
+            mmio_lookup_context_t mmioCtx;
+            mmioCtx.selected = ctx.word;
+            mmioCtx.mmioAddress = RVA_INVALID;
             auto core = Core()->lock();
-            RzPlatformTarget *arch_target = rz_analysis_get_arch_target(core->analysis);
-            if (arch_target && arch_target->profile) {
-                ht_up_foreach(arch_target->profile->registers_mmio, lookup_mmio_addr_cb, &mmio_ctx);
+            const RzPlatformTarget *archTarget = rz_analysis_get_arch_target(core->analysis);
+            if (archTarget && archTarget->profile) {
+                ht_up_foreach(archTarget->profile->registers_mmio, lookupMmioAddrCb, &mmioCtx);
             }
-            if (mmio_ctx.mmio_address != RVA_INVALID) {
-                res.value = mmio_ctx.mmio_address;
+            if (mmioCtx.mmioAddress != RVA_INVALID) {
+                res.value = mmioCtx.mmioAddress;
                 res.type = TargetType::MMIO;
                 return res;
             }

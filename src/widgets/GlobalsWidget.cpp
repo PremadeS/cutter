@@ -1,9 +1,10 @@
 #include "GlobalsWidget.h"
-#include "ui_GlobalsWidget.h"
-#include "core/MainWindow.h"
+
 #include "common/Helpers.h"
+#include "core/MainWindow.h"
 #include "dialogs/GlobalVariableDialog.h"
 #include "shortcuts/ShortcutManager.h"
+#include "ui_GlobalsWidget.h"
 
 #include <QMenu>
 #include <QShortcut>
@@ -32,7 +33,7 @@ QVariant GlobalsModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case GlobalsModel::AddressColumn:
-            return RzAddressString(global.addr);
+            return rzAddressString(global.addr);
         case GlobalsModel::TypeColumn:
             return QString(global.type).trimmed();
         case GlobalsModel::NameColumn:
@@ -91,7 +92,7 @@ GlobalsProxyModel::GlobalsProxyModel(GlobalsModel *sourceModel, QObject *parent)
 
 bool GlobalsProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
     auto global = index.data(GlobalsModel::GlobalDescriptionRole).value<GlobalDescription>();
 
     return qhelpers::filterStringContains(global.name, this);
@@ -120,13 +121,13 @@ bool GlobalsProxyModel::lessThan(const QModelIndex &left, const QModelIndex &rig
 
 void GlobalsWidget::editGlobal()
 {
-    QModelIndex index = ui->treeView->currentIndex();
+    const QModelIndex index = ui->treeView->currentIndex();
 
     if (!index.isValid()) {
         return;
     }
 
-    RVA globalVariableAddress = globalsProxyModel->address(index);
+    const RVA globalVariableAddress = globalsProxyModel->address(index);
 
     GlobalVariableDialog dialog(globalVariableAddress, parentWidget());
     dialog.exec();
@@ -134,17 +135,21 @@ void GlobalsWidget::editGlobal()
 
 void GlobalsWidget::deleteGlobal()
 {
-    QModelIndex index = ui->treeView->currentIndex();
+    const QModelIndex index = ui->treeView->currentIndex();
 
     if (!index.isValid()) {
         return;
     }
 
-    RVA globalVariableAddress = globalsProxyModel->address(index);
+    const RVA globalVariableAddress = globalsProxyModel->address(index);
     Core()->delGlobalVariable(globalVariableAddress);
 }
 
-GlobalsWidget::GlobalsWidget(MainWindow *main) : CutterDockWidget(main), ui(new Ui::GlobalsWidget)
+GlobalsWidget::GlobalsWidget(MainWindow *main)
+    : CutterDockWidget(main),
+      ui(new Ui::GlobalsWidget),
+      globalsModel(new GlobalsModel(this)),
+      globalsProxyModel(new GlobalsProxyModel(globalsModel, this))
 {
     ui->setupUi(this);
     ui->quickFilterView->setLabelText(tr("Category"));
@@ -158,9 +163,8 @@ GlobalsWidget::GlobalsWidget(MainWindow *main) : CutterDockWidget(main), ui(new 
     ui->treeView->setMainWindow(mainWindow);
 
     // Setup up the model and the proxy model
-    globalsModel = new GlobalsModel(this);
-    globalsProxyModel = new GlobalsProxyModel(globalsModel, this);
-    ui->treeView->setModel(globalsProxyModel);
+
+    ui->treeView->setModel(static_cast<AddressableItemModelI *>(globalsProxyModel));
     ui->treeView->sortByColumn(GlobalsModel::AddressColumn, Qt::AscendingOrder);
 
     // Setup custom context menu

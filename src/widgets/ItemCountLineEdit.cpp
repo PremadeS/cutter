@@ -1,20 +1,24 @@
 #include "ItemCountLineEdit.h"
+
 #include "Configuration.h"
 
-#include <QResizeEvent>
 #include <QLabel>
+#include <QResizeEvent>
 
 namespace {
-constexpr int PADDING = 5;
+constexpr int padding = 5;
 }
 
 ItemCountLineEdit::ItemCountLineEdit(QWidget *parent)
-    : QLineEdit(parent), m_itemCountLabel(new QLabel(this))
+    : QLineEdit(parent),
+      itemCountLabel(new QLabel(this)),
+      isItemCountVisible(Config()->getItemCountVisible()),
+      itemCountAutoHideEnabled(Config()->getItemCountAutoHide())
 {
     // parent widget must handle the context menu
     this->setContextMenuPolicy(Qt::NoContextMenu);
 
-    m_itemCountLabel->setStyleSheet("QLabel { background: transparent; }");
+    itemCountLabel->setStyleSheet("QLabel { background: transparent; }");
 
     connect(this, &QLineEdit::textChanged, this, &ItemCountLineEdit::updateLabelPosition);
     connect(Config(), &Configuration::itemCountOptionsChanged, this,
@@ -22,40 +26,38 @@ ItemCountLineEdit::ItemCountLineEdit(QWidget *parent)
     connect(Config(), &Configuration::itemCountOptionsChanged, this,
             [this] { setItemCountAutoHide(Config()->getItemCountAutoHide()); });
 
-    m_itemCountAutoHide = Config()->getItemCountAutoHide();
-    m_itemCountVisible = Config()->getItemCountVisible();
-    if (!m_itemCountVisible) {
-        m_itemCountLabel->hide();
+    if (!isItemCountVisible) {
+        itemCountLabel->hide();
     }
     updateLabelPosition();
 }
 
 void ItemCountLineEdit::setItemCount(int count)
 {
-    m_itemCountLabel->setText(QString("%1 Items").arg(count));
+    itemCountLabel->setText(QString("%1 Items").arg(count));
     updateLabelPosition();
 }
 
 bool ItemCountLineEdit::itemCountVisible() const
 {
-    return m_itemCountVisible;
+    return isItemCountVisible;
 }
 
 void ItemCountLineEdit::setItemCountAutoHide(bool value)
 {
-    m_itemCountAutoHide = value;
+    itemCountAutoHideEnabled = value;
     updateLabelPosition();
 }
 
 bool ItemCountLineEdit::itemCountAutoHide() const
 {
-    return m_itemCountAutoHide;
+    return itemCountAutoHideEnabled;
 }
 
 void ItemCountLineEdit::showItemCount(bool show)
 {
-    m_itemCountVisible = show;
-    m_itemCountLabel->setVisible(show);
+    isItemCountVisible = show;
+    itemCountLabel->setVisible(show);
     if (!show) {
         this->setTextMargins(0, 0, 0, 0);
     }
@@ -70,26 +72,26 @@ void ItemCountLineEdit::resizeEvent(QResizeEvent *event)
 
 void ItemCountLineEdit::updateLabelPosition()
 {
-    if (!m_itemCountVisible) {
+    if (!isItemCountVisible) {
         return;
     }
 
-    m_itemCountLabel->adjustSize();
+    itemCountLabel->adjustSize();
 
-    int labelWidth = m_itemCountLabel->sizeHint().width();
-    int x = this->width() - labelWidth - PADDING;
+    const int labelWidth = itemCountLabel->sizeHint().width();
+    const int x = this->width() - labelWidth - padding;
 
-    if (m_itemCountAutoHide) {
-        QFont font = this->font();
-        QFontMetrics fm(font);
+    if (itemCountAutoHideEnabled) {
+        const QFont font = this->font();
+        const QFontMetrics fm(font);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-        int textWidth = fm.horizontalAdvance(this->text());
+        const int textWidth = fm.horizontalAdvance(this->text());
 #else
         int textWidth = fm.width(this->text());
 #endif
-        const int BUFFER = Config()->windowColorIsDark() ? 4 : 5;
-        if (x <= (PADDING * BUFFER) + textWidth) {
-            m_itemCountLabel->hide();
+        const int buffer = Config()->windowColorIsDark() ? 4 : 5;
+        if (x <= (padding * buffer) + textWidth) {
+            itemCountLabel->hide();
             this->setTextMargins(0, 0, 0, 0);
             return;
         }
@@ -97,10 +99,10 @@ void ItemCountLineEdit::updateLabelPosition()
 
     // required so the label doesn't overlap with placeholder text
     auto margins = this->textMargins();
-    margins.setRight(labelWidth + PADDING);
+    margins.setRight(labelWidth + padding);
     this->setTextMargins(margins);
 
-    int y = (this->height() - m_itemCountLabel->height()) / 2;
-    m_itemCountLabel->move(x, y);
-    m_itemCountLabel->show();
+    const int y = (this->height() - itemCountLabel->height()) / 2;
+    itemCountLabel->move(x, y);
+    itemCountLabel->show();
 }

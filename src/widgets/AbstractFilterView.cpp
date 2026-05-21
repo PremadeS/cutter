@@ -1,6 +1,7 @@
 #include "AbstractFilterView.h"
-#include <QMenu>
+
 #include <QAction>
+#include <QMenu>
 
 AbstractFilterView::AbstractFilterView(QWidget *parent) : QWidget(parent) {}
 
@@ -45,7 +46,7 @@ void AbstractFilterView::closeFilter()
 
 void AbstractFilterView::showCustomContextMenu(const QPoint &pos)
 {
-    QWidget *child = this->childAt(pos);
+    const QWidget *child = this->childAt(pos);
 
     QMenu *menu;
     QAction *showItemCountAction;

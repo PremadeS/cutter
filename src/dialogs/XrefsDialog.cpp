@@ -1,15 +1,14 @@
 #include "XrefsDialog.h"
+
+#include "common/Helpers.h"
+#include "common/TempConfig.h"
+#include "core/MainWindow.h"
+#include "shortcuts/ShortcutManager.h"
 #include "ui_XrefsDialog.h"
 
-#include "common/TempConfig.h"
-#include "common/Helpers.h"
-
-#include "core/MainWindow.h"
-
+#include <QApplication>
 #include <QJsonArray>
 #include <QShortcut>
-#include "shortcuts/ShortcutManager.h"
-#include <QApplication>
 
 XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     : QDialog(parent),
@@ -26,8 +25,8 @@ XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     ui->toTreeWidget->setMainWindow(parent);
     ui->fromTreeWidget->setMainWindow(parent);
 
-    ui->toTreeWidget->setModel(&toProxyModel);
-    ui->fromTreeWidget->setModel(&fromProxyModel);
+    ui->toTreeWidget->setModel(static_cast<AddressableItemModelI *>(&toProxyModel));
+    ui->fromTreeWidget->setModel(static_cast<AddressableItemModelI *>(&fromProxyModel));
 
     ui->toTreeWidget->getItemContextMenu()->toggleBreakpointAction(true);
     ui->fromTreeWidget->getItemContextMenu()->toggleBreakpointAction(true);
@@ -37,8 +36,8 @@ XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     ui->splitter->setSizes(QList<int>() << 300 << 400);
 
     // Increase asm text edit margin
-    QTextDocument *asm_docu = ui->previewTextEdit->document();
-    asm_docu->setDocumentMargin(10);
+    QTextDocument *asmDocu = ui->previewTextEdit->document();
+    asmDocu->setDocumentMargin(10);
 
     setupPreviewColors();
     setupPreviewFont();
@@ -60,12 +59,13 @@ XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
 
     // SearchWidget shortcuts
 
-    QShortcut *searchShortcut = Shortcuts()->makeQShortcut("General.showFilter", ui->toTreeWidget);
-    QShortcut *clearShortcut =
+    const QShortcut *searchShortcut =
+            Shortcuts()->makeQShortcut("General.showFilter", ui->toTreeWidget);
+    const QShortcut *clearShortcut =
             Shortcuts()->makeQShortcut("General.clearFilter", ui->fromQuickFilter);
 
     connect(searchShortcut, &QShortcut::activated, this, [this]() {
-        QWidget *fw = QApplication::focusWidget();
+        const QWidget *fw = QApplication::focusWidget();
         if (ui->toTreeWidget->isAncestorOf(fw)) {
             ui->toQuickFilter->showFilter();
         } else if (ui->fromTreeWidget->isAncestorOf(fw)) {
@@ -74,7 +74,7 @@ XrefsDialog::XrefsDialog(MainWindow *parent, bool hideXrefFrom)
     });
 
     connect(clearShortcut, &QShortcut::activated, [this]() {
-        QWidget *fw = QApplication::focusWidget();
+        const QWidget *fw = QApplication::focusWidget();
         if (ui->toQuickFilter->isAncestorOf(fw)) {
             ui->toQuickFilter->clearFilter();
         } else if (ui->fromQuickFilter->isAncestorOf(fw)) {
@@ -122,8 +122,7 @@ void XrefsDialog::setupPreviewColors()
 {
     ui->previewTextEdit->setStyleSheet(
             QString("QPlainTextEdit { background-color: %1; color: %2; }")
-                    .arg(ConfigColor("gui.background").name())
-                    .arg(ConfigColor("btext").name()));
+                    .arg(ConfigColor("gui.background").name(), ConfigColor("btext").name()));
 }
 
 void XrefsDialog::highlightCurrentLine()
@@ -171,7 +170,7 @@ void XrefsDialog::updatePreview(RVA addr)
     tempConfig.set("asm.lines", false);
     tempConfig.set("asm.bytes", false);
 
-    QString disas = Core()->getFunctionExecOut(
+    const QString disas = Core()->getFunctionExecOut(
             [](RzCore *core) {
                 ut64 offset = core->offset;
                 if (!rz_core_prevop_addr(core, core->offset, 20, &offset)) {
@@ -179,37 +178,36 @@ void XrefsDialog::updatePreview(RVA addr)
                 }
                 rz_core_seek(core, offset, true);
                 rz_core_print_disasm(core, core->offset, core->block, (int)core->blocksize, 40,
-                                     NULL, NULL);
+                                     nullptr, nullptr);
                 return true;
             },
             addr);
     ui->previewTextEdit->document()->setHtml(disas);
 
     // Does it make any sense?
-    ui->previewTextEdit->find(normalizeAddr(RzAddressString(addr)), QTextDocument::FindBackward);
+    ui->previewTextEdit->find(normalizeAddr(rzAddressString(addr)), QTextDocument::FindBackward);
     ui->previewTextEdit->moveCursor(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
 }
 
-void XrefsDialog::updateLabels(QString name)
+void XrefsDialog::updateLabels(const QString &name)
 {
-    ui->label_xTo->setText(tr("X-Refs to %1 (%2 results):").arg(name).arg(toModel.rowCount()));
-    ui->label_xFrom->setText(
-            tr("X-Refs from %1 (%2 results):").arg(name).arg(fromModel.rowCount()));
+    ui->labelXTo->setText(tr("X-Refs to %1 (%2 results):").arg(name).arg(toModel.rowCount()));
+    ui->labelXFrom->setText(tr("X-Refs from %1 (%2 results):").arg(name).arg(fromModel.rowCount()));
 }
 
-void XrefsDialog::updateLabelsForVariables(QString name)
+void XrefsDialog::updateLabelsForVariables(const QString &name)
 {
-    ui->label_xTo->setText(tr("Writes to %1").arg(name));
-    ui->label_xFrom->setText(tr("Reads from %1").arg(name));
+    ui->labelXTo->setText(tr("Writes to %1").arg(name));
+    ui->labelXFrom->setText(tr("Reads from %1").arg(name));
 }
 
 void XrefsDialog::hideXrefFromSection()
 {
-    ui->label_xFrom->hide();
+    ui->labelXFrom->hide();
     ui->fromTreeWidget->hide();
 }
 
-void XrefsDialog::fillRefsForAddress(RVA addr, QString name, bool whole_function)
+void XrefsDialog::fillRefsForAddress(RVA addr, const QString &name, bool whole_function)
 {
     setWindowTitle(tr("X-Refs for %1").arg(name));
 
@@ -228,7 +226,7 @@ void XrefsDialog::fillRefsForAddress(RVA addr, QString name, bool whole_function
     }
 }
 
-void XrefsDialog::fillRefsForVariable(QString nameOfVariable, RVA offset)
+void XrefsDialog::fillRefsForVariable(const QString &nameOfVariable, RVA offset)
 {
     setWindowTitle(tr("X-Refs for %1").arg(nameOfVariable));
     updateLabelsForVariables(nameOfVariable);
@@ -273,7 +271,7 @@ void XrefModel::readForOffset(RVA offset, bool to, bool whole_function)
     endResetModel();
 }
 
-void XrefModel::readForVariable(QString nameOfVariable, bool write, RVA offset)
+void XrefModel::readForVariable(const QString &nameOfVariable, bool write, RVA offset)
 {
     beginResetModel();
     this->to = write;
@@ -305,7 +303,7 @@ QVariant XrefModel::data(const QModelIndex &index, int role) const
     case Qt::DisplayRole:
         switch (index.column()) {
         case OFFSET:
-            return to ? xref.from_str : xref.to_str;
+            return to ? xref.fromStr : xref.toStr;
         case TYPE:
             return xrefTypeString(xref.type);
         case CODE:
@@ -318,7 +316,7 @@ QVariant XrefModel::data(const QModelIndex &index, int role) const
             return to ? Core()->getCommentAt(xref.from) : Core()->getCommentAt(xref.to);
         }
         return QVariant();
-    case FlagDescriptionRole:
+    case flagDescriptionRole:
         return QVariant::fromValue(xref);
     default:
         break;
@@ -375,23 +373,23 @@ XrefFilterProxyModel::XrefFilterProxyModel(XrefModel *source_model, QObject *par
 
 bool XrefFilterProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-    QModelIndex index = sourceModel()->index(row, 0, parent);
-    XrefDescription xref = index.data(XrefModel::FlagDescriptionRole).value<XrefDescription>();
-    return qhelpers::filterStringContains(to ? xref.to_str : xref.from_str, this);
+    const QModelIndex index = sourceModel()->index(row, 0, parent);
+    const auto xref = index.data(XrefModel::flagDescriptionRole).value<XrefDescription>();
+    return qhelpers::filterStringContains(to ? xref.toStr : xref.fromStr, this);
 }
 
 bool XrefFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     auto source = static_cast<XrefModel *>(sourceModel());
-    auto left_item = source->description(left);
-    auto right_item = source->description(right);
+    auto leftItem = source->description(left);
+    auto rightItem = source->description(right);
 
     switch (left.column()) {
     case XrefModel::OFFSET:
-        return to ? left_item->to < right_item->to : left_item->from < right_item->from;
+        return to ? leftItem->to < rightItem->to : leftItem->from < rightItem->from;
 
     case XrefModel::TYPE:
-        return left_item->type < right_item->type;
+        return leftItem->type < rightItem->type;
     default:
         return sourceModel()->data(left, Qt::DisplayRole).toString()
                 < sourceModel()->data(right, Qt::DisplayRole).toString();

@@ -1,10 +1,10 @@
 #ifndef ANALOPTIONSWIDGET_H
 #define ANALOPTIONSWIDGET_H
 
+#include <QCheckBox>
 #include <QDialog>
-#include <memory>
 
-#include "core/Cutter.h"
+#include <memory>
 
 class MainWindow;
 
@@ -14,6 +14,9 @@ namespace Ui {
 class AnalysisOptionsWidget;
 }
 
+/**
+ * @brief Contains configurable options related to analysis
+ */
 class AnalysisOptionsWidget : public QDialog
 {
     Q_OBJECT

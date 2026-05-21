@@ -1,12 +1,12 @@
 #include "DisassemblyPreview.h"
+
 #include "Configuration.h"
 #include "rz_types_base.h"
-#include "widgets/GraphView.h"
 
 #include <QCoreApplication>
-#include <QWidget>
-#include <QToolTip>
 #include <QProcessEnvironment>
+#include <QToolTip>
+#include <QWidget>
 
 namespace DH = DisassemblyHelper;
 
@@ -15,15 +15,14 @@ QString DisassemblyPreview::getToolTipStyleSheet()
     return QString { "QToolTip { border-width: 1px; max-width: %1px;"
                      "opacity: 230; background-color: %2;"
                      "color: %3; border-color: %3;}" }
-            .arg(400)
-            .arg(Config()->getColor("gui.tooltip.background").name())
-            .arg(Config()->getColor("gui.tooltip.foreground").name());
+            .arg(QString::number(400), Config()->getColor("gui.tooltip.background").name(),
+                 Config()->getColor("gui.tooltip.foreground").name());
 }
 
 bool DisassemblyPreview::showDisasPreview(QWidget *parent, const QPoint &pointOfEvent,
                                           const RVA offsetFrom)
 {
-    QList<XrefDescription> refs = Core()->getXRefs(offsetFrom, false, false);
+    const QList<XrefDescription> refs = Core()->getXRefs(offsetFrom, false, false);
     if (refs.length()) {
         if (refs.length() > 1) {
             qWarning() << QObject::tr(
@@ -31,7 +30,7 @@ bool DisassemblyPreview::showDisasPreview(QWidget *parent, const QPoint &pointOf
                                   .arg(refs.length());
         }
 
-        RVA offsetTo = refs.at(0).to; // This is the offset we want to preview
+        const RVA offsetTo = refs.at(0).to; // This is the offset we want to preview
         /*
          * Only if the offset we point *to* is different from the one the cursor is currently
          * on *and* the former is a valid offset, we are allowed to get a preview of offsetTo
@@ -46,16 +45,15 @@ bool DisassemblyPreview::showDisasPreview(QWidget *parent, const QPoint &pointOf
 bool DisassemblyPreview::showDisasPreviewAt(QWidget *parent, const QPoint &pointOfEvent,
                                             const RVA offset)
 {
-    QStringList disasmPreview = Core()->getDisassemblyPreview(offset, 10);
+    const QStringList disasmPreview = Core()->getDisassemblyPreview(offset, 10);
     if (!disasmPreview.isEmpty()) {
         const QFont &fnt = Config()->getFont();
-        QString tooltip = QString("<html><div style=\"font-family: '%1'; font-size: %2pt; "
-                                  "white-space: nowrap;\"><div style=\"margin-bottom: "
-                                  "10px;\"><strong>Disassembly Preview</strong>:</div>"
-                                  "%3</div></html>")
-                                  .arg(fnt.family().toHtmlEscaped())
-                                  .arg(qMax(8, fnt.pointSize() - 1))
-                                  .arg(disasmPreview.join("<br>"));
+        const QString tooltip = QString("<html><div style=\"font-family: %1; font-size: %2pt; "
+                                        "white-space: nowrap;\"><div style=\"margin-bottom: "
+                                        "10px;\"><strong>Disassembly Preview</strong>:<br>%3<div>")
+                                        .arg(fnt.family())
+                                        .arg(qMax(8, fnt.pointSize() - 1))
+                                        .arg(disasmPreview.join("<br>"));
 
         QToolTip::showText(pointOfEvent, tooltip, parent, QRect {}, 3500);
         return true;
@@ -83,7 +81,7 @@ bool DisassemblyPreview::showDebugValueTooltip(QWidget *parent, const QPoint &po
         break;
     }
     case DH::TargetType::MMIO: {
-        int len = 8; // TODO: Determine proper len of mmio address for the cpu
+        const int len = 8; // TODO: Determine proper len of mmio address for the cpu
         auto core = Core()->lock();
         if (char *r = rz_core_print_hexdump_or_hexdiff_str(core, RZ_OUTPUT_MODE_STANDARD, ta.value,
                                                            len, false)) {
@@ -93,7 +91,7 @@ bool DisassemblyPreview::showDebugValueTooltip(QWidget *parent, const QPoint &po
         break;
     }
     case DH::TargetType::Memory: {
-        ut64 addr = Core()->math(ctx.word.mid(1, ctx.word.length() - 2));
+        const ut64 addr = Core()->math(ctx.word.mid(1, ctx.word.length() - 2));
         msg = QString("%1 = 0x%2 -> 0x%3").arg(ctx.word).arg(addr, 0, 16).arg(ta.value, 0, 16);
         break;
     }
@@ -113,7 +111,7 @@ bool DisassemblyPreview::showDebugValueTooltip(QWidget *parent, const QPoint &po
 bool DisassemblyPreview::showTooltip(QWidget *parent, const QPoint &globalPos,
                                      const DH::TargetContext &ctx, bool hasPreview)
 {
-    bool isWordEmpty = ctx.word.isEmpty();
+    const bool isWordEmpty = ctx.word.isEmpty();
     if (hasPreview) {
         auto ta = DH::resolveTarget(ctx, DH::XRefComments | DH::Arrows);
 
