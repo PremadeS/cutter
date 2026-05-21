@@ -114,3 +114,6 @@ InsertBraces: true
 
 # Insert space in empty braces
 SpaceInEmptyBlock: false
+
+# Removes the spaces around ->
+StatementAttributeLikeMacros: [emit]
