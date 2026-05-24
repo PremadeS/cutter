@@ -440,9 +440,8 @@ jobs:
         brew install llvm@20 && brew link llvm@20
     - name: py dependencies
       run: |
-        #python3 -m pip install -U pip==21.3.1
         pip install --no-cache-dir meson
-	pip install --no-cache-dir setuptools
+        pip install --no-cache-dir setuptools
     - name: Prepare package id
       shell: bash
       run: |
