@@ -1,18 +1,16 @@
 #ifndef RIZINCONFIGOPTIONSWIDGET_H
 #define RIZINCONFIGOPTIONSWIDGET_H
 
-#include <QDialog>
-#include <memory>
+#include "CutterDescriptions.h"
+#include "PreferencesDialog.h"
 
 #include <QAbstractItemModel>
-#include "CutterDescriptions.h"
-
-#include <QStyledItemDelegate>
-#include <QSpinBox>
-
+#include <QDialog>
 #include <QSortFilterProxyModel>
+#include <QSpinBox>
+#include <QStyledItemDelegate>
 
-#include "PreferencesDialog.h"
+#include <memory>
 
 namespace Ui {
 class RizinConfigOptionsWidget;

@@ -1,7 +1,7 @@
 #include "RizinConfigOptionsWidget.h"
-#include "ui_RizinConfigOptionsWidget.h"
 
 #include "Cutter.h"
+#include "ui_RizinConfigOptionsWidget.h"
 
 #include <QComboBox>
 #include <QTimer>

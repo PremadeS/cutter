@@ -9,12 +9,12 @@
 #include "InterfaceOptionsWidget.h"
 #include "PluginsOptionsWidget.h"
 #include "PreferenceCategory.h"
+#include "RizinConfigOptionsWidget.h"
 #include "ShortcutOptionsWidget.h"
 #include "SymbolsOptionsWidget.h"
 #include "common/Configuration.h"
 #include "common/Helpers.h"
 #include "ui_PreferencesDialog.h"
-#include "RizinConfigOptionsWidget.h"
 
 #include <QDialogButtonBox>
 
