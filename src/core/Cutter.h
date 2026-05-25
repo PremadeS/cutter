@@ -470,6 +470,8 @@ public:
     void setConfig(const char *k, const QString &v);
     void setConfig(const QString &k, const QString &v) { setConfig(k.toUtf8().constData(), v); }
     void setConfig(const char *k, int v);
+    void setConfig(const char *k, ut64 v);
+    void setConfig(const QString &k, ut64 v) { setConfig(k.toUtf8().constData(), v); }
     void setConfig(const QString &k, int v) { setConfig(k.toUtf8().constData(), v); }
     void setConfig(const char *k, bool v);
     void setConfig(const QString &k, bool v) { setConfig(k.toUtf8().constData(), v); }
@@ -491,6 +493,7 @@ public:
     bool setColor(const QString &key, const QString &color);
     QString getColorNameFromOp(ut32 opType);
     QStringList getConfigVariableSpaces(const QString &key = "");
+    void resetConfig();
 
     /* Assembly\Hexdump related methods */
     QByteArray assemble(const QString &code);
@@ -756,6 +759,8 @@ public:
     QList<ResourcesDescription> getAllResources();
     QList<VTableDescription> getAllVTables();
     QList<BacktraceDescription> getAllBacktraces();
+    QList<EvaluableVarDescription> getAllEvaluableVars();
+    QList<QString> getAllEvaluableVarSpaces();
 
     /**
      * @return all loaded types
@@ -877,6 +882,9 @@ public:
     void triggerRefreshAll();
     void triggerAsmOptionsChanged();
     void triggerGraphOptionsChanged();
+    void triggerDebugOptionsChanged();
+    void triggerAnalysisOptionsChanged();
+    void triggerSymbolsOptionsChanged();
 
     void message(const QString &msg, bool debug = false);
 
@@ -1004,6 +1012,21 @@ signals:
      * emitted when config regarding graph display changes
      */
     void graphOptionsChanged();
+
+    /**
+     * emitted when config regarding debug/esil changes
+     */
+    void debugOptionsChanged();
+
+    /**
+     * emitted when config regarding analysis changes
+     */
+    void analysisOptionsChanged();
+
+    /**
+     * emitted when config regarding symbols changes (bin.dbginfo / pdb)
+     */
+    void symbolsOptionsChanged();
 
     /**
      * @brief seekChanged is emitted each time Rizin's seek value is modified

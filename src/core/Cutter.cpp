@@ -1165,6 +1165,12 @@ void CutterCore::setConfig(const char *k, int v)
     rz_config_set_i(core->config, k, static_cast<ut64>(v));
 }
 
+void CutterCore::setConfig(const char *k, ut64 v)
+{
+    CORE_LOCK();
+    rz_config_set_i(core->config, k, v);
+}
+
 void CutterCore::setConfig(const char *k, bool v)
 {
     CORE_LOCK();
@@ -1209,6 +1215,21 @@ void CutterCore::triggerAsmOptionsChanged()
 void CutterCore::triggerGraphOptionsChanged()
 {
     emit graphOptionsChanged();
+}
+
+void CutterCore::triggerDebugOptionsChanged()
+{
+    emit debugOptionsChanged();
+}
+
+void CutterCore::triggerAnalysisOptionsChanged()
+{
+    emit analysisOptionsChanged();
+}
+
+void CutterCore::triggerSymbolsOptionsChanged()
+{
+    emit symbolsOptionsChanged();
 }
 
 void CutterCore::message(const QString &msg, bool debug)
@@ -4044,6 +4065,82 @@ QList<BacktraceDescription> CutterCore::getAllBacktraces()
     return backtraces;
 }
 
+QList<EvaluableVarDescription> CutterCore::getAllEvaluableVars()
+{
+    auto addEvalVar = [](QList<EvaluableVarDescription> &evalVars, RzConfigNode *node) {
+        if (!node) {
+            return;
+        }
+
+        EvaluableVarDescription var;
+
+        var.name = QString::fromUtf8(node->name);
+        var.description = QString::fromUtf8(node->desc);
+        var.readOnly = node->flags & CN_RO;
+
+        var.value = QString::fromUtf8(node->value);
+
+        if (node->flags & CN_BOOL) {
+            var.type = EvaluableVarDescription::Bool;
+        } else if (node->flags & CN_INT) {
+            var.type = EvaluableVarDescription::Int;
+        } else if (node->flags & CN_STR) {
+            var.type = EvaluableVarDescription::String;
+        }
+
+        // Normal evars
+        RzListIter *iter;
+        char *option;
+        CutterRzListForeach (node->options, iter, char, option) {
+            var.options << QString::fromUtf8(option);
+        }
+        evalVars << var;
+    };
+
+    QList<EvaluableVarDescription> evalVars;
+    CORE_LOCK();
+
+    // Plugin evars:
+    CutterHtSP<RzConfig>(core->plugin_configs)
+            .ForEach([&evalVars, &addEvalVar](const char * /*k*/, const RzConfig *config) {
+                if (!config) {
+                    return true;
+                }
+                RzListIter *iter;
+                RzConfigNode *node;
+                CutterRzListForeach (config->nodes, iter, RzConfigNode, node) {
+                    addEvalVar(evalVars, node);
+                }
+                return true;
+            });
+
+    // Normal evars
+    RzListIter *iter;
+    RzConfigNode *node;
+    CutterRzListForeach (core->config->nodes, iter, RzConfigNode, node) {
+        addEvalVar(evalVars, node);
+    }
+
+    return evalVars;
+}
+
+QList<QString> CutterCore::getAllEvaluableVarSpaces()
+{
+    CORE_LOCK();
+    QList<QString> evalVarSpaces;
+
+    RzList *spaces = rz_core_config_in_space(core, nullptr);
+    RzListIter *iter;
+    char *space;
+    CutterRzListForeach (spaces, iter, char, space) {
+        evalVarSpaces << QString::fromUtf8(space);
+    }
+
+    rz_list_free(spaces);
+
+    return evalVarSpaces;
+}
+
 QList<TypeDescription> CutterCore::getAllTypes()
 {
     QList<TypeDescription> types;
@@ -5267,6 +5364,12 @@ QStringList CutterCore::getConfigVariableSpaces(const QString &key)
     }
     rz_list_free(list);
     return stringList;
+}
+
+void CutterCore::resetConfig()
+{
+    CORE_LOCK();
+    rz_core_config_init(core);
 }
 
 char *CutterCore::getTextualGraphAt(RzCoreGraphType type, RzCoreGraphFormat format, RVA address)
