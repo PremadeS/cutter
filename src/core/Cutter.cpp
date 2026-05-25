@@ -4082,10 +4082,10 @@ QList<EvaluableVarDescription> CutterCore::getAllEvaluableVars()
 
         if (node->flags & CN_BOOL) {
             var.type = EvaluableVarDescription::Bool;
-        } else if (node->flags & CN_INT) {
-            var.type = EvaluableVarDescription::Int;
         } else if (node->flags & CN_STR) {
             var.type = EvaluableVarDescription::String;
+        } else if (node->flags & CN_INT) {
+            var.type = EvaluableVarDescription::Int;
         }
 
         // Normal evars

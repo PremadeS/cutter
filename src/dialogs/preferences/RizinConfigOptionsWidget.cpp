@@ -191,10 +191,21 @@ bool RizinConfigOptionsModel::setData(const QModelIndex &index, const QVariant &
 
     auto &evalVar = items[index.row()];
 
+    const QString res = value.toString();
+
     if (evalVar.type == EvaluableVarDescription::Bool && role == Qt::CheckStateRole) {
         evalVar.value = (value.toInt() == Qt::Checked) ? "true" : "false";
         emit dataChanged(index, index, { Qt::DisplayRole, Qt::EditRole, Qt::CheckStateRole });
         return true;
+    } else if (evalVar.type == EvaluableVarDescription::Int && role == Qt::EditRole) {
+        bool ok = false;
+        res.toULongLong(&ok, 10);
+        if (!ok && res.startsWith("0x", Qt::CaseInsensitive)) {
+            res.toULongLong(&ok, 16);
+        }
+        if (!ok) {
+            return false;
+        }
     }
 
     if (role != Qt::EditRole) {
@@ -332,6 +343,24 @@ QWidget *RizinOptionDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     }
 
     return QStyledItemDelegate::createEditor(parent, option, index);
+}
+
+void RizinOptionDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    if (auto *comboBox = qobject_cast<QComboBox *>(editor)) {
+        const QString currentText = index.data(Qt::EditRole).toString();
+
+        const int comboIndex = comboBox->findText(currentText);
+
+        if (comboIndex >= 0) {
+            comboBox->setCurrentIndex(comboIndex);
+        } else {
+            comboBox->addItem(currentText);
+            comboBox->setCurrentIndex(comboBox->count() - 1);
+        }
+    } else {
+        QStyledItemDelegate::setEditorData(editor, index);
+    }
 }
 
 void RizinOptionDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,

@@ -113,14 +113,20 @@ public:
                           const QModelIndex &index) const override;
 
     /**
-     * @brief Fills the combobox with all of the available options that an evaluable variable can be
-     * set to
+     * @brief Selects the correct entry inside optiosn combo-box
+     *
+     * @see RizinOptionDelegate::createEditor()
+     */
+    void setEditorData(QWidget *editor, const QModelIndex &index) const override;
+
+    /**
+     * @brief Updates UI with data set from combo-box by calling @ref
+     * RizinConfigOptionsModel::setData() with the current combo-box selected text as argument
      *
      * @see RizinOptionDelegate::createEditor()
      */
     void setModelData(QWidget *editor, QAbstractItemModel *model,
                       const QModelIndex &index) const override;
-
 };
 
 /**
