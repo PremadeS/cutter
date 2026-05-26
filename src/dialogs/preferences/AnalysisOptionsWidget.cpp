@@ -80,7 +80,7 @@ AnalysisOptionsWidget::AnalysisOptionsWidget(PreferencesDialog *dialog)
                 [val, &cb, this]() { checkboxEnabler(&cb, val); });
 #else
         connect(confCheckbox.checkBox, &QCheckBox::stateChanged, this,
-                [val, &cb]() { checkboxEnabler(&cb, val); });
+                [val, &cb, this]() { checkboxEnabler(&cb, val); });
 #endif
     }
 
