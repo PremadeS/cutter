@@ -1168,7 +1168,7 @@ void CutterCore::setConfig(const char *k, int v)
 void CutterCore::setConfig(const char *k, ut64 v)
 {
     CORE_LOCK();
-    rz_config_set_i(core->config, k, v);
+    rz_config_set_integer(core->config, k, v);
 }
 
 void CutterCore::setConfig(const char *k, bool v)
@@ -4067,58 +4067,74 @@ QList<BacktraceDescription> CutterCore::getAllBacktraces()
 
 QList<EvaluableVarDescription> CutterCore::getAllEvaluableVars()
 {
-    auto addEvalVar = [](QList<EvaluableVarDescription> &evalVars, RzConfigNode *node) {
-        if (!node) {
-            return;
+    auto rzConfigIteratorCb = [](const RzConfigEntry *entry, void *user) -> bool {
+        if (!entry) {
+            return true;
         }
 
+        auto *evalVarsList = static_cast<QList<EvaluableVarDescription> *>(user);
         EvaluableVarDescription var;
 
-        var.name = QString::fromUtf8(node->name);
-        var.description = QString::fromUtf8(node->desc);
-        var.readOnly = node->flags & CN_RO;
+        var.name = QString::fromUtf8(rz_config_entry_get_name(entry));
+        var.description = QString::fromUtf8(rz_config_entry_get_desc(entry));
+        var.value = QString::fromUtf8(rz_config_entry_get_as_string(entry));
 
-        var.value = QString::fromUtf8(node->value);
+        if (entry->is_variable) {
+            const RzConfigVar *v = &entry->var;
+            var.readOnly = rz_config_var_is_readonly(v);
 
-        if (node->flags & CN_BOOL) {
-            var.type = EvaluableVarDescription::Bool;
-        } else if (node->flags & CN_STR) {
-            var.type = EvaluableVarDescription::String;
-        } else if (node->flags & CN_INT) {
-            var.type = EvaluableVarDescription::Int;
+            const ut32 flags = rz_config_var_get_flags(v);
+            if (RZ_CONFIG_VAR_IS_TYPE(flags, RZ_CONFIG_VAR_TYPE_BOOL)) {
+                var.type = EvaluableVarDescription::Bool;
+            } else if (RZ_CONFIG_VAR_IS_TYPE(flags, RZ_CONFIG_VAR_TYPE_STR)) {
+                var.type = EvaluableVarDescription::String;
+            } else if (RZ_CONFIG_VAR_IS_TYPE(flags, RZ_CONFIG_VAR_TYPE_INT)) {
+                var.type = EvaluableVarDescription::Int;
+            }
+
+            const RzList *optionsList = rz_config_var_get_options(v);
+            if (optionsList) {
+                RzListIter *iter;
+                char *option;
+                CutterRzListForeach (optionsList, iter, char, option) {
+                    var.options << QString::fromUtf8(option);
+                }
+            }
+        } else {
+            const RzConfigNode *node = &entry->node;
+            var.readOnly = node->flags & CN_RO;
+            if (node->flags & CN_BOOL) {
+                var.type = EvaluableVarDescription::Bool;
+            } else if (node->flags & CN_STR) {
+                var.type = EvaluableVarDescription::String;
+            } else if (node->flags & CN_INT) {
+                var.type = EvaluableVarDescription::Int;
+            }
+
+            RzListIter *iter;
+            char *option;
+            CutterRzListForeach (node->options, iter, char, option) {
+                var.options << QString::fromUtf8(option);
+            }
         }
 
-        // Normal evars
-        RzListIter *iter;
-        char *option;
-        CutterRzListForeach (node->options, iter, char, option) {
-            var.options << QString::fromUtf8(option);
-        }
-        evalVars << var;
+        evalVarsList->append(var);
+        return true;
     };
 
     QList<EvaluableVarDescription> evalVars;
     CORE_LOCK();
 
-    // Plugin evars:
     CutterHtSP<RzConfig>(core->plugin_configs)
-            .ForEach([&evalVars, &addEvalVar](const char * /*k*/, const RzConfig *config) {
-                if (!config) {
-                    return true;
-                }
-                RzListIter *iter;
-                RzConfigNode *node;
-                CutterRzListForeach (config->nodes, iter, RzConfigNode, node) {
-                    addEvalVar(evalVars, node);
+            .ForEach([&evalVars, rzConfigIteratorCb](const char *, const RzConfig *config) {
+                if (config) {
+                    rz_config_iterate_over(config, rzConfigIteratorCb, &evalVars);
                 }
                 return true;
             });
 
-    // Normal evars
-    RzListIter *iter;
-    RzConfigNode *node;
-    CutterRzListForeach (core->config->nodes, iter, RzConfigNode, node) {
-        addEvalVar(evalVars, node);
+    if (core->config) {
+        rz_config_iterate_over(core->config, rzConfigIteratorCb, &evalVars);
     }
 
     return evalVars;
