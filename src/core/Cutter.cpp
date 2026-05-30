@@ -1183,6 +1183,24 @@ void CutterCore::setConfig(const char *k, const RzInterval &itv)
     rz_config_set_interval(core->config, k, itv);
 }
 
+void CutterCore::setConfig(const char *k, const QStringList &list)
+{
+    CORE_LOCK();
+    RzList *rzList = rz_list_newf(free);
+    if (!rzList) {
+        return;
+    }
+
+    for (const QString &str : list) {
+        char *dupStr = strdup(str.toUtf8().constData());
+        if (dupStr) {
+            rz_list_append(rzList, dupStr);
+        }
+    }
+
+    rz_config_set_list(core->config, k, rzList);
+}
+
 int CutterCore::getConfigi(const char *k)
 {
     CORE_LOCK();
@@ -1212,10 +1230,11 @@ QStringList CutterCore::getConfigList(const char *k)
     CORE_LOCK();
 
     QStringList res;
-    const RzList *list = rz_config_get_list(core->config, k);
+    RzList *list = rz_config_get_list(core->config, k);
     for (const auto *s : CutterRzList<const char>(list)) {
         res << QString::fromUtf8(s);
     }
+    rz_list_free(list);
     return res;
 }
 
@@ -1291,7 +1310,6 @@ QStringList CutterCore::getConfigOptions(const char *k)
 
 void CutterCore::setConfig(const char *k, const QVariant &v)
 {
-    // TODO: UPDATE THE #else BLOCK
 #if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     const int typeId = v.typeId();
 
@@ -1302,7 +1320,9 @@ void CutterCore::setConfig(const char *k, const QVariant &v)
     } else if (typeId == qMetaTypeId<RzInterval>()) {
         const auto itv = v.value<RzInterval>();
         setConfig(k, itv);
-
+    } else if (typeId == QMetaType::Type::QStringList) {
+        const QStringList list = v.toStringList();
+        setConfig(k, list);
     } else {
         setConfig(k, v.toString());
     }
@@ -1314,8 +1334,17 @@ void CutterCore::setConfig(const char *k, const QVariant &v)
     case QVariant::Type::Int:
         setConfig(k, v.toInt());
         break;
+    case QVariant::Type::StringList: {
+        const QStringList list = v.toStringList();
+        setConfig(QString::fromUtf8(k), list);
+        break;
+    }
     default:
-        setConfig(k, v.toString());
+        if (v.userType() == qMetaTypeId<RzInterval>()) {
+            setConfig(k, v.value<RzInterval>());
+        } else {
+            setConfig(k, v.toString());
+        }
         break;
     }
 #endif

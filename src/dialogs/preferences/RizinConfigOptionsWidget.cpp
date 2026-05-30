@@ -1,6 +1,8 @@
 #include "RizinConfigOptionsWidget.h"
 
 #include "Cutter.h"
+#include "dialogs/IntervalDialog.h"
+#include "dialogs/StringListDialog.h"
 #include "ui_RizinConfigOptionsWidget.h"
 
 #include <QComboBox>
@@ -19,97 +21,6 @@ QModelIndex siblingAtColumn(const QModelIndex &idx, int column)
 #endif
 }
 
-}
-
-IntervalDialog::IntervalDialog(const QString &name, QWidget *parent) : QDialog(parent)
-{
-    setWindowTitle(tr("Set Interval for %1").arg(name));
-
-    auto *mainLayout = new QVBoxLayout(this);
-    auto *formLayout = new QFormLayout();
-
-    addressEdit = new QLineEdit(this);
-    sizeEdit = new QLineEdit(this);
-
-    const QRegularExpression hexOrIntRegex("");
-    const QRegularExpressionValidator *validator =
-            new QRegularExpressionValidator(hexOrIntRegex, this);
-
-    addressEdit->setValidator(validator);
-    sizeEdit->setValidator(validator);
-
-    formLayout->addRow(tr("Address"), addressEdit);
-    formLayout->addRow(tr("Size"), sizeEdit);
-
-    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
-    mainLayout->addLayout(formLayout);
-    mainLayout->addWidget(buttonBox);
-}
-
-void IntervalDialog::setAddress(ut64 addr)
-{
-    addressEdit->setText(rzAddressString(addr));
-}
-
-void IntervalDialog::setSize(ut64 size)
-{
-    sizeEdit->setText(rzSizeString(size));
-}
-
-QString IntervalDialog::getAddress() const
-{
-    return addressEdit->text();
-}
-
-QString IntervalDialog::getSize() const
-{
-    return sizeEdit->text();
-}
-
-StringListDialog::StringListDialog(const QStringList &initialList, QWidget *parent)
-    : QDialog(parent)
-{
-    setWindowTitle(tr("Edit List"));
-    auto *layout = new QVBoxLayout(this);
-    auto *hl = new QHBoxLayout();
-
-    listView = new QListWidget(this);
-    for (const auto &str : initialList) {
-        auto *item = new QListWidgetItem(str, listView);
-        item->setFlags(item->flags() | Qt::ItemIsEditable);
-    }
-    hl->addWidget(listView);
-
-    auto *btnLayout = new QVBoxLayout();
-    auto *addBtn = new QPushButton(tr("Add"), this);
-    auto *removeBtn = new QPushButton(tr("Remove"), this);
-    auto *removeAllBtn = new QPushButton(tr("Remove All"), this);
-    btnLayout->addWidget(addBtn);
-    btnLayout->addWidget(removeBtn);
-    btnLayout->addWidget(removeAllBtn);
-    btnLayout->addStretch();
-    hl->addLayout(btnLayout);
-
-    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
-    layout->addLayout(hl);
-    layout->addWidget(buttonBox);
-
-    connect(addBtn, &QPushButton::clicked, this, [this]() {
-        auto *item = new QListWidgetItem(tr("new_item"), listView);
-        item->setFlags(item->flags() | Qt::ItemIsEditable);
-        listView->setCurrentItem(item);
-        listView->editItem(item);
-    });
-    connect(removeBtn, &QPushButton::clicked, this, [this]() { delete listView->currentItem(); });
-    connect(removeAllBtn, &QPushButton::clicked, this, [this]() { listView->clear(); });
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
-    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
-    listView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
 }
 
 RizinConfigOptionsModel::RizinConfigOptionsModel(QObject *parent) : QAbstractItemModel(parent)
@@ -424,8 +335,9 @@ bool RizinConfigOptionsProxyModel::lessThan(const QModelIndex &left, const QMode
     return leftData.toString().localeAwareCompare(rightData.toString()) < 0;
 }
 
-QWidget *RizinOptionDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                           const QModelIndex &index) const
+QWidget *RizinConfigOptionsDelegate::createEditor(QWidget *parent,
+                                                  const QStyleOptionViewItem &option,
+                                                  const QModelIndex &index) const
 {
     const auto evalVar =
             index.data(RizinConfigOptionsModel::EvaluableVarRole).value<EvaluableVarDescription>();
@@ -448,7 +360,7 @@ QWidget *RizinOptionDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     return QStyledItemDelegate::createEditor(parent, option, index);
 }
 
-void RizinOptionDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+void RizinConfigOptionsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     const auto evalVar =
             index.data(RizinConfigOptionsModel::EvaluableVarRole).value<EvaluableVarDescription>();
@@ -473,8 +385,8 @@ void RizinOptionDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
     }
 }
 
-void RizinOptionDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-                                       const QModelIndex &index) const
+void RizinConfigOptionsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                              const QModelIndex &index) const
 {
     if (auto *comboBox = qobject_cast<QComboBox *>(editor)) {
         model->setData(index, comboBox->currentText(), Qt::EditRole);
@@ -504,7 +416,7 @@ RizinConfigOptionsWidget::RizinConfigOptionsWidget(PreferencesDialog *parent)
       ui(new Ui::RizinConfigOptionsWidget),
       sourceModel(new RizinConfigOptionsModel(this)),
       proxyModel(new RizinConfigOptionsProxyModel(sourceModel, this)),
-      delegate(new RizinOptionDelegate(this))
+      delegate(new RizinConfigOptionsDelegate(this))
 {
     ui->setupUi(this);
     ui->treeView->setModel(proxyModel);

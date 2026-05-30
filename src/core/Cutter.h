@@ -476,6 +476,15 @@ public:
     void setConfig(const char *k, bool v);
     void setConfig(const QString &k, bool v) { setConfig(k.toUtf8().constData(), v); }
     void setConfig(const char *k, const RzInterval &itv);
+    void setConfig(const QString &k, const RzInterval &itv)
+    {
+        setConfig(k.toUtf8().constData(), itv);
+    }
+    void setConfig(const char *k, const QStringList &list);
+    void setConfig(const QString &k, const QStringList &list)
+    {
+        setConfig(k.toUtf8().constData(), list);
+    }
     void setConfig(const char *k, const QVariant &v);
     void setConfig(const QString &k, const QVariant &v) { setConfig(k.toUtf8().constData(), v); }
     int getConfigi(const char *k);
