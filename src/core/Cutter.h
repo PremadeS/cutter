@@ -475,6 +475,7 @@ public:
     void setConfig(const QString &k, int v) { setConfig(k.toUtf8().constData(), v); }
     void setConfig(const char *k, bool v);
     void setConfig(const QString &k, bool v) { setConfig(k.toUtf8().constData(), v); }
+    void setConfig(const char *k, const RzInterval &itv);
     void setConfig(const char *k, const QVariant &v);
     void setConfig(const QString &k, const QVariant &v) { setConfig(k.toUtf8().constData(), v); }
     int getConfigi(const char *k);
@@ -483,6 +484,10 @@ public:
     ut64 getConfigut64(const QString &k) { return getConfigut64(k.toUtf8().constData()); }
     bool getConfigb(const char *k);
     bool getConfigb(const QString &k) { return getConfigb(k.toUtf8().constData()); }
+    RzInterval getConfigItv(const char *k);
+    RzInterval getConfigItv(const QString &k) { return getConfigItv(k.toUtf8().constData()); }
+    QStringList getConfigList(const char *k);
+    QStringList getConfigList(const QString &k) { return getConfigList(k.toUtf8().constData()); }
     QString getConfig(const char *k);
     QString getConfig(const QString &k) { return getConfig(k.toUtf8().constData()); }
     QString getConfigDescription(const char *k);

@@ -7,6 +7,7 @@
 #include "common/StringsTask.h"
 
 #include <QAbstractListModel>
+#include <QPair>
 #include <QSortFilterProxyModel>
 
 #include <memory>

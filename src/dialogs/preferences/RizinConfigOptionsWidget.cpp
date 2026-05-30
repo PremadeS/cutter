@@ -4,7 +4,9 @@
 #include "ui_RizinConfigOptionsWidget.h"
 
 #include <QComboBox>
+#include <QFormLayout>
 #include <QTimer>
+#include <QVBoxLayout>
 
 namespace {
 
@@ -17,6 +19,97 @@ QModelIndex siblingAtColumn(const QModelIndex &idx, int column)
 #endif
 }
 
+}
+
+IntervalDialog::IntervalDialog(const QString &name, QWidget *parent) : QDialog(parent)
+{
+    setWindowTitle(tr("Set Interval for %1").arg(name));
+
+    auto *mainLayout = new QVBoxLayout(this);
+    auto *formLayout = new QFormLayout();
+
+    addressEdit = new QLineEdit(this);
+    sizeEdit = new QLineEdit(this);
+
+    const QRegularExpression hexOrIntRegex("");
+    const QRegularExpressionValidator *validator =
+            new QRegularExpressionValidator(hexOrIntRegex, this);
+
+    addressEdit->setValidator(validator);
+    sizeEdit->setValidator(validator);
+
+    formLayout->addRow(tr("Address"), addressEdit);
+    formLayout->addRow(tr("Size"), sizeEdit);
+
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    mainLayout->addLayout(formLayout);
+    mainLayout->addWidget(buttonBox);
+}
+
+void IntervalDialog::setAddress(ut64 addr)
+{
+    addressEdit->setText(rzAddressString(addr));
+}
+
+void IntervalDialog::setSize(ut64 size)
+{
+    sizeEdit->setText(rzSizeString(size));
+}
+
+QString IntervalDialog::getAddress() const
+{
+    return addressEdit->text();
+}
+
+QString IntervalDialog::getSize() const
+{
+    return sizeEdit->text();
+}
+
+StringListDialog::StringListDialog(const QStringList &initialList, QWidget *parent)
+    : QDialog(parent)
+{
+    setWindowTitle(tr("Edit List"));
+    auto *layout = new QVBoxLayout(this);
+    auto *hl = new QHBoxLayout();
+
+    listView = new QListWidget(this);
+    for (const auto &str : initialList) {
+        auto *item = new QListWidgetItem(str, listView);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+    }
+    hl->addWidget(listView);
+
+    auto *btnLayout = new QVBoxLayout();
+    auto *addBtn = new QPushButton(tr("Add"), this);
+    auto *removeBtn = new QPushButton(tr("Remove"), this);
+    auto *removeAllBtn = new QPushButton(tr("Remove All"), this);
+    btnLayout->addWidget(addBtn);
+    btnLayout->addWidget(removeBtn);
+    btnLayout->addWidget(removeAllBtn);
+    btnLayout->addStretch();
+    hl->addLayout(btnLayout);
+
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    layout->addLayout(hl);
+    layout->addWidget(buttonBox);
+
+    connect(addBtn, &QPushButton::clicked, this, [this]() {
+        auto *item = new QListWidgetItem(tr("new_item"), listView);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        listView->setCurrentItem(item);
+        listView->editItem(item);
+    });
+    connect(removeBtn, &QPushButton::clicked, this, [this]() { delete listView->currentItem(); });
+    connect(removeAllBtn, &QPushButton::clicked, this, [this]() { listView->clear(); });
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+
+    listView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
 }
 
 RizinConfigOptionsModel::RizinConfigOptionsModel(QObject *parent) : QAbstractItemModel(parent)
@@ -117,6 +210,17 @@ QVariant RizinConfigOptionsModel::data(const QModelIndex &index, int role) const
         case NameColumn:
             return evalVar.name;
         case ValueColumn:
+            if (evalVar.type == EvaluableVarDescription::Interval) {
+                const auto itv = evalVar.value.value<RzInterval>();
+                return QString("%1+%2").arg(rzAddressString(itv.addr), rzSizeString(itv.size));
+            }
+            if (evalVar.type == EvaluableVarDescription::List) {
+                const QStringList list = evalVar.value.toStringList();
+                if (list.isEmpty()) {
+                    return QString();
+                }
+                return list.count() > 1 ? list.first() + "..." : list.first();
+            }
             return evalVar.value;
         case DescColumn:
             return evalVar.description;
@@ -191,18 +295,14 @@ bool RizinConfigOptionsModel::setData(const QModelIndex &index, const QVariant &
 
     auto &evalVar = items[index.row()];
 
-    const QString res = value.toString();
-
     if (evalVar.type == EvaluableVarDescription::Bool && role == Qt::CheckStateRole) {
         evalVar.value = (value.toInt() == Qt::Checked) ? "true" : "false";
         emit dataChanged(index, index, { Qt::DisplayRole, Qt::EditRole, Qt::CheckStateRole });
         return true;
     } else if (evalVar.type == EvaluableVarDescription::Int && role == Qt::EditRole) {
+        const QString res = value.toString();
         bool ok = false;
-        res.toULongLong(&ok, 10);
-        if (!ok && res.startsWith("0x", Qt::CaseInsensitive)) {
-            res.toULongLong(&ok, 16);
-        }
+        res.toULongLong(&ok, res.startsWith("0x", Qt::CaseInsensitive) ? 16 : 10);
         if (!ok) {
             return false;
         }
@@ -212,7 +312,7 @@ bool RizinConfigOptionsModel::setData(const QModelIndex &index, const QVariant &
         return false;
     }
 
-    evalVar.value = value.toString();
+    evalVar.value = value;
 
     emit dataChanged(index, index, { Qt::DisplayRole, Qt::EditRole });
     return true;
@@ -330,7 +430,10 @@ QWidget *RizinOptionDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     const auto evalVar =
             index.data(RizinConfigOptionsModel::EvaluableVarRole).value<EvaluableVarDescription>();
 
-    if (evalVar.type == EvaluableVarDescription::Bool) {
+    if (evalVar.type == EvaluableVarDescription::Bool
+        || evalVar.type == EvaluableVarDescription::Interval
+        || evalVar.type == EvaluableVarDescription::List) {
+        // handled in lambda  connected to ui->treeView::doubleClicked
         return nullptr;
     }
 
@@ -347,6 +450,9 @@ QWidget *RizinOptionDelegate::createEditor(QWidget *parent, const QStyleOptionVi
 
 void RizinOptionDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
+    const auto evalVar =
+            index.data(RizinConfigOptionsModel::EvaluableVarRole).value<EvaluableVarDescription>();
+
     if (auto *comboBox = qobject_cast<QComboBox *>(editor)) {
         const QString currentText = index.data(Qt::EditRole).toString();
 
@@ -358,6 +464,10 @@ void RizinOptionDelegate::setEditorData(QWidget *editor, const QModelIndex &inde
             comboBox->addItem(currentText);
             comboBox->setCurrentIndex(comboBox->count() - 1);
         }
+    } else if (auto *intervalDialog = qobject_cast<IntervalDialog *>(editor)) {
+        const auto itv = evalVar.value.value<RzInterval>();
+        intervalDialog->setAddress(itv.addr);
+        intervalDialog->setSize(itv.size);
     } else {
         QStyledItemDelegate::setEditorData(editor, index);
     }
@@ -368,6 +478,22 @@ void RizinOptionDelegate::setModelData(QWidget *editor, QAbstractItemModel *mode
 {
     if (auto *comboBox = qobject_cast<QComboBox *>(editor)) {
         model->setData(index, comboBox->currentText(), Qt::EditRole);
+    } else if (auto *intervalDialog = qobject_cast<IntervalDialog *>(editor)) {
+        if (intervalDialog->result() == QDialog::Accepted) {
+            bool okAddr = false;
+            bool okSize = false;
+
+            const QString addrStr = intervalDialog->getAddress();
+            const QString sizeStr = intervalDialog->getSize();
+
+            const ut64 addr = addrStr.toULongLong(&okAddr, addrStr.startsWith("0x") ? 16 : 10);
+            const ut64 size = sizeStr.toULongLong(&okSize, sizeStr.startsWith("0x") ? 16 : 10);
+
+            if (okAddr && okSize) {
+                const RzInterval itv { addr, size };
+                model->setData(index, QVariant::fromValue(itv), Qt::EditRole);
+            }
+        }
     } else {
         QStyledItemDelegate::setModelData(editor, model, index);
     }
@@ -414,6 +540,54 @@ RizinConfigOptionsWidget::RizinConfigOptionsWidget(PreferencesDialog *parent)
             const Qt::CheckState newState =
                     (currentState == Qt::Checked) ? Qt::Unchecked : Qt::Checked;
             proxyModel->setData(valueColumnIndex, newState, Qt::CheckStateRole);
+            return;
+        }
+
+        if (evalVar.type == EvaluableVarDescription::Interval) {
+            IntervalDialog dialog(evalVar.name, this);
+            const auto itv = evalVar.value.value<RzInterval>();
+            dialog.setAddress(itv.addr);
+            dialog.setSize(itv.size);
+
+            auto pos = QCursor::pos();
+            pos.setX(pos.x() - dialog.width());
+            pos.setY(pos.x() - dialog.height() / 2);
+            dialog.move(pos);
+
+            if (dialog.exec() == QDialog::Accepted) {
+                bool okAddr = false;
+                bool okSize = false;
+                const QString addrStr = dialog.getAddress();
+                const QString sizeStr = dialog.getSize();
+
+                const ut64 addr = addrStr.toULongLong(&okAddr, addrStr.startsWith("0x") ? 16 : 10);
+                const ut64 size = sizeStr.toULongLong(&okSize, sizeStr.startsWith("0x") ? 16 : 10);
+
+                if (okAddr && okSize) {
+                    const RzInterval newItv { addr, size };
+                    const QModelIndex valueColumnIndex =
+                            siblingAtColumn(index, RizinConfigOptionsModel::ValueColumn);
+                    proxyModel->setData(valueColumnIndex, QVariant::fromValue(newItv),
+                                        Qt::EditRole);
+                }
+            }
+            return;
+        }
+
+        if (evalVar.type == EvaluableVarDescription::List) {
+            StringListDialog dialog(evalVar.value.toStringList(), this);
+            dialog.setWindowTitle(tr("Edit List for %1").arg(evalVar.name));
+
+            auto pos = QCursor::pos();
+            pos.setX(pos.x() - dialog.width());
+            pos.setY(pos.y() - dialog.height() / 2);
+            dialog.move(pos);
+
+            if (dialog.exec() == QDialog::Accepted) {
+                const QModelIndex valueColumnIndex =
+                        siblingAtColumn(index, RizinConfigOptionsModel::ValueColumn);
+                proxyModel->setData(valueColumnIndex, dialog.getStringList(), Qt::EditRole);
+            }
             return;
         }
 
@@ -508,7 +682,13 @@ void RizinConfigOptionsWidget::handleConfigOptionChanged(const QModelIndex &topL
                            .value<EvaluableVarDescription>();
 
     if (!originalValues.contains(evalVar.name)) {
-        originalValues[evalVar.name] = Core()->getConfig(evalVar.name);
+        if (evalVar.type == EvaluableVarDescription::Interval) {
+            originalValues[evalVar.name] = QVariant::fromValue(Core()->getConfigItv(evalVar.name));
+        } else if (evalVar.type == EvaluableVarDescription::List) {
+            originalValues[evalVar.name] = QVariant::fromValue(Core()->getConfigList(evalVar.name));
+        } else {
+            originalValues[evalVar.name] = Core()->getConfig(evalVar.name);
+        }
     }
 
     Core()->setConfig(evalVar.name, evalVar.value);

@@ -16,6 +16,44 @@ namespace Ui {
 class RizinConfigOptionsWidget;
 }
 
+Q_DECLARE_METATYPE(RzInterval)
+
+// TODO: move to dialogs
+class IntervalDialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    IntervalDialog(const QString &name, QWidget *parent = nullptr);
+    void setAddress(ut64 addr);
+    void setSize(ut64 size);
+
+    QString getAddress() const;
+    QString getSize() const;
+
+private:
+    QLineEdit *addressEdit;
+    QLineEdit *sizeEdit;
+};
+
+class StringListDialog : public QDialog
+{
+public:
+    StringListDialog(const QStringList &initialList, QWidget *parent = nullptr);
+
+    QStringList getStringList() const
+    {
+        QStringList list;
+        for (int i = 0; i < listView->count(); ++i) {
+            list << listView->item(i)->text();
+        }
+        return list;
+    }
+
+private:
+    QListWidget *listView;
+};
+
 /**
  * @brief Source model for @ref RizinConfigOptionsWidget
  */
@@ -145,7 +183,7 @@ private:
     RizinConfigOptionsProxyModel *proxyModel;
     RizinOptionDelegate *delegate;
 
-    QMap<QString, QString> originalValues;
+    QMap<QString, QVariant> originalValues;
 
     enum OptionChanged : ut8 {
         Asm = 1 << 0,
