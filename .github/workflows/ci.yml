@@ -506,7 +506,6 @@ jobs:
         ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
         choco install winflexbison3
         vcpkg install zlib:x64-windows
-        vcpkg integrate install
     - name: windows cmake
       if: contains(matrix.os, 'windows')
       shell: cmd
