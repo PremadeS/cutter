@@ -507,6 +507,19 @@ jobs:
         choco install winflexbison3
         vcpkg install zlib:x64-windows
         vcpkg integrate install
+    - name: Verify Zlib Installation
+      if: contains(matrix.os, 'windows')
+      shell: cmd
+      run: |
+        echo === Checking Header Location ===
+        if exist "C:\vcpkg\installed\x64-windows\include\zlib.h" (echo zlib.h FOUND!) else (echo zlib.h MISSING!)
+
+        echo === Checking Library Location ===
+        if exist "C:\vcpkg\installed\x64-windows\lib\zlib.lib" (echo zlib.lib FOUND!) else (echo zlib.lib MISSING!)
+
+        echo === Listing Installed Directory Content ===
+        dir /b C:\vcpkg\installed\x64-windows\include
+        dir /b C:\vcpkg\installed\x64-windows\lib
     - name: windows cmake
       if: contains(matrix.os, 'windows')
       shell: cmd
