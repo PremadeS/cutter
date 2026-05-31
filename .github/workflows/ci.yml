@@ -506,7 +506,6 @@ jobs:
         ln -sf "$PWD/cutter-deps/pyside/share/PySide6/"* "$PWD/cutter-deps/pyside/"
         choco install winflexbison3
         vcpkg install zlib:x64-windows
-        vcpkg integrate install
     - name: windows cmake
       if: contains(matrix.os, 'windows')
       shell: cmd
@@ -514,6 +513,7 @@ jobs:
         set ARCH=x64
         set CUTTER_DEPS=%CD%\cutter-deps
         set PATH=%CD%\cutter-deps\qt\bin;%PATH%
+        set ZLIB_ROOT=C:/vcpkg/installed/x64-windows
         call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
         cd
         mkdir build
@@ -539,7 +539,6 @@ jobs:
           -DCUTTER_ENABLE_DEPENDENCY_DOWNLOADS=ON ^
           -DCMAKE_PREFIX_PATH="%CUTTER_DEPS%\pyside;C:/vcpkg/installed/x64-windows" ^
           -DCPACK_PACKAGE_FILE_NAME=%PACKAGE_NAME% ^
-          -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake ^
           -G Ninja ^
           ..
         cmake --build . --config Release
