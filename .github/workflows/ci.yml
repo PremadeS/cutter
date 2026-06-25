@@ -554,7 +554,7 @@ jobs:
     - name: Get release
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       id: get_release
-      uses: PremadeS/gha-get-release@952b6c72eceba3d0c2982a88f0ecc04a96cbbe2c
+      uses: PremadeS/gha-get-release@bca7eca37a54853af30c31e429880361c49ab69a
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload release assets
