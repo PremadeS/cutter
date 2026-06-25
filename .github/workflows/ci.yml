@@ -554,7 +554,7 @@ jobs:
     - name: Get release
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       id: get_release
-      uses: rizinorg/gha-get-release@c8074dd5d13ddd0a194d8c9205a1466973c7dc0d
+      uses: PremadeS/gha-get-release@952b6c72eceba3d0c2982a88f0ecc04a96cbbe2c
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload release assets
