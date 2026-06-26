@@ -303,6 +303,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: ${{ env.PACKAGE_PATH }}
+        draft: true
 
     - name: Set output
       id: output_setup
@@ -387,6 +388,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: ${{ env.PACKAGE_PATH }}
+        draft: true
 
   build:
     name: ${{ matrix.name }}
@@ -562,6 +564,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: ${{ env.PACKAGE_PATH }}
+        draft: true
 
     - name: Set output
       if: matrix.output-id != ''
