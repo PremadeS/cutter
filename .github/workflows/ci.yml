@@ -289,13 +289,6 @@ jobs:
         name: ${{ env.PACKAGE_NAME }}
         path: ${{ env.PACKAGE_PATH }}
 
-    # To avoid accidently pushing the wrong tag name and softprops creates a enw release under that tag
-    - name: Check release exists
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        gh release view "${{ github.ref_name }}" --repo "${{ github.repository }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload release assets
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && env.PACKAGE_NAME != null
       uses: softprops/action-gh-release@v3
@@ -304,6 +297,8 @@ jobs:
       with:
         files: ${{ env.PACKAGE_PATH }}
         draft: true
+        # fails if a release is not manually created first, to prevent accidently creating a release under incorrect tag
+        target_commitish: "fail-if-release-not-manually-created"
 
     - name: Set output
       id: output_setup
@@ -375,12 +370,6 @@ jobs:
         name: ${{ steps.build.outputs.PACKAGE_NAME }}
         path: ${{ steps.build.outputs.PACKAGE_PATH }}
 
-    - name: Check release exists
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        gh release view "${{ github.ref_name }}" --repo "${{ github.repository }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload release assets
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && env.PACKAGE_NAME != null
       uses: softprops/action-gh-release@v3
@@ -389,6 +378,7 @@ jobs:
       with:
         files: ${{ env.PACKAGE_PATH }}
         draft: true
+        target_commitish: "fail-if-release-not-manually-created"
 
   build:
     name: ${{ matrix.name }}
@@ -551,12 +541,6 @@ jobs:
         name: ${{ env.PACKAGE_NAME }}
         path: ${{ env.PACKAGE_PATH }}
 
-    - name: Check release exists
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        gh release view "${{ github.ref_name }}" --repo "${{ github.repository }}"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload release assets
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && env.PACKAGE_NAME != null
       uses: softprops/action-gh-release@v3
@@ -565,6 +549,7 @@ jobs:
       with:
         files: ${{ env.PACKAGE_PATH }}
         draft: true
+        target_commitish: "fail-if-release-not-manually-created"
 
     - name: Set output
       if: matrix.output-id != ''
