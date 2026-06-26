@@ -289,12 +289,6 @@ jobs:
         name: ${{ env.PACKAGE_NAME }}
         path: ${{ env.PACKAGE_PATH }}
 
-    # manually check if release exists, avoids accidently creating a new release under incorrectly pushed tag
-    - name: Check release exists
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        curl -f -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}"
     - name: Upload release assets
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && env.PACKAGE_NAME != null
       uses: softprops/action-gh-release@v3
@@ -374,11 +368,6 @@ jobs:
         name: ${{ steps.build.outputs.PACKAGE_NAME }}
         path: ${{ steps.build.outputs.PACKAGE_PATH }}
 
-    - name: Check release exists
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        curl -f -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}"
     - name: Upload release assets
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && env.PACKAGE_NAME != null
       uses: softprops/action-gh-release@v3
@@ -549,11 +538,6 @@ jobs:
         name: ${{ env.PACKAGE_NAME }}
         path: ${{ env.PACKAGE_PATH }}
 
-    - name: Check release exists
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        curl -f -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ github.ref_name }}"
     - name: Upload release assets
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && env.PACKAGE_NAME != null
       uses: softprops/action-gh-release@v3
