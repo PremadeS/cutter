@@ -76,6 +76,9 @@ protected:
     DisassemblyLeftPanel *leftPanel;
     QList<DisassemblyLine> lines;
 
+    int windowStartIndex = 0;
+    QList<DisassemblyLine> lineBuffer;
+
 private:
     RVA topOffset;
     RVA bottomOffset;

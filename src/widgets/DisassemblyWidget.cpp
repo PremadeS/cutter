@@ -250,11 +250,7 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
         topOffset = offset;
     }
 
-    if (topOffset == RVA_INVALID) {
-        return;
-    }
-
-    if (maxLines <= 0) {
+    if (topOffset == RVA_INVALID || maxLines <= 0) {
         connectCursorPositionChanged(true);
         mDisasTextEdit->clear();
         connectCursorPositionChanged(false);
@@ -263,24 +259,36 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
 
     breakpoints = Core()->getBreakpointsAddresses();
     const int horizontalScrollValue = mDisasTextEdit->horizontalScrollBar()->value();
-    mDisasTextEdit->setLockScroll(true); // avoid flicker
+    mDisasTextEdit->setLockScroll(true);
 
-    // Retrieve disassembly lines
-    {
+    if (lineBuffer.isEmpty() || windowStartIndex < maxLines
+        || windowStartIndex + maxLines >= lineBuffer.size()) {
         TempConfig tempConfig;
         tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
-        lines = Core()->disassembleLines(topOffset, maxLines);
+        RVA fetchStart = Core()->prevOpAddr(topOffset, maxLines * 2);
+        lineBuffer = Core()->disassembleLines(fetchStart, maxLines * 5);
+
+        windowStartIndex = 0;
+        for (int i = 0; i < lineBuffer.size(); ++i) {
+            if (lineBuffer[i].offset >= topOffset) {
+                windowStartIndex = i;
+                break;
+            }
+        }
+    }
+
+    lines.clear();
+    for (int i = windowStartIndex; i < qMin(windowStartIndex + maxLines, (int)lineBuffer.size());
+         ++i) {
+        lines.append(lineBuffer[i]);
     }
 
     connectCursorPositionChanged(true);
-
     mDisasTextEdit->document()->clear();
     QTextCursor cursor(mDisasTextEdit->document());
     const QTextBlockFormat regular = cursor.blockFormat();
+
     for (const DisassemblyLine &line : lines) {
-        if (line.offset < topOffset) { // overflow
-            break;
-        }
         cursor.insertHtml(line.text);
         if (Core()->isBreakpoint(breakpoints, line.offset)) {
             QTextBlockFormat f;
@@ -294,7 +302,7 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     }
 
     if (!lines.isEmpty()) {
-        bottomOffset = lines[qMin(lines.size(), maxLines) - 1].offset;
+        bottomOffset = lines.last().offset;
         if (bottomOffset < topOffset) {
             bottomOffset = RVA_MAX;
         }
@@ -303,10 +311,8 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     }
 
     connectCursorPositionChanged(false);
-
     updateCursorPosition();
 
-    // remove additional lines
     QTextCursor tc = mDisasTextEdit->textCursor();
     tc.movePosition(QTextCursor::Start);
     tc.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, maxLines - 1);
@@ -318,7 +324,6 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     mDisasTextEdit->horizontalScrollBar()->setValue(horizontalScrollValue);
     mDisasScrollArea->verticalScrollBar()->setPosition(topOffset);
 
-    // Refresh the left panel (trigger paintEvent)
     leftPanel->update();
 }
 
@@ -328,25 +333,22 @@ void DisassemblyWidget::scrollInstructions(int count, bool clampToScrollBarRange
         return;
     }
 
-    RVA offset;
-    if (count > 0) {
-        offset = Core()->nextOpAddr(topOffset, count);
-        if (offset < topOffset) {
-            offset = RVA_MAX;
-        }
-    } else {
-        offset = Core()->prevOpAddr(topOffset, -count);
-        if (offset > topOffset) {
-            offset = 0;
-        }
+    windowStartIndex += count;
+
+    if (windowStartIndex >= 0 && windowStartIndex < lineBuffer.size()) {
+        topOffset = lineBuffer[windowStartIndex].offset;
     }
 
     if (clampToScrollBarRange) {
-        offset = mDisasScrollArea->verticalScrollBar()->clampAddressToRange(offset);
+        topOffset = mDisasScrollArea->verticalScrollBar()->clampAddressToRange(topOffset);
     }
 
-    refreshDisasm(offset);
-    topOffsetHistory[topOffsetHistoryPos] = offset;
+    if (windowStartIndex < maxLines || windowStartIndex + maxLines >= lineBuffer.size()) {
+        lineBuffer.clear();
+    }
+
+    refreshDisasm(topOffset);
+    topOffsetHistory[topOffsetHistoryPos] = topOffset;
 }
 
 bool DisassemblyWidget::updateMaxLines()
