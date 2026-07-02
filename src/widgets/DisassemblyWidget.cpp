@@ -30,6 +30,11 @@
 
 namespace DisHlp = DisassemblyHelper;
 
+namespace {
+
+constexpr uint8_t threshold = 10;
+}
+
 DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     : MemoryDockWidget(MemoryWidgetType::Disassembly, main),
       mCtxMenu(new DisassemblyContextMenu(this, main)),
@@ -183,6 +188,11 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
     ADD_ACTION("Disassembly.pageUp", Qt::WidgetWithChildrenShortcut,
                [this]() { moveCursorRelative(true, true); })
 #undef ADD_ACTION
+
+    // ----------
+
+    connect(mDisasTextEdit, &DisassemblyTextEdit::updateFromScroll, this,
+            &DisassemblyWidget::updateFromScroll);
 }
 
 void DisassemblyWidget::setPreviewMode(bool previewMode)
@@ -273,12 +283,17 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     QList<DisassemblyLine> topLines;
     QList<DisassemblyLine> bottomLines;
     const RVA top = Core()->prevOpAddr(topOffset, maxLines); // Note, no checks added here rn
-    const RVA bottom = Core()->nextOpAddr(topOffset, maxLines);
     {
         TempConfig tempConfig;
         tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
         lines = Core()->disassembleLines(topOffset, maxLines);
         topLines = Core()->disassembleLines(top, maxLines);
+    }
+
+    const RVA bottom = Core()->nextOpAddr(lines[lines.size() - 1].offset, 1);
+    {
+        TempConfig tempConfig;
+        tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
         bottomLines = Core()->disassembleLines(bottom, maxLines);
     }
 
@@ -335,6 +350,10 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     } else {
         bottomOffset = topOffset;
     }
+
+    newLines.append(topLines);
+    newLines.append(lines);
+    newLines.append(bottomLines);
 
     // ------------------------------------------
 
@@ -597,6 +616,125 @@ void DisassemblyWidget::cursorPositionChanged()
         mCtxMenu->setCurHighlightedWord(curHighlightedWord);
     }
     leftPanel->update();
+}
+
+void DisassemblyWidget::updateFromScroll(bool dir)
+{
+
+    if (newLines.isEmpty()) {
+        // maybe refresh disasm here?
+        return;
+    }
+
+    QScrollBar *vScroll = mDisasTextEdit->verticalScrollBar();
+    int oldScrollValue = vScroll->value();
+
+    mDisasTextEdit->setUpdatesEnabled(false);
+    // mDisasTextEdit->setLockScroll(true);
+
+    auto addLines = [=, this](const DisassemblyLine &line, QTextCursor &cursor,
+                              const QTextBlockFormat &regular) -> bool {
+        if (line.offset < topOffset) {
+            return false;
+        }
+        cursor.insertHtml(line.text);
+        if (Core()->isBreakpoint(breakpoints, line.offset)) {
+            QTextBlockFormat f;
+            f.setBackground(ConfigColor("gui.breakpoint_background"));
+            cursor.setBlockFormat(f);
+        }
+        auto a = new DisassemblyTextBlockUserData(line);
+        cursor.block().setUserData(a);
+        cursor.insertBlock();
+        cursor.setBlockFormat(regular);
+        return true;
+    };
+
+    // dir is true, jab aap neechai ja rhai ho
+    if (dir) {
+
+        // remove "threshold" lines from top
+        QTextCursor cursor(mDisasTextEdit->document());
+        cursor.movePosition(QTextCursor::Start);
+        for (int i = 0; i < threshold; ++i) {
+            cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor);
+        }
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+        cursor.deleteChar();
+
+        // add threshold lines at bottom
+        const RVA off = newLines[newLines.size() - 1].offset; // should be fixed in refreshdisasm
+        const RVA btmOffset = Core()->nextOpAddr(off, 1);
+
+        QList<DisassemblyLine> tempLines;
+        {
+            TempConfig tempConfig;
+            tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
+            tempLines = Core()->disassembleLines(btmOffset, threshold);
+        }
+
+        QTextCursor tc(mDisasTextEdit->document());
+        tc.movePosition(QTextCursor::End);
+        const QTextBlockFormat regular = tc.blockFormat();
+
+        if (!tc.block().text().isEmpty()) {
+            tc.insertBlock();
+        }
+
+        for (const auto &line : tempLines) {
+            addLines(line, tc, regular);
+        }
+
+    } else {
+
+        // remove "threshold" lines from bottom
+
+        QTextCursor cursor(mDisasTextEdit->document());
+        cursor.movePosition(QTextCursor::End);
+        for (int i = 0; i < threshold; ++i) {
+            cursor.movePosition(QTextCursor::Up, QTextCursor::KeepAnchor);
+        }
+        cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+        cursor.removeSelectedText();
+
+        // add threshold lines at top
+        const RVA off = newLines[0].offset; // should be fixed in refreshdisasm
+        const RVA tpOffset = Core()->prevOpAddr(off, threshold);
+
+        // todo: da damn boundary checks
+        QList<DisassemblyLine> tempLines;
+        {
+            TempConfig tempConfig;
+            tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
+            tempLines = Core()->disassembleLines(tpOffset, threshold);
+        }
+
+        QTextCursor tc(mDisasTextEdit->document());
+        tc.movePosition(QTextCursor::Start);
+        const QTextBlockFormat regular = tc.blockFormat();
+
+        for (const auto &line : tempLines) {
+            addLines(line, tc, regular);
+        }
+    }
+
+    // manually scrolling up
+    const QFontMetrics fm(mDisasTextEdit->document()->defaultFont());
+    int lineHeight = fm.lineSpacing();
+    int scrollDeltaY = threshold * lineHeight;
+    if (dir) {
+        // Moving down: Lines were REMOVED from the top.
+        // The remaining content naturally shifted UP. We decrease the scrollbar to compensate.
+        vScroll->setValue(oldScrollValue - scrollDeltaY);
+    } else {
+        // Moving up: Lines were ADDED to the top.
+        // The existing content naturally shifted DOWN. We increase the scrollbar to compensate.
+        vScroll->setValue(oldScrollValue + scrollDeltaY);
+    }
+
+    // mDisasTextEdit->setLockScroll(false);
+    mDisasTextEdit->setUpdatesEnabled(true);
 }
 
 void DisassemblyWidget::moveCursorRelative(bool up, bool page)
@@ -868,12 +1006,34 @@ qreal DisassemblyTextEdit::textOffset() const
 
 bool DisassemblyTextEdit::viewportEvent(QEvent *event)
 {
-    switch (event->type()) {
-    // case QEvent::Type::Wheel:
-    // return false;
-    default:
-        return QAbstractScrollArea::viewportEvent(event);
+    const bool ret = QAbstractScrollArea::viewportEvent(event);
+
+    // maybe move this to wheelEvent func
+    if (event->type() == QEvent::Type::Wheel) {
+        auto wheelEvent = static_cast<QWheelEvent *>(event);
+
+        // todo check this is right
+        // if (!wheelEvent->isUpdateEvent()) {
+        //     return true;
+        // }
+
+        accumScrollWheelDeltaY += wheelEvent->angleDelta().y();
+        constexpr int lineDelta = 5 * 8;
+        if (accumScrollWheelDeltaY >= lineDelta || accumScrollWheelDeltaY <= -lineDelta) {
+            const int lineCount = accumScrollWheelDeltaY / lineDelta;
+            accumScrollWheelDeltaY -= lineDelta * lineCount;
+            scrolledCount -= lineCount;
+        }
+
+        if (std::abs(scrolledCount) >= threshold) {
+            emit updateFromScroll(scrolledCount > 0);
+            scrolledCount = 0;
+        }
+
+        return true;
     }
+
+    return ret;
 }
 
 void DisassemblyTextEdit::scrollContentsBy(int dx, int dy)

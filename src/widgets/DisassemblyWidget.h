@@ -59,6 +59,7 @@ public slots:
      * @brief Forces the transient vertical scrollbar to appear on scroll
      */
     void showTransientScrollBar();
+
 protected slots:
     void onSeekChanged(RVA offset, CutterCore::SeekHistoryType type);
     void refreshIfInRange(RVA offset);
@@ -69,6 +70,8 @@ protected slots:
 
     void cursorPositionChanged();
 
+    void updateFromScroll(bool direction);
+
 protected:
     DisassemblyContextMenu *mCtxMenu;
     DisassemblyScrollArea *mDisasScrollArea;
@@ -76,10 +79,14 @@ protected:
     DisassemblyLeftPanel *leftPanel;
     QList<DisassemblyLine> lines;
 
+    QList<DisassemblyLine> newLines;
+    int accumScrollWheelDeltaY = 0;
+    // todo change
+    int maxLines;
+
 private:
     RVA topOffset;
     RVA bottomOffset;
-    int maxLines;
 
     QString curHighlightedWord;
 
@@ -151,14 +158,21 @@ public:
 
     qreal textOffset() const;
 
+    // change
+    int scrolledCount = 0;
+
 protected:
     bool viewportEvent(QEvent *event) override;
     void scrollContentsBy(int dx, int dy) override;
     void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
 
+signals:
+    void updateFromScroll(bool direction);
+
 private:
     bool lockScroll;
+    int accumScrollWheelDeltaY;
 };
 
 /**
