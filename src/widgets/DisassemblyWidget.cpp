@@ -265,21 +265,29 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     const int horizontalScrollValue = mDisasTextEdit->horizontalScrollBar()->value();
     mDisasTextEdit->setLockScroll(true); // avoid flicker
 
+    // currntly lets put all lines at once
+    // and go from there (for now)
+    // ----------------------------------------------
+
     // Retrieve disassembly lines
+    QList<DisassemblyLine> topLines;
+    QList<DisassemblyLine> bottomLines;
+    const RVA top = Core()->prevOpAddr(topOffset, maxLines); // Note, no checks added here rn
+    const RVA bottom = Core()->nextOpAddr(topOffset, maxLines);
     {
         TempConfig tempConfig;
         tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
         lines = Core()->disassembleLines(topOffset, maxLines);
+        topLines = Core()->disassembleLines(top, maxLines);
+        bottomLines = Core()->disassembleLines(bottom, maxLines);
     }
 
     connectCursorPositionChanged(true);
 
-    mDisasTextEdit->document()->clear();
-    QTextCursor cursor(mDisasTextEdit->document());
-    const QTextBlockFormat regular = cursor.blockFormat();
-    for (const DisassemblyLine &line : lines) {
+    auto addLines = [=, this](const DisassemblyLine &line, QTextCursor &cursor,
+                              const QTextBlockFormat &regular) -> bool {
         if (line.offset < topOffset) { // overflow
-            break;
+            return false;
         }
         cursor.insertHtml(line.text);
         if (Core()->isBreakpoint(breakpoints, line.offset)) {
@@ -291,6 +299,32 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
         cursor.block().setUserData(a);
         cursor.insertBlock();
         cursor.setBlockFormat(regular);
+        return true;
+    };
+
+    mDisasTextEdit->document()->clear();
+    QTextCursor cursor(mDisasTextEdit->document());
+    const QTextBlockFormat regular = cursor.blockFormat();
+
+    mDisasTextEdit->setUpdatesEnabled(false);
+
+    // top lines
+    for (const DisassemblyLine &line : topLines) {
+        if (!addLines(line, cursor, regular)) {
+            break;
+        }
+    }
+
+    for (const DisassemblyLine &line : lines) {
+        if (!addLines(line, cursor, regular)) {
+            break;
+        }
+    }
+
+    for (const DisassemblyLine &line : bottomLines) {
+        if (!addLines(line, cursor, regular)) {
+            break;
+        }
     }
 
     if (!lines.isEmpty()) {
@@ -302,21 +336,17 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
         bottomOffset = topOffset;
     }
 
+    // ------------------------------------------
+
     connectCursorPositionChanged(false);
 
     updateCursorPosition();
 
-    // remove additional lines
-    QTextCursor tc = mDisasTextEdit->textCursor();
-    tc.movePosition(QTextCursor::Start);
-    tc.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, maxLines - 1);
-    tc.movePosition(QTextCursor::EndOfLine);
-    tc.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
-    tc.removeSelectedText();
-
     mDisasTextEdit->setLockScroll(false);
     mDisasTextEdit->horizontalScrollBar()->setValue(horizontalScrollValue);
     mDisasScrollArea->verticalScrollBar()->setPosition(topOffset);
+
+    mDisasTextEdit->setUpdatesEnabled(true);
 
     // Refresh the left panel (trigger paintEvent)
     leftPanel->update();
@@ -813,22 +843,22 @@ bool DisassemblyScrollArea::viewportEvent(QEvent *event)
 
 void DisassemblyScrollArea::wheelEvent(QWheelEvent *event)
 {
-    if (event->angleDelta().isNull() || !event->angleDelta().y()) {
-        QAbstractScrollArea::wheelEvent(event);
-        return;
-    }
+    // if (event->angleDelta().isNull() || !event->angleDelta().y()) {
+    QAbstractScrollArea::wheelEvent(event);
+    // return;
+    // }
 
-    accumScrollWheelDeltaY += event->angleDelta().y();
-    // Delta is reported in 1/8 of a degree
-    // eg. 120 units * 1/8 = 15 degrees
-    // Typical scroll speed is 1 line per 5 degrees
-    const int lineDelta = 5 * 8;
-    if (accumScrollWheelDeltaY >= lineDelta || accumScrollWheelDeltaY <= -lineDelta) {
-        const int lineCount = accumScrollWheelDeltaY / lineDelta;
-        accumScrollWheelDeltaY -= lineDelta * lineCount;
-        emit scrollLines(-lineCount);
-    }
-    emit wheelEventTriggered();
+    // accumScrollWheelDeltaY += event->angleDelta().y();
+    // // Delta is reported in 1/8 of a degree
+    // // eg. 120 units * 1/8 = 15 degrees
+    // // Typical scroll speed is 1 line per 5 degrees
+    // const int lineDelta = 5 * 8;
+    // if (accumScrollWheelDeltaY >= lineDelta || accumScrollWheelDeltaY <= -lineDelta) {
+    //     const int lineCount = accumScrollWheelDeltaY / lineDelta;
+    //     accumScrollWheelDeltaY -= lineDelta * lineCount;
+    //     emit scrollLines(-lineCount);
+    // }
+    // emit wheelEventTriggered();
 }
 
 qreal DisassemblyTextEdit::textOffset() const
@@ -839,8 +869,8 @@ qreal DisassemblyTextEdit::textOffset() const
 bool DisassemblyTextEdit::viewportEvent(QEvent *event)
 {
     switch (event->type()) {
-    case QEvent::Type::Wheel:
-        return false;
+    // case QEvent::Type::Wheel:
+    // return false;
     default:
         return QAbstractScrollArea::viewportEvent(event);
     }
