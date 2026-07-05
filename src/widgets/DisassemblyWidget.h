@@ -11,6 +11,7 @@
 #include <QShortcut>
 #include <QTextEdit>
 
+#include <memory>
 #include <vector>
 
 class DisassemblyTextEdit;
@@ -18,6 +19,7 @@ class DisassemblyScrollArea;
 class DisassemblyContextMenu;
 class DisassemblyLeftPanel;
 class AddressRangeScrollBar;
+class DisassemblyTask;
 
 /**
  * @brief Main widget for showing disassembly of a binary
@@ -69,15 +71,15 @@ protected slots:
 
     void cursorPositionChanged();
 
+    void onDebounceTimeout();
+    void onDisassemblyFetchFinished(const QVector<DisassemblyLine> &extendedBuffer);
+
 protected:
     DisassemblyContextMenu *mCtxMenu;
     DisassemblyScrollArea *mDisasScrollArea;
     DisassemblyTextEdit *mDisasTextEdit;
     DisassemblyLeftPanel *leftPanel;
     QList<DisassemblyLine> lines;
-
-    int windowStartIndex = 0;
-    QList<DisassemblyLine> lineBuffer;
 
 private:
     RVA topOffset;
@@ -105,6 +107,11 @@ private:
     QList<RVA> topOffsetHistory;
 
     QList<RVA> breakpoints;
+
+    int windowStartIndex = 0;
+    QList<DisassemblyLine> lineBuffer;
+    QTimer *debounceTimer = nullptr;
+    std::shared_ptr<DisassemblyTask> backgroundTask;
 
     void setupFonts();
     void setupColors();

@@ -174,6 +174,7 @@ set(SOURCES
     dialogs/preferences/RizinConfigOptionsWidget.cpp
     dialogs/IntervalDialog.cpp
     dialogs/StringListDialog.cpp
+    common/DisassemblyTask.cpp
 )
 set(HEADER_FILES
     core/Cutter.h
@@ -356,6 +357,7 @@ set(HEADER_FILES
     dialogs/preferences/RizinConfigOptionsWidget.h
     dialogs/IntervalDialog.h
     dialogs/StringListDialog.h
+    common/DisassemblyTask.h
 )
 set(UI_FILES
     dialogs/AboutDialog.ui
