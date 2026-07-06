@@ -267,43 +267,74 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     const int horizontalScrollValue = mDisasTextEdit->horizontalScrollBar()->value();
     mDisasTextEdit->setLockScroll(true);
 
-    // could be faster? bin search or anything else?
+    static QElapsedTimer scrollDeltaTimer;
+    if (!scrollDeltaTimer.isValid()) {
+        scrollDeltaTimer.start();
+    }
+    const qint64 elapsed = scrollDeltaTimer.restart();
+    const bool isFastScrubbing = (elapsed < 50);
+
     int targetIdx = -1;
-    for (int i = 0; i < lineBuffer.size(); ++i) {
-        if (lineBuffer[i].offset >= topOffset) {
-            targetIdx = i;
-            break;
+
+    if (windowStartIndex >= 0 && windowStartIndex < lineBuffer.size()
+        && lineBuffer[windowStartIndex].offset == topOffset) {
+        targetIdx = windowStartIndex;
+    } else {
+        auto it = std::lower_bound(
+                lineBuffer.begin(), lineBuffer.end(), topOffset,
+                [](const DisassemblyLine &line, RVA o) { return line.offset < o; });
+
+        if (it != lineBuffer.end() && it->offset >= topOffset) {
+            targetIdx = std::distance(lineBuffer.begin(), it);
         }
     }
 
-    const bool cacheMiss =
-            (targetIdx == -1 || targetIdx < maxLines || targetIdx + maxLines >= lineBuffer.size());
+    TempConfig tempConfig;
+    tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
 
-    if (cacheMiss) {
-
-        if (backgroundTask) {
-            backgroundTask->interrupt();
-        }
-
-        TempConfig tempConfig;
-        tempConfig.set("scr.color", COLOR_MODE_16M).set("asm.lines", false);
-
+    if (isFastScrubbing) {
         lineBuffer = Core()->disassembleLines(topOffset, maxLines);
-        windowStartIndex = 0;
+        targetIdx = 0;
+    } else {
+        const int fetchChunkSize = 20;
+        const int fetchThreshold = 15;
 
-        debounceTimer->stop();
-        // TODO: what should this time be? maybe even < 100??
-        debounceTimer->start(200); // wait for the user to stop scrolling
+        if (targetIdx == -1 || targetIdx + maxLines > lineBuffer.size()) {
+            lineBuffer = Core()->disassembleLines(topOffset, maxLines + fetchChunkSize * 2);
+            auto it = std::lower_bound(
+                    lineBuffer.begin(), lineBuffer.end(), topOffset,
+                    [](const DisassemblyLine &line, RVA o) { return line.offset < o; });
+            targetIdx = (it != lineBuffer.end()) ? std::distance(lineBuffer.begin(), it) : 0;
+        } else if (targetIdx < fetchThreshold) {
+            RVA fetchStart = Core()->prevOpAddr(lineBuffer.first().offset, fetchChunkSize);
+            QList<DisassemblyLine> prependLines =
+                    Core()->disassembleLines(fetchStart, fetchChunkSize);
+            for (int i = prependLines.size() - 1; i >= 0; --i) {
+                lineBuffer.prepend(prependLines[i]);
+            }
+            targetIdx += prependLines.size();
+            if (lineBuffer.size() > maxLines * 5) {
+                lineBuffer.erase(lineBuffer.end() - prependLines.size(), lineBuffer.end());
+            }
+        } else if (lineBuffer.size() - (targetIdx + maxLines) < fetchThreshold) {
+            RVA fetchStart = Core()->nextOpAddr(lineBuffer.last().offset, 1);
+            QList<DisassemblyLine> appendLines =
+                    Core()->disassembleLines(fetchStart, fetchChunkSize);
+            lineBuffer.append(appendLines);
+            if (lineBuffer.size() > maxLines * 5) {
+                lineBuffer.erase(lineBuffer.begin(), lineBuffer.begin() + appendLines.size());
+                targetIdx -= appendLines.size();
+                if (targetIdx < 0) {
+                    targetIdx = 0;
+                }
+            }
+        }
     }
-    // else {
-    //     windowStartIndex = targetIdx;
-    // }
 
-    // TODO: the force refresh
+    windowStartIndex = targetIdx;
 
     lines.clear();
-    for (int i = windowStartIndex; i < qMin(windowStartIndex + maxLines, (int)lineBuffer.size());
-         ++i) {
+    for (int i = targetIdx; i < qMin(targetIdx + maxLines, (int)lineBuffer.size()); ++i) {
         lines.append(lineBuffer[i]);
     }
 
@@ -337,7 +368,6 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
     connectCursorPositionChanged(false);
     updateCursorPosition();
 
-    // TODO: remove in the loop itself, so they don't render at all
     QTextCursor tc = mDisasTextEdit->textCursor();
     tc.movePosition(QTextCursor::Start);
     tc.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, maxLines - 1);
@@ -394,16 +424,18 @@ void DisassemblyWidget::scrollInstructions(int count, bool clampToScrollBarRange
 
     windowStartIndex += count;
 
-    if (windowStartIndex >= 0 && windowStartIndex < lineBuffer.size()) {
+    if (!lineBuffer.isEmpty() && windowStartIndex >= 0 && windowStartIndex < lineBuffer.size()) {
         topOffset = lineBuffer[windowStartIndex].offset;
+    } else {
+        if (count > 0) {
+            topOffset = Core()->nextOpAddr(topOffset, count);
+        } else {
+            topOffset = Core()->prevOpAddr(topOffset, -count);
+        }
     }
 
     if (clampToScrollBarRange) {
         topOffset = mDisasScrollArea->verticalScrollBar()->clampAddressToRange(topOffset);
-    }
-
-    if (windowStartIndex < maxLines || windowStartIndex + maxLines >= lineBuffer.size()) {
-        lineBuffer.clear();
     }
 
     refreshDisasm(topOffset);
