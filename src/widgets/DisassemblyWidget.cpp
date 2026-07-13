@@ -242,6 +242,8 @@ void DisassemblyWidget::instructionChanged(RVA offset)
 
 void DisassemblyWidget::refreshDisasm(RVA offset)
 {
+    auto startTime = std::chrono::high_resolution_clock::now();
+
     if (!disasmRefresh->attemptRefresh(offset == RVA_INVALID ? nullptr : new RVA(offset))) {
         return;
     }
@@ -320,6 +322,30 @@ void DisassemblyWidget::refreshDisasm(RVA offset)
 
     // Refresh the left panel (trigger paintEvent)
     leftPanel->update();
+
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto durationUs =
+            std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime).count();
+
+    // Use static variables to track averages without polluting DisassemblyWidget.h
+    static double totalDurationUs = 0;
+    static int renderCount = 0;
+
+    totalDurationUs += durationUs;
+    renderCount++;
+
+    double currentMs = durationUs / 1000.0;
+    double averageMs = (totalDurationUs / renderCount) / 1000.0;
+
+    // Log to file (writes to the build/working directory)
+    QFile logFile(QDir::homePath() + "/disasm_render_profile.txt");
+    if (logFile.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream stream(&logFile);
+        stream << "Render #" << renderCount << " | Current: " << QString::number(currentMs, 'f', 3)
+               << " ms"
+               << " | Avg: " << QString::number(averageMs, 'f', 3) << " ms\n";
+        logFile.close();
+    }
 }
 
 void DisassemblyWidget::scrollInstructions(int count, bool clampToScrollBarRange)
