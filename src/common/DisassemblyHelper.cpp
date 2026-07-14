@@ -228,3 +228,23 @@ DisassemblyHelper::TargetAction DisassemblyHelper::resolveTarget(const TargetCon
 
     return res;
 }
+
+int DisassemblyHelper::getIndexInOffsetGroup(const QTextCursor &cursor)
+{
+    const RVA offset = DisassemblyHelper::readDisassemblyOffset(cursor);
+    if (offset == RVA_INVALID) {
+        return 0;
+    }
+
+    int index = 0;
+    QTextBlock block = cursor.block().previous();
+    while (block.isValid()) {
+        if (DisassemblyHelper::readDisassemblyOffset(QTextCursor(block)) == offset) {
+            index++;
+            block = block.previous();
+        } else {
+            break; // RVAs are contiguous, stop looking
+        }
+    }
+    return index;
+}
