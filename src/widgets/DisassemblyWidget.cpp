@@ -1078,8 +1078,11 @@ void DisassemblyWidget::keyPressEvent(QKeyEvent *event)
     bool handled = false;
     QTextCursor::MoveOperation op;
 
-    // fix for macos
+    // fix for macos, since macos appends KeypadModifier to cursor keys pressed via keypad, it
+    // causes the QKeySequence::ExactMatch check to fail.
+    // We remove the modifier here
     const Qt::KeyboardModifiers pureModifiers = event->modifiers() & ~Qt::KeypadModifier;
+
     const int baseKey = event->key() | (pureModifiers & ~Qt::ShiftModifier);
     QKeySequence baseSeq(baseKey);
     QKeySequence exactSeq(event->key() | event->modifiers());
