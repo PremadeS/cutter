@@ -294,8 +294,23 @@ void DisassemblyWidget::refreshDisasm(RVA offset, RefreshMode mode)
             const RVA newOffset = Core()->prevOpAddr(lines.first().offset, maxLines);
             auto newLines = Core()->disassembleLines(newOffset, maxLines);
 
-            const int prependCount = newLines.size();
+            // remove duplicates if any
+            if (!newLines.isEmpty() && !lines.isEmpty()) {
+                int keepSize = newLines.size();
+                const RVA firstOffset = lines.first().offset;
+                for (int i = newLines.size() - 1; i >= 0; --i) {
+                    if (newLines[i].offset >= firstOffset) {
+                        keepSize = i;
+                    } else {
+                        break;
+                    }
+                }
+                if (keepSize < newLines.size()) {
+                    newLines.erase(newLines.begin() + keepSize, newLines.end());
+                }
+            }
 
+            const int prependCount = newLines.size();
             newLines.append(lines);
             lines = std::move(newLines);
 
