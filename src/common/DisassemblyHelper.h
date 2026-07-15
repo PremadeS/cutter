@@ -139,23 +139,6 @@ TargetContext getContextFromCursor(QTextCursor tc);
  * @return The result containing the address and type found
  */
 TargetAction resolveTarget(const TargetContext &ctx, int filter = TargetFilter::All);
-
-/**
- * @brief Metadata lines attached to an instruction have the same offset saved with it as the
- * instruction, This function returns the index of the current line within that offset group/block
- *
- * e.g:
- *
- * @code
- * ; a comment
- * ; another comment     <------ assume cursor is here
- * ; void func1()
- * 0x1000 mov rax, rax
- * @endcode
- *
- * Then the returned index is "1"
- */
-int getIndexInOffsetGroup(const QTextCursor &cursor);
 }
 
 #endif // DISASSEMBLYHELPER_H

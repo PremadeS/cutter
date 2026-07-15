@@ -19,10 +19,7 @@ class DisassemblyContextMenu;
 class DisassemblyLeftPanel;
 class AddressRangeScrollBar;
 
-// TODO: better name
 enum class RefreshMode : ut8 { Append, Prepend, Reset, Keep, None };
-
-enum CursorMoveMode : ut8 { Up, Down, Left, Right, Page };
 
 /**
  * @brief Main widget for showing disassembly of a binary
@@ -189,6 +186,21 @@ private:
      * @brief Clears the current text selection so nothing is highlighted as selected
      */
     void invalidateCursorSelection();
+
+    /**
+     * @brief Metadata lines attached to an instruction have the same offset saved with it as the
+     * instruction, This function returns the index of the current line within that offset
+     * group/block
+     *      * e.g:
+     *      * @code
+     * ; a comment
+     * ; another comment     <------ assume cursor is here
+     * ; void func1()
+     * 0x1000 mov rax, rax
+     * @endcode
+     *      * Then the returned index is "1"
+     */
+    int getIndexInOffsetGroup(const QTextCursor &cursor) const;
 };
 
 class DisassemblyScrollArea : public QAbstractScrollArea

@@ -557,17 +557,37 @@ void DisassemblyWidget::invalidateCursorSelection()
     selectionPosChar = 0;
 }
 
+int DisassemblyWidget::getIndexInOffsetGroup(const QTextCursor &cursor) const
+{
+    const int lineIndex = startIndex + cursor.blockNumber();
+    if (lineIndex < 0 || lineIndex >= lines.size()) {
+        return 0;
+    }
+
+    const RVA offset = lines[lineIndex].offset;
+    int subIndex = 0;
+
+    for (int i = lineIndex - 1; i >= 0; --i) {
+        if (lines[i].offset == offset) {
+            subIndex++;
+        } else {
+            break; // offsets are contiguous
+        }
+    }
+    return subIndex;
+}
+
 void DisassemblyWidget::updateSelectionPos(const QTextCursor &cursor)
 {
     selectionPosRVA = DisHlp::readDisassemblyOffset(cursor);
-    selectionPosSubIndex = DisHlp::getIndexInOffsetGroup(cursor);
+    selectionPosSubIndex = getIndexInOffsetGroup(cursor);
     selectionPosChar = cursor.positionInBlock();
 }
 
 void DisassemblyWidget::updateSelectionAnchor(const QTextCursor &cursor)
 {
     selectionAnchorRVA = DisHlp::readDisassemblyOffset(cursor);
-    selectionAnchorSubIndex = DisHlp::getIndexInOffsetGroup(cursor);
+    selectionAnchorSubIndex = getIndexInOffsetGroup(cursor);
     selectionAnchorChar = cursor.positionInBlock();
 }
 
@@ -757,7 +777,7 @@ void DisassemblyWidget::cursorPositionChanged()
 
     const auto c = mDisasTextEdit->textCursor();
     cursorCharOffset = c.positionInBlock();
-    cursorLineOffset = DisHlp::getIndexInOffsetGroup(c);
+    cursorLineOffset = getIndexInOffsetGroup(c);
 
     seekFromCursor = true;
     seekable->seek(offset);
@@ -924,7 +944,7 @@ void DisassemblyWidget::moveCursorRelative(QTextCursor::MoveOperation op, bool p
         if (select) {
             const auto newCursor = mDisasTextEdit->textCursor();
             selectionPosRVA = DisHlp::readDisassemblyOffset(newCursor);
-            selectionPosSubIndex = DisHlp::getIndexInOffsetGroup(newCursor);
+            selectionPosSubIndex = getIndexInOffsetGroup(newCursor);
             selectionPosChar = newCursor.positionInBlock();
             refreshDisasm(RVA_INVALID, RefreshMode::None);
         } else if (hadSelection) {
@@ -1043,7 +1063,9 @@ void DisassemblyWidget::keyPressEvent(QKeyEvent *event)
     bool handled = false;
     QTextCursor::MoveOperation op;
 
-    const int baseKey = event->key() | (event->modifiers() & ~Qt::ShiftModifier);
+    // fix for macos
+    const Qt::KeyboardModifiers pureModifiers = event->modifiers() & ~Qt::KeypadModifier;
+    const int baseKey = event->key() | (pureModifiers & ~Qt::ShiftModifier);
     QKeySequence baseSeq(baseKey);
     QKeySequence exactSeq(event->key() | event->modifiers());
 
