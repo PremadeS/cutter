@@ -198,7 +198,8 @@ private:
      * ; void func1()
      * 0x1000 mov rax, rax
      * @endcode
-     *      * Then the returned index is "1"
+     *
+     * Then the returned index is "1"
      */
     int getIndexInOffsetGroup(const QTextCursor &cursor) const;
 };
