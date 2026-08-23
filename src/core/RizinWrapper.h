@@ -934,6 +934,10 @@ private:
      */
     RzCore *core = nullptr;
 
+    // TODO:
+    int coreLockDepth = 0;
+    void *coreBed = nullptr;
+
     QList<TypeDescription> getBaseType(RzBaseTypeKind kind, const char *category);
     QList<SearchDescription> getAllSearchCommand(const QString &searchFor, SearchKind kind,
                                                  const QString &in);

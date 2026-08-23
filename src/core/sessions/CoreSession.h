@@ -73,6 +73,7 @@ public:
     /**
      * @brief Returns a pointer to the underlying Rizin core instance
      */
+    // TODO: change name
     RzCore *core();
 };
 
@@ -93,6 +94,7 @@ public:
      * @brief Generic connect function for autmatically connecting to either Session or RizinWrapper
      * based on the signal provided
      */
+    // TODO: check QueuedConnection, via running script and seeking a thousand times
     template<typename C, typename... Args, typename... Rest,
              typename = std::enable_if_t<std::is_base_of_v<CoreSession, C>
                                          || std::is_base_of_v<RizinWrapper, C>>>
@@ -231,6 +233,7 @@ protected:
 
     RizinWrapper *wrapper = nullptr;
 
+// TODO: change to normal mutex now
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     QMutex mutex;
 #else

@@ -286,6 +286,7 @@ void ConsoleWidget::executeCommand(const QString &command)
                 }
             });
 
+    // When we run this, rizin runs its own async call?
     Session()->getAsyncTaskManager()->start(commandTask);
 }
 

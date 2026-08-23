@@ -179,7 +179,8 @@ RizinWrapper::RizinWrapper(QObject *parent) : QObject(parent) {}
 
 void RizinWrapper::initialize(bool loadPlugins)
 {
-    rz_cons_new(); // initialize console
+    // TODO: this need to be repeayed?
+    // rz_cons_new(); // initialize console
     core = rz_core_new();
 
 #if defined(MACOS_RZ_BUNDLED)
@@ -195,7 +196,7 @@ void RizinWrapper::initialize(bool loadPlugins)
     core->io->envprofile = rz_run_get_environ_profile(env);
     rz_core_task_sync_begin(&core->tasks);
     // TODO:
-    // coreBed = rz_cons_sleep_begin();
+    coreBed = rz_cons_sleep_begin();
 
     rz_event_hook(core->ev, RZ_EVENT_ALL, cutterREventCallback, this);
 

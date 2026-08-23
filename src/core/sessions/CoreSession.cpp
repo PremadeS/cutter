@@ -29,6 +29,7 @@ CoreSession::CoreSession(QObject *parent)
 #endif
 {
     wrapper = new RizinWrapper(this);
+
     auto returnFalse = [] { return false; };
     wrapper->setDebugStateProvider(returnFalse, returnFalse);
 
@@ -247,23 +248,23 @@ RizinLocked::RizinLocked(CoreSession *session) : session(session)
     lock();
 
     // TODO:
-    // assert(core->coreLockDepth >= 0);
-    // core->coreLockDepth++;
-    // if (core->coreLockDepth == 1) {
-    //     assert(core->coreBed);
-    //     rz_cons_sleep_end(core->coreBed);
-    //     core->coreBed = nullptr;
-    // }
+    assert(session->wrapper->coreLockDepth >= 0);
+    session->wrapper->coreLockDepth++;
+    if (session->wrapper->coreLockDepth == 1) {
+        assert(session->wrapper->coreBed);
+        rz_cons_sleep_end(session->wrapper->coreBed);
+        session->wrapper->coreBed = nullptr;
+    }
 }
 
 RizinLocked::~RizinLocked()
 {
     // TODO:
-    // assert(core->coreLockDepth > 0);
-    // core->coreLockDepth--;
-    // if (core->coreLockDepth == 0) {
-    //     core->coreBed = rz_cons_sleep_begin();
-    // }
+    assert(session->wrapper->coreLockDepth > 0);
+    session->wrapper->coreLockDepth--;
+    if (session->wrapper->coreLockDepth == 0) {
+        session->wrapper->coreBed = rz_cons_sleep_begin();
+    }
 
     unlock();
 }
