@@ -94,14 +94,15 @@ public:
      * @brief Generic connect function for autmatically connecting to either Session or RizinWrapper
      * based on the signal provided
      */
-    // TODO: check QueuedConnection, via running script and seeking a thousand times
     template<typename C, typename... Args, typename... Rest,
              typename = std::enable_if_t<std::is_base_of_v<CoreSession, C>
                                          || std::is_base_of_v<RizinWrapper, C>>>
     QMetaObject::Connection connect(void (C::*signal)(Args...), Rest &&...rest)
     {
         if constexpr (std::is_base_of_v<RizinWrapper, C>) {
-            return QObject::connect(static_cast<C *>(wrapper), signal, std::forward<Rest>(rest)...);
+            // Use QueuedConnection to avoid holding the lock for longer than needed
+            return QObject::connect(static_cast<C *>(wrapper), signal, std::forward<Rest>(rest)...,
+                                    Qt::ConnectionType::QueuedConnection);
         } else {
             return QObject::connect(static_cast<C *>(this), signal, std::forward<Rest>(rest)...);
         }
@@ -233,7 +234,9 @@ protected:
 
     RizinWrapper *wrapper = nullptr;
 
-// TODO: change to normal mutex now
+    // TODO: docs here
+    static thread_local CoreSession *currentActiveSession;
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     QMutex mutex;
 #else
@@ -246,6 +249,19 @@ private:
     BasicInstructionHighlighter biHighlighter;
 
     QVector<QString> getCutterRCFilePaths() const;
+
+    // TODO: docs here
+    int lockDepth = 0;
+    // TODO: maybe better name
+    void *sleepTask = nullptr;
+
+    // since creating new core objects overrides this callback, hence we need to call this each time
+    // a new session is created
+    void initConsCallbacks();
+    // also note that these functions assume lock is held, to be called from within RizinLocked only
+    // TODO: diff name??
+    static void *consSleepBegin(void *user);
+    static void consSleepEnd(void *user, void *bed);
 };
 
 #endif // CORESESSION_H

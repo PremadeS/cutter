@@ -175,12 +175,16 @@ static void cutterREventCallback(RzEvent *, int type, void *user, void *data)
     core->handleREvent(type, data);
 }
 
-RizinWrapper::RizinWrapper(QObject *parent) : QObject(parent) {}
+RizinWrapper::RizinWrapper(QObject *parent) : QObject(parent)
+{
+    // TODO:
+    initialize();
+}
 
 void RizinWrapper::initialize(bool loadPlugins)
 {
     // TODO: this need to be repeayed?
-    // rz_cons_new(); // initialize console
+    rz_cons_new(); // initialize console
     core = rz_core_new();
 
 #if defined(MACOS_RZ_BUNDLED)
@@ -195,8 +199,6 @@ void RizinWrapper::initialize(bool loadPlugins)
     char **env = rz_sys_get_environ();
     core->io->envprofile = rz_run_get_environ_profile(env);
     rz_core_task_sync_begin(&core->tasks);
-    // TODO:
-    coreBed = rz_cons_sleep_begin();
 
     rz_event_hook(core->ev, RZ_EVENT_ALL, cutterREventCallback, this);
 
@@ -224,14 +226,25 @@ void RizinWrapper::setDebugStateProvider(std::function<bool()> currentlyDebuggin
     this->currentlyEmulatingCb = std::move(currentlyEmulatingCb);
 }
 
+void *RizinWrapper::handleSleepBegin()
+{
+    return rz_core_sleep_begin(core);
+}
+
+void RizinWrapper::handleSleepEnd(void *bed)
+{
+    rz_core_sleep_end(core, bed);
+}
+
 RizinWrapper::~RizinWrapper()
 {
-    // TODO:
+    // TODO: move to session destructor?
     // rz_cons_sleep_end(coreBed);
 
     rz_core_task_sync_end(&core->tasks);
     rz_core_free(this->core);
-    rz_cons_free();
+    // TODO:
+    rz_cons_free(); // Move this to cutterApp??
 }
 
 QList<QString> RizinWrapper::sdbList(const QString &path)

@@ -91,6 +91,10 @@ public:
     void setDebugStateProvider(std::function<bool()> currentlyDebuggingCb,
                                std::function<bool()> currentlyEmulatingCb);
 
+    // TODO: docs
+    void *handleSleepBegin();
+    void handleSleepEnd(void *bed);
+
     RVA getOffset() const { return core->offset; }
 
     /* Core functions (commands) */
@@ -933,10 +937,6 @@ private:
      * Internal reference to the RzCore
      */
     RzCore *core = nullptr;
-
-    // TODO:
-    int coreLockDepth = 0;
-    void *coreBed = nullptr;
 
     QList<TypeDescription> getBaseType(RzBaseTypeKind kind, const char *category);
     QList<SearchDescription> getAllSearchCommand(const QString &searchFor, SearchKind kind,
