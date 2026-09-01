@@ -75,7 +75,6 @@ class CUTTER_EXPORT RizinWrapper : public QObject
     friend class RizinLocked;
     friend class Basefind;
 
-    // Only for legacy compatibility, will be removed)
     friend class RizinTask;
 
 public:

@@ -135,6 +135,8 @@ void *CoreSession::consSleepBegin(void * /* user */)
         return nullptr;
     }
 
+    qDebug() << ">>>>> consSleepBeign() triggerred <<<<<<";
+
     // TODO: add the processEvents thing??
     // Check if rizin calls this callback during long execution of command
 
@@ -311,7 +313,7 @@ RizinLocked::RizinLocked(CoreSession *session) : session(session)
 {
     lock();
 
-    // TODO:
+    // TODO: test
     assert(session->lockDepth >= 0);
     session->lockDepth++;
     if (session->lockDepth == 1) {
