@@ -513,48 +513,55 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
     set_source_files_properties(${BINDINGS_SOURCE} PROPERTIES COMPILE_FLAGS -w)
 endif()
 
+list(REMOVE_ITEM SOURCES Main.cpp)
+
 # Make a source group for Visual Studio
 set(CUTTER_SOURCES ${OPTIONS} ${UI_FILES} ${QRC_FILES} ${PLATFORM_RESOURCES} ${SOURCES} ${HEADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${CUTTER_SOURCES})
 
-add_executable(Cutter ${CUTTER_SOURCES} ${BINDINGS_SOURCE})
+add_library(cutter_gui_lib STATIC ${CUTTER_SOURCES} ${BINDINGS_SOURCE})
+set_target_properties(cutter_gui_lib PROPERTIES
+        POSITION_INDEPENDENT_CODE ON
+        CXX_VISIBILITY_PRESET hidden)
+target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_SOURCE_BUILD)
+
+add_executable(Cutter Main.cpp)
+target_link_libraries(Cutter PRIVATE cutter_gui_lib)
 set_target_properties(Cutter PROPERTIES
         OUTPUT_NAME cutter
         RUNTIME_OUTPUT_DIRECTORY ..
         PDB_OUTPUT_DIRECTORY ..
-        ENABLE_EXPORTS ON
-        CXX_VISIBILITY_PRESET hidden)
-target_compile_definitions(Cutter PRIVATE CUTTER_SOURCE_BUILD)
+        ENABLE_EXPORTS ON)
 
 # Set Cutter as the startup project in Visual Studio
 set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Cutter)
 
 foreach(_dir ${CUTTER_INCLUDE_DIRECTORIES})
-    target_include_directories(Cutter PUBLIC
+    target_include_directories(cutter_gui_lib PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${_dir}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cutter/${_dir}>
     )
 endforeach()
 
 if (TARGET Graphviz::GVC)
-    target_link_libraries(Cutter PRIVATE Graphviz::GVC)
-    target_compile_definitions(Cutter PRIVATE CUTTER_ENABLE_GRAPHVIZ)
+    target_link_libraries(cutter_gui_lib PRIVATE Graphviz::GVC)
+    target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_ENABLE_GRAPHVIZ)
 endif()
 
-target_link_libraries(Cutter PUBLIC ${QT_PREFIX}::Core ${QT_PREFIX}::Widgets ${QT_PREFIX}::Gui PRIVATE  ${QT_PREFIX}::Svg ${QT_PREFIX}::Network)
+target_link_libraries(cutter_gui_lib PUBLIC ${QT_PREFIX}::Core ${QT_PREFIX}::Widgets ${QT_PREFIX}::Gui PRIVATE  ${QT_PREFIX}::Svg ${QT_PREFIX}::Network)
 if (CUTTER_QT EQUAL 6)
-    target_link_libraries(Cutter PUBLIC Qt6::Core5Compat Qt6::SvgWidgets)
-    target_link_libraries(Cutter PRIVATE Qt6::OpenGLWidgets)
+    target_link_libraries(cutter_gui_lib PUBLIC Qt6::Core5Compat Qt6::SvgWidgets)
+    target_link_libraries(cutter_gui_lib PRIVATE Qt6::OpenGLWidgets)
 endif()
 
-target_link_libraries(Cutter PUBLIC ${RIZIN_TARGET})
+target_link_libraries(cutter_gui_lib PUBLIC ${RIZIN_TARGET})
 if(CUTTER_ENABLE_PYTHON)
-    target_link_libraries(Cutter PRIVATE Python3::Python)
+    target_link_libraries(cutter_gui_lib PRIVATE Python3::Python)
 
     if(CUTTER_ENABLE_PYTHON_BINDINGS)
-        target_link_libraries(Cutter PRIVATE ${CUTTER_PYSIDE_LIBS})
+        target_link_libraries(cutter_gui_lib PRIVATE ${CUTTER_PYSIDE_LIBS})
 
-        get_target_property(RAW_BINDINGS_INCLUDE_DIRS Cutter INCLUDE_DIRECTORIES)
+        get_target_property(RAW_BINDINGS_INCLUDE_DIRS cutter_gui_lib INCLUDE_DIRECTORIES)
         if(NOT CUTTER_USE_BUNDLED_RIZIN)
             get_target_property(RAW_RIZIN_INCLUDE_DIRS ${RIZIN_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
             list(APPEND RAW_BINDINGS_INCLUDE_DIRS "${RAW_RIZIN_INCLUDE_DIRS}")
@@ -595,24 +602,24 @@ if(CUTTER_ENABLE_PYTHON)
 endif()
 
 if(TARGET KF${CUTTER_QT}::SyntaxHighlighting)
-    target_link_libraries(Cutter PRIVATE KF${CUTTER_QT}::SyntaxHighlighting)
-    target_compile_definitions(Cutter PRIVATE CUTTER_ENABLE_KSYNTAXHIGHLIGHTING)
+    target_link_libraries(cutter_gui_lib PRIVATE KF${CUTTER_QT}::SyntaxHighlighting)
+    target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_ENABLE_KSYNTAXHIGHLIGHTING)
 endif()
 
 if (CUTTER_APPIMAGE_BUILD)
-    target_compile_definitions(Cutter PRIVATE APPIMAGE)
+    target_compile_definitions(cutter_gui_lib PRIVATE APPIMAGE)
 endif()
 
 if (CUTTER_PACKAGE_JSDEC)
-	target_compile_definitions(Cutter PRIVATE CUTTER_BUNDLE_JSDEC)
+        target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_BUNDLE_JSDEC)
 endif()
 
 if(APPLE AND CUTTER_ENABLE_PACKAGING AND CUTTER_USE_BUNDLED_RIZIN)
-	target_compile_definitions(Cutter PRIVATE MACOS_RZ_BUNDLED)
+        target_compile_definitions(cutter_gui_lib PRIVATE MACOS_RZ_BUNDLED)
 endif()
 
 if(CUTTER_ENABLE_PACKAGING)
-    target_compile_definitions(Cutter PRIVATE CUTTER_ENABLE_PACKAGING)
+    target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_ENABLE_PACKAGING)
 endif()
 
 if(CUTTER_ENABLE_TRANSLATIONS)
@@ -620,7 +627,7 @@ if(CUTTER_ENABLE_TRANSLATIONS)
 endif()
 
 # Install files
-install(TARGETS Cutter
+install(TARGETS Cutter cutter_gui_lib
         EXPORT CutterTargets
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         BUNDLE DESTINATION "." # needs to be tested
