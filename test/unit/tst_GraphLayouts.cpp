@@ -1,19 +1,30 @@
 #include "widgets/GraphGridLayout.h"
+#include "widgets/GraphHorizontalAdapter.h"
+#include "widgets/GraphvizLayout.h"
 
 #include <QtTest/QtTest>
+
+#include <memory>
 
 class TestGraphLayouts : public QObject
 {
     Q_OBJECT
 
 private slots:
+    // GraphGridLayout
     void testEmptyGraph();
-    void testSingleBlockData();
+    void testSingleBlock_data(); // NOLINT
     void testSingleBlock();
     void testLinearFlow();
-    void testBranchingColumnsData();
+    void testBranchingColumns_data(); // NOLINT
     void testBranchingColumns();
     void testCyclicFlow();
+
+    // GraphHorizontalAdapter Tests
+    void testHorizontalAdapterSwapsCoordinatesAndArrowDirections();
+
+    // GraphvizLayout Tests
+    void testGraphvizLayoutLinearFlow();
 };
 
 void TestGraphLayouts::testEmptyGraph()
@@ -29,7 +40,7 @@ void TestGraphLayouts::testEmptyGraph()
     QCOMPARE(height, 0);
 }
 
-void TestGraphLayouts::testSingleBlockData()
+void TestGraphLayouts::testSingleBlock_data() // NOLINT
 {
     QTest::addColumn<int>("blockWidth");
     QTest::addColumn<int>("blockHeight");
@@ -61,8 +72,8 @@ void TestGraphLayouts::testSingleBlock()
     // (10px)
     QCOMPARE(graph[0x00401000].x, 10);
     QCOMPARE(graph[0x00401000].y, 10);
-    QCOMPARE(totalWidth, blockWidth + 20); // horizontal margin (10 left + 10 right)
-    QCOMPARE(totalHeight, blockHeight + 20); // certical margin (10 top + 10 bottom)
+    QCOMPARE(totalWidth, blockWidth + 20); // Horizontal margin (10 left + 10 right)
+    QCOMPARE(totalHeight, blockHeight + 20); // Vertical margin (10 top + 10 bottom)
 }
 
 void TestGraphLayouts::testLinearFlow()
@@ -94,7 +105,7 @@ void TestGraphLayouts::testLinearFlow()
     QVERIFY(!graph[0x1000].edges[0].polyline.isEmpty());
 }
 
-void TestGraphLayouts::testBranchingColumnsData()
+void TestGraphLayouts::testBranchingColumns_data() // NOLINT
 {
     QTest::addColumn<GraphGridLayout::LayoutType>("layoutType");
 
@@ -168,6 +179,70 @@ void TestGraphLayouts::testCyclicFlow()
 
     QVERIFY(totalWidth > 0);
     QVERIFY(totalHeight > 0);
+}
+
+void TestGraphLayouts::testHorizontalAdapterSwapsCoordinatesAndArrowDirections()
+{
+    // Build vertical grid layout wrapped in horizontal adapter
+    auto baseGrid = std::make_unique<GraphGridLayout>(GraphGridLayout::LayoutType::Medium);
+    GraphHorizontalAdapter adapter(std::move(baseGrid));
+
+    GraphLayout::Graph graph;
+
+    GraphLayout::GraphBlock blockA;
+    blockA.entry = 0x1000;
+    blockA.width = 100;
+    blockA.height = 50;
+    blockA.edges.emplace_back(0x2000);
+
+    GraphLayout::GraphBlock blockB;
+    blockB.entry = 0x2000;
+    blockB.width = 100;
+    blockB.height = 50;
+
+    graph[0x1000] = blockA;
+    graph[0x2000] = blockB;
+
+    int totalWidth = 0;
+    int totalHeight = 0;
+
+    adapter.calculateLayout(graph, 0x1000, totalWidth, totalHeight);
+
+    // In horizontal layout, block B should be placed to the right of block A (x increases)
+    QVERIFY(graph[0x2000].x > graph[0x1000].x);
+
+    // Verify arrow direction mapped from Down -> Right
+    QCOMPARE(graph[0x1000].edges[0].arrow, GraphLayout::GraphEdge::Right);
+}
+
+void TestGraphLayouts::testGraphvizLayoutLinearFlow()
+{
+    GraphvizLayout layout(GraphvizLayout::LayoutType::DotPolyline, GraphvizLayout::Direction::TB);
+    GraphLayout::Graph graph;
+
+    GraphLayout::GraphBlock blockA;
+    blockA.entry = 0x1000;
+    blockA.width = 120;
+    blockA.height = 60;
+    blockA.edges.emplace_back(0x2000);
+
+    GraphLayout::GraphBlock blockB;
+    blockB.entry = 0x2000;
+    blockB.width = 120;
+    blockB.height = 60;
+
+    graph[0x1000] = blockA;
+    graph[0x2000] = blockB;
+
+    int totalWidth = 0;
+    int totalHeight = 0;
+
+    layout.calculateLayout(graph, 0x1000, totalWidth, totalHeight);
+
+    // verify Graphviz assigned non-zero canvas dimensions and positions
+    QVERIFY(totalWidth > 0);
+    QVERIFY(totalHeight > 0);
+    QVERIFY(!graph[0x1000].edges[0].polyline.isEmpty());
 }
 
 QTEST_MAIN(TestGraphLayouts)
