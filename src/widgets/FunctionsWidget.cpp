@@ -366,6 +366,16 @@ QString FunctionModel::name(const QModelIndex &index) const
     return function.name;
 }
 
+void FunctionModel::setFunctions(const QList<FunctionDescription> &functions)
+{
+    this->functions = functions;
+}
+
+QList<FunctionDescription> FunctionModel::getFunctions() const
+{
+    return functions;
+}
+
 void FunctionModel::seekChanged(RVA)
 {
     const int previousIndex = currentIndex;
@@ -413,9 +423,9 @@ void FunctionModel::functionRenamed(const RVA offset, const QString &new_name)
     }
 }
 
-FunctionSortFilterProxyModel::FunctionSortFilterProxyModel(FunctionModel *source_model,
+FunctionSortFilterProxyModel::FunctionSortFilterProxyModel(FunctionModel *sourceModel,
                                                            QObject *parent)
-    : AddressableFilterProxyModel(source_model, parent)
+    : AddressableFilterProxyModel(sourceModel, parent)
 {
     setFilterCaseSensitivity(Qt::CaseInsensitive);
     setSortCaseSensitivity(Qt::CaseInsensitive);
