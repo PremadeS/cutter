@@ -2,7 +2,7 @@
 
 #include <QtTest/QtTest>
 
-class testGraphLayouts : public QObject
+class TestGraphLayouts : public QObject
 {
     Q_OBJECT
 
@@ -16,7 +16,7 @@ private slots:
     void testCyclicFlow();
 };
 
-void testGraphLayouts::testEmptyGraph()
+void TestGraphLayouts::testEmptyGraph()
 {
     GraphGridLayout gridLayout(GraphGridLayout::LayoutType::Medium);
     GraphLayout::Graph emptyGraph;
@@ -29,7 +29,7 @@ void testGraphLayouts::testEmptyGraph()
     QCOMPARE(height, 0);
 }
 
-void testGraphLayouts::testSingleBlockData()
+void TestGraphLayouts::testSingleBlockData()
 {
     QTest::addColumn<int>("blockWidth");
     QTest::addColumn<int>("blockHeight");
@@ -38,7 +38,7 @@ void testGraphLayouts::testSingleBlockData()
     QTest::newRow("wide_instruction_block") << 300 << 150;
 }
 
-void testGraphLayouts::testSingleBlock()
+void TestGraphLayouts::testSingleBlock()
 {
     QFETCH(int, blockWidth);
     QFETCH(int, blockHeight);
@@ -65,7 +65,7 @@ void testGraphLayouts::testSingleBlock()
     QCOMPARE(totalHeight, blockHeight + 20); // certical margin (10 top + 10 bottom)
 }
 
-void testGraphLayouts::testLinearFlow()
+void TestGraphLayouts::testLinearFlow()
 {
     GraphGridLayout gridLayout(GraphGridLayout::LayoutType::Medium);
     GraphLayout::Graph graph;
@@ -94,7 +94,7 @@ void testGraphLayouts::testLinearFlow()
     QVERIFY(!graph[0x1000].edges[0].polyline.isEmpty());
 }
 
-void testGraphLayouts::testBranchingColumnsData()
+void TestGraphLayouts::testBranchingColumnsData()
 {
     QTest::addColumn<GraphGridLayout::LayoutType>("layoutType");
 
@@ -103,7 +103,7 @@ void testGraphLayouts::testBranchingColumnsData()
     QTest::newRow("narrow_grid_type") << GraphGridLayout::LayoutType::Narrow;
 }
 
-void testGraphLayouts::testBranchingColumns()
+void TestGraphLayouts::testBranchingColumns()
 {
     QFETCH(GraphGridLayout::LayoutType, layoutType);
 
@@ -141,7 +141,7 @@ void testGraphLayouts::testBranchingColumns()
     QVERIFY(graph[0x2000].x != graph[0x3000].x);
 }
 
-void testGraphLayouts::testCyclicFlow()
+void TestGraphLayouts::testCyclicFlow()
 {
     GraphGridLayout gridLayout(GraphGridLayout::LayoutType::Medium);
     GraphLayout::Graph graph;
@@ -170,5 +170,5 @@ void testGraphLayouts::testCyclicFlow()
     QVERIFY(totalHeight > 0);
 }
 
-QTEST_MAIN(testGraphLayouts)
+QTEST_MAIN(TestGraphLayouts)
 #include "tst_GraphLayouts.moc"

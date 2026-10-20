@@ -28,16 +28,16 @@ public:
     }
 };
 
-class testAddressableItemModel : public QObject
+class TestAddressableItemModel : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void testFilterProxyModel_data();
+    void testFilterProxyModel_data(); // NOLINT
     void testFilterProxyModel();
 };
 
-void testAddressableItemModel::testFilterProxyModel_data()
+void TestAddressableItemModel::testFilterProxyModel_data() // NOLINT
 {
     QTest::addColumn<QString>("filterPattern");
     QTest::addColumn<int>("expectedProxyRowCount");
@@ -51,7 +51,7 @@ void testAddressableItemModel::testFilterProxyModel_data()
     QTest::newRow("filter_no_matches") << "nonexistent_pattern" << 0 << UT64_MAX << "";
 }
 
-void testAddressableItemModel::testFilterProxyModel()
+void TestAddressableItemModel::testFilterProxyModel()
 {
     const QFETCH(QString, filterPattern);
     const QFETCH(int, expectedProxyRowCount);
@@ -82,5 +82,5 @@ void testAddressableItemModel::testFilterProxyModel()
     }
 }
 
-QTEST_MAIN(testAddressableItemModel)
+QTEST_MAIN(TestAddressableItemModel)
 #include "tst_AddressableItemModel.moc"

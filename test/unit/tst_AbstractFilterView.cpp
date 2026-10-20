@@ -23,7 +23,7 @@ private:
     ItemCountLineEdit *m_lineEdit;
 };
 
-class testAbstractFilterView : public QObject
+class TestAbstractFilterView : public QObject
 {
     Q_OBJECT
 
@@ -35,7 +35,7 @@ private slots:
     void testShowFilter();
 };
 
-void testAbstractFilterView::testFilterTextChangedData()
+void TestAbstractFilterView::testFilterTextChangedData()
 {
     QTest::addColumn<QString>("inputText");
     QTest::addColumn<QString>("expectedEmittedText");
@@ -47,7 +47,7 @@ void testAbstractFilterView::testFilterTextChangedData()
     QTest::newRow("empty_string_search") << "" << "";
 }
 
-void testAbstractFilterView::testFilterTextChanged()
+void TestAbstractFilterView::testFilterTextChanged()
 {
     QFETCH(QString, inputText);
     QFETCH(QString, expectedEmittedText);
@@ -71,7 +71,7 @@ void testAbstractFilterView::testFilterTextChanged()
     QCOMPARE(arguments.at(0).toString(), expectedEmittedText);
 }
 
-void testAbstractFilterView::testClearFilter()
+void TestAbstractFilterView::testClearFilter()
 {
     TestableFilterView filterView;
     filterView.lineEdit()->setText("pre_existing_filter_query");
@@ -81,7 +81,7 @@ void testAbstractFilterView::testClearFilter()
     QCOMPARE(filterView.lineEdit()->text(), QString(""));
 }
 
-void testAbstractFilterView::testCloseFilter()
+void TestAbstractFilterView::testCloseFilter()
 {
     TestableFilterView filterView;
     filterView.show();
@@ -96,7 +96,7 @@ void testAbstractFilterView::testCloseFilter()
     QCOMPARE(spy.count(), 1);
 }
 
-void testAbstractFilterView::testShowFilter()
+void TestAbstractFilterView::testShowFilter()
 {
     TestableFilterView filterView;
     filterView.hide();
@@ -108,5 +108,5 @@ void testAbstractFilterView::testShowFilter()
     QCOMPARE(filterView.focusWidget(), static_cast<QWidget *>(filterView.lineEdit()));
 }
 
-QTEST_MAIN(testAbstractFilterView)
+QTEST_MAIN(TestAbstractFilterView)
 #include "tst_AbstractFilterView.moc"
