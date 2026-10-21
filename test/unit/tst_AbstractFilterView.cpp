@@ -28,14 +28,14 @@ class TestAbstractFilterView : public QObject
     Q_OBJECT
 
 private slots:
-    void testFilterTextChangedData();
+    void testFilterTextChanged_data(); // NOLINT
     void testFilterTextChanged();
     void testClearFilter();
     void testCloseFilter();
     void testShowFilter();
 };
 
-void TestAbstractFilterView::testFilterTextChangedData()
+void TestAbstractFilterView::testFilterTextChanged_data() // NOLINT
 {
     QTest::addColumn<QString>("inputText");
     QTest::addColumn<QString>("expectedEmittedText");

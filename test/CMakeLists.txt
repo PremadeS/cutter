@@ -1,3 +1,5 @@
+find_package(Qt6 COMPONENTS Test REQUIRED)
+
 set(TEST_INCLUDES
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/common
@@ -13,3 +15,4 @@ set(TEST_COMMON_SOURCES
 enable_testing()
 
 add_subdirectory(unit)
+add_subdirectory(integration)

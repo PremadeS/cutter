@@ -87,6 +87,8 @@ DisassemblyHelper::BracketResult DisassemblyHelper::findBracketRange(const QStri
             }
         }
         if (isInside) {
+            // TODO: this fixes the testcase. Verify whether the highlighter logic is correct
+            // for (int i = posInLine + 1; i < closeBracket; ++i)
             for (int i = posInLine; i < closeBracket; ++i) {
                 if (line[i] == '[') {
                     isInside = false;

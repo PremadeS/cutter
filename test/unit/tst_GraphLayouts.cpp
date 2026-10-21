@@ -1,6 +1,8 @@
 #include "widgets/GraphGridLayout.h"
 #include "widgets/GraphHorizontalAdapter.h"
-#include "widgets/GraphvizLayout.h"
+#if CUTTER_ENABLE_GRAPHVIZ
+#    include "widgets/GraphvizLayout.h"
+#endif
 
 #include <QtTest/QtTest>
 
@@ -24,7 +26,9 @@ private slots:
     void testHorizontalAdapterSwapsCoordinatesAndArrowDirections();
 
     // GraphvizLayout Tests
+#if CUTTER_ENABLE_GRAPHVIZ
     void testGraphvizLayoutLinearFlow();
+#endif
 };
 
 void TestGraphLayouts::testEmptyGraph()
@@ -215,6 +219,7 @@ void TestGraphLayouts::testHorizontalAdapterSwapsCoordinatesAndArrowDirections()
     QCOMPARE(graph[0x1000].edges[0].arrow, GraphLayout::GraphEdge::Right);
 }
 
+#if CUTTER_ENABLE_GRAPHVIZ
 void TestGraphLayouts::testGraphvizLayoutLinearFlow()
 {
     GraphvizLayout layout(GraphvizLayout::LayoutType::DotPolyline, GraphvizLayout::Direction::TB);
@@ -244,6 +249,7 @@ void TestGraphLayouts::testGraphvizLayoutLinearFlow()
     QVERIFY(totalHeight > 0);
     QVERIFY(!graph[0x1000].edges[0].polyline.isEmpty());
 }
+#endif
 
 QTEST_MAIN(TestGraphLayouts)
 #include "tst_GraphLayouts.moc"
