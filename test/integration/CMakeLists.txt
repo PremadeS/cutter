@@ -19,7 +19,24 @@ function(add_cutter_integration_test test_name test_source)
         Qt6::Widgets
     )
 
-    add_test(NAME integration.${test_name} COMMAND ${test_name})
+    add_test(NAME integration.${test_name} COMMAND $<TARGET_FILE:${test_name}>)
 endfunction()
 
-add_cutter_integration_test(tst_CoreLifeCycle tst_CoreLifeCycle.cpp)
+# Apply shared properties (labels + headless platform + timeout) to a set of
+# integration tests. QT_QPA_PLATFORM=offscreen lets the widget (L3) tests run
+# without a display server, which is required for CI runners.
+function(cutter_integration_test_props)
+    foreach(test_name IN LISTS ARGN)
+        set_tests_properties(integration.${test_name} PROPERTIES
+            LABELS "integration"
+            ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+            TIMEOUT 300
+        )
+    endforeach()
+endfunction()
+
+add_cutter_integration_test(tst_FilterViews tst_FilterViews.cpp)
+
+cutter_integration_test_props(
+	tst_FilterViews
+)

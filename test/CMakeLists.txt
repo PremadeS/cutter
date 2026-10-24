@@ -6,6 +6,7 @@ set(TEST_INCLUDES
     ${CMAKE_SOURCE_DIR}/src/core
     ${CMAKE_SOURCE_DIR}/src/widgets
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/helper
 )
 
 set(TEST_COMMON_SOURCES

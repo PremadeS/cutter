@@ -17,6 +17,13 @@ function(cutter_add_unit_test TEST_NAME)
 
     # test name will be shown in this format on output
     add_test(NAME unit.${TEST_NAME} COMMAND ${TEST_NAME})
+
+    # L1 unit tests are pure logic (no Core()/rizin, no display). Label them so
+    # they can be selected cheaply in CI: ctest -L unit
+    set_tests_properties(unit.${TEST_NAME} PROPERTIES
+        LABELS "unit"
+        TIMEOUT 120
+    )
 endfunction()
 
 function(cutter_add_unit_tests)
@@ -42,4 +49,6 @@ cutter_add_unit_tests(
     tst_RichTextPainter
     tst_SelectionHighlight
     tst_BasicInstructionHighlighter
+    tst_ModelConformance
+    tst_StringsFilter
 )
