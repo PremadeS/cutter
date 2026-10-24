@@ -4,7 +4,6 @@
 #include "shortcuts/ShortcutManager.h"
 
 #include <QCoreApplication>
-#include <QMouseEvent>
 #include <QMoveEvent>
 #include <QSignalSpy>
 #include <QTest>
@@ -39,7 +38,7 @@ void TestDocking::initTestCase()
     QVERIFY2(mainWindow != nullptr, "MainWindow not found among top-level widgets!");
 
     mainWindow->show();
-    QTest::qWait(500);
+    QApplication::processEvents();
 }
 
 void TestDocking::testDockingPreventedByModifier()
@@ -48,12 +47,11 @@ void TestDocking::testDockingPreventedByModifier()
     dock->setWindowTitle("Automated Test Dock");
     mainWindow->addDockWidget(Qt::LeftDockWidgetArea, dock);
 
-    // 1. Initial State: Floating
+    // 1. Initial State: Float the widget
     dock->setFloating(true);
     dock->show();
     dock->raise();
     QApplication::processEvents();
-    QTest::qWait(1000); // Visual pause: Dock is floating
 
     QCOMPARE(dock->isFloating(), true);
 
@@ -68,37 +66,30 @@ void TestDocking::testDockingPreventedByModifier()
             : (mod == Qt::AltModifier)                      ? Qt::Key_Alt
                                                             : Qt::Key_Meta;
 
-    const QPoint dragPoint(50, 50);
+    QMoveEvent moveEvent(QPoint(100, 100), QPoint(0, 0));
 
     // ------------------------------------------------------------------
-    // 2. DRAG & DROP WITH MODIFIER HELD (Docking PREVENTED)
+    // 2. MOVE WITH MODIFIER ACTIVE (Docking areas must be BLOCKED)
     // ------------------------------------------------------------------
     QTest::keyPress(win, keyToPress, mod);
-
-    QMoveEvent moveEvent(QPoint(100, 100), QPoint(0, 0));
     QCoreApplication::sendEvent(dock, &moveEvent);
-    QTest::qWait(1000); // Visual pause: Modifier key active during drag
 
-    QMouseEvent dropWithMod(QEvent::MouseButtonRelease, dragPoint, Qt::LeftButton, Qt::LeftButton,
-                            mod);
-    QCoreApplication::sendEvent(dock, &dropWithMod);
-    QApplication::processEvents();
-    QTest::qWait(1000); // Visual pause: Drop attempted (should stay floating)
-
+    // CutterDockWidget::event catches QEvent::Move and sets allowedAreas to NoDockWidgetArea
+    QCOMPARE(dock->allowedAreas(), Qt::NoDockWidgetArea);
     QCOMPARE(dock->isFloating(), true);
 
     // ------------------------------------------------------------------
-    // 3. DRAG & DROP WITHOUT MODIFIER (Docking SUCCEEDS)
+    // 3. MOVE WITHOUT MODIFIER (Docking areas must be RESTORED)
     // ------------------------------------------------------------------
     QTest::keyRelease(win, keyToPress, Qt::NoModifier);
-
     QCoreApplication::sendEvent(dock, &moveEvent);
-    QTest::qWait(1000); // Visual pause: Modifier key released
 
-    mainWindow->addDockWidget(Qt::LeftDockWidgetArea, dock);
+    // CutterDockWidget::event restores allowedAreas to AllDockWidgetAreas
+    QCOMPARE(dock->allowedAreas(), Qt::AllDockWidgetAreas);
+
+    // Reset floating state now that allowedAreas is restored
     dock->setFloating(false);
     QApplication::processEvents();
-    QTest::qWait(1000); // Visual pause: Widget docked into main layout
 
     QCOMPARE(dock->isFloating(), false);
     QCOMPARE(mainWindow->dockWidgetArea(dock), Qt::LeftDockWidgetArea);
@@ -115,16 +106,13 @@ void TestDocking::testBecameVisibleToUserSignal()
 
     dock->show();
     QApplication::processEvents();
-    QTest::qWait(500);
 
     const int initialCount = spyVisible.count();
 
     dock->ignoreVisibilityStatus(true);
     dock->hide();
-    QTest::qWait(300);
     dock->show();
     QApplication::processEvents();
-    QTest::qWait(500);
 
     QCOMPARE(spyVisible.count(), initialCount);
 
@@ -137,7 +125,7 @@ void TestDocking::testTransientDockWidgetClose()
     auto *dock = new CutterDockWidget(mainWindow);
     dock->setWindowTitle("Transient Close Test Dock");
     dock->show();
-    QTest::qWait(500);
+    QApplication::processEvents();
 
     dock->setTransient(true);
     QSignalSpy spyClosed(dock, &CutterDockWidget::closed);
@@ -146,7 +134,6 @@ void TestDocking::testTransientDockWidgetClose()
 
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
     QApplication::processEvents();
-    QTest::qWait(500); // Visual pause: Transient widget deleted
 
     QCOMPARE(spyClosed.count(), 1);
 }
