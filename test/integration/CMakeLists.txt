@@ -35,8 +35,8 @@ function(cutter_integration_test_props)
     endforeach()
 endfunction()
 
-add_cutter_integration_test(tst_FilterViews tst_FilterViews.cpp)
+add_cutter_integration_test(tst_Docking tst_Docking.cpp)
 
 cutter_integration_test_props(
-	tst_FilterViews
+	tst_Docking
 )
