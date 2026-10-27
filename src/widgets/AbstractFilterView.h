@@ -23,13 +23,13 @@ public:
     void clearFilter();
 
     virtual void closeFilter();
+    virtual ItemCountLineEdit *lineEdit() const = 0;
 
 signals:
     void filterTextChanged(const QString &text);
     void filterClosed();
 
 protected:
-    virtual ItemCountLineEdit *lineEdit() const = 0;
 
     void setupSharedConnections();
     void showCustomContextMenu(const QPoint &pos);

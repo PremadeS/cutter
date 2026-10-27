@@ -14,6 +14,13 @@
 
 StringsModel::StringsModel(QObject *parent) : AddressableItemModel<QAbstractListModel>(parent) {}
 
+void StringsModel::setStrings(const QList<StringDescription> &strings)
+{
+    beginResetModel();
+    this->strings = strings;
+    endResetModel();
+}
+
 int StringsModel::rowCount(const QModelIndex &) const
 {
     return strings.count();
@@ -269,9 +276,7 @@ void StringsWidget::refreshSectionCombo()
 
 void StringsWidget::stringSearchFinished(const QList<StringDescription> &strings)
 {
-    model->beginResetModel();
-    model->strings = strings;
-    model->endResetModel();
+    model->setStrings(strings);
 
     qhelpers::adjustColumns(ui->stringsTreeView, StringsModel::ColumnCount, 0);
 

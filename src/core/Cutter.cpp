@@ -4800,7 +4800,10 @@ void CutterCore::modifyGlobalVariable(RVA offset, QString name, const QString &t
     }
     // Compare if the name is not the same - also rename it
     if (name.compare(glob->name)) {
-        rz_analysis_var_global_rename(core->analysis, glob->name, name.toStdString().c_str());
+        // TODO: THIS WAS A FIX BY ME!!!
+        const QByteArray oldName = QByteArray(glob->name);
+        rz_analysis_var_global_rename(core->analysis, oldName.constData(),
+                                      +name.toUtf8().constData());
     }
     char *errmsg = nullptr;
     RzType *globType = rz_type_parse_string_single(rz_analysis_get_type_db(core->analysis)->parser,

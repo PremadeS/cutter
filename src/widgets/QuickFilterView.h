@@ -21,8 +21,6 @@ public:
     ~QuickFilterView();
 
     void clearFilter();
-
-protected:
     ItemCountLineEdit *lineEdit() const override;
 
 private:

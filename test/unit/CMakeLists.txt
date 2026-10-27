@@ -1,6 +1,6 @@
 # helper function to register a single test
 function(cutter_add_unit_test TEST_NAME)
-    add_executable(${TEST_NAME} "${TEST_NAME}.cpp" ${TEST_COMMON_SOURCES})
+    add_executable(${TEST_NAME} "${TEST_NAME}.cpp")
 
     target_include_directories(${TEST_NAME} PRIVATE ${TEST_INCLUDES})
 
@@ -34,21 +34,20 @@ endfunction()
 
 # Add unit tests here (preferably alphabetically sorted)
 cutter_add_unit_tests(
-    tst_AbstractFilterView
-    tst_AddressableItemModel
-    tst_DisassemblyHelper
-    tst_GraphLayouts
-    tst_Json
-    tst_PjHandle
-    tst_ShortcutManager
-    tst_SyntaxHighlighter
-    tst_MdHighlighter
-    tst_Helpers
-    tst_BinaryTrees
-    tst_LinkedListPool
-    tst_RichTextPainter
-    tst_SelectionHighlight
-    tst_BasicInstructionHighlighter
-    tst_ModelConformance
-    tst_StringsFilter
+    test_AbstractFilterView
+    test_AddressableFilterProxy
+    test_BasicInstructionHighlighter
+    test_BinaryTrees
+    test_DisassemblyHelper
+    test_GraphLayouts
+    test_Helpers
+    test_Json
+    test_LinkedListPool
+    test_MdHighlighter
+    test_PjHandle
+    test_RichTextPainter
+    test_SelectionHighlight
+    test_ShortcutManager
+    test_StringsFilter
+    test_SyntaxHighlighter
 )

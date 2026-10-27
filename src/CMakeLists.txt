@@ -515,7 +515,7 @@ endif()
 
 list(REMOVE_ITEM SOURCES Main.cpp)
 
-# Make a source group for Visual Studio
+# Make source group for Visual Studio
 set(CUTTER_SOURCES ${OPTIONS} ${UI_FILES} ${QRC_FILES} ${PLATFORM_RESOURCES} ${SOURCES} ${HEADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${CUTTER_SOURCES})
 
