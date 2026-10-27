@@ -44,7 +44,12 @@ jobs:
       run: sudo apt --assume-yes install wget software-properties-common lsb-release
 
     - name: Uninstall old conflicting packages
-      run: sudo apt purge --assume-yes --auto-remove llvm python3-lldb-14 llvm-14
+      run: |
+        pkgs=$(dpkg-query -W -f='${db:Status-Abbrev} ${Package}\n' 'llvm' 'llvm-[0-9]*' 'python3-lldb-[0-9]*' 2>/dev/null \
+          | awk '$1 == "ii" {print $2}' | grep -v -- "-${LLVM_VERSION}$" || true)
+        if [ -n "$pkgs" ]; then
+          sudo apt-get purge --assume-yes --auto-remove $pkgs
+        fi
 
     - name: Install automatic LLVM ${{ env.LLVM_VERSION }}
       run: wget https://apt.llvm.org/llvm.sh -O /tmp/llvm-install.sh; chmod +x /tmp/llvm-install.sh; sudo /tmp/llvm-install.sh "$LLVM_VERSION"
