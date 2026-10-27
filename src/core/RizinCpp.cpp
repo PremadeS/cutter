@@ -8,7 +8,7 @@ QSet<QString> convertRzSetS(const RzSetS *set)
         return {};
     }
 
-    RzIterator rzIt = (RzIterator) { nullptr };
+    RzIterator rzIt = {};
     rz_set_s_as_iter(set, &rzIt);
 
     QSet<QString> res;

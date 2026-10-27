@@ -744,7 +744,7 @@ CutterRzIter<RzCoreDecodedBytes> CutterCore::getRzCoreDecodedBytesSingle(RVA add
     rz_io_read_at_mapped(core->io, addr, buf, sizeof(buf));
 
     // Warning! only safe to use with stack buffer, due to instruction count being 1
-    RzIterator it = (RzIterator) { nullptr };
+    RzIterator it = {};
     rz_core_analysis_bytes(core, addr, buf, sizeof(buf), 1, &it);
 
     return CutterRzIter<RzCoreDecodedBytes>(it);
@@ -1293,7 +1293,7 @@ QSet<QString> CutterCore::getConfigOptions(const char *k)
     if (!(node && node->options)) {
         return {};
     }
-    RzIterator rzIt = (RzIterator) { nullptr };
+    RzIterator rzIt = {};
     rz_set_s_as_iter(node->options, &rzIt);
 
     QSet<QString> res;
