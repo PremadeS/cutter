@@ -5,4 +5,5 @@ cutter_add_layer_tests(session
     test_CoreSignals
     test_IOModes
     test_SeekHistory
+    test_SessionLifecycle
 )

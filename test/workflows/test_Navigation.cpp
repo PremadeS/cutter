@@ -1,47 +1,44 @@
+/**
+ * @file test_Navigation.cpp
+ * @brief Moving through the binary from lists, history and xrefs keeps the views in step.
+ *
+ * Every way of jumping somewhere ends in a seek that the code views must follow. A list
+ * dock that doesn't seek on activation, back/forward that moves the core but not the
+ * views, or an xref that jumps to the wrong side of the reference are all wiring bugs
+ * that the core-level tests can't see.
+ */
+
 #include "Fixtures.h"
 #include "TestEnv.h"
+#include "ViewHelpers.h"
 
-#include "common/AddressableItemModel.h"
-#include "common/CutterSeekable.h"
-#include "core/MainWindow.h"
-#include "widgets/DisassemblerGraphView.h"
-#include "widgets/DisassemblyWidget.h"
+#include "dialogs/XrefsDialog.h"
+#include "widgets/CutterDockWidget.h"
 #include "widgets/FunctionsWidget.h"
-#include "widgets/GraphWidget.h"
+#include "widgets/MemoryDockWidget.h"
 
-#include <QSet>
+#include <QAction>
+#include <QScopeGuard>
 #include <QTest>
 #include <QTreeView>
 
 namespace {
 
 constexpr int viewRefreshTimeoutMs = 10000;
+constexpr int listRefreshTimeoutMs = 2000;
+constexpr int minimumCheckedLists = 3;
 
-template<class Dock>
-Dock *findSynchronizedDock(MainWindow *main)
+QModelIndex rowAwayFrom(QAbstractItemView *view, RVA current)
 {
-    const QList<Dock *> docks = main->findChildren<Dock *>();
-    for (Dock *dock : docks) {
-        if (dock->getSeekable() && dock->getSeekable()->isSynchronized()) {
-            return dock;
+    auto *addressable = dynamic_cast<AddressableItemModelI *>(view->model());
+    for (int row = 0; row < view->model()->rowCount(); ++row) {
+        const QModelIndex index = view->model()->index(row, 0);
+        const RVA address = addressable->address(index);
+        if (address != RVA_INVALID && address != current) {
+            return index;
         }
     }
-    return nullptr;
-}
-
-QSet<RVA> lineOffsets(DisassemblyWidget *disassembly)
-{
-    QSet<RVA> offsets;
-    const QList<DisassemblyLine> lines = disassembly->getLines();
-    for (const DisassemblyLine &line : lines) {
-        offsets.insert(line.offset);
-    }
-    return offsets;
-}
-
-bool graphHasBlock(GraphWidget *graph, RVA address)
-{
-    return graph->getGraphView()->getBlocks().count(address) > 0;
+    return {};
 }
 
 } // namespace
@@ -51,24 +48,36 @@ class TestNavigation : public QObject
     Q_OBJECT
 
 private slots:
+    void initTestCase();
     void activatingFunctionSyncsDisassemblyAndGraph();
+    void activatingAnyAddressableListRowSeeks();
+    void backAndForwardMoveTheViews();
+    void activatingXrefSeeksToReference();
+
+private:
+    MainWindow *main = nullptr;
+    DisassemblyWidget *disassembly = nullptr;
+    GraphWidget *graph = nullptr;
 };
+
+void TestNavigation::initTestCase()
+{
+    main = CutterTest::mainWindow();
+    QVERIFY(main);
+    disassembly = CutterTest::findSynchronizedDock<DisassemblyWidget>(main);
+    graph = CutterTest::findSynchronizedDock<GraphWidget>(main);
+    QVERIFY(disassembly);
+    QVERIFY(graph);
+}
 
 void TestNavigation::activatingFunctionSyncsDisassemblyAndGraph()
 {
-    MainWindow *main = CutterTest::mainWindow();
-    QVERIFY(main);
-
     auto *functions = main->findChild<FunctionsWidget *>();
-    auto *disassembly = findSynchronizedDock<DisassemblyWidget>(main);
-    auto *graph = findSynchronizedDock<GraphWidget>(main);
     QVERIFY(functions);
-    QVERIFY(disassembly);
-    QVERIFY(graph);
 
     disassembly->raiseMemoryWidget();
     QTRY_VERIFY(!disassembly->getLines().isEmpty());
-    const QSet<RVA> visibleBefore = lineOffsets(disassembly);
+    const QSet<RVA> visibleBefore = CutterTest::disassemblyOffsets(disassembly);
 
     functions->raiseMemoryWidget();
     auto *view = functions->findChild<QTreeView *>();
@@ -83,7 +92,7 @@ void TestNavigation::activatingFunctionSyncsDisassemblyAndGraph()
         const QModelIndex index = view->model()->index(row, 0);
         const RVA address = addressable->address(index);
         if (address != RVA_INVALID && address != CutterTest::core()->getOffset()
-            && !visibleBefore.contains(address) && !graphHasBlock(graph, address)) {
+            && !visibleBefore.contains(address) && !CutterTest::graphHasBlock(graph, address)) {
             targetIndex = index;
             target = address;
             break;
@@ -95,10 +104,119 @@ void TestNavigation::activatingFunctionSyncsDisassemblyAndGraph()
     QCOMPARE(CutterTest::core()->getOffset(), target);
 
     disassembly->raiseMemoryWidget();
-    QTRY_VERIFY_WITH_TIMEOUT(lineOffsets(disassembly).contains(target), viewRefreshTimeoutMs);
+    QTRY_VERIFY_WITH_TIMEOUT(CutterTest::disassemblyOffsets(disassembly).contains(target),
+                             viewRefreshTimeoutMs);
 
     graph->raiseMemoryWidget();
-    QTRY_VERIFY_WITH_TIMEOUT(graphHasBlock(graph, target), viewRefreshTimeoutMs);
+    QTRY_VERIFY_WITH_TIMEOUT(CutterTest::graphHasBlock(graph, target), viewRefreshTimeoutMs);
+}
+
+void TestNavigation::activatingAnyAddressableListRowSeeks()
+{
+    int checked = 0;
+    const QList<CutterDockWidget *> docks = main->findChildren<CutterDockWidget *>();
+    for (CutterDockWidget *dock : docks) {
+        if (qobject_cast<MemoryDockWidget *>(dock)) {
+            continue;
+        }
+        QAbstractItemView *view = CutterTest::addressableView(dock);
+        if (!view) {
+            continue;
+        }
+
+        const bool wasOpen = dock->toggleViewAction()->isChecked();
+        const auto restore = qScopeGuard([dock, wasOpen]() {
+            if (!wasOpen) {
+                dock->toggleDockWidget(false);
+            }
+        });
+        dock->toggleDockWidget(true);
+        dock->raiseMemoryWidget();
+        if (!CutterTest::waitForRows(view->model(), listRefreshTimeoutMs)) {
+            continue;
+        }
+
+        const QModelIndex index = rowAwayFrom(view, CutterTest::core()->getOffset());
+        if (!index.isValid()) {
+            continue;
+        }
+        const RVA target = dynamic_cast<AddressableItemModelI *>(view->model())->address(index);
+
+        emit view->activated(index);
+        QVERIFY2(CutterTest::core()->getOffset() == target,
+                 qPrintable(QStringLiteral("activating a row in '%1' did not seek to it")
+                                    .arg(dock->windowTitle())));
+        ++checked;
+    }
+    QVERIFY2(checked >= minimumCheckedLists, "too few list docks had rows to activate");
+}
+
+void TestNavigation::backAndForwardMoveTheViews()
+{
+    CutterCore *core = CutterTest::core();
+    RVA first = RVA_INVALID;
+    RVA second = RVA_INVALID;
+    const QList<FunctionDescription> functions = core->getAllFunctions();
+    for (const FunctionDescription &function : functions) {
+        if (function.offset == core->getOffset()) {
+            continue;
+        }
+        if (first == RVA_INVALID) {
+            first = function.offset;
+        } else if (second == RVA_INVALID) {
+            second = function.offset;
+        }
+    }
+    QVERIFY2(second != RVA_INVALID, "fixture needs at least three analyzed functions");
+
+    auto *back = main->findChild<QAction *>("actionBackward");
+    auto *forward = main->findChild<QAction *>("actionForward");
+    QVERIFY(back);
+    QVERIFY(forward);
+
+    core->seek(first);
+    core->seek(second);
+    disassembly->raiseMemoryWidget();
+    QTRY_VERIFY_WITH_TIMEOUT(CutterTest::disassemblyOffsets(disassembly).contains(second),
+                             viewRefreshTimeoutMs);
+
+    back->trigger();
+    QCOMPARE(core->getOffset(), first);
+    QTRY_VERIFY_WITH_TIMEOUT(CutterTest::disassemblyOffsets(disassembly).contains(first),
+                             viewRefreshTimeoutMs);
+
+    forward->trigger();
+    QCOMPARE(core->getOffset(), second);
+    QTRY_VERIFY_WITH_TIMEOUT(CutterTest::disassemblyOffsets(disassembly).contains(second),
+                             viewRefreshTimeoutMs);
+}
+
+void TestNavigation::activatingXrefSeeksToReference()
+{
+    CutterCore *core = CutterTest::core();
+    XrefsDialog dialog(main);
+    auto *toView = dialog.findChild<QAbstractItemView *>("toTreeWidget");
+    QVERIFY(toView);
+
+    QModelIndex index;
+    const QList<FunctionDescription> functions = core->getAllFunctions();
+    for (const FunctionDescription &function : functions) {
+        dialog.fillRefsForAddress(function.offset, function.name, false);
+        index = rowAwayFrom(toView, core->getOffset());
+        if (index.isValid()) {
+            break;
+        }
+    }
+    QVERIFY2(index.isValid(), "no function with a reference to it");
+    const RVA source = dynamic_cast<AddressableItemModelI *>(toView->model())->address(index);
+
+    dialog.show();
+    emit toView->activated(index);
+    QCOMPARE(core->getOffset(), source);
+
+    disassembly->raiseMemoryWidget();
+    QTRY_VERIFY_WITH_TIMEOUT(CutterTest::disassemblyOffsets(disassembly).contains(source),
+                             viewRefreshTimeoutMs);
 }
 
 CUTTER_APP_TEST_MAIN_WITH_FILE(TestNavigation, CutterTest::Fixtures::helloX64())

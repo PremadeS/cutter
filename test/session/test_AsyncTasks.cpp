@@ -2,10 +2,12 @@
  * @file test_AsyncTasks.cpp
  * @brief Background tasks run through the core's AsyncTaskManager.
  *
- * File loading and analysis run as tasks, and the UI decides what to show from their
- * finished signal and the manager's running state. A task reported twice runs
- * finalizeOpen twice; a task that ignores interrupt freezes Cutter when the user
- * cancels analysis (the core side of that bug).
+ * File loading, analysis and list refreshes run as tasks, and the UI decides what to
+ * show from their finished signal, the manager's running state and AsyncTask::wait().
+ * A task reported twice runs finalizeOpen twice; tasksChanged on a worker thread
+ * updates widgets off the GUI thread; wait() returning early lets FunctionsWidget and
+ * StringsWidget run two refreshes at once; a task that ignores interrupt freezes Cutter
+ * when the user cancels analysis.
  */
 
 #include "CallbackTask.h"
@@ -14,10 +16,14 @@
 
 #include "common/AnalysisTask.h"
 
+#include <QCoreApplication>
+#include <QMutex>
+#include <QMutexLocker>
 #include <QScopeGuard>
 #include <QSemaphore>
 #include <QSignalSpy>
 #include <QTest>
+#include <QThread>
 
 #include <atomic>
 #include <memory>
@@ -26,8 +32,28 @@ namespace {
 
 constexpr int taskTimeoutMs = 5000;
 constexpr int duplicateSignalWaitMs = 100;
+constexpr int queuedWaitMs = 200;
 constexpr int analysisStartTimeoutMs = 60000;
 constexpr int interruptTimeoutMs = 2000;
+
+struct Gate
+{
+    QSemaphore semaphore;
+    std::atomic<int> started { 0 };
+};
+
+std::shared_ptr<CutterTest::CallbackTask> gatedTask(const std::shared_ptr<Gate> &gate)
+{
+    return std::make_shared<CutterTest::CallbackTask>([gate]() {
+        ++gate->started;
+        gate->semaphore.acquire();
+    });
+}
+
+AsyncTaskManager *manager()
+{
+    return CutterTest::core()->getAsyncTaskManager();
+}
 
 } // namespace
 
@@ -36,40 +62,146 @@ class TestAsyncTasks : public QObject
     Q_OBJECT
 
 private slots:
+    void init();
+    void cleanup();
+
     void taskReportsFinishedOnceAndLeavesManager();
+    void tasksChangedArrivesOnGuiThread();
+    void managerRunsUntilEveryTaskFinished();
+    void managerKeepsTaskAliveUntilFinished();
+    void waitBlocksWhileTaskIsQueued();
     void interruptedAnalysisFinishesQuickly();
 };
 
+void TestAsyncTasks::init()
+{
+    QVERIFY(!manager()->getTasksRunning());
+}
+
+void TestAsyncTasks::cleanup()
+{
+    QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
+}
+
 void TestAsyncTasks::taskReportsFinishedOnceAndLeavesManager()
 {
-    AsyncTaskManager *manager = CutterTest::core()->getAsyncTaskManager();
-    QVERIFY(!manager->getTasksRunning());
-
-    QSemaphore gate;
-    std::atomic<bool> started { false };
-    auto task = std::make_shared<CutterTest::CallbackTask>([&]() {
-        started = true;
-        gate.acquire();
-    });
-    const auto releaseGate = qScopeGuard([&]() { gate.release(); });
+    auto gate = std::make_shared<Gate>();
+    auto task = gatedTask(gate);
+    const auto release = qScopeGuard([gate]() { gate->semaphore.release(); });
 
     QObject context;
     int finishedCount = 0;
     connect(task.get(), &AsyncTask::finished, &context, [&]() { ++finishedCount; });
-    QSignalSpy tasksSpy(manager, &AsyncTaskManager::tasksChanged);
+    QSignalSpy tasksSpy(manager(), &AsyncTaskManager::tasksChanged);
 
-    manager->start(task);
-    QVERIFY(manager->getTasksRunning());
-    QTRY_VERIFY_WITH_TIMEOUT(started.load(), taskTimeoutMs);
+    manager()->start(task);
+    QVERIFY(manager()->getTasksRunning());
+    QTRY_COMPARE_WITH_TIMEOUT(gate->started.load(), 1, taskTimeoutMs);
     QCOMPARE(finishedCount, 0);
 
-    gate.release();
+    gate->semaphore.release();
     QTRY_COMPARE_WITH_TIMEOUT(finishedCount, 1, taskTimeoutMs);
-    QTRY_VERIFY_WITH_TIMEOUT(!manager->getTasksRunning(), taskTimeoutMs);
+    QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
 
     QTest::qWait(duplicateSignalWaitMs);
     QCOMPARE(finishedCount, 1);
     QCOMPARE(tasksSpy.count(), 2);
+}
+
+void TestAsyncTasks::tasksChangedArrivesOnGuiThread()
+{
+    auto gate = std::make_shared<Gate>();
+    auto task = gatedTask(gate);
+    const auto release = qScopeGuard([gate]() { gate->semaphore.release(); });
+
+    QMutex mutex;
+    QList<QThread *> threads;
+    QObject context;
+    connect(
+            manager(), &AsyncTaskManager::tasksChanged, &context,
+            [&]() {
+                const QMutexLocker locker(&mutex);
+                threads.append(QThread::currentThread());
+            },
+            Qt::DirectConnection);
+
+    manager()->start(task);
+    gate->semaphore.release();
+    QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
+
+    const QMutexLocker locker(&mutex);
+    QVERIFY(!threads.isEmpty());
+    for (QThread *thread : std::as_const(threads)) {
+        QCOMPARE(thread, QCoreApplication::instance()->thread());
+    }
+}
+
+void TestAsyncTasks::managerRunsUntilEveryTaskFinished()
+{
+    auto firstGate = std::make_shared<Gate>();
+    auto secondGate = std::make_shared<Gate>();
+    auto first = gatedTask(firstGate);
+    auto second = gatedTask(secondGate);
+    const auto release = qScopeGuard([firstGate, secondGate]() {
+        firstGate->semaphore.release();
+        secondGate->semaphore.release();
+    });
+
+    QObject context;
+    bool firstFinished = false;
+    connect(first.get(), &AsyncTask::finished, &context, [&]() { firstFinished = true; });
+
+    manager()->start(first);
+    manager()->start(second);
+    QTRY_COMPARE_WITH_TIMEOUT(firstGate->started.load(), 1, taskTimeoutMs);
+
+    firstGate->semaphore.release();
+    QTRY_VERIFY_WITH_TIMEOUT(firstFinished, taskTimeoutMs);
+    QTest::qWait(duplicateSignalWaitMs);
+    QVERIFY(manager()->getTasksRunning());
+
+    secondGate->semaphore.release();
+    QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
+}
+
+void TestAsyncTasks::managerKeepsTaskAliveUntilFinished()
+{
+    auto gate = std::make_shared<Gate>();
+    auto task = gatedTask(gate);
+    const std::weak_ptr<AsyncTask> observer = task;
+    const auto release = qScopeGuard([gate]() { gate->semaphore.release(); });
+
+    manager()->start(task);
+    QTRY_COMPARE_WITH_TIMEOUT(gate->started.load(), 1, taskTimeoutMs);
+    task.reset();
+    QVERIFY(!observer.expired());
+
+    gate->semaphore.release();
+    QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
+    QTRY_VERIFY_WITH_TIMEOUT(observer.expired(), taskTimeoutMs);
+}
+
+void TestAsyncTasks::waitBlocksWhileTaskIsQueued()
+{
+    const int poolSize = QThread::idealThreadCount();
+    auto blockers = std::make_shared<Gate>();
+    const auto release =
+            qScopeGuard([blockers, poolSize]() { blockers->semaphore.release(poolSize); });
+    for (int i = 0; i < poolSize; ++i) {
+        manager()->start(gatedTask(blockers));
+    }
+    QTRY_COMPARE_WITH_TIMEOUT(blockers->started.load(), poolSize, taskTimeoutMs);
+
+    auto ran = std::make_shared<std::atomic<bool>>(false);
+    auto queued = std::make_shared<CutterTest::CallbackTask>([ran]() { *ran = true; });
+    manager()->start(queued);
+
+    QVERIFY2(!queued->wait(queuedWaitMs), "wait() returned while the task was still queued");
+    QVERIFY(!ran->load());
+
+    blockers->semaphore.release(poolSize);
+    QVERIFY(queued->wait(taskTimeoutMs));
+    QVERIFY(ran->load());
 }
 
 void TestAsyncTasks::interruptedAnalysisFinishesQuickly()
@@ -94,8 +226,14 @@ void TestAsyncTasks::interruptedAnalysisFinishesQuickly()
         analysisStarted = analysisStarted || log.contains("Executing analysis");
     });
     connect(task.get(), &AsyncTask::finished, &context, [&]() { finished = true; });
+    const auto stopOnEarlyExit = qScopeGuard([&]() {
+        if (!finished) {
+            task->interrupt();
+            task->wait();
+        }
+    });
 
-    CutterTest::core()->getAsyncTaskManager()->start(task);
+    manager()->start(task);
     QTRY_VERIFY_WITH_TIMEOUT(analysisStarted, analysisStartTimeoutMs);
     if (finished) {
         QSKIP("analysis finished before it could be interrupted");

@@ -18,6 +18,7 @@ set(CUTTER_TEST_HARNESS_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/common/TestEnv.h
     ${CMAKE_CURRENT_SOURCE_DIR}/common/Fixtures.h
     ${CMAKE_CURRENT_SOURCE_DIR}/common/UiHelpers.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/common/ViewHelpers.h
     ${CMAKE_CURRENT_SOURCE_DIR}/common/CallbackTask.h
 )
 

@@ -25,10 +25,20 @@ bool openFile(const QString &path);
 void analyze();
 RVA addressWithoutComment(RVA start);
 
+int runWithoutCore(int argc, char **argv, const TestRunner &runner);
 int runCoreTest(int argc, char **argv, const TestRunner &runner);
 int runAppTest(int argc, char **argv, const QString &fixture, const TestRunner &runner);
 
 } // namespace CutterTest
+
+#define CUTTER_NO_CORE_TEST_MAIN(TestClass)                                                        \
+    int main(int argc, char *argv[])                                                               \
+    {                                                                                              \
+        return CutterTest::runWithoutCore(argc, argv, [](int testArgc, char **testArgv) {          \
+            TestClass test;                                                                        \
+            return QTest::qExec(&test, testArgc, testArgv);                                        \
+        });                                                                                        \
+    }
 
 #define CUTTER_CORE_TEST_MAIN(TestClass)                                                           \
     int main(int argc, char *argv[])                                                               \

@@ -108,6 +108,15 @@ RVA addressWithoutComment(RVA start)
     return RVA_INVALID;
 }
 
+int runWithoutCore(int argc, char **argv, const TestRunner &runner)
+{
+    prepareEnvironment();
+
+    const QApplication app(argc, argv);
+
+    return runner(argc, argv);
+}
+
 int runCoreTest(int argc, char **argv, const TestRunner &runner)
 {
     prepareEnvironment();
