@@ -1,103 +1,171 @@
-#include "SyntaxHighlighter.h"
+/**
+ * @file test_SyntaxHighlighter.cpp
+ * @brief Token highlighting of the fallback C highlighter.
+ *
+ * The decompiler and graph views use FallbackSyntaxHighlighter when KSyntaxHighlighting is not
+ * available. A broken rule leaves keywords plain, colors parts of identifiers, or lets a comment
+ * bleed into the code after it.
+ */
+
+#include "common/SyntaxHighlighter.h"
 
 #include <QTextBlock>
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QtTest/QtTest>
 
-class TestSyntaxHighlighters : public QObject
+namespace {
+
+class Highlighted
+{
+public:
+    explicit Highlighted(const QString &text) : highlighter(&document)
+    {
+        document.setPlainText(text);
+        highlighter.rehighlight();
+    }
+
+    QColor colorAt(int position) const
+    {
+        const QTextBlock block = document.findBlock(position);
+        const int offset = position - block.position();
+        for (const QTextLayout::FormatRange &range : block.layout()->formats()) {
+            if (offset >= range.start && offset < range.start + range.length) {
+                return range.format.foreground().color();
+            }
+        }
+        return {};
+    }
+
+    const FallbackSyntaxHighlighter &rules() const { return highlighter; }
+
+    bool spanHasColor(int start, int length, const QColor &color) const
+    {
+        for (int position = start; position < start + length; ++position) {
+            if (colorAt(position) != color) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+private:
+    QTextDocument document;
+    FallbackSyntaxHighlighter highlighter;
+};
+
+} // namespace
+
+class TestSyntaxHighlighter : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void testFallbackKeywordsHighlighting();
-    void testFallbackCommentsHighlighting();
-    void testFallbackStringsHighlighting();
-    void testFallbackMultiLineComments();
+    void everyKeywordIsHighlighted_data(); // NOLINT
+    void everyKeywordIsHighlighted();
+    void keywordInsideIdentifierIsNotHighlighted_data(); // NOLINT
+    void keywordInsideIdentifierIsNotHighlighted();
+    void functionCallIsHighlighted();
+    void lineCommentCoversRestOfLine();
+    void stringLiteralIsHighlighted();
+    void blockCommentSpansLinesAndEnds();
 };
 
-void TestSyntaxHighlighters::testFallbackKeywordsHighlighting()
+void TestSyntaxHighlighter::everyKeywordIsHighlighted_data() // NOLINT
 {
-    QTextDocument doc;
-    FallbackSyntaxHighlighter highlighter(&doc);
-
-    doc.setPlainText("void main()");
-    highlighter.rehighlight();
-
-    const QTextBlock block = doc.firstBlock();
-    const auto layout = block.layout();
-
-    const auto formats = layout->formats();
-    QVERIFY(!formats.isEmpty());
-
-    const auto formatRange = formats.first();
-    QCOMPARE(formatRange.start, 0);
-    QCOMPARE(formatRange.length, 4);
-    QCOMPARE(formatRange.format.foreground().color(), QColor(80, 200, 215));
+    QTest::addColumn<QString>("keyword");
+    const FallbackSyntaxHighlighter highlighter;
+    for (const QString &keyword : highlighter.keywords()) {
+        QTest::newRow(qPrintable(keyword)) << keyword;
+    }
 }
 
-void TestSyntaxHighlighters::testFallbackCommentsHighlighting()
+void TestSyntaxHighlighter::everyKeywordIsHighlighted()
 {
-    QTextDocument doc;
-    FallbackSyntaxHighlighter highlighter(&doc);
+    QFETCH(const QString, keyword);
 
-    doc.setPlainText("int x = 0; // single line comment");
-    highlighter.rehighlight();
+    const QString text = QString("x %1 y").arg(keyword);
+    const int start = text.indexOf(keyword);
+    const Highlighted highlighted(text);
 
-    const QTextBlock block = doc.firstBlock();
-    const auto layout = block.layout();
-    const auto formats = layout->formats();
+    QVERIFY(highlighted.spanHasColor(start, keyword.size(),
+                                     highlighted.rules().keywordColor()));
+    QVERIFY(highlighted.colorAt(start - 1) != highlighted.rules().keywordColor());
+    QVERIFY(highlighted.colorAt(start + keyword.size())
+            != highlighted.rules().keywordColor());
+}
 
-    bool foundCommentFormat = false;
-    for (const auto &range : formats) {
-        if (range.start == 11 && range.length == 22) {
-            QCOMPARE(range.format.foreground().color(), QColor(Qt::gray));
-            foundCommentFormat = true;
-            break;
+void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted_data() // NOLINT
+{
+    everyKeywordIsHighlighted_data();
+}
+
+void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted()
+{
+    QFETCH(const QString, keyword);
+
+    const QString text = QString("x_%1_y").arg(keyword);
+    const Highlighted highlighted(text);
+
+    for (int position = 0; position < text.size(); ++position) {
+        QVERIFY(highlighted.colorAt(position) != highlighted.rules().keywordColor());
+    }
+}
+
+void TestSyntaxHighlighter::functionCallIsHighlighted()
+{
+    const QString name = "compute";
+    const QString text = QString("x = %1(y);").arg(name);
+    const int start = text.indexOf(name);
+    const Highlighted highlighted(text);
+
+    QVERIFY(highlighted.spanHasColor(start, name.size(),
+                                     highlighted.rules().functionColor()));
+    QVERIFY(highlighted.colorAt(text.indexOf('y'))
+            != highlighted.rules().functionColor());
+}
+
+void TestSyntaxHighlighter::lineCommentCoversRestOfLine()
+{
+    const QString code = "x = y;";
+    const QString text = code + " // note";
+    const int start = text.indexOf("//");
+    const Highlighted highlighted(text);
+
+    QVERIFY(highlighted.spanHasColor(start, text.size() - start,
+                                     highlighted.rules().commentColor()));
+    QVERIFY(!highlighted.spanHasColor(0, code.size(), highlighted.rules().commentColor()));
+}
+
+void TestSyntaxHighlighter::stringLiteralIsHighlighted()
+{
+    const QString literal = "\"hello world\"";
+    const QString text = QString("s = %1;").arg(literal);
+    const int start = text.indexOf(literal);
+    const Highlighted highlighted(text);
+
+    QVERIFY(highlighted.spanHasColor(start, literal.size(),
+                                     highlighted.rules().stringColor()));
+    QVERIFY(highlighted.colorAt(start - 1) != highlighted.rules().stringColor());
+    QVERIFY(highlighted.colorAt(start + literal.size())
+            != highlighted.rules().stringColor());
+}
+
+void TestSyntaxHighlighter::blockCommentSpansLinesAndEnds()
+{
+    const QString comment = "/* first\n middle\n last */";
+    const QString text = comment + " y";
+    const Highlighted highlighted(text);
+
+    for (int position = 0; position < comment.size(); ++position) {
+        if (comment.at(position) != '\n') {
+            QVERIFY2(highlighted.colorAt(position) == highlighted.rules().commentColor(),
+                     qPrintable(QString("position %1 is not a comment").arg(position)));
         }
     }
-    QVERIFY(foundCommentFormat);
+    QVERIFY(highlighted.colorAt(text.indexOf('y', comment.size()))
+            != highlighted.rules().commentColor());
 }
 
-void TestSyntaxHighlighters::testFallbackStringsHighlighting()
-{
-    QTextDocument doc;
-    FallbackSyntaxHighlighter highlighter(&doc);
-
-    doc.setPlainText("char *s = \"hello world\";");
-    highlighter.rehighlight();
-
-    const QTextBlock block = doc.firstBlock();
-    const auto layout = block.layout();
-    const auto formats = layout->formats();
-
-    bool foundStringFormat = false;
-    for (const auto &range : formats) {
-        if (range.start == 10 && range.length == 13) {
-            QCOMPARE(range.format.foreground().color(), QColor(Qt::darkGreen));
-            foundStringFormat = true;
-            break;
-        }
-    }
-    QVERIFY(foundStringFormat);
-}
-
-void TestSyntaxHighlighters::testFallbackMultiLineComments()
-{
-    QTextDocument doc;
-    FallbackSyntaxHighlighter highlighter(&doc);
-
-    doc.setPlainText("/* start comment\n line 2\n end comment */");
-    highlighter.rehighlight();
-
-    const QTextBlock block1 = doc.firstBlock();
-    const QTextBlock block2 = block1.next();
-    const QTextBlock block3 = block2.next();
-
-    QCOMPARE(block1.userState(), 1); // State 1: Inside multi-line comment
-    QCOMPARE(block2.userState(), 1);
-    QCOMPARE(block3.userState(), 0); // State 0: Comment closed
-}
-
-QTEST_MAIN(TestSyntaxHighlighters)
+QTEST_MAIN(TestSyntaxHighlighter)
 #include "test_SyntaxHighlighter.moc"

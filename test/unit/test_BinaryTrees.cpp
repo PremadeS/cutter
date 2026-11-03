@@ -33,48 +33,36 @@ void TestBinaryTrees::testPointSetMinTreeBasic()
 
 void TestBinaryTrees::testPointSetMinTreeLessThanQueries()
 {
-    // Tree array representation: [10, 20, 5, 15, 30, 2, 25, 40]
     PointSetMinTree tree(8, 100);
     const std::vector<int> values = { 10, 20, 5, 15, 30, 2, 25, 40 };
     for (size_t i = 0; i < values.size(); ++i) {
         tree.set(i, values[i]);
     }
 
-    // Test rightMostLessThan:
-    // Search in range [0; 4] for value less than 15 (values: 10, 20, 5, 15, 30) -> elements < 15 are 10 (idx 0), 5 (idx 2). Rightmost is 2.
     QCOMPARE(tree.rightMostLessThan(4, 15), 2);
 
-    // Search in range [0; 7] for value less than 10 -> elements < 10 are 5 (idx 2), 2 (idx 5). Rightmost is 5.
     QCOMPARE(tree.rightMostLessThan(7, 10), 5);
 
-    // Search in range [0; 1] for value less than 5 -> no such element
     QCOMPARE(tree.rightMostLessThan(1, 5), -1);
 
-    // Test leftMostLessThan:
-    // Search in range [0; 7] for value less than 15 -> elements < 15 are 10 (idx 0), 5 (idx 2), 2 (idx 5). Leftmost is 0.
     QCOMPARE(tree.leftMostLessThan(0, 15), 0);
 
-    // Search in range [3; 7] for value less than 10 (values: 15, 30, 2, 25, 40) -> element < 10 is 2 (idx 5).
     QCOMPARE(tree.leftMostLessThan(3, 10), 5);
 
-    // Search in range [6; 7] for value less than 10 (values: 25, 40) -> no such element
     QCOMPARE(tree.leftMostLessThan(6, 10), -1);
 }
 
 void TestBinaryTrees::testRangeAssignMaxTree()
 {
-    // Create RangeAssignMaxTree with 10 elements initialized to 0
     RangeAssignMaxTree tree(10, 0);
 
     QCOMPARE(tree.rangeMaximum(0, 10), 0);
 
-    // Set range [2, 6) to 10
     tree.setRange(2, 6, 10);
     QCOMPARE(tree.rangeMaximum(0, 2), 0);
     QCOMPARE(tree.rangeMaximum(2, 6), 10);
     QCOMPARE(tree.rangeMaximum(0, 10), 10);
 
-    // Overlapping update: set range [4, 8) to 20
     tree.setRange(4, 8, 20);
     QCOMPARE(tree.rangeMaximum(2, 4), 10);
     QCOMPARE(tree.rangeMaximum(4, 8), 20);
@@ -84,7 +72,7 @@ void TestBinaryTrees::testRangeAssignMaxTree()
 
 void TestBinaryTrees::testMinMaxAccumulateTree()
 {
-    // Test example case provided in class documentation
+    // Test example case provided in class doc
     MinMaxAccumulateTree<int> tree(30);
 
     tree.updateRange(1, 5, 10);

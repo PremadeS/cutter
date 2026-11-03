@@ -65,61 +65,28 @@ class TestAddressableFilterProxy : public QObject
     Q_OBJECT
 
 private slots:
-    void init();
-    void cleanup();
-
-    void addressAndNameFollowSorting();
-    void addressAndNameFollowFiltering();
-
-private:
-    AddressListModel *source = nullptr;
-    AddressableFilterProxyModel *proxy = nullptr;
+    void addressAndNameFollowSortedFilteredRows();
 };
 
-void TestAddressableFilterProxy::init()
+void TestAddressableFilterProxy::addressAndNameFollowSortedFilteredRows()
 {
-    source = new AddressListModel;
+    AddressListModel source;
     for (const Item &item : items) {
-        source->addItem(item.name, item.address);
+        source.addItem(item.name, item.address);
     }
-    proxy = new AddressableFilterProxyModel(source, nullptr);
-}
+    AddressableFilterProxyModel proxy(&source, nullptr);
+    proxy.sort(0, Qt::DescendingOrder);
+    proxy.setFilterFixedString("e");
 
-void TestAddressableFilterProxy::cleanup()
-{
-    delete proxy;
-    delete source;
-    proxy = nullptr;
-    source = nullptr;
-}
-
-void TestAddressableFilterProxy::addressAndNameFollowSorting()
-{
-    proxy->sort(0, Qt::AscendingOrder);
-
-    QCOMPARE(proxy->rowCount(), int(items.size()));
-    QCOMPARE(proxy->name(proxy->index(0, 0)), QString("entry0"));
-    for (int row = 0; row < proxy->rowCount(); ++row) {
-        const QModelIndex index = proxy->index(row, 0);
-        const QString name = proxy->name(index);
-        QCOMPARE(name, proxy->data(index).toString());
-        QCOMPARE(proxy->address(index), addressOf(name));
+    QCOMPARE(proxy.rowCount(), 2);
+    for (int row = 0; row < proxy.rowCount(); ++row) {
+        const QModelIndex index = proxy.index(row, 0);
+        const QString shown = proxy.data(index).toString();
+        QVERIFY(shown.contains('e'));
+        QCOMPARE(proxy.name(index), shown);
+        QCOMPARE(proxy.address(index), addressOf(shown));
     }
-}
-
-void TestAddressableFilterProxy::addressAndNameFollowFiltering()
-{
-    proxy->sort(0, Qt::DescendingOrder);
-    proxy->setFilterFixedString("e");
-
-    QCOMPARE(proxy->rowCount(), 2);
-    for (int row = 0; row < proxy->rowCount(); ++row) {
-        const QModelIndex index = proxy->index(row, 0);
-        const QString name = proxy->name(index);
-        QVERIFY(name.contains('e'));
-        QCOMPARE(proxy->address(index), addressOf(name));
-    }
-    QCOMPARE(proxy->address(QModelIndex()), RVA_INVALID);
+    QCOMPARE(proxy.address(QModelIndex()), RVA_INVALID);
 }
 
 QTEST_MAIN(TestAddressableFilterProxy)

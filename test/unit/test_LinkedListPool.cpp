@@ -18,7 +18,7 @@ private slots:
 void TestLinkedListPool::testMakeListAndIterate()
 {
     LinkedListPool<int> pool(10);
-    typename LinkedListPool<int>::List emptyList;
+    const LinkedListPool<int>::List emptyList;
     QVERIFY(emptyList.isEmpty());
 
     auto list = pool.makeList(42);
@@ -54,7 +54,7 @@ void TestLinkedListPool::testAppend()
 void TestLinkedListPool::testAppendWithEmpty()
 {
     LinkedListPool<int> pool(10);
-    typename LinkedListPool<int>::List emptyList;
+    LinkedListPool<int>::List emptyList;
     auto validList = pool.makeList(100);
 
     auto res1 = pool.append(emptyList, validList);
@@ -74,7 +74,7 @@ void TestLinkedListPool::testSplitTail()
     auto combined = pool.append(pool.append(l1, l2), l3); // [100, 200, 300]
 
     auto it = pool.head(combined);
-    ++it; // Points to 200
+    ++it; // points to 200
 
     auto tailPart = pool.splitTail(combined, it);
 

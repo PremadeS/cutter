@@ -2,9 +2,8 @@
  * @file test_AbstractFilterView.cpp
  * @brief Debounce, clear, close and show behavior of the list quick filter.
  *
- * Every list dock filters through this view. The debounce must coalesce typing into
- * one update, or large lists re-filter on every keystroke; clear and close must
- * reset the filter; showing it must focus the input.
+ * Every list dock filters through this view. Since almost every dock widget uses a subclass of
+ * this, although trivial it's still better to test the base implementation
  */
 
 #include "widgets/AbstractFilterView.h"
@@ -34,7 +33,7 @@ public:
     ItemCountLineEdit *lineEdit() const override { return m_lineEdit; }
 
 private:
-    ItemCountLineEdit *m_lineEdit;
+    ItemCountLineEdit *m_lineEdit; // TODO: rename
 };
 
 class TestAbstractFilterView : public QObject

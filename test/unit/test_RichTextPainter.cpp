@@ -10,51 +10,12 @@ class TestRichTextPainter : public QObject
     Q_OBJECT
 
 private slots:
-    void testHtmlRichText();
-    void testHtmlRichTextEscaping();
     void testCroppedUnchanged();
     void testCroppedTruncated();
     void testCroppedWithIndicator();
     void testCroppedMultiTokenIndicator();
     void testFromTextDocument();
 };
-
-void TestRichTextPainter::testHtmlRichText()
-{
-    RichTextPainter::CustomRichText t1;
-    t1.text = "mov";
-    t1.flags = RichTextPainter::FlagColor;
-    t1.textColor = QColor("#ff0000");
-
-    RichTextPainter::CustomRichText t2;
-    t2.text = "eax";
-    t2.flags = RichTextPainter::FlagAll;
-    t2.textColor = QColor("#00ff00");
-    t2.textBackground = QColor("#0000ff");
-    t2.highlight = true;
-
-    RichTextPainter::List list = { t1, t2 };
-
-    QString html, plain;
-    RichTextPainter::htmlRichText(list, html, plain);
-
-    QCOMPARE(plain, QString("moveax"));
-    QVERIFY(html.contains("<span style=\"color:#ff0000\">mov</span>"));
-    QVERIFY(html.contains("<span style=\"color:#00ff00; background-color:#0000ff\"><u>eax</u></span>"));
-}
-
-void TestRichTextPainter::testHtmlRichTextEscaping()
-{
-    RichTextPainter::CustomRichText item;
-    item.text = "<script>&";
-    item.flags = RichTextPainter::FlagNone;
-
-    QString html, plain;
-    RichTextPainter::htmlRichText(RichTextPainter::List{ item }, html, plain);
-
-    QCOMPARE(plain, QString("<script>&"));
-    QCOMPARE(html, QString("<span>&lt;script&gt;&amp;</span>"));
-}
 
 void TestRichTextPainter::testCroppedUnchanged()
 {

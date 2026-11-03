@@ -95,18 +95,15 @@ void TestMdHighlighter::testMultilineDocument()
     doc.setPlainText("## Header\nNormal text line\n; Assembly comment");
     highlighter.rehighlight();
 
-    // Line 1: Header
     QTextBlock block1 = doc.findBlockByNumber(0);
     const auto formats1 = block1.layout()->formats();
     QCOMPARE(formats1.size(), 1);
     QCOMPARE(formats1[0].format.foreground().color(), QColor(Qt::gray));
 
-    // Line 2: Normal text
     QTextBlock block2 = doc.findBlockByNumber(1);
     const auto formats2 = block2.layout()->formats();
     QCOMPARE(formats2.size(), 0);
 
-    // Line 3: Comment
     QTextBlock block3 = doc.findBlockByNumber(2);
     const auto formats3 = block3.layout()->formats();
     QCOMPARE(formats3.size(), 1);

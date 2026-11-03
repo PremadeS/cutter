@@ -78,7 +78,7 @@ void TestHelpers::testAppendRow()
 
     QVERIFY(item != nullptr);
     QCOMPARE(treeWidget.topLevelItemCount(), 1);
-    QCOMPARE(item->text(0), QString("0")); // Dummy hidden column
+    QCOMPARE(item->text(0), QString("0")); // dummy hidden column
     QCOMPARE(item->text(1), QString("Col1"));
     QCOMPARE(item->text(2), QString("Col2"));
     QCOMPARE(item->text(3), QString("Col3"));

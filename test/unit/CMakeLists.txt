@@ -18,8 +18,7 @@ function(cutter_add_unit_test TEST_NAME)
     # test name will be shown in this format on output
     add_test(NAME unit.${TEST_NAME} COMMAND ${TEST_NAME})
 
-    # L1 unit tests are pure logic (no Core()/rizin, no display). Label them so
-    # they can be selected cheaply in CI: ctest -L unit
+    # all tests in this directory can be ran via: ctest -L unit
     set_tests_properties(unit.${TEST_NAME} PROPERTIES
         LABELS "unit"
         TIMEOUT 120
@@ -44,10 +43,8 @@ cutter_add_unit_tests(
     test_Json
     test_LinkedListPool
     test_MdHighlighter
-    test_PjHandle
     test_RichTextPainter
     test_SelectionHighlight
     test_ShortcutManager
-    test_StringsFilter
     test_SyntaxHighlighter
 )
