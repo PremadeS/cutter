@@ -22,6 +22,7 @@ public:
 
     void clearFilter();
     ItemCountLineEdit *lineEdit() const override;
+    bool isClosable() const override { return true; }
 
 private:
     std::unique_ptr<Ui::QuickFilterView> ui;

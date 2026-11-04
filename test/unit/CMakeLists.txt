@@ -21,6 +21,7 @@ function(cutter_add_unit_test TEST_NAME)
     # all tests in this directory can be ran via: ctest -L unit
     set_tests_properties(unit.${TEST_NAME} PROPERTIES
         LABELS "unit"
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
         TIMEOUT 120
     )
 endfunction()

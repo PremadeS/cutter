@@ -1,15 +1,20 @@
 /**
  * @file test_AbstractFilterView.cpp
- * @brief Debounce, clear, close and show behavior of the list quick filter.
+ * @brief Debounce, clear, close and show behavior of the list quick filter, and its keys.
  *
- * Every list dock filters through this view. Since almost every dock widget uses a subclass of
- * this, although trivial it's still better to test the base implementation
+ * Every list dock and several dialogs filter through this view. attachTo() wires Find and
+ * Esc for all of them; when each widget wired the keys by hand, the Xrefs dialog shipped
+ * with Find not focusing the bar and Esc neither clearing nor closing it.
  */
 
+#include "shortcuts/ShortcutManager.h"
 #include "widgets/AbstractFilterView.h"
 #include "widgets/ItemCountLineEdit.h"
 
+#include <QDialog>
 #include <QLineEdit>
+#include <QListView>
+#include <QVBoxLayout>
 #include <QSignalSpy>
 #include <QtTest/QtTest>
 
@@ -24,17 +29,58 @@ class TestableFilterView : public AbstractFilterView
     Q_OBJECT
 
 public:
-    explicit TestableFilterView(QWidget *parent = nullptr)
-        : AbstractFilterView(parent), m_lineEdit(new ItemCountLineEdit(this))
+    explicit TestableFilterView(QWidget *parent = nullptr, bool closable = false)
+        : AbstractFilterView(parent), m_lineEdit(new ItemCountLineEdit(this)), closable(closable)
     {
         setupSharedConnections();
     }
 
     ItemCountLineEdit *lineEdit() const override { return m_lineEdit; }
+    bool isClosable() const override { return closable; }
 
 private:
     ItemCountLineEdit *m_lineEdit; // TODO: rename
+    bool closable;
 };
+
+/** A filter bar above the list it filters, the layout every list dock uses. */
+struct FilteredList
+{
+    explicit FilteredList(QWidget *window, bool closable)
+        : filter(new TestableFilterView(window, closable)), list(new QListView(window))
+    {
+        auto *layout = qobject_cast<QVBoxLayout *>(window->layout());
+        if (!layout) {
+            layout = new QVBoxLayout(window);
+        }
+        layout->addWidget(filter);
+        layout->addWidget(list);
+    }
+
+    TestableFilterView *filter;
+    QListView *list;
+};
+
+namespace {
+
+QKeySequence findKey()
+{
+    return Shortcuts()->getKeySequence("General.showFilter");
+}
+
+QKeySequence escKey()
+{
+    return Shortcuts()->getKeySequence("General.clearFilter");
+}
+
+bool showActive(QWidget *window)
+{
+    window->show();
+    window->activateWindow();
+    return QTest::qWaitForWindowActive(window);
+}
+
+} // namespace
 
 class TestAbstractFilterView : public QObject
 {
@@ -47,6 +93,15 @@ private slots:
     void testClearFilter();
     void testCloseFilter();
     void testShowFilter();
+
+    /** @brief Find pressed in the list shows a hidden bar and focuses it. */
+    void findInListShowsAndFocusesFilter();
+    /** @brief Esc clears the text, then closes a closable bar and refocuses the list. */
+    void escClearsThenClosesAndReturnsToList();
+    /** @brief A bar that can't close keeps Esc free once empty, so a dialog still closes. */
+    void escOnEmptyUnclosableBarClosesDialog();
+    /** @brief Two bars attached to two lists in one window each answer only their own list. */
+    void twoBarsInOneWindowStaySeparate();
 };
 
 void TestAbstractFilterView::testFilterTextChanged_data() // NOLINT
@@ -128,6 +183,86 @@ void TestAbstractFilterView::testShowFilter()
 
     QCOMPARE(filterView.isVisible(), true);
     QCOMPARE(filterView.focusWidget(), static_cast<QWidget *>(filterView.lineEdit()));
+}
+
+void TestAbstractFilterView::findInListShowsAndFocusesFilter()
+{
+    QWidget window;
+    FilteredList pair(&window, true);
+    pair.filter->attachTo(pair.list);
+    QVERIFY(showActive(&window));
+    pair.filter->hide();
+
+    pair.list->setFocus();
+    QTest::keySequence(pair.list, findKey());
+
+    QVERIFY(pair.filter->isVisible());
+    QCOMPARE(QApplication::focusWidget(), static_cast<QWidget *>(pair.filter->lineEdit()));
+}
+
+void TestAbstractFilterView::escClearsThenClosesAndReturnsToList()
+{
+    QWidget window;
+    FilteredList pair(&window, true);
+    pair.filter->attachTo(pair.list);
+    QVERIFY(showActive(&window));
+
+    pair.filter->showFilter();
+    QTest::keyClicks(pair.filter->lineEdit(), "main");
+
+    QTest::keySequence(pair.filter->lineEdit(), escKey());
+    QVERIFY(pair.filter->lineEdit()->text().isEmpty());
+    QVERIFY(pair.filter->isVisible());
+
+    QTest::keySequence(pair.filter->lineEdit(), escKey());
+    QVERIFY(!pair.filter->isVisible());
+    QCOMPARE(QApplication::focusWidget(), static_cast<QWidget *>(pair.list));
+
+    QTest::keySequence(pair.list, findKey());
+    QVERIFY2(pair.filter->isVisible(), "Find did not bring the closed bar back");
+}
+
+void TestAbstractFilterView::escOnEmptyUnclosableBarClosesDialog()
+{
+    QDialog dialog;
+    FilteredList pair(&dialog, false);
+    pair.filter->attachTo(pair.list, &dialog);
+    QVERIFY(showActive(&dialog));
+
+    pair.filter->showFilter();
+    QTest::keyClicks(pair.filter->lineEdit(), "main");
+    QTest::keySequence(pair.filter->lineEdit(), escKey());
+    QVERIFY(pair.filter->lineEdit()->text().isEmpty());
+    QVERIFY(dialog.isVisible());
+
+    QTest::keySequence(pair.filter->lineEdit(), escKey());
+    QVERIFY2(!dialog.isVisible(),
+             "Esc on an empty bar was swallowed instead of closing the dialog");
+}
+
+void TestAbstractFilterView::twoBarsInOneWindowStaySeparate()
+{
+    QWidget window;
+    FilteredList to(&window, true);
+    FilteredList from(&window, true);
+    to.filter->attachTo(to.list);
+    from.filter->attachTo(from.list);
+    QVERIFY(showActive(&window));
+    to.filter->hide();
+    from.filter->hide();
+
+    from.list->setFocus();
+    QTest::keySequence(from.list, findKey());
+    QVERIFY(from.filter->isVisible());
+    QVERIFY(!to.filter->isVisible());
+
+    to.filter->showFilter();
+    QTest::keyClicks(to.filter->lineEdit(), "to");
+    QTest::keyClicks(from.filter->lineEdit(), "from");
+    from.filter->lineEdit()->setFocus();
+    QTest::keySequence(from.filter->lineEdit(), escKey());
+    QVERIFY(from.filter->lineEdit()->text().isEmpty());
+    QCOMPARE(to.filter->lineEdit()->text(), QString("to"));
 }
 
 QTEST_MAIN(TestAbstractFilterView)
