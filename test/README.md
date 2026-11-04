@@ -10,7 +10,7 @@ and the state Cutter owns. They do not test rizin's own results.
 | --- | --- | --- |
 | `unit/` | nothing | Cutter's own algorithms and pure classes |
 | `session/` | core + fixture, no widgets | core operations emit the right signal, once, with the right data |
-| `dialogs/` | app, no loaded file | one dialog's flow: cancel, re-enter, error states |
+| `dialogs/` | app, no loaded file | dialog flows, including one dialog opening another: cancel, re-enter, error states; no MainWindow or docks |
 | `workflows/` | full MainWindow + fixture | user scenarios across several widgets |
 | `sweep/` | full MainWindow + fixture, Linux | every core signal against every connected slot (deadlocks); slow, aborts with every thread's stack |
 | `common/` | — | shared helper; the only code that knows how the core is created |

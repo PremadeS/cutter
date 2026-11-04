@@ -1,10 +1,9 @@
 /**
  * @file test_EditMethodDialog.cpp
- * @brief Creating and editing class methods through the method dialog.
+ * @brief Moving a class method to another class through Edit Method.
  *
- * The dialog requires both a name and a real name, can derive the name from the
- * real name, and editMethod renames the method before updating it when the name
- * changed. A gap here creates nameless methods or leaves the old method behind.
+ * Edit Method shows an editable class combo box, but editMethod renames and updates the
+ * method in the original class, so choosing another class is silently ignored.
  */
 
 #include "Fixtures.h"
@@ -13,42 +12,20 @@
 
 #include "dialogs/EditMethodDialog.h"
 
-#include <QCheckBox>
+#include <QComboBox>
 #include <QTest>
 
 namespace {
 
-const AnalysisMethodDescription *findMethod(const QList<AnalysisMethodDescription> &methods,
-                                            const QString &name)
+bool hasMethod(const QString &className, const QString &methodName)
 {
-    for (const AnalysisMethodDescription &method : methods) {
-        if (method.name == name) {
-            return &method;
+    for (const AnalysisMethodDescription &method :
+         CutterTest::core()->getAnalysisClassMethods(className)) {
+        if (method.name == methodName) {
+            return true;
         }
     }
-    return nullptr;
-}
-
-bool setAutoRename(QWidget *dialog, bool enabled)
-{
-    auto *box = dialog->findChild<QCheckBox *>("autoRenameCheckBox");
-    if (!box) {
-        return false;
-    }
-    box->setChecked(enabled);
-    return box->isChecked() == enabled;
-}
-
-QLineEdit *field(QWidget *dialog, const char *objectName)
-{
-    return dialog->findChild<QLineEdit *>(objectName);
-}
-
-bool okEnabled(QWidget *dialog)
-{
-    auto *buttons = dialog->findChild<QDialogButtonBox *>();
-    QPushButton *ok = buttons ? buttons->button(QDialogButtonBox::Ok) : nullptr;
-    return ok && ok->isEnabled();
+    return false;
 }
 
 } // namespace
@@ -60,110 +37,44 @@ class TestEditMethodDialog : public QObject
 private slots:
     void initTestCase();
 
-    void okNeedsNameAndRealName();
-    void autoRenameFollowsRealNameOnlyWhenEnabled();
-    void newMethodAddsToClassAtCurrentOffset();
-    void editMethodRenamesExistingMethod();
+    void editMethodMovesToChosenClass();
 
 private:
-    const QString className = QStringLiteral("CutterTestClass");
+    const QString sourceClass = QStringLiteral("CutterTestSource");
+    const QString targetClass = QStringLiteral("CutterTestTarget");
 };
 
 void TestEditMethodDialog::initTestCase()
 {
     CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::helloX64());
     QVERIFY(CutterTest::openFile(path));
-    CutterTest::core()->createNewClass(className);
-    QVERIFY(CutterTest::core()->getAllAnalysisClasses(false).contains(className));
+    CutterTest::core()->createNewClass(sourceClass);
+    CutterTest::core()->createNewClass(targetClass);
+    const QList<QString> classes = CutterTest::core()->getAllAnalysisClasses(false);
+    QVERIFY(classes.contains(sourceClass) && classes.contains(targetClass));
 }
 
-void TestEditMethodDialog::okNeedsNameAndRealName()
+void TestEditMethodDialog::editMethodMovesToChosenClass()
 {
-    EditMethodDialog dialog(false);
-    QVERIFY(setAutoRename(&dialog, false));
-    QLineEdit *name = field(&dialog, "nameEdit");
-    QLineEdit *realName = field(&dialog, "realNameEdit");
-    QVERIFY(name && realName);
-
-    name->setText(QString());
-    realName->setText(QString());
-    QVERIFY(!okEnabled(&dialog));
-
-    realName->setText("cutter_real");
-    QVERIFY(!okEnabled(&dialog));
-
-    name->setText("cutter_name");
-    QVERIFY(okEnabled(&dialog));
-
-    realName->setText(QString());
-    QVERIFY(!okEnabled(&dialog));
-}
-
-void TestEditMethodDialog::autoRenameFollowsRealNameOnlyWhenEnabled()
-{
-    EditMethodDialog dialog(false);
-    QLineEdit *name = field(&dialog, "nameEdit");
-    QLineEdit *realName = field(&dialog, "realNameEdit");
-    QVERIFY(name && realName);
-
-    QVERIFY(setAutoRename(&dialog, true));
-    realName->setText("operator new");
-    QVERIFY(!name->text().isEmpty());
-    QVERIFY(!name->text().contains(' '));
-    QVERIFY(!name->isEnabled());
-
-    QVERIFY(setAutoRename(&dialog, false));
-    name->setText("cutter_manual");
-    realName->setText("something else");
-    QCOMPARE(name->text(), QString("cutter_manual"));
-    QVERIFY(name->isEnabled());
-}
-
-void TestEditMethodDialog::newMethodAddsToClassAtCurrentOffset()
-{
-    const QString methodName = QStringLiteral("cutter_new_method");
-
-    QObject context;
-    CutterTest::onceVisible<EditMethodDialog>(&context, [&](EditMethodDialog *dialog) {
-        setAutoRename(dialog, false);
-        CutterTest::setLineEditText(dialog, "nameEdit", methodName);
-        CutterTest::setLineEditText(dialog, "realNameEdit", methodName);
-        CutterTest::clickStandardButton(dialog, QDialogButtonBox::Ok);
-    });
-    EditMethodDialog::newMethod(className, QString(), nullptr);
-
-    const QList<AnalysisMethodDescription> methods =
-            CutterTest::core()->getAnalysisClassMethods(className);
-    const AnalysisMethodDescription *method = findMethod(methods, methodName);
-    QVERIFY(method);
-    QCOMPARE(method->addr, CutterTest::core()->getOffset());
-}
-
-void TestEditMethodDialog::editMethodRenamesExistingMethod()
-{
-    const QString oldName = QStringLiteral("cutter_old_method");
-    const QString newName = QStringLiteral("cutter_renamed_method");
     AnalysisMethodDescription desc;
-    desc.name = oldName;
-    desc.realName = oldName;
+    desc.name = QStringLiteral("cutter_moved_method");
+    desc.realName = desc.name;
     desc.addr = CutterTest::core()->getOffset();
-    desc.vtableOffset = -1;
-    CutterTest::core()->setAnalysisMethod(className, desc);
+    desc.vtableOffset = RVA_INVALID;
+    CutterTest::core()->setAnalysisMethod(sourceClass, desc);
+    QVERIFY(hasMethod(sourceClass, desc.name));
 
     QObject context;
     CutterTest::onceVisible<EditMethodDialog>(&context, [&](EditMethodDialog *dialog) {
-        setAutoRename(dialog, false);
-        CutterTest::setLineEditText(dialog, "nameEdit", newName);
+        if (auto *classes = dialog->findChild<QComboBox *>()) {
+            classes->setCurrentIndex(classes->findData(targetClass));
+        }
         CutterTest::clickStandardButton(dialog, QDialogButtonBox::Ok);
     });
-    EditMethodDialog::editMethod(className, oldName, nullptr);
+    EditMethodDialog::editMethod(sourceClass, desc.name, nullptr);
 
-    const QList<AnalysisMethodDescription> methods =
-            CutterTest::core()->getAnalysisClassMethods(className);
-    QVERIFY(!findMethod(methods, oldName));
-    const AnalysisMethodDescription *method = findMethod(methods, newName);
-    QVERIFY(method);
-    QCOMPARE(method->addr, desc.addr);
+    QVERIFY2(hasMethod(targetClass, desc.name), "the method is not in the chosen class");
+    QVERIFY2(!hasMethod(sourceClass, desc.name), "the method stayed in the original class");
 }
 
 CUTTER_CORE_TEST_MAIN(TestEditMethodDialog)

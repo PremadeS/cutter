@@ -706,7 +706,8 @@ void CutterCore::renameFlag(const QString &old_name, const QString &new_name)
     if (!flag) {
         return;
     }
-    rz_flag_rename(core->flags, flag, new_name.toStdString().c_str());
+    const QString name = sanitizeStringForCommand(new_name);
+    rz_flag_rename(core->flags, flag, name.toStdString().c_str());
     emit flagsChanged();
 }
 

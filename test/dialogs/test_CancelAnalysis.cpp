@@ -1,5 +1,5 @@
 /**
- * @file test_AsyncTaskDialog.cpp
+ * @file test_CancelAnalysis.cpp
  * @brief Cancelling analysis from the progress dialog.
  *
  * After InitialOptionsDialog starts analysis, AsyncTaskDialog is the only way to stop
@@ -37,7 +37,7 @@ bool analysisStarted(AsyncTaskDialog *dialog)
 
 } // namespace
 
-class TestAsyncTaskDialog : public QObject
+class TestCancelAnalysis : public QObject
 {
     Q_OBJECT
 
@@ -45,7 +45,7 @@ private slots:
     void cancelDuringAnalysisDoesNotFreeze();
 };
 
-void TestAsyncTaskDialog::cancelDuringAnalysisDoesNotFreeze()
+void TestCancelAnalysis::cancelDuringAnalysisDoesNotFreeze()
 {
     CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::coreutilsLs());
 
@@ -82,5 +82,5 @@ void TestAsyncTaskDialog::cancelDuringAnalysisDoesNotFreeze()
                 || CutterTest::findVisibleTopLevel<NewFileDialog>());
 }
 
-CUTTER_APP_TEST_MAIN(TestAsyncTaskDialog)
-#include "test_AsyncTaskDialog.moc"
+CUTTER_APP_TEST_MAIN(TestCancelAnalysis)
+#include "test_CancelAnalysis.moc"

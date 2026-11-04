@@ -54,6 +54,12 @@ private slots:
 
     void renameAppliesToVariable();
     void newNameIsSanitized();
+    /**
+     * @brief Editing a variable works when the seek is in another function.
+     *
+     * applyFields() looks up the function at the seek instead of the one the dialog was
+     * opened for, so with the seek elsewhere OK does nothing. Red until fixed.
+     */
     void editAppliesWhenSeekIsInAnotherFunction();
 
 private:
@@ -74,6 +80,11 @@ void TestEditVariablesDialog::initTestCase()
             function = candidate.offset;
         } else if (otherFunction == RVA_INVALID && !hasVariables) {
             otherFunction = candidate.offset;
+        }
+
+        if (function != RVA_INVALID && otherFunction != RVA_INVALID) {
+            // found what we needed
+            break;
         }
     }
     QVERIFY2(function != RVA_INVALID, "no analyzed function with variables");

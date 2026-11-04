@@ -11,6 +11,7 @@
 #include "Fixtures.h"
 #include "TestEnv.h"
 
+#include <QScopeGuard>
 #include <QSignalSpy>
 #include <QTest>
 
@@ -38,6 +39,17 @@ bool hasVariable(CutterCore *core, RVA function, const QString &name)
     return false;
 }
 
+QString globalNameAt(CutterCore *core, RVA address)
+{
+    const QList<GlobalDescription> globals = core->getAllGlobals();
+    for (const GlobalDescription &global : globals) {
+        if (global.addr == address) {
+            return global.name;
+        }
+    }
+    return {};
+}
+
 } // namespace
 
 class TestCoreSignals : public QObject
@@ -52,6 +64,7 @@ private slots:
     void renameFunctionWithoutFunctionNotifiesNothing();
     void renameVariableNotifiesCodeViewsOnce();
     void flagEditsNotifyOnce();
+    void renameGlobalVariableKeepsTypeAndNotifiesOnce();
     void byteEditNotifiesInstructionChangedWithAddress();
     void undefineFunctionNotifiesFunctionsChanged();
 
@@ -192,6 +205,25 @@ void TestCoreSignals::flagEditsNotifyOnce()
     core->delFlag(renamed);
     QCOMPARE(spy.count(), 3);
     QVERIFY(!hasFlag(core, freeAddress, renamed));
+}
+
+void TestCoreSignals::renameGlobalVariableKeepsTypeAndNotifiesOnce()
+{
+    CutterCore *core = CutterTest::core();
+    const QString name = QStringLiteral("cutter_test_global");
+    const QString renamed = QStringLiteral("cutter_test_global_renamed");
+    const QString type = QStringLiteral("int");
+
+    QVERIFY(globalNameAt(core, freeAddress).isEmpty());
+    core->addGlobalVariable(freeAddress, name, type);
+    const auto removeGlobal = qScopeGuard([&]() { core->delGlobalVariable(freeAddress); });
+    QCOMPARE(globalNameAt(core, freeAddress), name);
+
+    QSignalSpy spy(core, &CutterCore::globalVarsChanged);
+    core->modifyGlobalVariable(freeAddress, renamed, type);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(globalNameAt(core, freeAddress), renamed);
+    QCOMPARE(core->getGlobalVariableType(freeAddress), type);
 }
 
 void TestCoreSignals::byteEditNotifiesInstructionChangedWithAddress()

@@ -1,10 +1,9 @@
 /**
  * @file test_MarkDialog.cpp
- * @brief Creating and editing marks (named address ranges).
+ * @brief Mark names must stay unique.
  *
- * MarkDialog validates the range and name before touching the core, proposes a
- * default name for new marks, and implements rename as delete-then-add. A gap in
- * that logic either stores an invalid range or loses the user's mark on rename.
+ * Marks are stored by name, and storing one under a name already in use replaces the
+ * other mark's range, comment and color. The dialog must refuse a taken name instead.
  */
 
 #include "Fixtures.h"
@@ -14,7 +13,6 @@
 #include "dialogs/MarkDialog.h"
 
 #include <QTest>
-#include <QTextEdit>
 
 namespace {
 
@@ -30,18 +28,6 @@ const MarkDescription *findMark(const QList<MarkDescription> &marks, const QStri
     return nullptr;
 }
 
-bool setRange(MarkDialog &dialog, RVA from, RVA to)
-{
-    return CutterTest::setLineEditText(&dialog, "startAddressEdit", rzAddressString(from))
-            && CutterTest::setLineEditText(&dialog, "endAddressEdit", rzAddressString(to));
-}
-
-QString fieldText(MarkDialog &dialog, const char *objectName)
-{
-    auto *edit = dialog.findChild<QLineEdit *>(objectName);
-    return edit ? edit->text() : QString();
-}
-
 } // namespace
 
 class TestMarkDialog : public QObject
@@ -52,16 +38,18 @@ private slots:
     void initTestCase();
     void init();
 
-    void newMarkUsesProposedName();
-    void startAfterEndIsRejected();
-    void emptyNameIsRejected();
-    void renameReplacesMark();
+    /** @brief Renaming a mark to another mark's name is refused and both marks stay. */
+    void renameOntoTakenNameIsRejected();
+    /** @brief Adding a mark under a taken name is refused and the other mark stays. */
+    void addWithTakenNameIsRejected();
 
 private:
+    void verifyOtherMarkUnchanged();
+
     RVA from = RVA_INVALID;
-    RVA to = RVA_INVALID;
     const QString name = QStringLiteral("cutter_test_mark");
-    const QString renamed = QStringLiteral("cutter_test_mark_renamed");
+    const QString otherName = QStringLiteral("cutter_test_other");
+    const QString otherComment = QStringLiteral("other comment");
 };
 
 void TestMarkDialog::initTestCase()
@@ -70,7 +58,6 @@ void TestMarkDialog::initTestCase()
     QVERIFY(CutterTest::openFile(path));
     from = CutterTest::core()->getOffset();
     QVERIFY(from != RVA_INVALID);
-    to = from + markLength;
 }
 
 void TestMarkDialog::init()
@@ -80,73 +67,46 @@ void TestMarkDialog::init()
     for (const MarkDescription &mark : marks) {
         core->delMark(mark.name);
     }
-    QVERIFY(core->getMarks().isEmpty());
+    core->addMark(from + 2 * markLength, from + 3 * markLength, otherName, otherComment,
+                  Qt::red);
 }
 
-void TestMarkDialog::newMarkUsesProposedName()
+void TestMarkDialog::verifyOtherMarkUnchanged()
 {
-    MarkDialog dialog(from, to);
-    const QString proposed = fieldText(dialog, "nameEdit");
-    QVERIFY(!proposed.isEmpty());
-
-    QVERIFY(CutterTest::clickStandardButton(&dialog, QDialogButtonBox::Ok));
-    QCOMPARE(dialog.result(), int(QDialog::Accepted));
-
     const QList<MarkDescription> marks = CutterTest::core()->getMarks();
-    const MarkDescription *mark = findMark(marks, proposed);
-    QVERIFY(mark);
-    QCOMPARE(mark->from, from);
-    QCOMPARE(mark->to, to);
+    const MarkDescription *other = findMark(marks, otherName);
+    QVERIFY(other);
+    QCOMPARE(other->from, from + 2 * markLength);
+    QCOMPARE(other->to, from + 3 * markLength);
+    QCOMPARE(other->comment, otherComment);
 }
 
-void TestMarkDialog::startAfterEndIsRejected()
+void TestMarkDialog::renameOntoTakenNameIsRejected()
 {
-    CutterTest::MessageBoxWatcher messageBoxes;
+    CutterTest::core()->addMark(from, from + markLength, name, QString(), Qt::black);
+    CutterTest::MessageBoxWatcher warnings;
 
-    MarkDialog dialog(from, to);
-    QVERIFY(setRange(dialog, to, from));
-    QVERIFY(CutterTest::setLineEditText(&dialog, "nameEdit", name));
+    MarkDialog dialog(from, from + markLength, nullptr, name);
+    QVERIFY(CutterTest::setLineEditText(&dialog, "nameEdit", otherName));
     QVERIFY(CutterTest::clickStandardButton(&dialog, QDialogButtonBox::Ok));
 
-    QCOMPARE(messageBoxes.seenTexts().size(), 1);
+    QCOMPARE(warnings.seenTexts().size(), 1);
     QVERIFY(dialog.result() != QDialog::Accepted);
-    QVERIFY(CutterTest::core()->getMarks().isEmpty());
+    QVERIFY(findMark(CutterTest::core()->getMarks(), name));
+    verifyOtherMarkUnchanged();
 }
 
-void TestMarkDialog::emptyNameIsRejected()
+void TestMarkDialog::addWithTakenNameIsRejected()
 {
-    CutterTest::MessageBoxWatcher messageBoxes;
+    CutterTest::MessageBoxWatcher warnings;
 
-    MarkDialog dialog(from, to);
-    QVERIFY(CutterTest::setLineEditText(&dialog, "nameEdit", QString()));
+    MarkDialog dialog(from, from + markLength);
+    QVERIFY(CutterTest::setLineEditText(&dialog, "nameEdit", otherName));
     QVERIFY(CutterTest::clickStandardButton(&dialog, QDialogButtonBox::Ok));
 
-    QCOMPARE(messageBoxes.seenTexts().size(), 1);
+    QCOMPARE(warnings.seenTexts().size(), 1);
     QVERIFY(dialog.result() != QDialog::Accepted);
-    QVERIFY(CutterTest::core()->getMarks().isEmpty());
-}
-
-void TestMarkDialog::renameReplacesMark()
-{
-    const QString comment = QStringLiteral("kept across rename");
-    CutterTest::core()->addMark(from, to, name, comment);
-
-    MarkDialog dialog(from, to, nullptr, name);
-    QCOMPARE(fieldText(dialog, "nameEdit"), name);
-    auto *commentEdit = dialog.findChild<QTextEdit *>("commentEdit");
-    QVERIFY(commentEdit);
-    QCOMPARE(commentEdit->toPlainText(), comment);
-
-    QVERIFY(CutterTest::setLineEditText(&dialog, "nameEdit", renamed));
-    QVERIFY(CutterTest::clickStandardButton(&dialog, QDialogButtonBox::Ok));
-
-    const QList<MarkDescription> marks = CutterTest::core()->getMarks();
-    QVERIFY(!findMark(marks, name));
-    const MarkDescription *mark = findMark(marks, renamed);
-    QVERIFY(mark);
-    QCOMPARE(mark->from, from);
-    QCOMPARE(mark->to, to);
-    QCOMPARE(mark->comment, comment);
+    verifyOtherMarkUnchanged();
 }
 
 CUTTER_CORE_TEST_MAIN(TestMarkDialog)

@@ -5,7 +5,8 @@
  * The dialog keeps the end and length fields in sync, turns the user's exclusive
  * end into an inclusive last address, and only enables OK for a usable range.
  * Mistakes here select one byte too many or too few, or let an invalid or
- * overflowing range through to every action that uses it.
+ * overflowing range through to every action that uses it. HexWidget reuses one dialog
+ * and reopens it at the cursor, so OK must use the start address the dialog shows.
  */
 
 #include "TestEnv.h"
@@ -64,6 +65,13 @@ private slots:
     void endBeforeStartIsInvalid();
     void emptyRangeNeedsAllowEmpty();
     void lengthOverflowIsInvalid();
+    /**
+     * @brief Reopening the dialog at a new address and pressing OK uses that address.
+     *
+     * HexWidget reuses one dialog. openAt() only sets the start field's text, so the start
+     * from the previous use is kept and OK selects the old range. Red until fixed.
+     */
+    void okRightAfterOpenUsesShownStart();
 };
 
 void TestHexdumpRangeDialog::endModeComputesLengthAndLastAddress()
@@ -131,6 +139,19 @@ void TestHexdumpRangeDialog::lengthOverflowIsInvalid()
 
     QVERIFY(!okEnabled(&dialog));
     QCOMPARE(fieldText(&dialog, "endAddressLineEdit"), QString("Invalid"));
+}
+
+void TestHexdumpRangeDialog::okRightAfterOpenUsesShownStart()
+{
+    HexdumpRangeDialog dialog;
+    dialog.openAt(0x1000);
+    QVERIFY(typeInto(&dialog, "endAddressLineEdit", "0x1010"));
+    QCOMPARE(dialog.getStartAddress(), RVA(0x1000));
+
+    dialog.openAt(0x2000);
+    QCOMPARE(fieldText(&dialog, "startAddressLineEdit"), QString("0x2000"));
+    QVERIFY2(!okEnabled(&dialog) || dialog.getStartAddress() == RVA(0x2000),
+             "OK uses a start address other than the one shown");
 }
 
 CUTTER_CORE_TEST_MAIN(TestHexdumpRangeDialog)

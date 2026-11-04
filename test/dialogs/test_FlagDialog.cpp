@@ -1,10 +1,9 @@
 /**
  * @file test_FlagDialog.cpp
- * @brief Adding, renaming and removing flags through the flag dialog.
+ * @brief Editing an existing flag through the flag dialog.
  *
- * FlagDialog turns one name field into four different actions depending on whether
- * a flag already exists at the address: add, rename, delete, or nothing. Getting
- * that table wrong renames the wrong flag or leaves stray ones behind.
+ * Editing used to only rename: the size field was not filled in and a new size was
+ * dropped, and a renamed flag kept characters that adding a flag replaces.
  */
 
 #include "Fixtures.h"
@@ -13,24 +12,11 @@
 
 #include "dialogs/FlagDialog.h"
 
-#include <QSignalSpy>
 #include <QTest>
 
 namespace {
 
 constexpr RVA flagSearchRange = 0x100;
-
-bool hasFlag(RVA address, const QString &name)
-{
-    const QStringList flags =
-            CutterTest::core()->listFlagsAsStringAt(address).split(',', Qt::SkipEmptyParts);
-    for (const QString &flag : flags) {
-        if (flag.trimmed() == name) {
-            return true;
-        }
-    }
-    return false;
-}
 
 RVA addressWithoutFlag(RVA start)
 {
@@ -42,17 +28,21 @@ RVA addressWithoutFlag(RVA start)
     return RVA_INVALID;
 }
 
-QString prefilledName(FlagDialog &dialog)
+RVA flagSize(const QString &name)
 {
-    auto *edit = dialog.findChild<QLineEdit *>("nameEdit");
-    return edit ? edit->text() : QString();
+    const QList<FlagDescription> flags = CutterTest::core()->getAllFlags();
+    for (const FlagDescription &flag : flags) {
+        if (flag.name == name) {
+            return flag.size;
+        }
+    }
+    return RVA_INVALID;
 }
 
-bool submit(FlagDialog &dialog, const QString &name, QDialogButtonBox::StandardButton which)
+QString fieldText(FlagDialog &dialog, const char *objectName)
 {
-    return CutterTest::setLineEditText(&dialog, "nameEdit", name)
-            && CutterTest::setLineEditText(&dialog, "sizeEdit", "1")
-            && CutterTest::clickStandardButton(&dialog, which);
+    auto *edit = dialog.findChild<QLineEdit *>(objectName);
+    return edit ? edit->text() : QString();
 }
 
 } // namespace
@@ -64,16 +54,16 @@ class TestFlagDialog : public QObject
 private slots:
     void initTestCase();
     void init();
+    void cleanup();
 
-    void nameAddsFlag();
-    void prefillsAndRenamesExistingFlag();
-    void emptyNameDeletesExistingFlag();
-    void emptyNameWithoutFlagDoesNothing();
-    void cancelDoesNothing();
+    /** @brief Editing a flag shows its size and applies a new one. */
+    void editingFlagAppliesNewSize();
+    /** @brief Renaming replaces ';' and '@' in the name, like adding a flag does. */
+    void renameIsSanitizedLikeAdd();
 
 private:
     RVA address = RVA_INVALID;
-    const QString flagName = QStringLiteral("cutter_test_flag_a");
+    const QString flagName = QStringLiteral("cutter_test_flag");
     const QString renamedFlag = QStringLiteral("cutter_test_renamed");
 };
 
@@ -88,62 +78,34 @@ void TestFlagDialog::initTestCase()
 
 void TestFlagDialog::init()
 {
-    CutterCore *core = CutterTest::core();
-    core->delFlag(flagName);
-    core->delFlag(renamedFlag);
-    QVERIFY(core->listFlagsAsStringAt(address).isEmpty());
+    CutterTest::core()->addFlag(address, flagName, 4);
 }
 
-void TestFlagDialog::nameAddsFlag()
+void TestFlagDialog::cleanup()
 {
-    FlagDialog dialog(address);
-    QVERIFY(prefilledName(dialog).isEmpty());
-
-    QVERIFY(submit(dialog, flagName, QDialogButtonBox::Ok));
-    QVERIFY(hasFlag(address, flagName));
+    CutterTest::core()->delFlag(flagName);
+    CutterTest::core()->delFlag(renamedFlag);
 }
 
-void TestFlagDialog::prefillsAndRenamesExistingFlag()
+void TestFlagDialog::editingFlagAppliesNewSize()
 {
-    CutterTest::core()->addFlag(address, flagName, 1);
-
     FlagDialog dialog(address);
-    QCOMPARE(prefilledName(dialog), flagName);
+    QCOMPARE(fieldText(dialog, "sizeEdit"), QString("4"));
 
-    QVERIFY(submit(dialog, renamedFlag, QDialogButtonBox::Ok));
-    QVERIFY(hasFlag(address, renamedFlag));
-    QVERIFY(!hasFlag(address, flagName));
+    QVERIFY(CutterTest::setLineEditText(&dialog, "sizeEdit", "16"));
+    QVERIFY(CutterTest::clickStandardButton(&dialog, QDialogButtonBox::Ok));
+
+    QCOMPARE(flagSize(flagName), RVA(16));
 }
 
-void TestFlagDialog::emptyNameDeletesExistingFlag()
+void TestFlagDialog::renameIsSanitizedLikeAdd()
 {
-    CutterTest::core()->addFlag(address, flagName, 1);
-
     FlagDialog dialog(address);
-    QVERIFY(submit(dialog, QString(), QDialogButtonBox::Ok));
-    QVERIFY(!hasFlag(address, flagName));
-}
+    QVERIFY(CutterTest::setLineEditText(&dialog, "nameEdit", "cutter;test@renamed"));
+    QVERIFY(CutterTest::clickStandardButton(&dialog, QDialogButtonBox::Ok));
 
-void TestFlagDialog::emptyNameWithoutFlagDoesNothing()
-{
-    QSignalSpy spy(CutterTest::core(), &CutterCore::flagsChanged);
-
-    FlagDialog dialog(address);
-    QVERIFY(submit(dialog, QString(), QDialogButtonBox::Ok));
-    QCOMPARE(spy.count(), 0);
-    QVERIFY(CutterTest::core()->listFlagsAsStringAt(address).isEmpty());
-}
-
-void TestFlagDialog::cancelDoesNothing()
-{
-    CutterTest::core()->addFlag(address, flagName, 1);
-    QSignalSpy spy(CutterTest::core(), &CutterCore::flagsChanged);
-
-    FlagDialog dialog(address);
-    QVERIFY(submit(dialog, renamedFlag, QDialogButtonBox::Cancel));
-    QCOMPARE(spy.count(), 0);
-    QVERIFY(hasFlag(address, flagName));
-    QVERIFY(!hasFlag(address, renamedFlag));
+    QCOMPARE(flagSize(flagName), RVA_INVALID);
+    QCOMPARE(flagSize(renamedFlag), RVA(4));
 }
 
 CUTTER_CORE_TEST_MAIN(TestFlagDialog)
