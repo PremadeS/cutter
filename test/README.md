@@ -19,15 +19,21 @@ Each `ctest` label matches its directory.
 
 ## Fixtures
 
-`session/`, `workflows/` and `sweep/` load binaries from
-[rizin-testbins](https://github.com/rizinorg/rizin-testbins), which is not part
-of this repository:
+`session/`, `dialogs/`, `workflows/` and `sweep/` load a few binaries from
+[rizin-testbins](https://github.com/rizinorg/rizin-testbins). CMake downloads
+only those files, at the commit pinned in `common/Fixtures.cmake`, into
+`build/test-fixtures/` and checks each one's SHA-256. Nothing to set up.
+
+If you already have rizin-testbins cloned, point CMake at it and nothing is
+downloaded:
 
 ```sh
 cmake -B build -DCUTTER_TESTBINS_DIR=/path/to/rizin-testbins
 ```
 
-Without it those tests are reported as skipped.
+Offline, or with `-DCUTTER_FETCH_TEST_FIXTURES=OFF`, tests that need a missing
+fixture are reported as skipped. To add a fixture, add a line to
+`common/Fixtures.cmake`; `Fixtures.h` is generated from it.
 
 ## Running
 

@@ -10,13 +10,12 @@ set(TEST_INCLUDES
 
 enable_testing()
 
-set(CUTTER_TESTBINS_DIR "" CACHE PATH
-    "Path to a rizin-testbins checkout used by the session, dialogs, workflows and sweep tests")
+include(${CMAKE_CURRENT_SOURCE_DIR}/common/Fixtures.cmake)
 
 set(CUTTER_TEST_HARNESS_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/common/TestEnv.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/common/TestEnv.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/common/Fixtures.h
+    ${CUTTER_TEST_GENERATED_DIR}/Fixtures.h
     ${CMAKE_CURRENT_SOURCE_DIR}/common/UiHelpers.h
     ${CMAKE_CURRENT_SOURCE_DIR}/common/ViewHelpers.h
     ${CMAKE_CURRENT_SOURCE_DIR}/common/CallbackTask.h
@@ -28,6 +27,7 @@ function(cutter_add_layer_test LAYER TEST_NAME)
     target_include_directories(${TEST_NAME} PRIVATE
         ${TEST_INCLUDES}
         ${CMAKE_SOURCE_DIR}/test/common
+        ${CUTTER_TEST_GENERATED_DIR}
     )
 
     set_target_properties(${TEST_NAME} PROPERTIES
@@ -46,7 +46,7 @@ function(cutter_add_layer_test LAYER TEST_NAME)
 
     set_tests_properties(${LAYER}.${TEST_NAME} PROPERTIES
         LABELS "${LAYER}"
-        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;CUTTER_TESTBINS_DIR=${CUTTER_TESTBINS_DIR}"
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen;CUTTER_TESTBINS_DIR=${CUTTER_TEST_FIXTURES_DIR}"
         TIMEOUT 300
         SKIP_RETURN_CODE 77
     )
