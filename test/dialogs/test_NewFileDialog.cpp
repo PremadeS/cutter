@@ -49,11 +49,8 @@ private:
 
 void TestNewFileDialog::initTestCase()
 {
-    helloPath = CutterTest::fixturePath(CutterTest::Fixtures::helloX64());
-    crackmePath = CutterTest::fixturePath(CutterTest::Fixtures::crackmeX86());
-    if (helloPath.isEmpty() || crackmePath.isEmpty()) {
-        QSKIP("rizin-testbins not available, set CUTTER_TESTBINS_DIR");
-    }
+    CUTTER_REQUIRE_FIXTURE(helloPath, CutterTest::Fixtures::helloX64());
+    CUTTER_REQUIRE_FIXTURE(crackmePath, CutterTest::Fixtures::crackmeX86());
 }
 
 void TestNewFileDialog::init()

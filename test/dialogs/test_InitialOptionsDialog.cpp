@@ -54,10 +54,7 @@ private:
 
 void TestInitialOptionsDialog::initTestCase()
 {
-    path = CutterTest::fixturePath(CutterTest::Fixtures::helloX64());
-    if (path.isEmpty()) {
-        QSKIP("rizin-testbins not available, set CUTTER_TESTBINS_DIR");
-    }
+    CUTTER_REQUIRE_FIXTURE(path, CutterTest::Fixtures::helloX64());
 }
 
 void TestInitialOptionsDialog::init()

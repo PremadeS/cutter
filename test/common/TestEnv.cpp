@@ -69,12 +69,19 @@ namespace CutterTest {
 
 QString fixturePath(const QString &relativePath)
 {
-    const QString root = qEnvironmentVariable("CUTTER_TESTBINS_DIR");
+    const QString root = qEnvironmentVariable(testbinsVariable);
     if (root.isEmpty()) {
         return {};
     }
     const QFileInfo info(QDir(root).filePath(relativePath));
     return info.isFile() ? info.absoluteFilePath() : QString();
+}
+
+const char *missingFixtureMessage()
+{
+    static const QByteArray message =
+            QByteArray("rizin-testbins not available, set ") + testbinsVariable;
+    return message.constData();
 }
 
 CutterCore *core()
@@ -137,8 +144,8 @@ int runAppTest(int argc, char **argv, const QString &fixture, const TestRunner &
     if (!fixture.isEmpty()) {
         file = fixturePath(fixture);
         if (file.isEmpty()) {
-            std::fprintf(stderr, "SKIP: fixture '%s' not found, set CUTTER_TESTBINS_DIR\n",
-                         qPrintable(fixture));
+            std::fprintf(stderr, "SKIP: fixture '%s' not found: %s\n", qPrintable(fixture),
+                         missingFixtureMessage());
             return skipReturnCode;
         }
     }

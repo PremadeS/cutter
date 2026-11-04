@@ -37,10 +37,7 @@ private slots:
 
 void TestSessionLifecycle::destroyingCoreStopsRunningAnalysisFirst()
 {
-    const QString path = CutterTest::fixturePath(CutterTest::Fixtures::coreutilsLs());
-    if (path.isEmpty()) {
-        QSKIP("rizin-testbins not available, set CUTTER_TESTBINS_DIR");
-    }
+    CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::coreutilsLs());
 
     auto core = std::make_unique<CutterCore>();
     core->initialize(false);

@@ -4,16 +4,15 @@
  *
  * File loading, analysis and list refreshes run as tasks, and the UI decides what to
  * show from their finished signal, the manager's running state and AsyncTask::wait().
- * A task reported twice runs finalizeOpen twice; tasksChanged on a worker thread
- * updates widgets off the GUI thread; wait() returning early lets FunctionsWidget and
- * StringsWidget run two refreshes at once; a task that ignores interrupt freezes Cutter
- * when the user cancels analysis.
+ * A task reported twice runs finalizeOpen twice; a task finishing on a pool thread must
+ * update the manager's task list on the GUI thread, or the list races; wait() returning
+ * early lets FunctionsWidget and StringsWidget run two refreshes at once; a task that
+ * ignores interrupt freezes Cutter when the user cancels analysis.
  */
 
 #include "CallbackTask.h"
 #include "Fixtures.h"
 #include "TestEnv.h"
-
 #include "common/AnalysisTask.h"
 
 #include <QCoreApplication>
@@ -65,11 +64,43 @@ private slots:
     void init();
     void cleanup();
 
+    /**
+     * @brief One task goes start -> running -> finished exactly once.
+     */
     void taskReportsFinishedOnceAndLeavesManager();
+
+    /**
+     * @brief tasksChanged is always emitted on the GUI thread.
+     *
+     * A direct-connected lambda runs on the emitting thread and records it. The finish emit
+     * sits next to tasks.removeOne(), so a background-thread emit means the task list was changed
+     * off the GUI thread while the GUI reads it.
+     */
     void tasksChangedArrivesOnGuiThread();
+
+    /**
+     * @brief The manager reports running until its last task finishes.
+     */
     void managerRunsUntilEveryTaskFinished();
+
+    /**
+     * @brief The manager owns a running task even after the caller drops it.
+     */
     void managerKeepsTaskAliveUntilFinished();
+
+    /**
+     * @brief wait() blocks while a task is queued and has not started.
+     *
+     * Every background thread is filled with gated tasks so the next one cannot run because there
+     * is no room, hence stays in queued state. wait() must time out until the gated tasks finish.
+     *
+     * wait() returning early means it isn't handled correctly on queued tasks.
+     */
     void waitBlocksWhileTaskIsQueued();
+
+    /**
+     * @brief Interrupting a real analysis finishes it quickly and cleanly.
+     */
     void interruptedAnalysisFinishesQuickly();
 };
 
@@ -99,7 +130,7 @@ void TestAsyncTasks::taskReportsFinishedOnceAndLeavesManager()
     QTRY_COMPARE_WITH_TIMEOUT(gate->started.load(), 1, taskTimeoutMs);
     QCOMPARE(finishedCount, 0);
 
-    gate->semaphore.release();
+    gate->semaphore.release(); // release so task can finish
     QTRY_COMPARE_WITH_TIMEOUT(finishedCount, 1, taskTimeoutMs);
     QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
 
@@ -196,8 +227,12 @@ void TestAsyncTasks::waitBlocksWhileTaskIsQueued()
     auto queued = std::make_shared<CutterTest::CallbackTask>([ran]() { *ran = true; });
     manager()->start(queued);
 
-    QVERIFY2(!queued->wait(queuedWaitMs), "wait() returned while the task was still queued");
-    QVERIFY(!ran->load());
+    const bool returned = queued->wait(queuedWaitMs);
+
+    // shouldn't fail unless idead thread count in manager is manually changed to different value
+    QVERIFY2(!ran->load(), "queued task ran: the pool was not full");
+
+    QVERIFY2(!returned, "wait() returned while the task was still queued");
 
     blockers->semaphore.release(poolSize);
     QVERIFY(queued->wait(taskTimeoutMs));
@@ -206,15 +241,13 @@ void TestAsyncTasks::waitBlocksWhileTaskIsQueued()
 
 void TestAsyncTasks::interruptedAnalysisFinishesQuickly()
 {
-    const QString path = CutterTest::fixturePath(CutterTest::Fixtures::coreutilsLs());
-    if (path.isEmpty()) {
-        QSKIP("rizin-testbins not available, set CUTTER_TESTBINS_DIR");
-    }
+    CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::coreutilsLs());
 
+    const CommandDescription analysis = { "aaaa", "Auto analysis (experimental)" };
     InitialOptions options;
     options.filename = path;
     options.endian = InitialOptions::Endianness::Auto;
-    options.analysisCmd = { { "aaaa", "Auto analysis (experimental)" } };
+    options.analysisCmd = { analysis };
 
     auto task = std::make_shared<AnalysisTask>();
     task->setOptions(options);
@@ -223,7 +256,7 @@ void TestAsyncTasks::interruptedAnalysisFinishesQuickly()
     bool analysisStarted = false;
     bool finished = false;
     connect(task.get(), &AsyncTask::logChanged, &context, [&](const QString &log) {
-        analysisStarted = analysisStarted || log.contains("Executing analysis");
+        analysisStarted = analysisStarted || log.contains(analysis.translatedDescription());
     });
     connect(task.get(), &AsyncTask::finished, &context, [&]() { finished = true; });
     const auto stopOnEarlyExit = qScopeGuard([&]() {

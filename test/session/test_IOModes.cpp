@@ -59,10 +59,7 @@ private:
 
 void TestIOModes::initTestCase()
 {
-    const QString fixture = CutterTest::fixturePath(CutterTest::Fixtures::helloX64());
-    if (fixture.isEmpty()) {
-        QSKIP("rizin-testbins not available, set CUTTER_TESTBINS_DIR");
-    }
+    CUTTER_REQUIRE_FIXTURE(const QString fixture, CutterTest::Fixtures::helloX64());
     QVERIFY(tempDir.isValid());
     filePath = tempDir.filePath("io-modes-fixture");
     QVERIFY(QFile::copy(fixture, filePath));
@@ -128,8 +125,8 @@ void TestIOModes::cacheModeEditLeavesFileUntouched()
 
     core->editBytes(address, hexOf(patched));
     QCOMPARE(core->ioRead(address, 1), patched);
-    QCOMPARE(fileHash(), originalHash);
 
+    QCOMPARE(fileHash(), originalHash);
     core->resetWriteCache();
     QCOMPARE(core->ioRead(address, 1), original);
 }

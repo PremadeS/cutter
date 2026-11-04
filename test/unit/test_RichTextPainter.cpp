@@ -1,9 +1,9 @@
 #include "RichTextPainter.h"
 
 #include <QTest>
-#include <QTextDocument>
-#include <QTextCursor>
 #include <QTextCharFormat>
+#include <QTextCursor>
+#include <QTextDocument>
 
 class TestRichTextPainter : public QObject
 {

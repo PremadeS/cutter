@@ -71,10 +71,7 @@ private:
 
 void TestEditMethodDialog::initTestCase()
 {
-    const QString path = CutterTest::fixturePath(CutterTest::Fixtures::helloX64());
-    if (path.isEmpty()) {
-        QSKIP("rizin-testbins not available, set CUTTER_TESTBINS_DIR");
-    }
+    CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::helloX64());
     QVERIFY(CutterTest::openFile(path));
     CutterTest::core()->createNewClass(className);
     QVERIFY(CutterTest::core()->getAllAnalysisClasses(false).contains(className));
