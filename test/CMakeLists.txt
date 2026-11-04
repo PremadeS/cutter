@@ -11,7 +11,7 @@ set(TEST_INCLUDES
 enable_testing()
 
 set(CUTTER_TESTBINS_DIR "" CACHE PATH
-    "Path to a rizin-testbins checkout used by the session, dialogs and workflows tests")
+    "Path to a rizin-testbins checkout used by the session, dialogs, workflows and sweep tests")
 
 set(CUTTER_TEST_HARNESS_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/common/TestEnv.cpp
@@ -62,3 +62,4 @@ add_subdirectory(unit)
 add_subdirectory(session)
 add_subdirectory(dialogs)
 add_subdirectory(workflows)
+add_subdirectory(sweep)

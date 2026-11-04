@@ -3,6 +3,7 @@
 
 #include <QString>
 
+// Relative to rizin-testbins structure
 namespace CutterTest::Fixtures {
 
 inline QString helloX64()

@@ -55,6 +55,7 @@ void TestCoreLocking::init()
     CutterTest::core()->delComment(address);
 }
 
+// valuable if we ever switch from recursive mutex to plain, inside CutterCore
 void TestCoreLocking::slotCanReadCoreDuringSignal()
 {
     CutterCore *core = CutterTest::core();

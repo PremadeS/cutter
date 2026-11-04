@@ -12,13 +12,14 @@ and the state Cutter owns. They do not test rizin's own results.
 | `session/` | core + fixture, no widgets | core operations emit the right signal, once, with the right data |
 | `dialogs/` | app, no loaded file | one dialog's flow: cancel, re-enter, error states |
 | `workflows/` | full MainWindow + fixture | user scenarios across several widgets |
+| `sweep/` | full MainWindow + fixture, Linux | every core signal against every connected slot (deadlocks); slow, aborts with every thread's stack |
 | `common/` | — | shared helper; the only code that knows how the core is created |
 
 Each `ctest` label matches its directory.
 
 ## Fixtures
 
-`session/` and `workflows/` load binaries from
+`session/`, `workflows/` and `sweep/` load binaries from
 [rizin-testbins](https://github.com/rizinorg/rizin-testbins), which is not part
 of this repository:
 
