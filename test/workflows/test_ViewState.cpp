@@ -25,7 +25,7 @@ namespace {
 constexpr int viewRefreshTimeoutMs = 10000;
 constexpr int decompileTimeoutMs = 60000;
 constexpr int settleMs = 500;
-constexpr int scrolledInstructions = 3;
+constexpr int maxScrollLines = 50;
 constexpr int graphScrollPixels = 40;
 constexpr RVA minimumBlocks = 4;
 
@@ -84,16 +84,22 @@ void TestViewState::disassemblyKeepsTopLineAndSeekAfterComment()
                              viewRefreshTimeoutMs);
 
     const RVA topBefore = CutterTest::disassemblyTopOffset(disassembly);
-    disassembly->scrollInstructions(scrolledInstructions);
+    for (int i = 0; i < maxScrollLines; ++i) {
+        if (CutterTest::disassemblyTopOffset(disassembly) != topBefore) {
+            break;
+        }
+        disassembly->scrollInstructions(1);
+    }
     const RVA top = CutterTest::disassemblyTopOffset(disassembly);
     QVERIFY(top != RVA_INVALID);
-    QVERIFY(top != topBefore);
+    QVERIFY2(top != topBefore, "scrolling did not move the view past the first address");
+    const QString topText = disassembly->getLines().at(disassembly->getStartIndex()).text;
     const RVA seek = core->getOffset();
 
     RVA address = RVA_INVALID;
     const QList<DisassemblyLine> lines = disassembly->getLines();
     for (int i = disassembly->getStartIndex() + 1; i < disassembly->getEndIndex(); ++i) {
-        if (core->getCommentAt(lines.at(i).offset).isEmpty()) {
+        if (lines.at(i).offset != top && core->getCommentAt(lines.at(i).offset).isEmpty()) {
             address = lines.at(i).offset;
             break;
         }
@@ -107,6 +113,7 @@ void TestViewState::disassemblyKeepsTopLineAndSeekAfterComment()
     QTRY_VERIFY_WITH_TIMEOUT(CutterTest::disassemblyContains(disassembly, comment),
                              viewRefreshTimeoutMs);
     QCOMPARE(CutterTest::disassemblyTopOffset(disassembly), top);
+    QCOMPARE(disassembly->getLines().at(disassembly->getStartIndex()).text, topText);
     QCOMPARE(core->getOffset(), seek);
 }
 

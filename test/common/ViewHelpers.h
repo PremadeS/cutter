@@ -72,7 +72,8 @@ inline bool modelContains(const QAbstractItemModel *model, const QString &text,
                 return true;
             }
         }
-        if (modelContains(model, text, model->index(row, 0, parent))) {
+        const QModelIndex child = model->index(row, 0, parent);
+        if (model->hasChildren(child) && modelContains(model, text, child)) {
             return true;
         }
     }

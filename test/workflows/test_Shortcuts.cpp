@@ -4,24 +4,31 @@
  *
  * Many docks register the same key (Copy, Find) with a widget-local context. A wrong
  * context makes the key ambiguous so nothing happens, or lets another dock handle it.
- * The hexdump copy shortcut once did nothing at all.
+ * The hexdump copy shortcut once did nothing at all. Every filter bar wires Find and
+ * Esc itself; the Xrefs dialog once shipped with neither working. Filter bars in docks
+ * and in the dialogs opened in initTestCase are found at runtime and all checked.
  */
 
 #include "Fixtures.h"
 #include "TestEnv.h"
 #include "ViewHelpers.h"
 
+#include "dialogs/TypesVariablesDialog.h"
+#include "dialogs/XrefsDialog.h"
 #include "shortcuts/ShortcutManager.h"
 #include "widgets/AbstractFilterView.h"
-#include "widgets/FunctionsWidget.h"
+#include "widgets/CutterDockWidget.h"
 #include "widgets/HexdumpWidget.h"
-#include "widgets/StringsWidget.h"
+#include "widgets/QuickFilterView.h"
 
 #include <QApplication>
 #include <QClipboard>
+#include <QHash>
+#include <QPointer>
 #include <QScopeGuard>
 #include <QTest>
-#include <QTreeView>
+
+#include <memory>
 
 namespace {
 
@@ -33,6 +40,28 @@ bool focusIsWithin(QWidget *widget)
     return focus && (focus == widget || widget->isAncestorOf(focus));
 }
 
+/** The list a filter bar filters: the item view closest to it among its siblings. */
+QAbstractItemView *pairedList(QWidget *filter)
+{
+    for (QWidget *child = filter; child->parentWidget(); child = child->parentWidget()) {
+        const QObjectList siblings = child->parentWidget()->children();
+        const qsizetype own = siblings.indexOf(child);
+        QAbstractItemView *closest = nullptr;
+        qsizetype distance = siblings.size();
+        for (qsizetype i = 0; i < siblings.size(); ++i) {
+            auto *view = qobject_cast<QAbstractItemView *>(siblings.at(i));
+            if (view && qAbs(i - own) < distance) {
+                closest = view;
+                distance = qAbs(i - own);
+            }
+        }
+        if (closest) {
+            return closest;
+        }
+    }
+    return nullptr;
+}
+
 } // namespace
 
 class TestShortcuts : public QObject
@@ -41,17 +70,49 @@ class TestShortcuts : public QObject
 
 private slots:
     void initTestCase();
+    void cleanup();
     void hexdumpCopyShortcutCopiesSelection();
-    void filterShortcutOpensOnlyFocusedListFilter();
+    /**
+     * @brief Every filter bar: Find shows and focuses it, Esc clears it, Esc again closes it
+     * (if it can close), and Find brings it back. Other filter bars stay as they were.
+     */
+    void filterBarKeyboardCycle_data();
+    void filterBarKeyboardCycle();
 
 private:
+    QString filterRowName(AbstractFilterView *filter) const;
+
     MainWindow *main = nullptr;
+    std::unique_ptr<XrefsDialog> xrefs;
+    std::unique_ptr<TypesVariablesDialog> typeVariables;
+    QMap<QString, QPointer<AbstractFilterView>> filters;
 };
 
 void TestShortcuts::initTestCase()
 {
     main = CutterTest::mainWindow();
     QVERIFY(main);
+    main->activateWindow();
+    QVERIFY(QTest::qWaitForWindowActive(main));
+
+    xrefs = std::make_unique<XrefsDialog>(main);
+    xrefs->fillRefsForAddress(CutterTest::core()->getOffset(), "cutter_test", true);
+    typeVariables = std::make_unique<TypesVariablesDialog>(main, "int");
+
+    const QList<AbstractFilterView *> bars = main->findChildren<AbstractFilterView *>();
+    for (AbstractFilterView *bar : bars) {
+        filters.insert(filterRowName(bar), bar);
+    }
+}
+
+void TestShortcuts::cleanup()
+{
+    const QWidgetList windows = QApplication::topLevelWidgets();
+    for (QWidget *window : windows) {
+        if (window != main && window->isVisible()) {
+            window->hide();
+        }
+    }
     main->activateWindow();
     QVERIFY(QTest::qWaitForWindowActive(main));
 }
@@ -80,38 +141,102 @@ void TestShortcuts::hexdumpCopyShortcutCopiesSelection()
     QTRY_COMPARE(QApplication::clipboard()->text(), expected);
 }
 
-void TestShortcuts::filterShortcutOpensOnlyFocusedListFilter()
+QString TestShortcuts::filterRowName(AbstractFilterView *filter) const
 {
-    auto *functions = main->findChild<FunctionsWidget *>();
-    auto *strings = main->findChild<StringsWidget *>();
-    QVERIFY(functions);
-    QVERIFY(strings);
-    strings->toggleDockWidget(true);
-    strings->raiseMemoryWidget();
-    functions->raiseMemoryWidget();
+    QString owner;
+    if (filter->window() == main) {
+        for (QWidget *parent = filter->parentWidget(); parent; parent = parent->parentWidget()) {
+            if (qobject_cast<CutterDockWidget *>(parent)) {
+                owner = parent->objectName();
+                break;
+            }
+        }
+    } else {
+        owner = filter->window()->metaObject()->className();
+    }
+    return owner + '/' + filter->objectName();
+}
 
-    auto *functionsFilter = functions->findChild<AbstractFilterView *>();
-    auto *stringsFilter = strings->findChild<AbstractFilterView *>();
-    auto *functionsList = functions->findChild<QTreeView *>();
-    QVERIFY(functionsFilter);
-    QVERIFY(stringsFilter);
-    QVERIFY(functionsList);
+void TestShortcuts::filterBarKeyboardCycle_data()
+{
+    QTest::addColumn<QString>("filter");
+    for (auto it = filters.cbegin(); it != filters.cend(); ++it) {
+        QTest::newRow(qPrintable(it.key())) << it.key();
+    }
+}
 
-    const QList<QKeySequence> keys = Shortcuts()->getKeySequences("General.showFilter");
-    QVERIFY(!keys.isEmpty());
+void TestShortcuts::filterBarKeyboardCycle()
+{
+    QFETCH(const QString, filter);
+    AbstractFilterView *bar = filters.value(filter);
+    QVERIFY(bar);
 
-    functionsFilter->closeFilter();
-    const auto restore = qScopeGuard([functionsFilter]() { functionsFilter->closeFilter(); });
-    const bool stringsFilterVisible = stringsFilter->isVisible();
+    QWidget *window = bar->window();
+    if (window == main) {
+        auto *dock = bar->parentWidget();
+        while (dock && !qobject_cast<CutterDockWidget *>(dock)) {
+            dock = dock->parentWidget();
+        }
+        QVERIFY(dock);
+        static_cast<CutterDockWidget *>(dock)->toggleDockWidget(true);
+        static_cast<CutterDockWidget *>(dock)->raiseMemoryWidget();
+    } else {
+        window->show();
+    }
+    const auto hideDialog = qScopeGuard([window, this]() {
+        if (window != main) {
+            window->hide();
+        }
+    });
+    window->activateWindow();
+    QVERIFY(QTest::qWaitForWindowActive(window));
 
-    functionsList->setFocus(Qt::OtherFocusReason);
-    QTRY_VERIFY(functionsList->hasFocus());
+    QAbstractItemView *list = pairedList(bar);
+    QVERIFY2(list, "no list next to the filter bar");
+    const bool closable = qobject_cast<QuickFilterView *>(bar) != nullptr;
+    if (closable) {
+        bar->closeFilter();
+    } else {
+        bar->clearFilter();
+    }
 
-    QTest::keySequence(functionsList, keys.first());
+    QHash<AbstractFilterView *, bool> othersVisible;
+    for (AbstractFilterView *other : std::as_const(filters)) {
+        if (other && other != bar) {
+            othersVisible.insert(other, other->isVisible());
+        }
+    }
 
-    QTRY_VERIFY(functionsFilter->isVisible());
-    QTRY_VERIFY(QApplication::focusWidget() == functionsFilter->lineEdit());
-    QCOMPARE(stringsFilter->isVisible(), stringsFilterVisible);
+    const QKeySequence showKey = Shortcuts()->getKeySequences("General.showFilter").value(0);
+    const QKeySequence clearKey = Shortcuts()->getKeySequences("General.clearFilter").value(0);
+    QVERIFY(!showKey.isEmpty() && !clearKey.isEmpty());
+
+    list->setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(list->hasFocus());
+    QTest::keySequence(list, showKey);
+    QTRY_VERIFY2(bar->isVisible() && QApplication::focusWidget() == bar->lineEdit(),
+                 "the find shortcut did not show and focus the filter");
+    for (auto it = othersVisible.cbegin(); it != othersVisible.cend(); ++it) {
+        QVERIFY2(it.key()->isVisible() == it.value(), "the find shortcut changed another filter");
+    }
+
+    QTest::keyClicks(bar->lineEdit(), "cutter");
+    QTest::keySequence(bar->lineEdit(), clearKey);
+    QTRY_VERIFY2(bar->lineEdit()->text().isEmpty(), "Esc did not clear the filter");
+    QVERIFY2(window->isVisible(), "Esc closed the window instead of clearing the filter");
+
+    if (!closable) {
+        return;
+    }
+    QTest::keySequence(bar->lineEdit(), clearKey);
+    QTRY_VERIFY2(!bar->isVisible(), "Esc on an empty filter did not close it");
+    QVERIFY2(window->isVisible(), "Esc closed the window instead of the filter");
+
+    list->setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(list->hasFocus());
+    QTest::keySequence(list, showKey);
+    QTRY_VERIFY2(bar->isVisible() && QApplication::focusWidget() == bar->lineEdit(),
+                 "the find shortcut did not bring a closed filter back");
 }
 
 CUTTER_APP_TEST_MAIN_WITH_FILE(TestShortcuts, CutterTest::Fixtures::helloX64())

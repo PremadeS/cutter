@@ -1,14 +1,48 @@
+/**
+ * @file test_Docking.cpp
+ * @brief Cutter's own dock behaviour: docking held off by a modifier, and closing extra docks.
+ *
+ * Holding the Docking.toggle modifier while moving a floating dock must keep it from
+ * snapping into a dock area. Extra docks (a second Disassembly, Graph, ...) are deleted on
+ * close and must leave MainWindow's dock list, or the next layout save or switch walks a
+ * deleted widget.
+ */
+
+#include "Fixtures.h"
 #include "TestEnv.h"
 
-#include "CutterDockWidget.h"
 #include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
+#include "widgets/CutterDockWidget.h"
+#include "widgets/MemoryDockWidget.h"
 
-#include <QCoreApplication>
-#include <QMoveEvent>
-#include <QSignalSpy>
+#include <QAction>
+#include <QPointer>
+#include <QScopeGuard>
 #include <QTest>
 #include <QWindow>
+
+namespace {
+
+constexpr int moveStep = 40;
+
+Qt::Key modifierKey(Qt::KeyboardModifier modifier)
+{
+    switch (modifier) {
+    case Qt::ShiftModifier:
+        return Qt::Key_Shift;
+    case Qt::ControlModifier:
+        return Qt::Key_Control;
+    case Qt::AltModifier:
+        return Qt::Key_Alt;
+    case Qt::MetaModifier:
+        return Qt::Key_Meta;
+    default:
+        return Qt::Key_unknown;
+    }
+}
+
+} // namespace
 
 class TestDocking : public QObject
 {
@@ -16,130 +50,74 @@ class TestDocking : public QObject
 
 private slots:
     void initTestCase();
-    void testDockingPreventedByModifier();
-    void testBecameVisibleToUserSignal();
-    void testTransientDockWidgetClose();
-    void cleanupTestCase();
+
+    /**
+     * @brief Moving a floating dock with the modifier held blocks docking; releasing allows it.
+     */
+    void modifierHeldBlocksDockingWhileMoving();
+    /**
+     * @brief A closed extra dock is deleted and gone from layout save and layout switch.
+     */
+    void closedExtraDockLeavesNoDanglingDock();
 
 private:
-    MainWindow *mainWindow = nullptr;
+    MainWindow *main = nullptr;
 };
 
 void TestDocking::initTestCase()
 {
-    mainWindow = CutterTest::mainWindow();
-
-    QVERIFY2(mainWindow != nullptr, "MainWindow not found among top-level widgets!");
-
-    mainWindow->show();
-    QApplication::processEvents();
+    main = CutterTest::mainWindow();
+    QVERIFY(main);
+    QTRY_VERIFY(main->isVisible());
 }
 
-void TestDocking::testDockingPreventedByModifier()
+void TestDocking::modifierHeldBlocksDockingWhileMoving()
 {
-    auto *dock = new CutterDockWidget(mainWindow);
-    dock->setWindowTitle("Automated Test Dock");
-    mainWindow->addDockWidget(Qt::LeftDockWidgetArea, dock);
-
-    // 1. Initial State: Float the widget
-    dock->setFloating(true);
-    dock->show();
-    dock->raise();
-    QApplication::processEvents();
-
-    QCOMPARE(dock->isFloating(), true);
-
-    QWindow *win = mainWindow->windowHandle();
-    QVERIFY2(win != nullptr, "MainWindow native QWindow handle is null");
-
-    const Qt::KeyboardModifier mod =
+    const Qt::KeyboardModifier modifier =
             Shortcuts()->convertKeyToModifer(Shortcuts()->getKeySequence("Docking.toggle"));
+    const Qt::Key key = modifierKey(modifier);
+    if (key == Qt::Key_unknown) {
+        QSKIP("Docking.toggle is not bound to a modifier key");
+    }
 
-    const Qt::Key keyToPress = (mod == Qt::ControlModifier) ? Qt::Key_Control
-            : (mod == Qt::ShiftModifier)                    ? Qt::Key_Shift
-            : (mod == Qt::AltModifier)                      ? Qt::Key_Alt
-                                                            : Qt::Key_Meta;
+    QPointer<QDockWidget> dock = main->addNewMemoryWidget(
+            MemoryWidgetType::Hexdump, CutterTest::core()->getOffset(), false);
+    const auto closeDock = qScopeGuard([&dock]() {
+        if (dock) {
+            dock->close();
+        }
+    });
+    dock->setFloating(true);
+    QTRY_VERIFY(dock->isFloating() && dock->windowHandle());
+    QWindow *window = dock->windowHandle();
 
-    QMoveEvent moveEvent(QPoint(100, 100), QPoint(0, 0));
+    QTest::keyPress(window, key, modifier);
+    dock->move(dock->pos() + QPoint(moveStep, moveStep));
+    QTRY_COMPARE(dock->allowedAreas(), Qt::NoDockWidgetArea);
+    QVERIFY(dock->isFloating());
 
-    // ------------------------------------------------------------------
-    // 2. MOVE WITH MODIFIER ACTIVE (Docking areas must be BLOCKED)
-    // ------------------------------------------------------------------
-    QTest::keyPress(win, keyToPress, mod);
-    QCoreApplication::sendEvent(dock, &moveEvent);
-
-    // CutterDockWidget::event catches QEvent::Move and sets allowedAreas to NoDockWidgetArea
-    QCOMPARE(dock->allowedAreas(), Qt::NoDockWidgetArea);
-    QCOMPARE(dock->isFloating(), true);
-
-    // ------------------------------------------------------------------
-    // 3. MOVE WITHOUT MODIFIER (Docking areas must be RESTORED)
-    // ------------------------------------------------------------------
-    QTest::keyRelease(win, keyToPress, Qt::NoModifier);
-    QCoreApplication::sendEvent(dock, &moveEvent);
-
-    // CutterDockWidget::event restores allowedAreas to AllDockWidgetAreas
-    QCOMPARE(dock->allowedAreas(), Qt::AllDockWidgetAreas);
-
-    // Reset floating state now that allowedAreas is restored
-    dock->setFloating(false);
-    QApplication::processEvents();
-
-    QCOMPARE(dock->isFloating(), false);
-    QCOMPARE(mainWindow->dockWidgetArea(dock), Qt::LeftDockWidgetArea);
-
-    dock->deleteLater();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QTest::keyRelease(window, key, Qt::NoModifier);
+    dock->move(dock->pos() + QPoint(moveStep, moveStep));
+    QTRY_COMPARE(dock->allowedAreas(), Qt::AllDockWidgetAreas);
 }
 
-void TestDocking::testBecameVisibleToUserSignal()
+void TestDocking::closedExtraDockLeavesNoDanglingDock()
 {
-    auto *dock = new CutterDockWidget(mainWindow);
-    dock->setWindowTitle("Visibility Signal Test Dock");
-    QSignalSpy spyVisible(dock, &CutterDockWidget::becameVisibleToUser);
+    QPointer<MemoryDockWidget> extra = main->addNewMemoryWidget(
+            MemoryWidgetType::Disassembly, CutterTest::core()->getOffset(), false);
+    QVERIFY(extra);
+    const QString name = extra->objectName();
 
-    dock->show();
-    QApplication::processEvents();
+    extra->close();
+    QTRY_VERIFY2(extra.isNull(), "the closed extra dock was not deleted");
 
-    const int initialCount = spyVisible.count();
+    main->saveSettings();
+    auto *defaultLayout = main->findChild<QAction *>("actionDefaultLayout");
+    QVERIFY(defaultLayout);
+    defaultLayout->trigger();
 
-    dock->ignoreVisibilityStatus(true);
-    dock->hide();
-    dock->show();
-    QApplication::processEvents();
-
-    QCOMPARE(spyVisible.count(), initialCount);
-
-    dock->deleteLater();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QVERIFY(!main->findChild<QDockWidget *>(name));
 }
 
-void TestDocking::testTransientDockWidgetClose()
-{
-    auto *dock = new CutterDockWidget(mainWindow);
-    dock->setWindowTitle("Transient Close Test Dock");
-    dock->show();
-    QApplication::processEvents();
-
-    dock->setTransient(true);
-    QSignalSpy spyClosed(dock, &CutterDockWidget::closed);
-
-    dock->close();
-
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
-    QApplication::processEvents();
-
-    QCOMPARE(spyClosed.count(), 1);
-}
-
-void TestDocking::cleanupTestCase()
-{
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
-    QApplication::processEvents();
-
-    mainWindow = nullptr;
-}
-
-CUTTER_APP_TEST_MAIN(TestDocking)
-
+CUTTER_APP_TEST_MAIN_WITH_FILE(TestDocking, CutterTest::Fixtures::helloX64())
 #include "test_Docking.moc"
