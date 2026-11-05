@@ -523,7 +523,9 @@ add_library(cutter_gui_lib STATIC ${CUTTER_SOURCES} ${BINDINGS_SOURCE})
 set_target_properties(cutter_gui_lib PROPERTIES
         POSITION_INDEPENDENT_CODE ON
         CXX_VISIBILITY_PRESET hidden)
-target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_SOURCE_BUILD)
+# PUBLIC: the Cutter executable and the tests compile against the same headers and link this
+# static library, so CUTTER_EXPORT must not turn into dllimport for them on Windows.
+target_compile_definitions(cutter_gui_lib PUBLIC CUTTER_SOURCE_BUILD)
 
 # WIN32 and the icon resource belong to the executable: a library can't take WIN32, and the
 # linker drops a resource from a static library because nothing references it.

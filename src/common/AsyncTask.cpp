@@ -1,6 +1,10 @@
 
 #include "AsyncTask.h"
 
+#include <QDeadlineTimer>
+
+#include <utility>
+
 AsyncTask::AsyncTask() : QObject(nullptr), QRunnable(), running(false)
 {
     setAutoDelete(false);
@@ -13,17 +17,22 @@ AsyncTask::~AsyncTask()
 
 void AsyncTask::wait()
 {
-    runningMutex.lock();
-    runningMutex.unlock();
+    QMutexLocker locker(&stateMutex);
+    while (active) {
+        doneCondition.wait(&stateMutex);
+    }
 }
 
 bool AsyncTask::wait(int timeout)
 {
-    const bool r = runningMutex.tryLock(timeout);
-    if (r) {
-        runningMutex.unlock();
+    QMutexLocker locker(&stateMutex);
+    const QDeadlineTimer deadline(timeout);
+    while (active) {
+        if (!doneCondition.wait(&stateMutex, deadline)) {
+            return !active;
+        }
     }
-    return r;
+    return true;
 }
 
 void AsyncTask::interrupt()
@@ -35,12 +44,19 @@ void AsyncTask::prepareRun()
 {
     interrupted = false;
     wait();
+    {
+        const QMutexLocker locker(&stateMutex);
+        active = true;
+    }
     timer.start();
 }
 
 void AsyncTask::run()
 {
-    runningMutex.lock();
+    {
+        const QMutexLocker locker(&stateMutex);
+        active = true;
+    }
 
     running = true;
 
@@ -52,7 +68,9 @@ void AsyncTask::run()
 
     emit finished();
 
-    runningMutex.unlock();
+    const QMutexLocker locker(&stateMutex);
+    active = false;
+    doneCondition.wakeAll();
 }
 
 void AsyncTask::log(QString s)
@@ -80,6 +98,17 @@ void AsyncTaskManager::start(const AsyncTask::Ptr &task)
     });
     threadPool->start(task.get());
     emit tasksChanged();
+}
+
+/**
+ * @brief Interrupts every running task and waits until all have returned.
+ */
+void AsyncTaskManager::interruptAndWait()
+{
+    for (const AsyncTask::Ptr &task : std::as_const(tasks)) {
+        task->interrupt();
+    }
+    threadPool->waitForDone();
 }
 
 bool AsyncTaskManager::getTasksRunning()

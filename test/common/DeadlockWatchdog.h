@@ -14,9 +14,9 @@ namespace CutterTest {
 /**
  * @brief Aborts the test when the scope it guards does not finish in time.
  *
- * The fatal message prints what was guarded and, on Linux, the symbolized stack of every
- * thread: first the one that created the watchdog (the stuck slot), then the others (what it
- * is waiting for).
+ * The fatal message prints what was guarded and the symbolized stack of every thread: first
+ * the one that created the watchdog (the stuck slot), then the others (what it is waiting
+ * for). Linux uses addr2line, macOS atos and Windows DbgHelp with the build's PDBs.
  */
 class DeadlockWatchdog
 {

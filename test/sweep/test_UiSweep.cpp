@@ -1,16 +1,24 @@
 /**
  * @file test_UiSweep.cpp
- * @brief The main window's menus, toolbars, docks and context menus work without crashing.
+ * @brief Every path a user can take through the main window runs without crashing or hanging.
  *
- * The test acts as a user and nothing is listed by hand. It clicks every menu-bar entry
- * (opening submenus by hovering), every toolbar button and toolbar dropdown entry, and presses
- * every shortcut that isn't in a menu. It opens every dock, and every dock's context menus by
- * right-clicking each of its views, without clicking their entries. All of it is found at run
- * time, so new widgets, menus and entries are covered without editing this file. Every dialog
- * and message box that opens is rejected as soon as it is shown.
+ * The test crawls the UI as a user would and nothing is listed by hand. It clicks every
+ * menu-bar entry (opening submenus by hovering), every toolbar button and dropdown entry, every
+ * entry of every dock's context menus (right-clicking each view), every button and dropdown in
+ * every dock, every value of every combo box in a dock, double-clicks every list and presses
+ * every shortcut that isn't in a menu. All of it is found at run time, so new widgets, menus,
+ * dialogs and entries are covered without editing this file.
  *
- * Every dock opens again under ESIL emulation. Entries that would leave the test or touch the
- * fixture are in deniedActions.
+ * The first time a window of a class opens, the crawler explores it before cancelling it: it
+ * clicks every tab, the first rows of every list (the pages of Preferences, for example) and
+ * every button except those that commit or delete (OK, Apply, Save, Delete, ...). What those
+ * buttons open is explored the same way. Qt's own dialogs (file, font, color, message boxes)
+ * are only cancelled. Later openings of an explored class are cancelled straight away.
+ *
+ * Every dock opens again under ESIL emulation, and everything that was disabled or missing
+ * runs again there. A debugger run still going after a few seconds is suspended, as a user
+ * would. Entries that would leave the test or touch the fixture are in
+ * deniedActions; buttons that commit or delete match deniedButtons.
  */
 
 #include "AsyncTask.h"
@@ -22,17 +30,25 @@
 #include "TestEnv.h"
 #include "core/MainWindow.h"
 
+#include <QAbstractButton>
 #include <QAbstractItemView>
 #include <QApplication>
+#include <QComboBox>
 #include <QContextMenuEvent>
 #include <QDebug>
 #include <QDialog>
-#include <QHeaderView>
+#include <QDialogButtonBox>
 #include <QHash>
+#include <QHeaderView>
 #include <QMenu>
 #include <QMenuBar>
 #include <QPointer>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QRegularExpression>
 #include <QSet>
+#include <QTabBar>
+#include <QTabWidget>
 #include <QTest>
 #include <QTimer>
 #include <QToolBar>
@@ -48,11 +64,17 @@ namespace {
 
 constexpr int settleTimeoutMs = 60000;
 constexpr int menuTimeoutMs = 3000;
-// Docks refresh only once visible; this lets the deferred refresh run after showing one.
-constexpr int dockLoadMs = 200;
-constexpr std::chrono::milliseconds hangTimeout { 60000 };
+// A row can explore several new dialogs, each with pages and buttons.
+constexpr std::chrono::milliseconds hangTimeout { 180000 };
 // Menus nested deeper than this are generated lists (types, offsets), not more of the UI.
 constexpr int maxMenuDepth = 4;
+// Rows of a list a dialog explores, and values of a combo box a dock tries; the rest are more
+// of the same.
+constexpr int maxExploredRows = 20;
+constexpr int maxComboValues = 50;
+// A run (Continue, Continue until) can go on forever under emulation; after this long the
+// crawler presses Suspend, as a user would.
+constexpr int debugRunMs = 3000;
 
 QtMessageHandler previousHandler = nullptr;
 
@@ -73,10 +95,41 @@ const QSet<QString> deniedActions = { "actionNew",           "actionQuit",
                                       "actionIssue",         "actionDocumentation",
                                       "actionWriteMode",     "actionCommitChanges" };
 
+/** Buttons that commit, delete or close; exploring a window must not change anything. */
+const QRegularExpression deniedButtons(
+        R"(^(ok|apply|save|delete|remove|reset|restore|clear|yes|accept|done|close|cancel|)"
+        R"(quit|exit|commit|overwrite|default|purge)\b)",
+        QRegularExpression::CaseInsensitiveOption);
+
 bool tasksSettled()
 {
     return !CutterTest::core()->getAsyncTaskManager()->getTasksRunning()
             && !CutterTest::core()->isDebugTaskInProgress();
+}
+
+/** Presses Continue while the debugger runs, which is Suspend then. */
+void suspendDebugging()
+{
+    auto *debug = CutterTest::mainWindow()->findChild<DebugActions *>();
+    if (debug && debug->actionContinue->isEnabled()) {
+        qInfo().noquote() << "  still running after" << debugRunMs << "ms, suspending";
+        debug->actionContinue->trigger();
+    }
+}
+
+/**
+ * Lets what a click queued run (deferred refreshes, docks loading once visible), then waits
+ * only while Cutter's background tasks are running. A debugger run that goes on is suspended.
+ */
+bool settle()
+{
+    QCoreApplication::processEvents();
+    QCoreApplication::processEvents();
+    if (!QTest::qWaitFor([]() { return !CutterTest::core()->isDebugTaskInProgress(); },
+                         debugRunMs)) {
+        suspendDebugging();
+    }
+    return QTest::qWaitFor(tasksSettled, settleTimeoutMs);
 }
 
 bool isDenied(const QAction *action)
@@ -89,13 +142,136 @@ bool isDenied(const QAction *action)
     return debug && action == debug->actionStartEmul;
 }
 
+QString cleanText(QString text)
+{
+    return text.remove('&').remove("...").trimmed();
+}
+
 QString itemText(const QAction *action)
 {
-    QString text = action->text().remove('&').remove("...").trimmed();
+    QString text = cleanText(action->text());
     if (text.isEmpty()) {
         text = action->objectName().isEmpty() ? action->toolTip() : action->objectName();
     }
     return text;
+}
+
+QString buttonText(const QAbstractButton *button)
+{
+    QString text = cleanText(button->text());
+    if (text.isEmpty()) {
+        text = cleanText(button->toolTip());
+    }
+    if (text.isEmpty()) {
+        text = button->objectName();
+    }
+    return text;
+}
+
+template<typename T>
+bool hasAncestor(const QObject *object)
+{
+    for (QObject *parent = object->parent(); parent; parent = parent->parent()) {
+        if (qobject_cast<T *>(parent)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** Children as QPointers: clicking one can delete others. */
+template<typename T>
+QList<QPointer<T>> guardedChildren(const QWidget *parent)
+{
+    QList<QPointer<T>> children;
+    for (T *child : parent->findChildren<T *>()) {
+        children << QPointer<T>(child);
+    }
+    return children;
+}
+
+/**
+ * Buttons a user would press in a dock or dialog: visible, not Qt's own (title bars, tab
+ * scrollers), not in a toolbar (collected separately) and not committing or deleting.
+ */
+bool isPressable(const QAbstractButton *button)
+{
+    return button->isVisible() && !button->objectName().startsWith("qt_")
+            && !hasAncestor<QToolBar>(button) && !hasAncestor<QTabBar>(button)
+            && !hasAncestor<QDialogButtonBox>(button)
+            && !deniedButtons.match(buttonText(button)).hasMatch();
+}
+
+QMenu *buttonMenu(const QAbstractButton *button)
+{
+    if (auto *tool = qobject_cast<const QToolButton *>(button)) {
+        return tool->menu() ? tool->menu()
+                            : (tool->defaultAction() ? tool->defaultAction()->menu() : nullptr);
+    }
+    if (auto *push = qobject_cast<const QPushButton *>(button)) {
+        return push->menu();
+    }
+    return nullptr;
+}
+
+/**
+ * Clicks a button as a user would. A checkable one is clicked again if that changed its state,
+ * so the state doesn't carry over into later rows (radio buttons can't be clicked back).
+ */
+void clickButton(QAbstractButton *button)
+{
+    const QPointer<QAbstractButton> guard(button);
+    const bool wasChecked = button->isChecked();
+    QTest::mouseClick(button, Qt::LeftButton);
+    settle();
+    if (guard && guard->isCheckable() && guard->isChecked() != wasChecked && guard->isEnabled()
+        && guard->isVisible() && !qobject_cast<QRadioButton *>(guard.data())) {
+        QTest::mouseClick(guard, Qt::LeftButton);
+        settle();
+    }
+}
+
+/**
+ * Visits everything in a window a user can look at without committing: every tab, the first
+ * rows of every list, and every pressable button. What those open is handled by the Driver.
+ */
+void exploreWindow(QWidget *window)
+{
+    const QPointer<QWidget> guard(window);
+    for (const QPointer<QTabWidget> &tabs : guardedChildren<QTabWidget>(window)) {
+        for (int i = 0; guard && tabs && i < tabs->count(); ++i) {
+            if (tabs->isTabEnabled(i) && tabs->tabBar()->isVisible()) {
+                QTest::mouseClick(tabs->tabBar(), Qt::LeftButton, {},
+                                  tabs->tabBar()->tabRect(i).center());
+                settle();
+            }
+        }
+    }
+    for (const QPointer<QAbstractItemView> &view : guardedChildren<QAbstractItemView>(window)) {
+        if (!guard || !view || !view->isVisible() || !view->model()
+            || qobject_cast<QHeaderView *>(view.data())) {
+            continue;
+        }
+        const int rows = std::min(view->model()->rowCount(), maxExploredRows);
+        for (int row = 0; guard && view && row < rows; ++row) {
+            const QModelIndex index = view->model()->index(row, 0);
+            view->scrollTo(index);
+            const QRect rect = view->visualRect(index);
+            if (!rect.isEmpty()) {
+                QTest::mouseClick(view->viewport(), Qt::LeftButton, {}, rect.center());
+                settle();
+            }
+        }
+    }
+    for (const QPointer<QAbstractButton> &button : guardedChildren<QAbstractButton>(window)) {
+        if (!guard) {
+            return;
+        }
+        if (button && button->isEnabled() && isPressable(button)) {
+            qInfo().noquote() << "  pressing" << buttonText(button);
+            clickButton(button);
+        }
+    }
 }
 
 /** The visible entries of a menu, keyed by text; repeated texts get " #2", " #3", ... */
@@ -115,6 +291,39 @@ QList<QPair<QString, QAction *>> menuItems(const QMenu *menu)
         items.append({ key, action });
     }
     return items;
+}
+
+/**
+ * The entry's text without the state it shows: a trailing "(Empty)" or " (sym.main)",
+ * addresses ("Add flag at 0x00000138") and quoted names ("Edit function \"entry0\"").
+ */
+QString withoutState(const QString &key)
+{
+    static const QRegularExpression state(R"(\s*\([^()]*\)$)");
+    static const QRegularExpression address("0x[0-9a-fA-F]+");
+    static const QRegularExpression quoted(R"("[^"]*")");
+    return QString(key).remove(state).replace(address, "0x").replace(quoted, "\"\"");
+}
+
+/**
+ * The entry with this key. Some entries show state in their text ("Graph(Empty)" until the
+ * graph has a function, the address under the cursor); if the text changed since the menu was
+ * read, the entry with the same text without that state is used.
+ */
+QAction *findEntry(const QMenu *menu, const QString &key)
+{
+    const QList<QPair<QString, QAction *>> items = menuItems(menu);
+    for (const auto &[text, action] : items) {
+        if (text == key) {
+            return action;
+        }
+    }
+    for (const auto &[text, action] : items) {
+        if (withoutState(text) == withoutState(key)) {
+            return action;
+        }
+    }
+    return nullptr;
 }
 
 void closePopups()
@@ -165,11 +374,13 @@ void closeOtherWindows(QWidget *main)
 }
 
 /**
- * @brief Rejects every window that opens, except the menus the test is opening itself.
+ * @brief Handles every window that opens, except the menus the test is opening itself.
  *
- * Rejecting from a zero timer lets a dialog started with exec() enter its event loop first, so
- * exec() returns as if the user pressed Cancel. Progress dialogs are left alone: they close
- * when their task ends, and rejecting one cancels the task.
+ * The first window of each Cutter class is explored (exploreWindow()), then cancelled; later
+ * ones and Qt's own dialogs are cancelled straight away. Both run from a zero timer, so a
+ * dialog started with exec() is in its event loop and exec() returns as if the user pressed
+ * Cancel. Progress dialogs are left alone: they close when their task ends, and rejecting one
+ * cancels the task.
  *
  * expectMenu() hands the next menu that opens to a callback, run inside that menu's event loop
  * as a user's clicks would be. Submenus opened while the callback navigates are left open.
@@ -192,7 +403,7 @@ public:
 
     bool menuWasHandled() const { return menuHandled; }
 
-    /** Stops leaving menus open: from here on, what the clicked entry opens is rejected. */
+    /** Stops leaving menus open: from here on, what the clicked entry opens is handled. */
     void stopNavigating() { navigating = false; }
 
     void reset()
@@ -205,6 +416,13 @@ public:
     {
         QStringList result = seen;
         seen.clear();
+        return result;
+    }
+
+    QStringList exploredClasses() const
+    {
+        QStringList result(explored.begin(), explored.end());
+        result.sort();
         return result;
     }
 
@@ -234,9 +452,20 @@ protected:
                 return false;
             }
         }
-        seen << QString::fromUtf8(widget->metaObject()->className());
+        const QString name = QString::fromUtf8(widget->metaObject()->className());
+        seen << name;
+        // Qt's own classes start with Q; Cutter's don't.
+        const bool explore = !qobject_cast<QMenu *>(widget) && !name.startsWith('Q')
+                && !explored.contains(name);
+        if (explore) {
+            explored << name;
+        }
         const QPointer<QWidget> guard(widget);
-        QTimer::singleShot(0, widget, [guard]() {
+        QTimer::singleShot(0, widget, [guard, explore, name]() {
+            if (explore && guard) {
+                qInfo().noquote() << "exploring" << name;
+                exploreWindow(guard);
+            }
             if (auto *dialog = qobject_cast<QDialog *>(guard.data())) {
                 dialog->reject();
             } else if (guard) {
@@ -257,43 +486,79 @@ private:
     bool menuHandled = false;
     bool navigating = false;
     QStringList seen;
+    QSet<QString> explored;
 };
 
+/** One thing a user does. Menu kinds open a menu, then click the entry at path. */
 struct Step
 {
-    enum Kind { MenuBar, ToolButton, ToolMenu, ContextMenu, Shortcut };
+    enum Kind { MenuBar, ToolButton, ToolMenu, ContextMenu, Shortcut, Button, Combo, DoubleClick };
 
     Kind kind;
     QString name;
     QPointer<QWidget> widget;
     QPointer<QAction> action;
     QStringList path;
-    // For steps inside a dock: the dock's name and the view's or shortcut's key in it, to find
-    // them again if an earlier row (resetting the layout) recreated the dock.
+    // For steps inside a dock: the dock's name and the widget's key in it, to find them again
+    // if an earlier row (resetting the layout) recreated the dock.
     QString dock;
     QString key;
 };
 
-/** The dock's visible views by key: class name, with " #2", " #3", ... for repeats. */
-QList<QPair<QString, QWidget *>> dockViews(CutterDockWidget *dock)
+using Keyed = QList<QPair<QString, QWidget *>>;
+
+/** Adds " #2", " #3", ... to repeated keys. */
+void addKeyed(Keyed &list, QHash<QString, int> &seen, QString key, QWidget *widget)
 {
-    QList<QPair<QString, QWidget *>> views;
+    const int count = ++seen[key];
+    if (count > 1) {
+        key += QString(" #%1").arg(count);
+    }
+    list.append({ key, widget });
+}
+
+/** The dock's visible views by class name, as viewports. Empty lists have nothing to click. */
+Keyed dockViews(CutterDockWidget *dock)
+{
+    Keyed views;
     QHash<QString, int> seen;
     for (auto *area : dock->findChildren<QAbstractScrollArea *>()) {
-        // Headers have no menus of their own, and an empty list has no row to right-click.
         auto *view = qobject_cast<QAbstractItemView *>(area);
         if (!area->isVisible() || qobject_cast<QHeaderView *>(area)
             || (view && (!view->model() || view->model()->rowCount() == 0))) {
             continue;
         }
-        QString key = QString::fromUtf8(area->metaObject()->className());
-        const int count = ++seen[key];
-        if (count > 1) {
-            key += QString(" #%1").arg(count);
-        }
-        views.append({ key, area->viewport() });
+        addKeyed(views, seen, QString::fromUtf8(area->metaObject()->className()),
+                 area->viewport());
     }
     return views;
+}
+
+/** The dock's own buttons (not its toolbars'), by text. */
+Keyed dockButtons(CutterDockWidget *dock)
+{
+    Keyed buttons;
+    QHash<QString, int> seen;
+    for (auto *button : dock->findChildren<QAbstractButton *>()) {
+        if (isPressable(button)) {
+            addKeyed(buttons, seen, "button " + buttonText(button), button);
+        }
+    }
+    return buttons;
+}
+
+Keyed dockCombos(CutterDockWidget *dock)
+{
+    Keyed combos;
+    QHash<QString, int> seen;
+    for (auto *combo : dock->findChildren<QComboBox *>()) {
+        if (combo->isVisible() && combo->count() > 1 && !hasAncestor<QToolBar>(combo)) {
+            const QString name = combo->objectName().isEmpty() ? QStringLiteral("combo")
+                                                                : combo->objectName();
+            addKeyed(combos, seen, "combo " + name, combo);
+        }
+    }
+    return combos;
 }
 
 /** The dock's actions that are in no menu or toolbar but have a shortcut, by key. */
@@ -334,10 +599,12 @@ private slots:
     void everyDockOpens();
     void everyEntryRuns_data();
     void everyEntryRuns();
-    void everyContextMenuOpens_data();
-    void everyContextMenuOpens();
+    void everyContextEntryRuns_data();
+    void everyContextEntryRuns();
     void everyDockOpensWhileEmulating_data();
     void everyDockOpensWhileEmulating();
+    void everythingRunsWhileEmulating_data();
+    void everythingRunsWhileEmulating();
 
 private:
     void addDockRows();
@@ -345,8 +612,8 @@ private:
     bool startEmulation();
     void showDock(CutterDockWidget *dock);
 
-    QList<Step> collectSteps();
-    void addMenuSteps(const Step &opener, QList<Step> &steps);
+    void collectSteps();
+    void addMenuSteps(const Step &opener, QList<Step> &steps, bool dedupe = false);
     void listMenu(QMenu *menu, const QStringList &prefix, QList<QStringList> &paths,
                   QSet<QMenu *> &open);
     bool openMenu(const Step &step);
@@ -361,6 +628,9 @@ private:
     QPointer<CutterDockWidget> shownDock;
     QList<Step> entrySteps;
     QList<Step> contextSteps;
+    QList<Step> emulationSteps;
+    QSet<QString> menuSignatures;
+    QSet<QString> ran;
 };
 
 void TestUiSweep::initTestCase()
@@ -370,7 +640,7 @@ void TestUiSweep::initTestCase()
     QVERIFY(main);
     main->show();
     main->activateWindow();
-    QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+    QVERIFY(settle());
 
     const QList<FunctionDescription> functions = CutterTest::core()->getAllFunctions();
     QVERIFY2(!functions.isEmpty(), "the fixture has no functions");
@@ -388,12 +658,17 @@ void TestUiSweep::init()
     closeOtherWindows(main);
     driver->reset();
     driver->takeSeen();
-    CutterTest::core()->seekAndShow(target);
-    QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+    if (CutterTest::core()->getOffset() != target) {
+        CutterTest::core()->seek(target);
+    }
+    QVERIFY(settle());
 }
 
 void TestUiSweep::cleanupTestCase()
 {
+    if (driver) {
+        qInfo().noquote() << "explored" << driver->exploredClasses().join(", ");
+    }
     if (CutterTest::core()->currentlyDebugging) {
         CutterTest::core()->stopDebug();
     }
@@ -405,7 +680,7 @@ void TestUiSweep::cleanupTestCase()
  * Shows the dock and lets it load; hides the dock shown before, so they aren't all alive.
  *
  * The dock may already be the shown one but hidden behind another tab: init() seeks, which
- * raises a memory widget over it. It is raised again then, or its views can't be clicked.
+ * can raise a memory widget over it. It is raised again then, or its views can't be clicked.
  */
 void TestUiSweep::showDock(CutterDockWidget *dock)
 {
@@ -417,8 +692,7 @@ void TestUiSweep::showDock(CutterDockWidget *dock)
     if (dock && !dock->isVisible()) {
         dock->toggleDockWidget(true);
         dock->raise();
-        QTest::qWait(dockLoadMs);
-        QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+        QVERIFY(settle());
     }
 }
 
@@ -461,7 +735,11 @@ bool TestUiSweep::openMenu(const Step &step)
         break;
     }
     case Step::ToolMenu:
-        static_cast<QToolButton *>(widget)->showMenu();
+        if (auto *tool = qobject_cast<QToolButton *>(widget)) {
+            tool->showMenu();
+        } else if (auto *push = qobject_cast<QPushButton *>(widget)) {
+            push->showMenu();
+        }
         break;
     case Step::ContextMenu: {
         const QPoint point = clickPoint(widget);
@@ -473,17 +751,23 @@ bool TestUiSweep::openMenu(const Step &step)
     default:
         return false;
     }
-    // exec() menus are done when sendEvent returns; popup() menus need the event loop.
+    // exec() menus are done when the call returns; popup() menus need the event loop.
     return QTest::qWaitFor([this]() { return driver->menuWasHandled(); }, menuTimeoutMs);
 }
 
-void TestUiSweep::addMenuSteps(const Step &opener, QList<Step> &steps)
+/**
+ * Opens the menu, reads its entries and adds a step per entry. With dedupe, a menu with the
+ * same entries as one already read in a dock of the same class adds nothing.
+ */
+void TestUiSweep::addMenuSteps(const Step &opener, QList<Step> &steps, bool dedupe)
 {
     // Collection runs before any row, so a hang here would otherwise name nothing.
     qInfo().noquote() << "listing" << opener.name;
     const CutterTest::DeadlockWatchdog watchdog("listing " + opener.name.toUtf8(), hangTimeout);
     QList<QStringList> paths;
-    driver->expectMenu([this, &paths](QMenu *menu) {
+    QString menuClass;
+    driver->expectMenu([this, &paths, &menuClass](QMenu *menu) {
+        menuClass = QString::fromUtf8(menu->metaObject()->className());
         QSet<QMenu *> open;
         listMenu(menu, {}, paths, open);
         closePopups();
@@ -492,8 +776,23 @@ void TestUiSweep::addMenuSteps(const Step &opener, QList<Step> &steps)
         driver->reset();
         return;
     }
-    QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+    QVERIFY(settle());
     closeOtherWindows(main);
+    if (dedupe) {
+        const CutterDockWidget *dock = owningDock(opener.widget.data());
+        QStringList entries;
+        for (const QStringList &path : paths) {
+            entries << path.join(" > ");
+        }
+        const QString signature =
+                QString::fromUtf8(dock ? dock->metaObject()->className() : "") + "|"
+                + menuClass + "|" + entries.join("|");
+        if (menuSignatures.contains(signature)) {
+            qInfo().noquote() << "  same menu as an earlier view";
+            return;
+        }
+        menuSignatures << signature;
+    }
     for (const QStringList &path : paths) {
         Step step = opener;
         step.path = path;
@@ -503,18 +802,20 @@ void TestUiSweep::addMenuSteps(const Step &opener, QList<Step> &steps)
 }
 
 /**
- * Finds every menu-bar, toolbar and shortcut entry by doing what a user would: open each menu
- * and read it. Docks are shown one at a time, so only visible views get a context-menu step;
- * those go to contextSteps.
+ * Finds everything a user can do by doing what a user would: opening each menu and reading it,
+ * and showing each dock to look at what's in it. Context-menu entries go to contextSteps, the
+ * rest to entrySteps.
  */
-QList<Step> TestUiSweep::collectSteps()
+void TestUiSweep::collectSteps()
 {
-    QList<Step> found;
+    entrySteps.clear();
     contextSteps.clear();
+    menuSignatures.clear();
     QMenuBar *bar = main->menuBar();
     for (QAction *action : bar->actions()) {
         if (action->menu() && action->isVisible()) {
-            addMenuSteps({ Step::MenuBar, "Menu/" + itemText(action), bar, action, {} }, found);
+            addMenuSteps({ Step::MenuBar, "Menu/" + itemText(action), bar, action, {} },
+                         entrySteps);
         }
     }
 
@@ -531,10 +832,10 @@ QList<Step> TestUiSweep::collectSteps()
             }
             const QString name = prefix + itemText(action);
             if (button->menu() || action->menu()) {
-                addMenuSteps({ Step::ToolMenu, name, button, action, {} }, found);
+                addMenuSteps({ Step::ToolMenu, name, button, action, {} }, entrySteps);
             }
             if (button->popupMode() != QToolButton::InstantPopup || !button->menu()) {
-                found << Step { Step::ToolButton, name, button, action, {} };
+                entrySteps << Step { Step::ToolButton, name, button, action, {} };
             }
         }
     }
@@ -542,22 +843,46 @@ QList<Step> TestUiSweep::collectSteps()
     for (CutterDockWidget *dock : main->findChildren<CutterDockWidget *>()) {
         showDock(dock);
         const QString prefix = "Dock/" + dock->objectName() + "/";
+        const QString dockName = dock->objectName();
         for (const auto &[key, viewport] : dockViews(dock)) {
-            contextSteps << Step { Step::ContextMenu, prefix + key, viewport, {}, {},
-                                   dock->objectName(), key };
+            addMenuSteps({ Step::ContextMenu, prefix + key, viewport, {}, {}, dockName, key },
+                         contextSteps, true);
+            if (qobject_cast<QAbstractItemView *>(viewport->parentWidget())) {
+                entrySteps << Step { Step::DoubleClick, prefix + key + "/double-click",
+                                     viewport,          {},
+                                     {},                dockName,
+                                     key };
+            }
+        }
+        for (const auto &[key, widget] : dockButtons(dock)) {
+            auto *button = static_cast<QAbstractButton *>(widget);
+            if (buttonMenu(button)) {
+                addMenuSteps({ Step::ToolMenu, prefix + key, button, {}, {}, dockName, key },
+                             entrySteps);
+            }
+            auto *tool = qobject_cast<QToolButton *>(button);
+            const bool onlyMenu = qobject_cast<QPushButton *>(button)
+                    ? buttonMenu(button) != nullptr
+                    : tool && tool->popupMode() == QToolButton::InstantPopup
+                            && buttonMenu(button);
+            if (!onlyMenu) {
+                entrySteps << Step { Step::Button, prefix + key, button, {}, {}, dockName, key };
+            }
+        }
+        for (const auto &[key, widget] : dockCombos(dock)) {
+            entrySteps << Step { Step::Combo, prefix + key, widget, {}, {}, dockName, key };
         }
         // Shortcuts that are in no menu or toolbar: only the key reaches them.
         for (const auto &[key, action] : dockShortcuts(dock)) {
             auto *widget = qobject_cast<QWidget *>(action->associatedObjects().first());
-            found << Step { Step::Shortcut, prefix + key, widget, action, {},
-                            dock->objectName(), key };
+            entrySteps << Step { Step::Shortcut, prefix + key, widget, action, {},
+                                 dockName,       key };
         }
     }
     showDock(nullptr);
-    return found;
 }
 
-/** Finds the step's view or shortcut in the dock of the same name, if the dock was recreated. */
+/** Finds the step's widget in the dock of the same name, if the dock was recreated. */
 void TestUiSweep::findAgain(Step &step)
 {
     auto *dock = main->findChild<CutterDockWidget *>(step.dock);
@@ -567,16 +892,24 @@ void TestUiSweep::findAgain(Step &step)
     showDock(dock);
     if (step.kind == Step::Shortcut) {
         for (const auto &[key, action] : dockShortcuts(dock)) {
-            if (key == step.key) {
+            if (withoutState(key) == withoutState(step.key)) {
                 step.action = action;
                 step.widget = qobject_cast<QWidget *>(action->associatedObjects().first());
             }
         }
         return;
     }
-    for (const auto &[key, viewport] : dockViews(dock)) {
-        if (key == step.key) {
-            step.widget = viewport;
+    Keyed candidates;
+    if (step.kind == Step::ContextMenu || step.kind == Step::DoubleClick) {
+        candidates = dockViews(dock);
+    } else if (step.kind == Step::Combo) {
+        candidates = dockCombos(dock);
+    } else {
+        candidates = dockButtons(dock);
+    }
+    for (const auto &[key, widget] : candidates) {
+        if (withoutState(key) == withoutState(step.key)) {
+            step.widget = widget;
         }
     }
 }
@@ -597,7 +930,8 @@ void TestUiSweep::addRows(const QList<Step> &list)
 
 /**
  * Does the step as a user would: shows the dock it belongs to, opens the menu and clicks the
- * entry (or only opens it), or clicks the button, presses the key.
+ * entry, clicks the button, tries every value of the combo box, presses the key, or
+ * double-clicks the row.
  *
  * Sets skipped to why the step couldn't run; leaves it empty if it ran.
  */
@@ -622,7 +956,10 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
     // doesn't carry over and disable later rows.
     QPointer<QAction> clicked;
     bool wasChecked = false;
-    const QList<CutterDockWidget *> docksBefore = main->findChildren<CutterDockWidget *>();
+    QSet<QString> docksBefore;
+    for (const CutterDockWidget *dock : main->findChildren<CutterDockWidget *>()) {
+        docksBefore << dock->objectName();
+    }
     {
         const CutterTest::DeadlockWatchdog watchdog(QTest::currentDataTag(), hangTimeout);
         // A crash kills the process before the row is reported; this names it.
@@ -630,16 +967,8 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
 
         if (opensMenu(step.kind)) {
             driver->expectMenu([this, &step, &outcome, &clicked, &wasChecked](QMenu *menu) {
-                if (step.path.isEmpty()) {
-                    outcome = Outcome::Clicked;
-                }
                 for (int i = 0; i < step.path.size(); ++i) {
-                    QAction *action = nullptr;
-                    for (const auto &[key, item] : menuItems(menu)) {
-                        if (key == step.path[i]) {
-                            action = item;
-                        }
-                    }
+                    QAction *action = findEntry(menu, step.path[i]);
                     if (!action) {
                         outcome = Outcome::Missing;
                         break;
@@ -668,14 +997,39 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
             });
             openMenu(step);
             driver->reset();
-        } else if (step.kind == Step::ToolButton) {
-            if (step.action && !step.action->isEnabled()) {
+        } else if (step.kind == Step::ToolButton || step.kind == Step::Button) {
+            const bool enabled = step.action ? step.action->isEnabled() : widget->isEnabled();
+            if (!enabled) {
                 outcome = Outcome::Disabled;
+            } else if (step.kind == Step::Button) {
+                outcome = Outcome::Clicked;
+                clickButton(static_cast<QAbstractButton *>(widget));
             } else {
                 outcome = Outcome::Clicked;
                 clicked = step.action;
                 wasChecked = clicked && clicked->isChecked();
                 QTest::mouseClick(widget, Qt::LeftButton);
+            }
+        } else if (step.kind == Step::Combo) {
+            auto *combo = static_cast<QComboBox *>(widget);
+            if (!combo->isEnabled()) {
+                outcome = Outcome::Disabled;
+            } else {
+                // The keyboard changes the value without the popup, as a focused user would.
+                outcome = Outcome::Clicked;
+                const QPointer<QComboBox> guard(combo);
+                const int original = combo->currentIndex();
+                combo->setFocus(Qt::OtherFocusReason);
+                QTest::keyClick(combo, Qt::Key_Home);
+                QVERIFY(settle());
+                const int values = std::min(combo->count(), maxComboValues);
+                for (int i = 1; guard && i < values; ++i) {
+                    QTest::keyClick(guard, Qt::Key_Down);
+                    QVERIFY(settle());
+                }
+                if (guard) {
+                    guard->setCurrentIndex(original);
+                }
             }
         } else if (step.kind == Step::Shortcut) {
             if (!step.action || !step.action->isEnabled()) {
@@ -688,20 +1042,25 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
                 widget->setFocus(Qt::ShortcutFocusReason);
                 QTest::keySequence(widget, step.action->shortcut());
             }
+        } else if (step.kind == Step::DoubleClick) {
+            outcome = Outcome::Clicked;
+            QTest::mouseDClick(widget, Qt::LeftButton, {}, clickPoint(widget));
         }
-        QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+        QVERIFY(settle());
     }
 
     if (clicked && clicked->isCheckable() && clicked->isChecked() != wasChecked) {
         clicked->trigger();
-        QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+        QVERIFY(settle());
     }
     const QStringList opened = driver->takeSeen();
     if (!opened.isEmpty()) {
         qInfo() << "opened" << opened;
     }
     for (CutterDockWidget *added : main->findChildren<CutterDockWidget *>()) {
-        if (!docksBefore.contains(added)) {
+        // Only docks the row added; ones it replaced (resetting the layout recreates the
+        // memory docks under the same names) are the layout now, and closing one deletes it.
+        if (!docksBefore.contains(added->objectName())) {
             added->close();
         }
     }
@@ -721,6 +1080,20 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
     case Outcome::Clicked:
         break;
     }
+}
+
+void TestUiSweep::runRow(const QList<Step> &list)
+{
+    QFETCH(const int, index);
+    QString skipped;
+    runStep(list[index], skipped);
+    if (QTest::currentTestFailed()) {
+        return;
+    }
+    if (!skipped.isEmpty()) {
+        QSKIP(qPrintable(skipped));
+    }
+    ran << list[index].name + "/" + QString::number(list[index].kind);
 }
 
 void TestUiSweep::addDockRows()
@@ -746,7 +1119,7 @@ void TestUiSweep::openDock(const QString &name)
     showDock(dock);
     CutterTest::core()->seekAndShow(target + 1);
     CutterTest::core()->seekAndShow(target);
-    QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
+    QVERIFY(settle());
     showDock(nullptr);
 }
 
@@ -777,7 +1150,7 @@ void TestUiSweep::everyDockOpens()
 
 void TestUiSweep::everyEntryRuns_data()
 {
-    entrySteps = collectSteps();
+    collectSteps();
     addRows(entrySteps);
 }
 
@@ -786,31 +1159,18 @@ void TestUiSweep::everyEntryRuns()
     runRow(entrySteps);
 }
 
-/** The views are found while collecting the entries, which normally runs first. */
-void TestUiSweep::everyContextMenuOpens_data()
+/** The context menus are read while collecting the entries, which normally runs first. */
+void TestUiSweep::everyContextEntryRuns_data()
 {
-    if (contextSteps.isEmpty()) {
-        entrySteps = collectSteps();
+    if (entrySteps.isEmpty()) {
+        collectSteps();
     }
     addRows(contextSteps);
 }
 
-void TestUiSweep::everyContextMenuOpens()
+void TestUiSweep::everyContextEntryRuns()
 {
     runRow(contextSteps);
-}
-
-void TestUiSweep::runRow(const QList<Step> &list)
-{
-    QFETCH(const int, index);
-    QString skipped;
-    runStep(list[index], skipped);
-    if (QTest::currentTestFailed()) {
-        return;
-    }
-    if (!skipped.isEmpty()) {
-        QSKIP(qPrintable(skipped));
-    }
 }
 
 void TestUiSweep::everyDockOpensWhileEmulating_data()
@@ -823,6 +1183,28 @@ void TestUiSweep::everyDockOpensWhileEmulating()
     QFETCH(const QString, dockName);
     QVERIFY2(startEmulation(), "emulation didn't start");
     openDock(dockName);
+}
+
+/** Collected again while emulating: debugging enables entries and fills the debug docks. */
+void TestUiSweep::everythingRunsWhileEmulating_data()
+{
+    startEmulation();
+    collectSteps();
+    emulationSteps.clear();
+    for (const QList<Step> *list : { &entrySteps, &contextSteps }) {
+        for (const Step &step : *list) {
+            if (!ran.contains(step.name + "/" + QString::number(step.kind))) {
+                emulationSteps << step;
+            }
+        }
+    }
+    addRows(emulationSteps);
+}
+
+void TestUiSweep::everythingRunsWhileEmulating()
+{
+    QVERIFY2(startEmulation(), "emulation didn't start");
+    runRow(emulationSteps);
 }
 
 CUTTER_APP_TEST_MAIN_WITH_FILE(TestUiSweep, CutterTest::Fixtures::helloX64())

@@ -82,9 +82,6 @@ private:
 
 void TestSignalSweep::initTestCase()
 {
-#ifndef Q_OS_LINUX
-    QSKIP("Linux only: DeadlockWatchdog needs /proc and addr2line");
-#endif
     constexpr int settleTimeoutMs = 60000;
 
     MainWindow *main = CutterTest::mainWindow();

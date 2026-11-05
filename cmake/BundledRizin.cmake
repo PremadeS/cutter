@@ -37,11 +37,7 @@ ExternalProject_Add(Rizin-Bundled
         CONFIGURE_COMMAND "${MESON}" "<SOURCE_DIR>" ${MESON_OPTIONS} && "${MESON}" configure ${MESON_OPTIONS} --buildtype "$<$<CONFIG:Debug>:debug>$<$<NOT:$<CONFIG:Debug>>:release>"
         BUILD_COMMAND "${NINJA}"
         BUILD_ALWAYS TRUE
-        INSTALL_COMMAND "${NINJA}" install
-        # Stream meson's and ninja's output instead of letting Ninja hold it until the step ends.
-        USES_TERMINAL_CONFIGURE TRUE
-        USES_TERMINAL_BUILD TRUE
-        USES_TERMINAL_INSTALL TRUE)
+        INSTALL_COMMAND "${NINJA}" install)
 
 set(Rizin_INCLUDE_DIRS "${RIZIN_INSTALL_DIR}/include/librz" "${RIZIN_INSTALL_DIR}/include/librz/sdb")
 

@@ -238,13 +238,17 @@ StringsWidget::~StringsWidget() {}
 
 void StringsWidget::refreshStrings()
 {
-    if (task) {
-        task->wait();
-    }
-
+    // A search still running is superseded, not waited for: refreshes can come from a slot
+    // whose caller holds the core lock, which that search needs to finish. Its result is
+    // ignored when it arrives.
     task = std::shared_ptr<StringsTask>(new StringsTask(ui->rawStringsCheckBox->isChecked()));
+    const StringsTask *current = task.get();
     connect(task.get(), &StringsTask::stringSearchFinished, this,
-            &StringsWidget::stringSearchFinished);
+            [this, current](const QList<StringDescription> &strings) {
+                if (task.get() == current) {
+                    stringSearchFinished(strings);
+                }
+            });
     Core()->getAsyncTaskManager()->start(task);
 
     refreshSectionCombo();

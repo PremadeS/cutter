@@ -12,7 +12,7 @@ and the state Cutter owns. They do not test rizin's own results.
 | `session/` | core + fixture, no widgets | core operations emit the right signal, once, with the right data |
 | `dialogs/` | app, no loaded file | dialog flows, including one dialog opening another: cancel, re-enter, error states; no MainWindow or docks |
 | `workflows/` | full MainWindow + fixture | user scenarios across several widgets |
-| `sweep/` | full MainWindow + fixture | everything found at runtime: every core signal against every connected slot (deadlocks, Linux only); every dock, menu and toolbar entry, and every context menu opened, dialogs rejected on show (crashes, hangs) |
+| `sweep/` | full MainWindow + fixture | everything found at runtime: every core signal against every connected slot (deadlocks); every dock, menu, toolbar, context-menu entry, dock button and combo value, each new dialog explored (crashes, hangs) |
 | `common/` | — | shared helper; the only code that knows how the core is created |
 
 Each `ctest` label matches its directory.
@@ -37,7 +37,11 @@ fixture are reported as skipped. To add a fixture, add a line to
 
 ## Running
 
+Tests are off by default; turn them on once, then build:
+
 ```sh
+cmake -B build -DCUTTER_ENABLE_TEST=ON
+cmake --build build
 ctest --test-dir build                  # everything
 ctest --test-dir build -L session       # one layer
 ctest --test-dir build -R test_Navigation

@@ -607,13 +607,16 @@ FunctionsWidget::~FunctionsWidget() {}
 
 void FunctionsWidget::refreshTree()
 {
-    if (task) {
-        task->wait();
-    }
-
+    // A fetch still running is superseded, not waited for: refreshes can come from a slot
+    // whose caller holds the core lock, which that fetch needs to finish. Its result is
+    // ignored when it arrives.
     task = std::shared_ptr<FunctionsTask>(new FunctionsTask());
+    const FunctionsTask *current = task.get();
     connect(task.get(), &FunctionsTask::fetchFinished, this,
-            [this](const QList<FunctionDescription> &functions) {
+            [this, current](const QList<FunctionDescription> &functions) {
+                if (task.get() != current) {
+                    return;
+                }
                 functionModel->beginResetModel();
 
                 functionModel->functions = functions;
