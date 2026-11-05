@@ -516,7 +516,7 @@ endif()
 list(REMOVE_ITEM SOURCES Main.cpp)
 
 # Make source group for Visual Studio
-set(CUTTER_SOURCES ${OPTIONS} ${UI_FILES} ${QRC_FILES} ${PLATFORM_RESOURCES} ${SOURCES} ${HEADER_FILES})
+set(CUTTER_SOURCES ${UI_FILES} ${QRC_FILES} ${SOURCES} ${HEADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${CUTTER_SOURCES})
 
 add_library(cutter_gui_lib STATIC ${CUTTER_SOURCES} ${BINDINGS_SOURCE})
@@ -525,7 +525,9 @@ set_target_properties(cutter_gui_lib PROPERTIES
         CXX_VISIBILITY_PRESET hidden)
 target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_SOURCE_BUILD)
 
-add_executable(Cutter Main.cpp)
+# WIN32 and the icon resource belong to the executable: a library can't take WIN32, and the
+# linker drops a resource from a static library because nothing references it.
+add_executable(Cutter ${OPTIONS} Main.cpp ${PLATFORM_RESOURCES})
 target_link_libraries(Cutter PRIVATE cutter_gui_lib)
 set_target_properties(Cutter PROPERTIES
         OUTPUT_NAME cutter

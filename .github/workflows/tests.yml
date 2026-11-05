@@ -36,14 +36,18 @@ jobs:
       run:
         shell: bash
     steps:
-    - uses: actions/checkout@v7
+    - name: Check Out Cutter
+      uses: actions/checkout@v7
       with:
         submodules: recursive
         persist-credentials: false
-    - uses: actions/setup-python@v6
+
+    - name: Set Up Python
+      uses: actions/setup-python@v6
       with:
         python-version: 3.12.x
-    - name: dependencies
+
+    - name: Install Dependencies
       run: |
         pip install --no-cache-dir meson ninja
         case "$RUNNER_OS" in
@@ -58,68 +62,42 @@ jobs:
           vcpkg install zlib:x64-windows ;;
         esac
         scripts/fetch_deps.sh
-    - uses: actions/cache@v4
+
+    - name: Restore Test Fixtures
+      uses: actions/cache@v4
       with:
         path: build/test-fixtures
         key: test-fixtures-${{ hashFiles('test/common/Fixtures.cmake') }}
-    - uses: hendrikmuhs/ccache-action@v1.2
+
+    - name: Set Up ccache
       if: runner.os != 'Windows'
+      uses: hendrikmuhs/ccache-action@v1.2
       with:
         key: tests-${{ matrix.name }}
         max-size: 2G
 
-    - name: build
-      if: runner.os != 'Windows'
+    - name: Build Cutter
       run: |
-        source cutter-deps/env.sh
-        set -euo pipefail
-        cmake -S . -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCUTTER_USE_BUNDLED_RIZIN=ON \
-            -DCUTTER_ENABLE_TEST=ON \
-            -DCUTTER_ENABLE_PYTHON=OFF \
-            -DCUTTER_ENABLE_GRAPHVIZ=OFF \
-            -DCUTTER_ENABLE_KSYNTAXHIGHLIGHTING=OFF \
-            -DCUTTER_ENABLE_TRANSLATIONS=OFF
-        cmake --build build
+        if [ "$RUNNER_OS" = Windows ]; then
+          cmd.exe //c 'scripts\build-tests.bat'
+        else
+          scripts/build-tests.sh
+        fi
         echo BUILT=1 >>"$GITHUB_ENV"
-    - name: build
-      if: runner.os == 'Windows'
-      shell: cmd
-      run: |
-        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
-        set PATH=%CD%\cutter-deps\qt\bin;%PATH%
-        cmake -S . -B build -G Ninja ^
-          -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
-          -DCMAKE_PREFIX_PATH="%CD%\cutter-deps\qt" ^
-          -DCMAKE_TOOLCHAIN_FILE=%VCPKG_INSTALLATION_ROOT%/scripts/buildsystems/vcpkg.cmake ^
-          -DCUTTER_USE_BUNDLED_RIZIN=ON ^
-          -DCUTTER_ENABLE_TEST=ON ^
-          -DCUTTER_ENABLE_PYTHON=OFF ^
-          -DCUTTER_ENABLE_GRAPHVIZ=OFF ^
-          -DCUTTER_ENABLE_KSYNTAXHIGHLIGHTING=OFF ^
-          -DCUTTER_ENABLE_TRANSLATIONS=OFF || exit /b 1
-        cmake --build build || exit /b 1
-        rem The tests find the Qt and Rizin DLLs through PATH.
-        echo %CD%\cutter-deps\qt\bin>>%GITHUB_PATH%
-        echo %CD%\build>>%GITHUB_PATH%
-        echo BUILT=1>>%GITHUB_ENV%
 
     # One step per layer, so each shows on its own. They all run even if an earlier one fails.
-    - name: unit
+    - name: Run Unit Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
       run: ctest --test-dir build -L '^unit$' --output-on-failure
-    - name: session
+    - name: Run Session Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
       run: ctest --test-dir build -L '^session$' --output-on-failure
-    - name: dialogs
+    - name: Run Dialog Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
       run: ctest --test-dir build -L '^dialogs$' --output-on-failure
-    - name: workflows
+    - name: Run Workflow Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
       run: ctest --test-dir build -L '^workflows$' --output-on-failure
-    - name: sweep
+    - name: Run Sweep Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
       run: ctest --test-dir build -L '^sweep$' --output-on-failure

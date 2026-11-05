@@ -31,7 +31,7 @@ deps)
     sudo apt-get install -y --no-install-recommends \
         ninja-build ccache pkg-config gcc-12 g++-12 llvm-12 \
         qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
-        libqt6svg6-dev libqt6svgwidgets6 libqt6core5compat6-dev \
+        libqt6svg6-dev libqt6svgwidgets6 libqt6core5compat6-dev libqt6opengl6-dev \
         libgl1-mesa-dev mesa-common-dev libxkbcommon-dev libxkbcommon-x11-dev libpcre2-dev
     python3 -m pip install --user meson
     mkdir -p "$HOME/.local/bin"
