@@ -61,9 +61,9 @@ class TestSyntaxHighlighter : public QObject
     Q_OBJECT
 
 private slots:
-    void everyKeywordIsHighlighted_data(); // NOLINT
+    void everyKeywordIsHighlighted_data();
     void everyKeywordIsHighlighted();
-    void keywordInsideIdentifierIsNotHighlighted_data(); // NOLINT
+    void keywordInsideIdentifierIsNotHighlighted_data();
     void keywordInsideIdentifierIsNotHighlighted();
     void functionCallIsHighlighted();
     void lineCommentCoversRestOfLine();
@@ -71,7 +71,7 @@ private slots:
     void blockCommentSpansLinesAndEnds();
 };
 
-void TestSyntaxHighlighter::everyKeywordIsHighlighted_data() // NOLINT
+void TestSyntaxHighlighter::everyKeywordIsHighlighted_data()
 {
     QTest::addColumn<QString>("keyword");
     const FallbackSyntaxHighlighter highlighter;
@@ -95,7 +95,7 @@ void TestSyntaxHighlighter::everyKeywordIsHighlighted()
             != highlighted.rules().keywordColor());
 }
 
-void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted_data() // NOLINT
+void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted_data()
 {
     everyKeywordIsHighlighted_data();
 }

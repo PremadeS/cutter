@@ -87,7 +87,7 @@ class TestAbstractFilterView : public QObject
     Q_OBJECT
 
 private slots:
-    void testFilterTextChanged_data(); // NOLINT
+    void testFilterTextChanged_data();
     void testFilterTextChanged();
     void testRapidTypingEmitsOnce();
     void testClearFilter();
@@ -104,7 +104,7 @@ private slots:
     void twoBarsInOneWindowStaySeparate();
 };
 
-void TestAbstractFilterView::testFilterTextChanged_data() // NOLINT
+void TestAbstractFilterView::testFilterTextChanged_data()
 {
     QTest::addColumn<QString>("inputText");
     QTest::addColumn<QString>("expectedEmittedText");

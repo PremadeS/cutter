@@ -10,13 +10,13 @@ class TestDisassemblyHelper : public QObject
     Q_OBJECT
 
 private slots:
-    void testFindBracketRange_data(); //NOLINT
+    void testFindBracketRange_data();
     void testFindBracketRange();
     void testReadDisassemblyDataFromCursor();
     void testGetContextFromCursor();
 };
 
-void TestDisassemblyHelper::testFindBracketRange_data() //NOLINT
+void TestDisassemblyHelper::testFindBracketRange_data()
 {
     QTest::addColumn<QString>("line");
     QTest::addColumn<int>("posInLine");

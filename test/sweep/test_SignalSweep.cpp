@@ -73,7 +73,7 @@ class TestSignalSweep : public QObject
 
 private slots:
     void initTestCase();
-    void slotsDoNotDeadlockUnderLock_data(); // NOLINT
+    void slotsDoNotDeadlockUnderLock_data();
     void slotsDoNotDeadlockUnderLock();
 
 private:
@@ -102,7 +102,7 @@ void TestSignalSweep::initTestCase()
     arguments.name = functions.first().name;
 }
 
-void TestSignalSweep::slotsDoNotDeadlockUnderLock_data() // NOLINT
+void TestSignalSweep::slotsDoNotDeadlockUnderLock_data()
 {
     QTest::addColumn<int>("methodIndex");
 

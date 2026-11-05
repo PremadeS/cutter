@@ -560,20 +560,20 @@ class TestGraphLayouts : public QObject
     Q_OBJECT
 
 private slots:
-    void emptyGraphSizeDoesNotDependOnCaller_data(); // NOLINT
+    void emptyGraphSizeDoesNotDependOnCaller_data();
     void emptyGraphSizeDoesNotDependOnCaller();
-    void singleBlockHasEqualMargins_data(); // NOLINT
+    void singleBlockHasEqualMargins_data();
     void singleBlockHasEqualMargins();
-    void layoutKeepsDrawingRules_data(); // NOLINT
+    void layoutKeepsDrawingRules_data();
     void layoutKeepsDrawingRules();
-    void layoutIsDeterministic_data(); // NOLINT
+    void layoutIsDeterministic_data();
     void layoutIsDeterministic();
     void veryLongChainKeepsOrder();
-    void cleanupEdgesKeepsFirstEdgeToEachBlock_data(); // NOLINT
+    void cleanupEdgesKeepsFirstEdgeToEachBlock_data();
     void cleanupEdgesKeepsFirstEdgeToEachBlock();
 };
 
-void TestGraphLayouts::emptyGraphSizeDoesNotDependOnCaller_data() // NOLINT
+void TestGraphLayouts::emptyGraphSizeDoesNotDependOnCaller_data()
 {
     addLayoutRows();
 }
@@ -601,7 +601,7 @@ void TestGraphLayouts::emptyGraphSizeDoesNotDependOnCaller()
     QCOMPARE(secondHeight, firstHeight);
 }
 
-void TestGraphLayouts::singleBlockHasEqualMargins_data() // NOLINT
+void TestGraphLayouts::singleBlockHasEqualMargins_data()
 {
     addLayoutRows();
 }
@@ -630,7 +630,7 @@ void TestGraphLayouts::singleBlockHasEqualMargins()
     QCOMPARE(height - (block.y + block.height), block.y);
 }
 
-void TestGraphLayouts::layoutKeepsDrawingRules_data() // NOLINT
+void TestGraphLayouts::layoutKeepsDrawingRules_data()
 {
     addCaseLayoutRows();
 }
@@ -666,7 +666,7 @@ void TestGraphLayouts::layoutKeepsDrawingRules()
     checkForwardEdges(graphCase, graph, kind);
 }
 
-void TestGraphLayouts::layoutIsDeterministic_data() // NOLINT
+void TestGraphLayouts::layoutIsDeterministic_data()
 {
     addCaseLayoutRows();
 }
@@ -729,7 +729,7 @@ void TestGraphLayouts::veryLongChainKeepsOrder()
     }
 }
 
-void TestGraphLayouts::cleanupEdgesKeepsFirstEdgeToEachBlock_data() // NOLINT
+void TestGraphLayouts::cleanupEdgesKeepsFirstEdgeToEachBlock_data()
 {
     QTest::addColumn<QList<ut64>>("targets");
     QTest::addColumn<QList<ut64>>("expected");

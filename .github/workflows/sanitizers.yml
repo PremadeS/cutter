@@ -1,0 +1,172 @@
+name: Sanitizers
+
+# Runs the test suite with Cutter built under sanitizers. Rizin is not instrumented.
+#   asan: AddressSanitizer + UndefinedBehaviorSanitizer; any error fails.
+#   lsan: LeakSanitizer; fails only on Cutter leaks the PR adds. The leaks of the base branch,
+#         built against the PR's Rizin commit, are the baseline. Pushes to dev save their leaks as
+#         the baseline for later PRs.
+# Linux only: LeakSanitizer is not supported on macOS or Windows.
+
+on:
+  push:
+    branches:
+    - dev
+  pull_request:
+    branches:
+    - dev
+    - stable
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_NOHASHDIR: "true"
+  CCACHE_MAXSIZE: 2G
+
+jobs:
+  asan:
+    name: asan-ubsan
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        path: pr
+        submodules: recursive
+        persist-credentials: false
+
+    - name: dependencies
+      run: pr/scripts/sanitizers.sh deps
+
+    - uses: actions/cache@v4
+      with:
+        path: .ccache
+        key: ccache-asan-${{ github.sha }}
+        restore-keys: ccache-asan-
+
+    - name: build
+      run: pr/scripts/sanitizers.sh build pr build asan
+
+    - name: test
+      run: pr/scripts/sanitizers.sh test build asan logs
+
+    - name: report
+      run: python3 pr/scripts/sanitizer_report.py asan logs
+
+    - uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: asan-logs
+        path: logs
+        if-no-files-found: ignore
+
+  lsan:
+    name: lsan
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v7
+      with:
+        path: pr
+        submodules: recursive
+        persist-credentials: false
+
+    - name: commits
+      id: commits
+      run: |
+        echo "rizin=$(git -C pr rev-parse HEAD:rizin)" >> "$GITHUB_OUTPUT"
+        echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+
+    - name: dependencies
+      run: pr/scripts/sanitizers.sh deps
+
+    - uses: actions/cache@v4
+      with:
+        path: .ccache
+        key: ccache-lsan-${{ github.sha }}
+        restore-keys: ccache-lsan-
+
+    - name: build
+      run: pr/scripts/sanitizers.sh build pr build lsan
+
+    - name: test
+      run: pr/scripts/sanitizers.sh test build lsan logs
+
+    - name: collect leaks
+      run: |
+        mkdir -p leaks
+        python3 pr/scripts/sanitizer_report.py lsan-extract logs leaks/leaks.json
+
+    # On dev, this run is the baseline for the PRs based on this commit.
+    - name: list leaks
+      if: github.event_name == 'push'
+      run: |
+        python3 pr/scripts/sanitizer_report.py lsan-compare - leaks/leaks.json pr/rizin/librz/include
+        mkdir -p baseline
+        cp leaks/leaks.json baseline/
+
+    # The path must match the restore step's, or the cache won't be found.
+    - uses: actions/cache/save@v4
+      if: github.event_name == 'push'
+      with:
+        path: baseline
+        key: lsan-base-${{ github.sha }}-${{ steps.commits.outputs.rizin }}
+
+    - uses: actions/cache/restore@v4
+      if: github.event_name == 'pull_request'
+      id: baseline
+      with:
+        path: baseline
+        key: lsan-base-${{ steps.commits.outputs.base }}-${{ steps.commits.outputs.rizin }}
+
+    - uses: actions/checkout@v7
+      if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-hit != 'true'
+      with:
+        path: base
+        ref: ${{ steps.commits.outputs.base }}
+        persist-credentials: false
+
+    # The base branch is built against the PR's Rizin, so a Rizin update can't show up as new
+    # leaks. If it doesn't build with that Rizin or has no tests, there is no baseline and the
+    # comparison only reports.
+    - name: base run
+      if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p baseline
+        if [ ! -f base/test/CMakeLists.txt ]; then
+          echo "The base branch has no tests."
+          exit 0
+        fi
+        rm -rf base/rizin
+        ln -s "$PWD/pr/rizin" base/rizin
+        if ! pr/scripts/sanitizers.sh build base build-base lsan; then
+          echo "The base branch does not build with this Rizin commit."
+          exit 0
+        fi
+        pr/scripts/sanitizers.sh test build-base lsan logs-base
+        python3 pr/scripts/sanitizer_report.py lsan-extract logs-base baseline/leaks.json
+
+    - uses: actions/cache/save@v4
+      if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-hit != 'true' && hashFiles('baseline/leaks.json') != ''
+      with:
+        path: baseline
+        key: lsan-base-${{ steps.commits.outputs.base }}-${{ steps.commits.outputs.rizin }}
+
+    - name: compare
+      if: github.event_name == 'pull_request'
+      run: |
+        base=baseline/leaks.json
+        [ -f "$base" ] || base=-
+        python3 pr/scripts/sanitizer_report.py lsan-compare "$base" leaks/leaks.json pr/rizin/librz/include
+
+    - uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: lsan-logs
+        path: |
+          logs
+          logs-base
+          leaks
+          baseline
+        if-no-files-found: ignore
