@@ -81,7 +81,7 @@ jobs:
         if [ "$RUNNER_OS" = Windows ]; then
           cmd.exe //c 'scripts\build-tests.bat'
         else
-          scripts/build-tests.sh
+          bash scripts/build-tests.sh
         fi
         echo BUILT=1 >>"$GITHUB_ENV"
 

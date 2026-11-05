@@ -39,7 +39,7 @@ jobs:
         persist-credentials: false
 
     - name: Install Dependencies
-      run: pr/scripts/sanitizers.sh deps
+      run: bash pr/scripts/sanitizers.sh deps
 
     - name: Restore ccache
       uses: actions/cache@v4
@@ -49,10 +49,10 @@ jobs:
         restore-keys: ccache-asan-
 
     - name: Build Cutter with ASan and UBSan
-      run: pr/scripts/sanitizers.sh build pr build asan
+      run: bash pr/scripts/sanitizers.sh build pr build asan
 
     - name: Run Tests
-      run: pr/scripts/sanitizers.sh test build asan logs
+      run: bash pr/scripts/sanitizers.sh test build asan logs
 
     - name: Check for Sanitizer Errors
       run: python3 pr/scripts/sanitizer_report.py asan logs
@@ -83,7 +83,7 @@ jobs:
         echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
 
     - name: Install Dependencies
-      run: pr/scripts/sanitizers.sh deps
+      run: bash pr/scripts/sanitizers.sh deps
 
     - name: Restore ccache
       uses: actions/cache@v4
@@ -93,10 +93,10 @@ jobs:
         restore-keys: ccache-lsan-
 
     - name: Build Cutter with LSan
-      run: pr/scripts/sanitizers.sh build pr build lsan
+      run: bash pr/scripts/sanitizers.sh build pr build lsan
 
     - name: Run Tests
-      run: pr/scripts/sanitizers.sh test build lsan logs
+      run: bash pr/scripts/sanitizers.sh test build lsan logs
 
     - name: Collect Leaks
       run: |
@@ -148,11 +148,11 @@ jobs:
         fi
         rm -rf base/rizin
         ln -s "$PWD/pr/rizin" base/rizin
-        if ! pr/scripts/sanitizers.sh build base build-base lsan; then
+        if ! bash pr/scripts/sanitizers.sh build base build-base lsan; then
           echo "The base branch does not build with this Rizin commit."
           exit 0
         fi
-        pr/scripts/sanitizers.sh test build-base lsan logs-base
+        bash pr/scripts/sanitizers.sh test build-base lsan logs-base
         python3 pr/scripts/sanitizer_report.py lsan-extract logs-base baseline/leaks.json
 
     - name: Save Base Branch Leaks
