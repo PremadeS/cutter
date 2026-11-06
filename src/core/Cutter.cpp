@@ -4834,20 +4834,22 @@ void CutterCore::modifyGlobalVariable(RVA offset, QString name, const QString &t
     if (!glob) {
         return;
     }
+    // Parse the type first, so an invalid type leaves the variable unchanged.
+    char *errmsg = nullptr;
+    RzType *globType = rz_type_parse_string_single(rz_analysis_get_type_db(core->analysis)->parser,
+                                                   typ.toStdString().c_str(), &errmsg);
+    if (errmsg || !globType) {
+        qWarning() << tr("Error parsing type: \"%1\" message: ").arg(typ) << errmsg;
+        free(errmsg);
+        rz_type_free(globType);
+        return;
+    }
     // Compare if the name is not the same - also rename it
     if (name.compare(glob->name)) {
         // Renaming frees glob->name, which Rizin would still read as the old name.
         const QByteArray oldName = QByteArray(glob->name);
         rz_analysis_var_global_rename(core->analysis, oldName.constData(),
                                       name.toUtf8().constData());
-    }
-    char *errmsg = nullptr;
-    RzType *globType = rz_type_parse_string_single(rz_analysis_get_type_db(core->analysis)->parser,
-                                                   typ.toStdString().c_str(), &errmsg);
-    if (errmsg) {
-        qWarning() << tr("Error parsing type: \"%1\" message: ").arg(typ) << errmsg;
-        free(errmsg);
-        return;
     }
     rz_analysis_var_global_set_type(glob, globType);
 
@@ -5511,7 +5513,26 @@ QStringList CutterCore::getConfigVariableSpaces(const QString &key)
 void CutterCore::resetConfig()
 {
     CORE_LOCK();
+    // Values that come from the opened file or that Cutter depends on, not user preferences.
+    // Order matters: asm.bits and cfg.bigendian are checked against asm.arch.
+    static const char *const keptKeys[] = {
+        "asm.arch",      "asm.cpu",          "asm.bits",    "asm.os",       "asm.features",
+        "cfg.bigendian", "asm.debuginfo",    "file.type",   "file.path",    "bin.lang",
+        "bin.baddr",     "bin.laddr",        "analysis.cc", "analysis.gp",  "analysis.cpp.abi",
+        "io.va",         "io.cache",         "cfg.debug",   "cfg.plugins",  "scr.interactive",
+        "dbg.profile",
+    };
+    QList<QPair<const char *, QByteArray>> kept;
+    for (const char *key : keptKeys) {
+        const char *value = rz_config_get(core->config, key);
+        if (value) {
+            kept.append({ key, QByteArray(value) });
+        }
+    }
     rz_core_config_init(core);
+    for (const auto &[key, value] : std::as_const(kept)) {
+        rz_config_set(core->config, key, value.constData());
+    }
 }
 
 char *CutterCore::getTextualGraphAt(RzCoreGraphType type, RzCoreGraphFormat format, RVA address)
