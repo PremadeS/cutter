@@ -6,16 +6,12 @@
 #include <QString>
 #include <QTest>
 
-#include <functional>
-
 class MainWindow;
 
 namespace CutterTest {
 
 constexpr int skipReturnCode = 77; // TODO: wat dis
 inline constexpr char testbinsVariable[] = "CUTTER_TESTBINS_DIR";
-
-using TestRunner = std::function<int(int, char **)>;
 
 QString fixturePath(const QString &relativePath);
 const char *missingFixtureMessage();
@@ -27,9 +23,16 @@ bool openFile(const QString &path);
 void analyze();
 RVA addressWithoutComment(RVA start);
 
-int runWithoutCore(int argc, char **argv, const TestRunner &runner);
-int runCoreTest(int argc, char **argv, const TestRunner &runner);
-int runAppTest(int argc, char **argv, const QString &fixture, const TestRunner &runner);
+/**
+ * @brief Sets up the layer's environment and runs the tests of test in it.
+ *
+ * The arguments go to QtTest first. QtTest handles the options that only print something, like
+ * -functions, and exits right there. So listing a test's methods doesn't start Cutter or load a
+ * binary. The environment is created only when tests are going to run.
+ */
+int runWithoutCore(QObject *test, int &argc, char **argv);
+int runCoreTest(QObject *test, int &argc, char **argv);
+int runAppTest(QObject *test, int &argc, char **argv, const QString &fixture);
 
 } // namespace CutterTest
 
@@ -42,28 +45,22 @@ int runAppTest(int argc, char **argv, const QString &fixture, const TestRunner &
 #define CUTTER_NO_CORE_TEST_MAIN(TestClass)                                                        \
     int main(int argc, char *argv[])                                                               \
     {                                                                                              \
-        return CutterTest::runWithoutCore(argc, argv, [](int testArgc, char **testArgv) {          \
-            TestClass test;                                                                        \
-            return QTest::qExec(&test, testArgc, testArgv);                                        \
-        });                                                                                        \
+        TestClass test;                                                                            \
+        return CutterTest::runWithoutCore(&test, argc, argv);                                      \
     }
 
 #define CUTTER_CORE_TEST_MAIN(TestClass)                                                           \
     int main(int argc, char *argv[])                                                               \
     {                                                                                              \
-        return CutterTest::runCoreTest(argc, argv, [](int testArgc, char **testArgv) {             \
-            TestClass test;                                                                        \
-            return QTest::qExec(&test, testArgc, testArgv);                                        \
-        });                                                                                        \
+        TestClass test;                                                                            \
+        return CutterTest::runCoreTest(&test, argc, argv);                                         \
     }
 
 #define CUTTER_APP_TEST_MAIN_WITH_FILE(TestClass, fixture)                                         \
     int main(int argc, char *argv[])                                                               \
     {                                                                                              \
-        return CutterTest::runAppTest(argc, argv, fixture, [](int testArgc, char **testArgv) {     \
-            TestClass test;                                                                        \
-            return QTest::qExec(&test, testArgc, testArgv);                                        \
-        });                                                                                        \
+        TestClass test;                                                                            \
+        return CutterTest::runAppTest(&test, argc, argv, fixture);                                 \
     }
 
 #define CUTTER_APP_TEST_MAIN(TestClass) CUTTER_APP_TEST_MAIN_WITH_FILE(TestClass, QString())

@@ -52,9 +52,15 @@ function(cutter_add_layer_test LAYER TEST_NAME)
     )
 endfunction()
 
+# Build targets for all tests (tests) and for one layer (tests_<layer>).
+add_custom_target(tests)
+
 function(cutter_add_layer_tests LAYER)
+    add_custom_target(tests_${LAYER})
+    add_dependencies(tests tests_${LAYER})
     foreach(TEST_NAME IN LISTS ARGN)
         cutter_add_layer_test(${LAYER} ${TEST_NAME})
+        add_dependencies(tests_${LAYER} ${TEST_NAME})
     endforeach()
 endfunction()
 

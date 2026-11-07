@@ -27,8 +27,11 @@ function(cutter_add_unit_test TEST_NAME)
 endfunction()
 
 function(cutter_add_unit_tests)
+    add_custom_target(tests_unit)
+    add_dependencies(tests tests_unit)
     foreach(TEST_NAME IN LISTS ARGN)
         cutter_add_unit_test(${TEST_NAME})
+        add_dependencies(tests_unit ${TEST_NAME})
     endforeach()
 endfunction()
 

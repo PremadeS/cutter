@@ -61,17 +61,39 @@ Offline, or with `-DCUTTER_FETCH_TEST_FIXTURES=OFF`, tests that need a missing
 fixture are reported as skipped. To add a fixture, add a line to
 `common/Fixtures.cmake`. `Fixtures.h` is generated from it.
 
-## Running
+## Building
 
-Tests are off by default. Turn them on once, then build:
+Tests are off by default. Turn them on once when you configure:
 
 ```sh
 cmake -B build -DCUTTER_ENABLE_TEST=ON
-cmake --build build
-ctest --test-dir build                    # everything
-ctest --test-dir build -L session      	  # one layer
-ctest --test-dir build -R test_Navigation # single testcase
 ```
+
+Each test file is its own build target, named after the file. Each layer has a `tests_<layer>`
+target, and `tests` builds them all:
+
+```sh
+cmake --build build                          # Cutter and every test
+cmake --build build --target tests           # every test
+cmake --build build --target tests_session   # one layer
+cmake --build build --target test_Navigation # one test file
+```
+
+Add `--parallel <jobs>` to build with several jobs.
+
+## Running
+
+Build the tests first. `ctest` runs what was last built and doesn't rebuild anything.
+
+```sh
+ctest --test-dir build                    # everything
+ctest --test-dir build -L session         # one layer
+ctest --test-dir build -R test_Navigation # one test file
+ctest --test-dir build -j 8               # 8 test files at the same time
+```
+
+`-j <jobs>` (or `--parallel <jobs>`) runs several test files at once. Each test file is its own
+process with its own settings, so they don't get in each other's way.
 
 Tests run headless (`QT_QPA_PLATFORM=offscreen`) with isolated settings, so they
 never touch your own Cutter configuration.
