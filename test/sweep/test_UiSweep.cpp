@@ -1,24 +1,6 @@
 /**
  * @file test_UiSweep.cpp
  * @brief Every path a user can take through the main window runs without crashing or hanging.
- *
- * The test crawls the UI as a user would and nothing is listed by hand. It clicks every
- * menu-bar entry (opening submenus by hovering), every toolbar button and dropdown entry, every
- * entry of every dock's context menus (right-clicking each view), every button and dropdown in
- * every dock, every value of every combo box in a dock, double-clicks every list and presses
- * every shortcut that isn't in a menu. All of it is found at run time, so new widgets, menus,
- * dialogs and entries are covered without editing this file.
- *
- * The first time a window of a class opens, the crawler explores it before cancelling it: it
- * clicks every tab, the first rows of every list (the pages of Preferences, for example) and
- * every button except those that commit or delete (OK, Apply, Save, Delete, ...). What those
- * buttons open is explored the same way. Qt's own dialogs (file, font, color, message boxes)
- * are only cancelled. Later openings of an explored class are cancelled straight away.
- *
- * Every dock opens again under ESIL emulation, and everything that was disabled or missing
- * runs again there. A debugger run still going after a few seconds is suspended, as a user
- * would. Entries that would leave the test or touch the fixture are in
- * deniedActions; buttons that commit or delete match deniedButtons.
  */
 
 #include "AsyncTask.h"
@@ -135,6 +117,9 @@ bool settle()
     return QTest::qWaitFor(tasksSettled, settleTimeoutMs);
 }
 
+/**
+ * @brief Whether the sweep must not trigger action.
+ */
 bool isDenied(const QAction *action)
 {
     if (deniedActions.contains(action->objectName())) {
@@ -145,6 +130,9 @@ bool isDenied(const QAction *action)
     return debug && action == debug->actionStartEmul;
 }
 
+/**
+ * @brief Text without mnemonics, ellipsis and surrounding spaces.
+ */
 QString cleanText(QString text)
 {
     return text.remove('&').remove("...").trimmed();
@@ -171,6 +159,9 @@ QString buttonText(const QAbstractButton *button)
     return text;
 }
 
+/**
+ * @brief Whether a parent of object is a T.
+ */
 template<typename T>
 bool hasAncestor(const QObject *object)
 {
@@ -205,6 +196,9 @@ bool isPressable(const QAbstractButton *button)
             && !deniedButtons.match(buttonText(button)).hasMatch();
 }
 
+/**
+ * @brief The menu a tool or push button opens, if any.
+ */
 QMenu *buttonMenu(const QAbstractButton *button)
 {
     if (auto *tool = qobject_cast<const QToolButton *>(button)) {
@@ -329,6 +323,9 @@ QAction *findEntry(const QMenu *menu, const QString &key)
     return nullptr;
 }
 
+/**
+ * @brief Closes every open popup, innermost first.
+ */
 void closePopups()
 {
     while (QWidget *popup = QApplication::activePopupWidget()) {
@@ -336,6 +333,9 @@ void closePopups()
     }
 }
 
+/**
+ * @brief Opens the submenu of action by hovering it, as a user would.
+ */
 bool openSubmenu(QMenu *menu, QAction *action)
 {
     menu->setActiveAction(action);
@@ -371,6 +371,9 @@ QPoint clickPoint(QWidget *viewport)
     return viewport->rect().center();
 }
 
+/**
+ * @brief Closes popups and every visible top-level window except main and docks.
+ */
 void closeOtherWindows(QWidget *main)
 {
     closePopups();
@@ -555,6 +558,9 @@ Keyed dockButtons(CutterDockWidget *dock)
     return buttons;
 }
 
+/**
+ * @brief The visible combo boxes of the dock with more than one value, outside toolbars.
+ */
 Keyed dockCombos(CutterDockWidget *dock)
 {
     Keyed combos;
@@ -587,6 +593,9 @@ QList<QPair<QString, QAction *>> dockShortcuts(CutterDockWidget *dock)
     return shortcuts;
 }
 
+/**
+ * @brief Whether a step of this kind opens a menu.
+ */
 bool opensMenu(Step::Kind kind)
 {
     return kind == Step::MenuBar || kind == Step::ToolMenu || kind == Step::ContextMenu;
@@ -1155,6 +1164,9 @@ void TestUiSweep::everyDockOpens_data()
     addDockRows();
 }
 
+/**
+ * @brief The dock opens and its views show without crashing.
+ */
 void TestUiSweep::everyDockOpens()
 {
     QFETCH(const QString, dockName);
@@ -1167,6 +1179,16 @@ void TestUiSweep::everyEntryRuns_data()
     addRows(entrySteps);
 }
 
+/**
+ * @brief One menu bar entry, toolbar button or dock button runs without crashing or hanging.
+ *
+ * The steps are every menu bar entry (submenus opened by hovering), toolbar button and dropdown
+ * entry, dock button, combo box value, list double-click and shortcut that isn't in a menu.
+ * Everything is found at run time, so new widgets and entries are covered without editing this
+ * file. The first window of each class that opens is explored (tabs, list rows, non-committing
+ * buttons) before it is cancelled; Qt's own dialogs are only cancelled. Entries that leave the test
+ * or touch the fixture are in deniedActions, committing buttons match deniedButtons.
+ */
 void TestUiSweep::everyEntryRuns()
 {
     runRow(entrySteps);
@@ -1181,6 +1203,9 @@ void TestUiSweep::everyContextEntryRuns_data()
     addRows(contextSteps);
 }
 
+/**
+ * @brief One entry of a dock's context menu runs without crashing or hanging.
+ */
 void TestUiSweep::everyContextEntryRuns()
 {
     runRow(contextSteps);
@@ -1191,6 +1216,9 @@ void TestUiSweep::everyDockOpensWhileEmulating_data()
     addDockRows();
 }
 
+/**
+ * @brief The dock opens under ESIL emulation.
+ */
 void TestUiSweep::everyDockOpensWhileEmulating()
 {
     QFETCH(const QString, dockName);
@@ -1214,6 +1242,11 @@ void TestUiSweep::everythingRunsWhileEmulating_data()
     addRows(emulationSteps);
 }
 
+/**
+ * @brief What was disabled or missing outside emulation runs under ESIL emulation.
+ *
+ * A run still going after a few seconds is suspended, as a user would.
+ */
 void TestUiSweep::everythingRunsWhileEmulating()
 {
     QVERIFY2(startEmulation(), "emulation didn't start");

@@ -1,3 +1,8 @@
+/**
+ * @file test_Helpers.cpp
+ * @brief Small helpers from common/Helpers.h.
+ */
+
 #include "common/Helpers.h"
 
 #include <QTest>
@@ -18,6 +23,9 @@ private slots:
     void testAppendRow();
 };
 
+/**
+ * @brief Byte counts are shown with the right unit.
+ */
 void TestHelpers::testFormatByteCount()
 {
     QCOMPARE(qhelpers::formatByteCount(0), QString("0"));
@@ -27,6 +35,9 @@ void TestHelpers::testFormatByteCount()
     QCOMPARE(qhelpers::formatByteCount(1073741824), QString("1 GB"));
 }
 
+/**
+ * @brief setCheckedWithoutSignals checks a button without emitting toggled.
+ */
 void TestHelpers::testSetCheckedWithoutSignals()
 {
     QPushButton button("Test");
@@ -40,6 +51,9 @@ void TestHelpers::testSetCheckedWithoutSignals()
     QVERIFY(button.isChecked());
 }
 
+/**
+ * @brief selectIndexByData selects the item with the data, or the default index.
+ */
 void TestHelpers::testSelectIndexByData()
 {
     QComboBox combo;
@@ -56,6 +70,9 @@ void TestHelpers::testSelectIndexByData()
     QCOMPARE(combo.currentIndex(), 2);
 }
 
+/**
+ * @brief applyColorToSvg replaces every fill color of an SVG.
+ */
 void TestHelpers::testApplyColorToSvg()
 {
     const QByteArray originalSvg = R"(<svg><path fill="#000000" style="fill:#123456;"/></svg>)";
@@ -69,6 +86,9 @@ void TestHelpers::testApplyColorToSvg()
 }
 
 
+/**
+ * @brief appendRow adds a top-level row with the texts after the hidden first column.
+ */
 void TestHelpers::testAppendRow()
 {
     QTreeWidget treeWidget;

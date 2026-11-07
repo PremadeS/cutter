@@ -37,7 +37,7 @@ function(cutter_add_layer_test LAYER TEST_NAME)
     )
 
     target_link_libraries(${TEST_NAME} PRIVATE
-        cutter_gui_lib
+        cutter_app
         Qt6::Test
         Qt6::Widgets
     )

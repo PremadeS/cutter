@@ -1,3 +1,8 @@
+/**
+ * @file test_BasicInstructionHighlighter.cpp
+ * @brief Highlighted instruction ranges: lookup, partial clear and full clear.
+ */
+
 #include "common/BasicInstructionHighlighter.h"
 
 #include <QTest>
@@ -12,6 +17,9 @@ private slots:
     void testFullOverlapClear();
 };
 
+/**
+ * @brief An address inside a highlighted range finds it; the end address doesn't.
+ */
 void TestInstructionHighlighters::testBasicLookup()
 {
     BasicInstructionHighlighter highlighter;
@@ -30,6 +38,9 @@ void TestInstructionHighlighters::testBasicLookup()
     QVERIFY(biEnd == nullptr);
 }
 
+/**
+ * @brief Clearing the middle of a range leaves the parts before and after it highlighted.
+ */
 void TestInstructionHighlighters::testPartialClearSplitsInstruction()
 {
     BasicInstructionHighlighter highlighter;
@@ -50,6 +61,9 @@ void TestInstructionHighlighters::testPartialClearSplitsInstruction()
     QCOMPARE(rightSegment->size, RVA(0x10));
 }
 
+/**
+ * @brief Clearing a range that covers several highlights removes all of them.
+ */
 void TestInstructionHighlighters::testFullOverlapClear()
 {
     BasicInstructionHighlighter highlighter;

@@ -1,11 +1,6 @@
 /**
  * @file test_Navigation.cpp
- * @brief Moving through the binary from lists, history and xrefs keeps the views in step.
- *
- * Every way of jumping somewhere ends in a seek that the code views must follow. A list
- * dock that doesn't seek on activation, back/forward that moves the core but not the
- * views, or an xref that jumps to the wrong side of the reference are all wiring bugs
- * that the core-level tests can't see.
+ * @brief Jumping through the binary from lists, history and xrefs moves the views.
  */
 
 #include "Fixtures.h"
@@ -70,6 +65,9 @@ void TestNavigation::initTestCase()
     QVERIFY(graph);
 }
 
+/**
+ * @brief Double-clicking a function in Functions shows it in the Disassembly and the Graph.
+ */
 void TestNavigation::activatingFunctionSyncsDisassemblyAndGraph()
 {
     auto *functions = main->findChild<FunctionsWidget *>();
@@ -111,6 +109,9 @@ void TestNavigation::activatingFunctionSyncsDisassemblyAndGraph()
     QTRY_VERIFY_WITH_TIMEOUT(CutterTest::graphHasBlock(graph, target), viewRefreshTimeoutMs);
 }
 
+/**
+ * @brief Activating a row in any list dock seeks to its address.
+ */
 void TestNavigation::activatingAnyAddressableListRowSeeks()
 {
     int checked = 0;
@@ -151,6 +152,9 @@ void TestNavigation::activatingAnyAddressableListRowSeeks()
     QVERIFY2(checked >= minimumCheckedLists, "too few list docks had rows to activate");
 }
 
+/**
+ * @brief Back and Forward move the core and the Disassembly.
+ */
 void TestNavigation::backAndForwardMoveTheViews()
 {
     CutterCore *core = CutterTest::core();
@@ -191,6 +195,9 @@ void TestNavigation::backAndForwardMoveTheViews()
                              viewRefreshTimeoutMs);
 }
 
+/**
+ * @brief Activating an xref seeks to the referencing side.
+ */
 void TestNavigation::activatingXrefSeeksToReference()
 {
     CutterCore *core = CutterTest::core();

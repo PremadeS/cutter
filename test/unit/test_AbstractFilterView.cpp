@@ -1,10 +1,6 @@
 /**
  * @file test_AbstractFilterView.cpp
- * @brief Debounce, clear, close and show behavior of the list quick filter, and its keys.
- *
- * Every list dock and several dialogs filter through this view. attachTo() wires Find and
- * Esc for all of them; when each widget wired the keys by hand, the Xrefs dialog shipped
- * with Find not focusing the bar and Esc neither clearing nor closing it.
+ * @brief The list quick filter: debounce, clear, close, show and its Find/Esc keys.
  */
 
 #include "shortcuts/ShortcutManager.h"
@@ -73,6 +69,9 @@ QKeySequence escKey()
     return Shortcuts()->getKeySequence("General.clearFilter");
 }
 
+/**
+ * @brief Shows the window and waits until it is the active window.
+ */
 bool showActive(QWidget *window)
 {
     window->show();
@@ -94,13 +93,21 @@ private slots:
     void testCloseFilter();
     void testShowFilter();
 
-    /** @brief Find pressed in the list shows a hidden bar and focuses it. */
+    /**
+     * @brief Find pressed in the list shows a hidden bar and focuses it.
+     */
     void findInListShowsAndFocusesFilter();
-    /** @brief Esc clears the text, then closes a closable bar and refocuses the list. */
+    /**
+     * @brief Esc clears the text, then closes a closable bar and refocuses the list.
+     */
     void escClearsThenClosesAndReturnsToList();
-    /** @brief A bar that can't close keeps Esc free once empty, so a dialog still closes. */
+    /**
+     * @brief A bar that can't close keeps Esc free once empty, so a dialog still closes.
+     */
     void escOnEmptyUnclosableBarClosesDialog();
-    /** @brief Two bars attached to two lists in one window each answer only their own list. */
+    /**
+     * @brief Two bars attached to two lists in one window each answer only their own list.
+     */
     void twoBarsInOneWindowStaySeparate();
 };
 
@@ -113,6 +120,9 @@ void TestAbstractFilterView::testFilterTextChanged_data()
     QTest::newRow("empty_string_search") << "" << "";
 }
 
+/**
+ * @brief Typing emits filterTextChanged with the typed text once the debounce ends.
+ */
 void TestAbstractFilterView::testFilterTextChanged()
 {
     QFETCH(QString, inputText);
@@ -134,6 +144,9 @@ void TestAbstractFilterView::testFilterTextChanged()
     QCOMPARE(arguments.at(0).toString(), expectedEmittedText);
 }
 
+/**
+ * @brief Several keystrokes within the debounce interval emit filterTextChanged once.
+ */
 void TestAbstractFilterView::testRapidTypingEmitsOnce()
 {
     TestableFilterView filterView;
@@ -149,6 +162,9 @@ void TestAbstractFilterView::testRapidTypingEmitsOnce()
     QCOMPARE(spy.takeFirst().at(0).toString(), QString("main"));
 }
 
+/**
+ * @brief clearFilter() empties the bar and emits the empty text.
+ */
 void TestAbstractFilterView::testClearFilter()
 {
     TestableFilterView filterView;
@@ -159,6 +175,9 @@ void TestAbstractFilterView::testClearFilter()
     QCOMPARE(filterView.lineEdit()->text(), QString(""));
 }
 
+/**
+ * @brief closeFilter() hides the bar and clears its text.
+ */
 void TestAbstractFilterView::testCloseFilter()
 {
     TestableFilterView filterView;
@@ -174,6 +193,9 @@ void TestAbstractFilterView::testCloseFilter()
     QCOMPARE(spy.count(), 1);
 }
 
+/**
+ * @brief showFilter() shows the bar and focuses its text field.
+ */
 void TestAbstractFilterView::testShowFilter()
 {
     TestableFilterView filterView;
@@ -185,6 +207,12 @@ void TestAbstractFilterView::testShowFilter()
     QCOMPARE(filterView.focusWidget(), static_cast<QWidget *>(filterView.lineEdit()));
 }
 
+/**
+ * @brief Find pressed in the attached list shows the bar and focuses it.
+ *
+ * attachTo() wires the keys for every view; when each view wired them by hand, the Xrefs dialog
+ * shipped without them.
+ */
 void TestAbstractFilterView::findInListShowsAndFocusesFilter()
 {
     QWidget window;
@@ -200,6 +228,9 @@ void TestAbstractFilterView::findInListShowsAndFocusesFilter()
     QCOMPARE(QApplication::focusWidget(), static_cast<QWidget *>(pair.filter->lineEdit()));
 }
 
+/**
+ * @brief Esc first clears the text, then closes the bar and gives focus back to the list.
+ */
 void TestAbstractFilterView::escClearsThenClosesAndReturnsToList()
 {
     QWidget window;
@@ -222,6 +253,9 @@ void TestAbstractFilterView::escClearsThenClosesAndReturnsToList()
     QVERIFY2(pair.filter->isVisible(), "Find did not bring the closed bar back");
 }
 
+/**
+ * @brief Esc on an empty bar that can't close passes through and closes the dialog.
+ */
 void TestAbstractFilterView::escOnEmptyUnclosableBarClosesDialog()
 {
     QDialog dialog;
@@ -240,6 +274,9 @@ void TestAbstractFilterView::escOnEmptyUnclosableBarClosesDialog()
              "Esc on an empty bar was swallowed instead of closing the dialog");
 }
 
+/**
+ * @brief Two filtered lists in one window each get their own bar from Find and Esc.
+ */
 void TestAbstractFilterView::twoBarsInOneWindowStaySeparate()
 {
     QWidget window;

@@ -1,10 +1,6 @@
 /**
  * @file test_SignalSweep.cpp
  * @brief Every CutterCore signal emitted under the core lock against a full MainWindow.
- *
- * Core methods emit while holding the core lock, so every slot connected to a core signal runs
- * under it. Emitting each signal twice under the lock with every dock visible finds slots that
- * deadlock by waiting for a task that needs the lock; the watchdog names the stuck slot.
  */
 
 #include "AsyncTask.h"
@@ -51,6 +47,9 @@ struct SignalArguments
     }
 };
 
+/**
+ * @brief Emits signal on core with one argument value per parameter type.
+ */
 void emitSignal(CutterCore *core, const QMetaMethod &signal, SignalArguments &arguments)
 {
     QList<void *> argv = { nullptr };
@@ -116,6 +115,13 @@ void TestSignalSweep::slotsDoNotDeadlockUnderLock_data()
 }
 
 // TODO: how does this deadlock??
+/**
+ * @brief Emitting the signal twice under the core lock, with every dock visible, doesn't deadlock.
+ *
+ * Core methods emit while holding the lock, so every slot runs under it. A slot that waits for a
+ * task needing the lock hangs, and the watchdog names the signal. FunctionsWidget and StringsWidget
+ * refreshes did; not reproducible from the UI.
+ */
 void TestSignalSweep::slotsDoNotDeadlockUnderLock()
 {
     QFETCH(const int, methodIndex);

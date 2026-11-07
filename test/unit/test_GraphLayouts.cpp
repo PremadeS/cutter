@@ -1,15 +1,6 @@
 /**
  * @file test_GraphLayouts.cpp
  * @brief Graph layouts keep the drawing readable for every control-flow shape.
- *
- * Exact coordinates depend on block sizes and layout tuning, so the layouts are checked
- * against rules that hold whatever the coordinates are: blocks stay inside the reported
- * size and never overlap, every edge leaves its source and arrives at its target, grid
- * edges are orthogonal and never cut through a block, forward edges point down (right
- * when horizontal), and a layout neither changes the graph nor depends on anything but
- * its input. A catalog of shapes (loops, switches, irreducible flow, unreachable code)
- * runs against every layout. Layouts expect a graph cleaned by GraphView::cleanupEdges,
- * which is tested on its own.
  */
 
 #include "widgets/GraphGridLayout.h"
@@ -320,6 +311,9 @@ bool isGrid(LayoutKind kind)
             || kind == LayoutKind::GridWide || isHorizontal(kind);
 }
 
+/**
+ * @brief Builds the layout input from a graph case.
+ */
 Graph buildGraph(const GraphCase &graphCase)
 {
     Graph graph;
@@ -351,6 +345,9 @@ QRectF rectOf(const GraphBlock &block)
     return QRectF(block.x, block.y, block.width, block.height);
 }
 
+/**
+ * @brief Whether the segment from a to b goes through the inside of rect.
+ */
 bool segmentCrossesInterior(const QPointF &a, const QPointF &b, const QRectF &rect)
 {
     constexpr qreal borderTolerance = 0.5;
@@ -371,6 +368,9 @@ bool segmentCrossesInterior(const QPointF &a, const QPointF &b, const QRectF &re
             && left < inner.right();
 }
 
+/**
+ * @brief The edges that a depth-first search from the entry doesn't see as loops.
+ */
 std::set<std::pair<ut64, ut64>> forwardEdgesFromEntry(const GraphCase &graphCase)
 {
     std::unordered_map<ut64, const BlockSpec *> specs;
@@ -410,6 +410,9 @@ std::set<std::pair<ut64, ut64>> forwardEdgesFromEntry(const GraphCase &graphCase
     return forward;
 }
 
+/**
+ * @brief Fails if the layout added, removed or resized blocks or edges.
+ */
 void checkStructureUnchanged(const GraphCase &graphCase, const Graph &graph)
 {
     QCOMPARE(graph.size(), graphCase.blocks.size());
@@ -426,6 +429,9 @@ void checkStructureUnchanged(const GraphCase &graphCase, const Graph &graph)
     }
 }
 
+/**
+ * @brief Fails if a block, or a grid edge point, is outside the reported size.
+ */
 void checkInsideBounds(const Graph &graph, int width, int height, LayoutKind kind)
 {
     for (const auto &it : graph) {
@@ -447,6 +453,9 @@ void checkInsideBounds(const Graph &graph, int width, int height, LayoutKind kin
     }
 }
 
+/**
+ * @brief Fails if two blocks overlap.
+ */
 void checkNoOverlap(const Graph &graph)
 {
     std::vector<std::pair<ut64, QRectF>> rects;
@@ -484,6 +493,9 @@ void checkEdgeEnds(ut64 from, const GraphBlock &source, const GraphEdge &edge,
     }
 }
 
+/**
+ * @brief Fails if a grid edge has a diagonal segment or crosses a block.
+ */
 void checkEdgeRoute(ut64 from, const GraphEdge &edge, const Graph &graph)
 {
     const QString name = edgeName(from, edge.target);
@@ -498,6 +510,9 @@ void checkEdgeRoute(ut64 from, const GraphEdge &edge, const Graph &graph)
     }
 }
 
+/**
+ * @brief Fails if an edge doesn't start at its source or end at its target.
+ */
 void checkEdges(const Graph &graph, LayoutKind kind)
 {
     for (const auto &it : graph) {
@@ -519,6 +534,9 @@ void checkEdges(const Graph &graph, LayoutKind kind)
     }
 }
 
+/**
+ * @brief Fails if a forward edge points against the flow.
+ */
 void checkForwardEdges(const GraphCase &graphCase, const Graph &graph, LayoutKind kind)
 {
     if (!isGrid(kind)) {
@@ -533,6 +551,9 @@ void checkForwardEdges(const GraphCase &graphCase, const Graph &graph, LayoutKin
     }
 }
 
+/**
+ * @brief Adds a data row for every graph case in every layout.
+ */
 void addCaseLayoutRows()
 {
     QTest::addColumn<int>("caseIndex");
@@ -545,6 +566,9 @@ void addCaseLayoutRows()
     }
 }
 
+/**
+ * @brief Adds a data row for every layout.
+ */
 void addLayoutRows()
 {
     QTest::addColumn<int>("layoutIndex");
@@ -578,6 +602,9 @@ void TestGraphLayouts::emptyGraphSizeDoesNotDependOnCaller_data()
     addLayoutRows();
 }
 
+/**
+ * @brief An empty graph gets the same size whatever width and height the caller passed in.
+ */
 void TestGraphLayouts::emptyGraphSizeDoesNotDependOnCaller()
 {
     constexpr int callerWidth = 777;
@@ -606,6 +633,9 @@ void TestGraphLayouts::singleBlockHasEqualMargins_data()
     addLayoutRows();
 }
 
+/**
+ * @brief A single block has the same margin on opposite sides in grid layouts.
+ */
 void TestGraphLayouts::singleBlockHasEqualMargins()
 {
     QFETCH(const int, layoutIndex);
@@ -635,6 +665,13 @@ void TestGraphLayouts::layoutKeepsDrawingRules_data()
     addCaseLayoutRows();
 }
 
+/**
+ * @brief Every graph shape keeps the drawing rules in every layout.
+ *
+ * Coordinates depend on block sizes and tuning, so the rules are relations: blocks stay inside the
+ * reported size and don't overlap, edges leave their source and reach their target, grid edges are
+ * orthogonal and don't cut through blocks, and forward edges point down (right when horizontal).
+ */
 void TestGraphLayouts::layoutKeepsDrawingRules()
 {
     QFETCH(const int, caseIndex);
@@ -671,6 +708,9 @@ void TestGraphLayouts::layoutIsDeterministic_data()
     addCaseLayoutRows();
 }
 
+/**
+ * @brief Laying out the same graph twice gives the same positions and edges.
+ */
 void TestGraphLayouts::layoutIsDeterministic()
 {
     QFETCH(const int, caseIndex);
@@ -701,6 +741,9 @@ void TestGraphLayouts::layoutIsDeterministic()
     }
 }
 
+/**
+ * @brief A 50000-block chain is laid out top to bottom in order.
+ */
 void TestGraphLayouts::veryLongChainKeepsOrder()
 {
     constexpr ut64 veryLongChainLength = 50000;
@@ -742,6 +785,9 @@ void TestGraphLayouts::cleanupEdgesKeepsFirstEdgeToEachBlock_data()
     QTest::newRow("no_edges") << QList<ut64> {} << QList<ut64> {};
 }
 
+/**
+ * @brief cleanupEdges drops edges leaving the graph and duplicate edges, keeping the first one.
+ */
 void TestGraphLayouts::cleanupEdgesKeepsFirstEdgeToEachBlock()
 {
     QFETCH(const QList<ut64>, targets);

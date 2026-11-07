@@ -1,13 +1,6 @@
 /**
  * @file test_AsyncTasks.cpp
  * @brief Background tasks run through the core's AsyncTaskManager.
- *
- * File loading, analysis and list refreshes run as tasks, and the UI decides what to
- * show from their finished signal, the manager's running state and AsyncTask::wait().
- * A task reported twice runs finalizeOpen twice; a task finishing on a pool thread must
- * update the manager's task list on the GUI thread, or the list races; wait() returning
- * early lets FunctionsWidget and StringsWidget run two refreshes at once; a task that
- * ignores interrupt freezes Cutter when the user cancels analysis.
  */
 
 #include "CallbackTask.h"
@@ -41,6 +34,9 @@ struct Gate
     std::atomic<int> started { 0 };
 };
 
+/**
+ * @brief A task that runs until its gate is released.
+ */
 std::shared_ptr<CutterTest::CallbackTask> gatedTask(const std::shared_ptr<Gate> &gate)
 {
     return std::make_shared<CutterTest::CallbackTask>([gate]() {
@@ -114,6 +110,11 @@ void TestAsyncTasks::cleanup()
     QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
 }
 
+/**
+ * @brief A task emits finished once and is removed from the manager's list.
+ *
+ * A task reported twice runs finalizeOpen twice.
+ */
 void TestAsyncTasks::taskReportsFinishedOnceAndLeavesManager()
 {
     auto gate = std::make_shared<Gate>();
@@ -139,6 +140,9 @@ void TestAsyncTasks::taskReportsFinishedOnceAndLeavesManager()
     QCOMPARE(tasksSpy.count(), 2);
 }
 
+/**
+ * @brief tasksChanged is delivered on the GUI thread, also for a task finishing on a pool thread.
+ */
 void TestAsyncTasks::tasksChangedArrivesOnGuiThread()
 {
     auto gate = std::make_shared<Gate>();
@@ -167,6 +171,9 @@ void TestAsyncTasks::tasksChangedArrivesOnGuiThread()
     }
 }
 
+/**
+ * @brief The manager reports running until the last of several tasks finishes.
+ */
 void TestAsyncTasks::managerRunsUntilEveryTaskFinished()
 {
     auto firstGate = std::make_shared<Gate>();
@@ -195,6 +202,9 @@ void TestAsyncTasks::managerRunsUntilEveryTaskFinished()
     QTRY_VERIFY_WITH_TIMEOUT(!manager()->getTasksRunning(), taskTimeoutMs);
 }
 
+/**
+ * @brief The manager keeps a started task alive until it finishes.
+ */
 void TestAsyncTasks::managerKeepsTaskAliveUntilFinished()
 {
     auto gate = std::make_shared<Gate>();
@@ -212,6 +222,13 @@ void TestAsyncTasks::managerKeepsTaskAliveUntilFinished()
     QTRY_VERIFY_WITH_TIMEOUT(observer.expired(), taskTimeoutMs);
 }
 
+/**
+ * @brief wait() on a task that is still queued blocks until it ran.
+ *
+ * Every pool thread is kept busy so the task stays queued. wait() used to return before the task
+ * started, which let FunctionsWidget and StringsWidget run two refreshes at once. Not reproducible
+ * from the UI.
+ */
 void TestAsyncTasks::waitBlocksWhileTaskIsQueued()
 {
     const int poolSize = QThread::idealThreadCount();
@@ -239,6 +256,13 @@ void TestAsyncTasks::waitBlocksWhileTaskIsQueued()
     QVERIFY(ran->load());
 }
 
+/**
+ * @brief Interrupting a running analysis of a large binary ends the task quickly.
+ *
+ * To reproduce:
+ * 1. Open a large binary (e.g. /bin/ls) with "Auto analysis (experimental)".
+ * 2. Cancel in the progress dialog: Cutter stayed frozen until the analysis finished.
+ */
 void TestAsyncTasks::interruptedAnalysisFinishesQuickly()
 {
     CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::coreutilsLs());

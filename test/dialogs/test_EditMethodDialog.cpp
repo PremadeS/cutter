@@ -1,9 +1,6 @@
 /**
  * @file test_EditMethodDialog.cpp
- * @brief Moving a class method to another class through Edit Method.
- *
- * Edit Method shows an editable class combo box, but editMethod renames and updates the
- * method in the original class, so choosing another class is silently ignored.
+ * @brief Editing a class method through Edit Method.
  */
 
 #include "Fixtures.h"
@@ -54,6 +51,14 @@ void TestEditMethodDialog::initTestCase()
     QVERIFY(classes.contains(sourceClass) && classes.contains(targetClass));
 }
 
+/**
+ * @brief Choosing another class in Edit Method moves the method there.
+ *
+ * To reproduce:
+ * 1. Windows → Info → Classes, with two classes.
+ * 2. Right click a method → Edit Method, pick the other class and press OK: the method stayed in
+ *    its class.
+ */
 void TestEditMethodDialog::editMethodMovesToChosenClass()
 {
     AnalysisMethodDescription desc;

@@ -1,3 +1,8 @@
+/**
+ * @file test_RichTextPainter.cpp
+ * @brief Cropping and converting the rich text drawn in the graph blocks.
+ */
+
 #include "RichTextPainter.h"
 
 #include <QTest>
@@ -17,6 +22,9 @@ private slots:
     void testFromTextDocument();
 };
 
+/**
+ * @brief Text shorter than the limit is kept and not reported as cropped.
+ */
 void TestRichTextPainter::testCroppedUnchanged()
 {
     RichTextPainter::CustomRichText item;
@@ -30,6 +38,9 @@ void TestRichTextPainter::testCroppedUnchanged()
     QVERIFY(!croppedOut);
 }
 
+/**
+ * @brief Text longer than the limit is cut at the limit.
+ */
 void TestRichTextPainter::testCroppedTruncated()
 {
     RichTextPainter::CustomRichText item;
@@ -43,6 +54,9 @@ void TestRichTextPainter::testCroppedTruncated()
     QVERIFY(croppedOut);
 }
 
+/**
+ * @brief A cropped text ends with the indicator, within the limit.
+ */
 void TestRichTextPainter::testCroppedWithIndicator()
 {
     RichTextPainter::CustomRichText item;
@@ -57,6 +71,9 @@ void TestRichTextPainter::testCroppedWithIndicator()
     QVERIFY(croppedOut);
 }
 
+/**
+ * @brief Cropping across several tokens keeps the earlier ones and adds the indicator.
+ */
 void TestRichTextPainter::testCroppedMultiTokenIndicator()
 {
     RichTextPainter::CustomRichText t1;
@@ -76,6 +93,9 @@ void TestRichTextPainter::testCroppedMultiTokenIndicator()
     QCOMPARE(total, QString("ab..."));
 }
 
+/**
+ * @brief Text and colors of a document become rich text items.
+ */
 void TestRichTextPainter::testFromTextDocument()
 {
     QTextDocument doc;

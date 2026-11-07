@@ -1,13 +1,6 @@
 /**
  * @file test_Layouts.cpp
  * @brief Saved layouts come back after a restart with every dock where the user left it.
- *
- * Qt's saveState() only stores where docks sit, and only for docks that already exist.
- * Cutter recreates the extra docks from their saved names, writes each dock's own
- * properties next to the state, and round-trips both through QSettings. The test builds
- * a layout that uses every dock area, tab groups, a floating dock, a hidden default dock
- * and extra memory widgets, saves it, reloads the settings as a restart would, resets to
- * the default layout, applies the saved one, and compares every dock with what was saved.
  */
 
 #include "Fixtures.h"
@@ -129,7 +122,9 @@ private slots:
     void initTestCase();
     void cleanup();
 
-    /** @brief A layout using every area, tabs, floating, hidden and extra docks comes back. */
+    /**
+     * @brief A layout using every area, tabs, floating, hidden and extra docks comes back.
+     */
     void complexLayoutIsRestored();
 
 private:
@@ -175,6 +170,13 @@ bool TestLayouts::saveRestartAndApply(const QString &name,
     return extrasClosed && applyLayout(main, name);
 }
 
+/**
+ * @brief A layout using every dock area is restored exactly after a restart.
+ *
+ * The layout has tab groups, a floating dock, a hidden default dock and extra memory widgets. It is
+ * saved, the settings are reloaded as a restart would, the default layout is applied and then the
+ * saved one, and every dock is compared with what was saved.
+ */
 void TestLayouts::complexLayoutIsRestored()
 {
     auto *functions = dock<FunctionsWidget>();

@@ -1,10 +1,6 @@
 /**
  * @file test_SyntaxHighlighter.cpp
- * @brief Token highlighting of the fallback C highlighter.
- *
- * The decompiler and graph views use FallbackSyntaxHighlighter when KSyntaxHighlighting is not
- * available. A broken rule leaves keywords plain, colors parts of identifiers, or lets a comment
- * bleed into the code after it.
+ * @brief The fallback C highlighter, used when KSyntaxHighlighting is not available.
  */
 
 #include "common/SyntaxHighlighter.h"
@@ -80,6 +76,9 @@ void TestSyntaxHighlighter::everyKeywordIsHighlighted_data()
     }
 }
 
+/**
+ * @brief Every C keyword is highlighted as a keyword.
+ */
 void TestSyntaxHighlighter::everyKeywordIsHighlighted()
 {
     QFETCH(const QString, keyword);
@@ -100,6 +99,9 @@ void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted_data()
     everyKeywordIsHighlighted_data();
 }
 
+/**
+ * @brief A keyword inside a longer identifier isn't highlighted.
+ */
 void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted()
 {
     QFETCH(const QString, keyword);
@@ -112,6 +114,9 @@ void TestSyntaxHighlighter::keywordInsideIdentifierIsNotHighlighted()
     }
 }
 
+/**
+ * @brief A name followed by '(' is highlighted as a function.
+ */
 void TestSyntaxHighlighter::functionCallIsHighlighted()
 {
     const QString name = "compute";
@@ -125,6 +130,9 @@ void TestSyntaxHighlighter::functionCallIsHighlighted()
             != highlighted.rules().functionColor());
 }
 
+/**
+ * @brief A // comment covers the rest of its line only.
+ */
 void TestSyntaxHighlighter::lineCommentCoversRestOfLine()
 {
     const QString code = "x = y;";
@@ -137,6 +145,9 @@ void TestSyntaxHighlighter::lineCommentCoversRestOfLine()
     QVERIFY(!highlighted.spanHasColor(0, code.size(), highlighted.rules().commentColor()));
 }
 
+/**
+ * @brief A string literal is highlighted as a string.
+ */
 void TestSyntaxHighlighter::stringLiteralIsHighlighted()
 {
     const QString literal = "\"hello world\"";
@@ -151,6 +162,9 @@ void TestSyntaxHighlighter::stringLiteralIsHighlighted()
             != highlighted.rules().stringColor());
 }
 
+/**
+ * @brief A block comment spans lines and ends at its closing marker.
+ */
 void TestSyntaxHighlighter::blockCommentSpansLinesAndEnds()
 {
     const QString comment = "/* first\n middle\n last */";

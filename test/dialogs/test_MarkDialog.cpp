@@ -1,9 +1,6 @@
 /**
  * @file test_MarkDialog.cpp
- * @brief Mark names must stay unique.
- *
- * Marks are stored by name, and storing one under a name already in use replaces the
- * other mark's range, comment and color. The dialog must refuse a taken name instead.
+ * @brief Adding and renaming marks through the mark dialog.
  */
 
 #include "Fixtures.h"
@@ -38,9 +35,13 @@ private slots:
     void initTestCase();
     void init();
 
-    /** @brief Renaming a mark to another mark's name is refused and both marks stay. */
+    /**
+     * @brief Renaming a mark to another mark's name is refused and both marks stay.
+     */
     void renameOntoTakenNameIsRejected();
-    /** @brief Adding a mark under a taken name is refused and the other mark stays. */
+    /**
+     * @brief Adding a mark under a taken name is refused and the other mark stays.
+     */
     void addWithTakenNameIsRejected();
 
 private:
@@ -81,6 +82,14 @@ void TestMarkDialog::verifyOtherMarkUnchanged()
     QCOMPARE(other->comment, otherComment);
 }
 
+/**
+ * @brief Renaming a mark to another mark's name is refused and the other mark is unchanged.
+ *
+ * To reproduce:
+ * 1. Add two marks.
+ * 2. Edit one and give it the other's name: the other mark's range, comment and color were
+ *    replaced.
+ */
 void TestMarkDialog::renameOntoTakenNameIsRejected()
 {
     CutterTest::core()->addMark(from, from + markLength, name, QString(), Qt::black);
@@ -96,6 +105,13 @@ void TestMarkDialog::renameOntoTakenNameIsRejected()
     verifyOtherMarkUnchanged();
 }
 
+/**
+ * @brief Adding a mark with a name already in use is refused and the other mark is unchanged.
+ *
+ * To reproduce:
+ * 1. Add a mark.
+ * 2. Add another with the same name: the first mark's range, comment and color were replaced.
+ */
 void TestMarkDialog::addWithTakenNameIsRejected()
 {
     CutterTest::MessageBoxWatcher warnings;

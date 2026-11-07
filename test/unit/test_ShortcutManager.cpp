@@ -1,11 +1,6 @@
 /**
  * @file test_ShortcutManager.cpp
  * @brief Cutter's default shortcut table and how shortcuts are matched.
- *
- * Two shortcuts with the same key in the same context make Qt treat the key as
- * ambiguous, so neither fires. Shortcuts built from platform key bindings can end
- * up with no key at all on some OS. Widgets that handle keys themselves rely on
- * matchesKeySequence checking every key of a shortcut.
  */
 
 #include "shortcuts/ShortcutManager.h"
@@ -22,6 +17,11 @@ private slots:
     void matchesEveryKeyOfShortcut();
 };
 
+/**
+ * @brief No two default shortcuts share a key in the same context.
+ *
+ * Qt treats such a key as ambiguous, so neither shortcut fires.
+ */
 void TestShortcutManager::defaultShortcutsDoNotConflictWithinContext()
 {
     const QHash<QString, Shortcut> shortcuts = Shortcuts()->getAllShortcuts();
@@ -48,6 +48,9 @@ void TestShortcutManager::defaultShortcutsDoNotConflictWithinContext()
     QVERIFY2(conflicts.isEmpty(), qPrintable(conflicts.join("; ")));
 }
 
+/**
+ * @brief Every default shortcut has a key on this OS; platform key bindings can be empty.
+ */
 void TestShortcutManager::everyShortcutHasKeyOnThisPlatform()
 {
     const QHash<QString, Shortcut> shortcuts = Shortcuts()->getAllShortcuts();
@@ -67,6 +70,9 @@ void TestShortcutManager::everyShortcutHasKeyOnThisPlatform()
     QVERIFY2(missing.isEmpty(), qPrintable("no key: " + missing.join(", ")));
 }
 
+/**
+ * @brief matchesKeySequence accepts every key of a shortcut, not only the first.
+ */
 void TestShortcutManager::matchesEveryKeyOfShortcut()
 {
     const QList<QKeySequence> zoomIn = Shortcuts()->getKeySequences("General.zoomIn");

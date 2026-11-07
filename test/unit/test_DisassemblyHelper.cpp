@@ -1,3 +1,8 @@
+/**
+ * @file test_DisassemblyHelper.cpp
+ * @brief The word, bracket expression, offset and arrow under the cursor in disassembly text.
+ */
+
 #include "DisassemblyHelper.h"
 
 #include <QtTest/QtTest>
@@ -41,6 +46,10 @@ void TestDisassemblyHelper::testFindBracketRange_data()
         << "mov eax, [0x1000" << 11 << false << 0 << 0 << "";
 }
 
+/**
+ * @brief findBracketRange returns the bracket expression around a position, including on its
+ *        opening '['.
+ */
 void TestDisassemblyHelper::testFindBracketRange()
 {
     QFETCH(const QString, line);
@@ -60,6 +69,9 @@ void TestDisassemblyHelper::testFindBracketRange()
     }
 }
 
+/**
+ * @brief The offset and arrow stored in a line's block data are read back.
+ */
 void TestDisassemblyHelper::testReadDisassemblyDataFromCursor()
 {
     QTextDocument doc;
@@ -78,6 +90,10 @@ void TestDisassemblyHelper::testReadDisassemblyDataFromCursor()
     QCOMPARE(DisassemblyHelper::readDisassemblyArrow(cursor), RVA(0x00401050));
 }
 
+/**
+ * @brief getContextFromCursor returns the bracket expression, line, offset and arrow under the
+ *        cursor.
+ */
 void TestDisassemblyHelper::testGetContextFromCursor()
 {
     QTextDocument doc;

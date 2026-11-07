@@ -1,11 +1,6 @@
 /**
  * @file test_ViewState.cpp
  * @brief Editing in a code view keeps the user's place in it.
- *
- * An edit refreshes the code views. If the refresh resets scroll, cursor or viewport,
- * the user loses their place after every rename or comment; renaming a variable in the
- * decompiler used to jump back to the top. Each test moves away from the default
- * position, makes an edit that refreshes the view, and checks the view stayed put.
  */
 
 #include "Fixtures.h"
@@ -76,6 +71,9 @@ void TestViewState::init()
     CutterTest::core()->seek(target);
 }
 
+/**
+ * @brief A comment added in the Disassembly keeps its top line and the seek.
+ */
 void TestViewState::disassemblyKeepsTopLineAndSeekAfterComment()
 {
     CutterCore *core = CutterTest::core();
@@ -117,6 +115,9 @@ void TestViewState::disassemblyKeepsTopLineAndSeekAfterComment()
     QCOMPARE(core->getOffset(), seek);
 }
 
+/**
+ * @brief A comment added in the Graph keeps its scroll position.
+ */
 void TestViewState::graphKeepsViewportAfterComment()
 {
     CutterCore *core = CutterTest::core();
@@ -151,6 +152,13 @@ void TestViewState::graphKeepsViewportAfterComment()
     QCOMPARE(view->getViewOffset(), scrolled);
 }
 
+/**
+ * @brief Renaming a variable in the Decompiler keeps its scroll position.
+ *
+ * To reproduce:
+ * 1. Decompile a long function and scroll down.
+ * 2. Rename a variable: the view jumped back to the top.
+ */
 void TestViewState::decompilerKeepsScrollAfterVariableRename()
 {
     CutterCore *core = CutterTest::core();

@@ -1,10 +1,6 @@
 /**
  * @file test_CancelAnalysis.cpp
  * @brief Cancelling analysis from the progress dialog.
- *
- * After InitialOptionsDialog starts analysis, AsyncTaskDialog is the only way to stop
- * it. Pressing Cancel there used to freeze Cutter. Cancelling must stop the task
- * quickly and leave the user in a usable window.
  */
 
 #include "Fixtures.h"
@@ -29,6 +25,9 @@ constexpr int experimentalAnalysisLevel = 2;
 constexpr int analysisStartTimeoutMs = 60000;
 constexpr int cancelTimeoutMs = 10000;
 
+/**
+ * @brief Whether the dialog's log shows that analysis began.
+ */
 bool analysisStarted(AsyncTaskDialog *dialog)
 {
     auto *log = dialog->findChild<QPlainTextEdit *>("logTextEdit");
@@ -45,6 +44,13 @@ private slots:
     void cancelDuringAnalysisDoesNotFreeze();
 };
 
+/**
+ * @brief Cancel in the analysis progress dialog stops the analysis and leaves a usable window.
+ *
+ * To reproduce:
+ * 1. Open a large binary (e.g. /bin/ls) and start the analysis.
+ * 2. Press Cancel in the progress dialog: Cutter froze.
+ */
 void TestCancelAnalysis::cancelDuringAnalysisDoesNotFreeze()
 {
     CUTTER_REQUIRE_FIXTURE(const QString path, CutterTest::Fixtures::coreutilsLs());

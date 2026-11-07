@@ -1,12 +1,6 @@
 /**
  * @file test_HexdumpRangeDialog.cpp
  * @brief Choosing an address range by end address or by length.
- *
- * The dialog keeps the end and length fields in sync, turns the user's exclusive
- * end into an inclusive last address, and only enables OK for a usable range.
- * Mistakes here select one byte too many or too few, or let an invalid or
- * overflowing range through to every action that uses it. HexWidget reuses one dialog
- * and reopens it at the cursor, so OK must use the start address the dialog shows.
  */
 
 #include "TestEnv.h"
@@ -19,6 +13,9 @@
 
 namespace {
 
+/**
+ * @brief Types text into the named field as a user would, so its validation runs.
+ */
 bool typeInto(QWidget *dialog, const char *objectName, const QString &text)
 {
     auto *edit = dialog->findChild<QLineEdit *>(objectName);
@@ -43,6 +40,9 @@ bool okEnabled(QWidget *dialog)
     return ok && ok->isEnabled();
 }
 
+/**
+ * @brief Switches the dialog to entering a length instead of an end.
+ */
 bool useLengthMode(QWidget *dialog)
 {
     auto *radio = dialog->findChild<QRadioButton *>("lengthRadioButton");
@@ -74,6 +74,9 @@ private slots:
     void okRightAfterOpenUsesShownStart();
 };
 
+/**
+ * @brief An exclusive end gives the length and the inclusive last address.
+ */
 void TestHexdumpRangeDialog::endModeComputesLengthAndLastAddress()
 {
     HexdumpRangeDialog dialog;
@@ -88,6 +91,9 @@ void TestHexdumpRangeDialog::endModeComputesLengthAndLastAddress()
     QVERIFY(!dialog.empty());
 }
 
+/**
+ * @brief A length gives the end address.
+ */
 void TestHexdumpRangeDialog::lengthModeComputesEnd()
 {
     HexdumpRangeDialog dialog;
@@ -102,6 +108,9 @@ void TestHexdumpRangeDialog::lengthModeComputesEnd()
     QVERIFY(!dialog.empty());
 }
 
+/**
+ * @brief An end before the start disables OK.
+ */
 void TestHexdumpRangeDialog::endBeforeStartIsInvalid()
 {
     HexdumpRangeDialog dialog;
@@ -113,6 +122,9 @@ void TestHexdumpRangeDialog::endBeforeStartIsInvalid()
     QCOMPARE(fieldText(&dialog, "lengthLineEdit"), QString("Invalid"));
 }
 
+/**
+ * @brief An empty range enables OK only when the dialog allows it.
+ */
 void TestHexdumpRangeDialog::emptyRangeNeedsAllowEmpty()
 {
     HexdumpRangeDialog strict(nullptr, false);
@@ -129,6 +141,9 @@ void TestHexdumpRangeDialog::emptyRangeNeedsAllowEmpty()
     QVERIFY(lenient.empty());
 }
 
+/**
+ * @brief A length that runs past the last address disables OK.
+ */
 void TestHexdumpRangeDialog::lengthOverflowIsInvalid()
 {
     HexdumpRangeDialog dialog;
@@ -141,6 +156,14 @@ void TestHexdumpRangeDialog::lengthOverflowIsInvalid()
     QCOMPARE(fieldText(&dialog, "endAddressLineEdit"), QString("Invalid"));
 }
 
+/**
+ * @brief OK right after opening uses the start address the dialog shows.
+ *
+ * To reproduce:
+ * 1. In the Hexdump, right click → Select range, enter an end and press OK.
+ * 2. Move the cursor, open Select range again and press OK straight away: the range started at the
+ *    old address.
+ */
 void TestHexdumpRangeDialog::okRightAfterOpenUsesShownStart()
 {
     HexdumpRangeDialog dialog;

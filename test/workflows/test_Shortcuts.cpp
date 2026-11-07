@@ -1,12 +1,6 @@
 /**
  * @file test_Shortcuts.cpp
  * @brief Keyboard shortcuts reach the widget that has focus, and only that one.
- *
- * Many docks register the same key (Copy, Find) with a widget-local context. A wrong
- * context makes the key ambiguous so nothing happens, or lets another dock handle it.
- * The hexdump copy shortcut once did nothing at all. Every filter bar wires Find and
- * Esc itself; the Xrefs dialog once shipped with neither working. Filter bars in docks
- * and in the dialogs opened in initTestCase are found at runtime and all checked.
  */
 
 #include "Fixtures.h"
@@ -117,6 +111,13 @@ void TestShortcuts::cleanup()
     QVERIFY(QTest::qWaitForWindowActive(main));
 }
 
+/**
+ * @brief The copy shortcut in the Hexdump copies the selected bytes.
+ *
+ * To reproduce:
+ * 1. Select bytes in the Hexdump.
+ * 2. Press the copy shortcut: the clipboard didn't change.
+ */
 void TestShortcuts::hexdumpCopyShortcutCopiesSelection()
 {
     auto *hexdump = CutterTest::findSynchronizedDock<HexdumpWidget>(main);
@@ -165,6 +166,15 @@ void TestShortcuts::filterBarKeyboardCycle_data()
     }
 }
 
+/**
+ * @brief Find focuses a filter bar, and Esc clears it, then closes it and returns to the list.
+ *
+ * Every filter bar in a dock or in the dialogs opened in initTestCase is a data row.
+ *
+ * To reproduce:
+ * 1. Open the X-Refs dialog and press Find: the filter bar wasn't focused.
+ * 2. Press Esc: the filter was neither cleared nor closed.
+ */
 void TestShortcuts::filterBarKeyboardCycle()
 {
     QFETCH(const QString, filter);

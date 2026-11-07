@@ -2,7 +2,6 @@
 #define CUTTER_TEST_DEADLOCK_WATCHDOG_H
 
 #include <QByteArray>
-#include <QtGlobal>
 
 #include <chrono>
 #include <condition_variable>
@@ -12,11 +11,9 @@
 namespace CutterTest {
 
 /**
- * @brief Aborts the test when the scope it guards does not finish in time.
+ * @brief Aborts the test when the scope it guards doesn't finish in time.
  *
- * The fatal message prints what was guarded and the symbolized stack of every thread: first
- * the one that created the watchdog (the stuck slot), then the others (what it is waiting
- * for). Linux uses addr2line, macOS atos and Windows DbgHelp with the build's PDBs.
+ * The fatal message names what was guarded, so the failing test says what hung.
  */
 class DeadlockWatchdog
 {
@@ -27,10 +24,7 @@ public:
     DeadlockWatchdog &operator=(const DeadlockWatchdog &) = delete;
 
 private:
-    [[noreturn]] void expire() const;
-
     QByteArray what;
-    quint64 guarded;
     std::mutex mutex;
     std::condition_variable finished;
     bool done = false;

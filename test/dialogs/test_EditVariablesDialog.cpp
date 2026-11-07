@@ -1,11 +1,6 @@
 /**
  * @file test_EditVariablesDialog.cpp
  * @brief Renaming and retyping a function's variables through their dialog.
- *
- * The dialog is opened for one function and must apply the edit to that function's
- * variable, with the new name sanitized for rizin. It is often opened from places
- * where the current seek is somewhere else (the Functions list, the decompiler), so
- * the edit must not depend on where the seek happens to be.
  */
 
 #include "Fixtures.h"
@@ -35,6 +30,9 @@ QString firstVariable(RVA function)
     return variables.isEmpty() ? QString() : variables.first().name;
 }
 
+/**
+ * @brief Opens the dialog for function, renames variable to newName and accepts it.
+ */
 bool renameThroughDialog(RVA function, const QString &variable, const QString &newName)
 {
     EditVariablesDialog dialog(function, variable);
@@ -96,6 +94,9 @@ void TestEditVariablesDialog::init()
     CutterTest::core()->seek(function);
 }
 
+/**
+ * @brief A new name entered in the dialog renames the variable.
+ */
 void TestEditVariablesDialog::renameAppliesToVariable()
 {
     const QString oldName = firstVariable(function);
@@ -106,6 +107,9 @@ void TestEditVariablesDialog::renameAppliesToVariable()
     QVERIFY(!hasVariable(function, oldName));
 }
 
+/**
+ * @brief Characters rizin doesn't allow in a name are replaced.
+ */
 void TestEditVariablesDialog::newNameIsSanitized()
 {
     const QString oldName = firstVariable(function);
@@ -114,6 +118,14 @@ void TestEditVariablesDialog::newNameIsSanitized()
     QVERIFY(hasVariable(function, "cutter_sanitized_name_var"));
 }
 
+/**
+ * @brief The edit applies to the dialog's function when the seek is in another function.
+ *
+ * To reproduce:
+ * 1. Show the Decompiler on a function and unsync it.
+ * 2. Seek to another function in the Disassembly.
+ * 3. In the Decompiler, right click a variable → Edit variable, rename it, OK: nothing changed.
+ */
 void TestEditVariablesDialog::editAppliesWhenSeekIsInAnotherFunction()
 {
     const QString oldName = firstVariable(function);

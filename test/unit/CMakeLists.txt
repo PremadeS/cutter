@@ -10,7 +10,7 @@ function(cutter_add_unit_test TEST_NAME)
     )
 
     target_link_libraries(${TEST_NAME} PRIVATE
-	cutter_gui_lib # TODO: change this name
+        cutter_app
         Qt6::Test
         Qt6::Widgets
     )

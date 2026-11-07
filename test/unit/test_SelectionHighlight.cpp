@@ -1,3 +1,8 @@
+/**
+ * @file test_SelectionHighlight.cpp
+ * @brief Highlighting the word under the cursor, matching braces and the current line.
+ */
+
 #include "SelectionHighlight.h"
 
 #include <QPlainTextEdit>
@@ -17,6 +22,9 @@ private slots:
     void testLineHighlights();
 };
 
+/**
+ * @brief An empty word highlights nothing.
+ */
 void TestSelectionHighlight::testEmptyWord()
 {
     QPlainTextEdit edit("int main() { return 0; }");
@@ -24,6 +32,9 @@ void TestSelectionHighlight::testEmptyWord()
     QVERIFY(selections.isEmpty());
 }
 
+/**
+ * @brief Every whole occurrence of the word is highlighted, not parts of other words.
+ */
 void TestSelectionHighlight::testSameWordHighlight()
 {
     QPlainTextEdit edit("int var = 1;\nint domain = 2;\nvar = var + 1;");
@@ -31,6 +42,9 @@ void TestSelectionHighlight::testSameWordHighlight()
     QCOMPARE(selections.size(), 3);
 }
 
+/**
+ * @brief An opening brace highlights its matching closing brace.
+ */
 void TestSelectionHighlight::testBraceMatchingForward()
 {
     QPlainTextEdit edit("void foo() {\n    if (x) {\n        return;\n    }\n}");
@@ -46,6 +60,9 @@ void TestSelectionHighlight::testBraceMatchingForward()
     QCOMPARE(selections[1].cursor.selectedText(), QString("}"));
 }
 
+/**
+ * @brief A closing brace highlights its matching opening brace.
+ */
 void TestSelectionHighlight::testBraceMatchingBackward()
 {
     QPlainTextEdit edit("void foo() {\n    if (x) {\n        return;\n    }\n}");
@@ -62,6 +79,9 @@ void TestSelectionHighlight::testBraceMatchingBackward()
     QCOMPARE(selections[1].cursor.selectedText(), QString("{"));
 }
 
+/**
+ * @brief The current line and program counter highlights span the full width.
+ */
 void TestSelectionHighlight::testLineHighlights()
 {
     QPlainTextEdit edit("Line 1\nLine 2");

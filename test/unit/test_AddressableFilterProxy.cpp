@@ -1,11 +1,6 @@
 /**
  * @file test_AddressableFilterProxy.cpp
  * @brief Address and name lookup through a sorted, filtered list proxy.
- *
- * Every list dock sorts and filters through AddressableFilterProxyModel, and
- * activating or right-clicking a row uses the proxy's address() and name(). If the
- * mapping to the source row breaks, the user seeks to, renames or comments the
- * wrong item.
  */
 
 #include "common/AddressableItemModel.h"
@@ -68,6 +63,13 @@ private slots:
     void addressAndNameFollowSortedFilteredRows();
 };
 
+/**
+ * @brief address() and name() of a proxy row belong to the source row shown there, after sorting
+ *        and filtering.
+ *
+ * Every list dock seeks to, renames or comments the item through these, so a wrong mapping acts on
+ * another item than the one the user clicked.
+ */
 void TestAddressableFilterProxy::addressAndNameFollowSortedFilteredRows()
 {
     AddressListModel source;

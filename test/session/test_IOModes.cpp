@@ -1,11 +1,6 @@
 /**
  * @file test_IOModes.cpp
  * @brief Cutter's IO modes: read-only, cache and write.
- *
- * Cutter owns the rules here: cache and write mode are mutually exclusive, cache
- * mode must never touch the file on disk, and committing the cache or editing in
- * write mode must. A mistake either loses the user's edits or silently changes
- * their binary. Tests run on a temporary copy of the fixture.
  */
 
 #include "Fixtures.h"
@@ -19,6 +14,9 @@
 
 namespace {
 
+/**
+ * @brief The byte with every bit flipped, so it always differs.
+ */
 QByteArray flippedByte(const QByteArray &original)
 {
     return QByteArray(1, static_cast<char>(original.at(0) ^ 0xff));
@@ -114,6 +112,9 @@ bool TestIOModes::inMode(bool cache, bool write)
     return core->isIOCacheEnabled() == cache && core->isWriteModeEnabled() == write;
 }
 
+/**
+ * @brief An edit in cache mode is visible in Cutter but doesn't touch the file.
+ */
 void TestIOModes::cacheModeEditLeavesFileUntouched()
 {
     CutterCore *core = CutterTest::core();
@@ -131,6 +132,13 @@ void TestIOModes::cacheModeEditLeavesFileUntouched()
     QCOMPARE(core->ioRead(address, 1), original);
 }
 
+/**
+ * @brief Committing the cache writes the edit to the file.
+ *
+ * To reproduce:
+ * 1. File → Set mode → Cache mode, and change a byte in the Hexdump.
+ * 2. File → Commit changes: a heap use after free under ASan.
+ */
 void TestIOModes::commitWriteCacheWritesFile()
 {
     CutterCore *core = CutterTest::core();
@@ -143,6 +151,9 @@ void TestIOModes::commitWriteCacheWritesFile()
     QVERIFY(inMode(true, false));
 }
 
+/**
+ * @brief An edit in write mode is written to the file.
+ */
 void TestIOModes::writeModeEditPersists()
 {
     CutterCore *core = CutterTest::core();
@@ -154,6 +165,9 @@ void TestIOModes::writeModeEditPersists()
     QVERIFY(fileHash() != originalHash);
 }
 
+/**
+ * @brief Cache mode and write mode are never on together, and each switch is signalled.
+ */
 void TestIOModes::modeSwitchesKeepCacheAndWriteExclusive()
 {
     CutterCore *core = CutterTest::core();

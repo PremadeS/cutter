@@ -1,11 +1,6 @@
 /**
  * @file test_Docking.cpp
- * @brief Cutter's own dock behaviour: docking held off by a modifier, and closing extra docks.
- *
- * Holding the Docking.toggle modifier while moving a floating dock must keep it from
- * snapping into a dock area. Extra docks (a second Disassembly, Graph, ...) are deleted on
- * close and must leave MainWindow's dock list, or the next layout save or switch walks a
- * deleted widget.
+ * @brief Cutter's own dock behavior: the docking modifier and closing extra docks.
  */
 
 #include "Fixtures.h"
@@ -71,6 +66,9 @@ void TestDocking::initTestCase()
     QTRY_VERIFY(main->isVisible());
 }
 
+/**
+ * @brief Holding the Docking.toggle modifier keeps a moved floating dock from docking.
+ */
 void TestDocking::modifierHeldBlocksDockingWhileMoving()
 {
     const Qt::KeyboardModifier modifier =
@@ -101,6 +99,11 @@ void TestDocking::modifierHeldBlocksDockingWhileMoving()
     QTRY_COMPARE(dock->allowedAreas(), Qt::AllDockWidgetAreas);
 }
 
+/**
+ * @brief A closed extra dock is deleted and leaves the main window's dock list.
+ *
+ * Otherwise the next layout save or switch walks a deleted widget.
+ */
 void TestDocking::closedExtraDockLeavesNoDanglingDock()
 {
     QPointer<MemoryDockWidget> extra = main->addNewMemoryWidget(

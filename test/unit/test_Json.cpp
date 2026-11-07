@@ -1,3 +1,8 @@
+/**
+ * @file test_Json.cpp
+ * @brief Showing rizin JSON as a tree of items.
+ */
+
 #include "CutterJson.h"
 #include "Json.h"
 
@@ -6,6 +11,9 @@
 
 #include <memory>
 
+/**
+ * @brief Parses JSON text the way Cutter reads rizin's JSON output.
+ */
 static CutterJson parseJson(const char *src)
 {
     char *buf = rz_str_dup(src);
@@ -23,6 +31,9 @@ private slots:
     void testJsonTreeWidgetItemObjectAndArray();
 };
 
+/**
+ * @brief Strings, numbers, booleans and null become one item with their value.
+ */
 void TestJson::testJsonTreeWidgetItemPrimitives()
 {
     // String
@@ -71,6 +82,9 @@ void TestJson::testJsonTreeWidgetItemPrimitives()
     }
 }
 
+/**
+ * @brief Objects and arrays become an item with one child per member.
+ */
 void TestJson::testJsonTreeWidgetItemObjectAndArray()
 {
     // Object

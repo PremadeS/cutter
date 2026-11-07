@@ -1,13 +1,6 @@
 /**
  * @file test_OpenFile.cpp
  * @brief Opening a binary: NewFileDialog, then InitialOptionsDialog, then analysis.
- *
- * NewFileDialog validates the chosen file and hands it to InitialOptionsDialog; cancelling
- * there brings a fresh NewFileDialog back without starting anything. Real bugs lived in this
- * loop: a second file rejected after cancelling, and an error that kept appearing after a
- * valid file was chosen. Every option chosen (architecture, bits, endianness, analysis
- * level) must reach the InitialOptions analysis runs with, or Cutter silently analyzes the
- * binary differently from what the user asked for.
  */
 
 #include "CutterApplication.h"
@@ -31,6 +24,9 @@ namespace {
 constexpr int analysisTimeoutMs = 60000;
 constexpr int autoAnalysisLevel = 1;
 
+/**
+ * @brief Enters path in the new file dialog and opens it.
+ */
 bool submitFile(NewFileDialog *dialog, const QString &path)
 {
     return dialog && CutterTest::setLineEditText(dialog, "newFileEdit", path)
@@ -75,6 +71,13 @@ void TestOpenFile::cleanup()
     }
 }
 
+/**
+ * @brief After cancelling the options dialog, another file can be chosen in the new file dialog.
+ *
+ * To reproduce:
+ * 1. Choose a file and press Cancel in the options dialog.
+ * 2. Choose another file in the new file dialog that opens: it was rejected.
+ */
 void TestOpenFile::reselectAfterCancelingOptions()
 {
     CutterTest::MessageBoxWatcher messageBoxes;
@@ -98,6 +101,13 @@ void TestOpenFile::reselectAfterCancelingOptions()
     QCOMPARE(messageBoxes.seenTexts(), QStringList());
 }
 
+/**
+ * @brief The error about a missing file goes away once a valid file is chosen.
+ *
+ * To reproduce:
+ * 1. Enter a path that doesn't exist in the new file dialog.
+ * 2. Choose a valid file: the error kept appearing.
+ */
 void TestOpenFile::errorClearedAfterValidSelection()
 {
     const QString missingPath = QDir(QDir::tempPath()).filePath("cutter-test-missing-binary");
@@ -116,6 +126,9 @@ void TestOpenFile::errorClearedAfterValidSelection()
     QCOMPARE(messageBoxes.seenTexts().size(), 1);
 }
 
+/**
+ * @brief The architecture, bits, endianness and analysis level chosen reach the analysis.
+ */
 void TestOpenFile::chosenOptionsReachAnalysis()
 {
     QVERIFY(submitFile(CutterTest::findVisibleTopLevel<NewFileDialog>(), helloPath));

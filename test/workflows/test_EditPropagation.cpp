@@ -1,12 +1,6 @@
 /**
  * @file test_EditPropagation.cpp
  * @brief An edit made anywhere reaches every view that shows the edited thing.
- *
- * Each view refreshes from its own set of core signals. A view that misses one keeps
- * showing the old function name, comment or variable until something else forces a
- * refresh, which users see as edits that "didn't apply" in some views. The test is a
- * matrix: every kind of edit is checked in every view that shows it. A new view or a
- * new kind of edit is one entry in views() or edits().
  */
 
 #include "Fixtures.h"
@@ -268,6 +262,12 @@ void TestEditPropagation::editShowsInView_data()
     }
 }
 
+/**
+ * @brief One kind of edit shows in one view; the data rows cover every edit in every view.
+ *
+ * A view that misses a core signal keeps showing the old name, comment or variable. A new view or
+ * kind of edit is one entry in views() or edits().
+ */
 void TestEditPropagation::editShowsInView()
 {
     QFETCH(const QString, edit);

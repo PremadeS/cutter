@@ -1,3 +1,8 @@
+/**
+ * @file test_BinaryTrees.cpp
+ * @brief Segment trees used by the graph grid layout.
+ */
+
 #include "common/BinaryTrees.h"
 
 #include <QTest>
@@ -13,6 +18,9 @@ private slots:
     void testMinMaxAccumulateTree();
 };
 
+/**
+ * @brief Point updates of a min tree are read back by valueAtPoint.
+ */
 void TestBinaryTrees::testPointSetMinTreeBasic()
 {
     // Initialize tree with 8 leaves and initial value 100
@@ -31,6 +39,9 @@ void TestBinaryTrees::testPointSetMinTreeBasic()
     QCOMPARE(tree.valueAtPoint(0), 100);
 }
 
+/**
+ * @brief rightMostLessThan and leftMostLessThan find the nearest index below a value, or -1.
+ */
 void TestBinaryTrees::testPointSetMinTreeLessThanQueries()
 {
     PointSetMinTree tree(8, 100);
@@ -52,6 +63,9 @@ void TestBinaryTrees::testPointSetMinTreeLessThanQueries()
     QCOMPARE(tree.leftMostLessThan(6, 10), -1);
 }
 
+/**
+ * @brief Range assignments of a max tree, including overlapping ones, give the right range maximum.
+ */
 void TestBinaryTrees::testRangeAssignMaxTree()
 {
     RangeAssignMaxTree tree(10, 0);
@@ -70,6 +84,9 @@ void TestBinaryTrees::testRangeAssignMaxTree()
     QCOMPARE(tree.rangeMaximum(8, 10), 0);
 }
 
+/**
+ * @brief Range updates of a min/max accumulate tree give the right range minimum and maximum.
+ */
 void TestBinaryTrees::testMinMaxAccumulateTree()
 {
     // Test example case provided in class doc

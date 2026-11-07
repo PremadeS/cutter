@@ -1,9 +1,6 @@
 /**
  * @file test_LayoutManager.cpp
  * @brief Renaming the user's saved layouts.
- *
- * The rename prompt is prefilled with the layout's current name, so confirming it as is
- * must not be treated as a clash with another layout.
  */
 
 #include "TestEnv.h"
@@ -27,6 +24,9 @@ Cutter::CutterLayout layoutWithState(const QByteArray &state)
     return layout;
 }
 
+/**
+ * @brief Answers the next input dialogs with answers in order, then rejects any more.
+ */
 void answerInputDialogs(QObject *context, QStringList answers)
 {
     auto *timer = new QTimer(context);
@@ -72,6 +72,13 @@ private slots:
     void renameToSameNameIsNotAnError();
 };
 
+/**
+ * @brief Confirming the prefilled name when renaming a layout shows no error.
+ *
+ * To reproduce:
+ * 1. View → Save layout, give it a name.
+ * 2. View → Manage layouts, select it, Rename, and press OK: "'name' is already used."
+ */
 void TestLayoutManager::renameToSameNameIsNotAnError()
 {
     Layouts layouts { { "mine", layoutWithState("mine-state") } };

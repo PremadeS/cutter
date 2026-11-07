@@ -1,10 +1,6 @@
 /**
  * @file test_SeekHistory.cpp
- * @brief Seek and seek-history signals of the core.
- *
- * Every synchronized view moves on seekChanged, so a missing, extra or mislabeled
- * seek signal leaves views out of place or refreshing for nothing. These tests pin
- * when Cutter emits it, with which address and which history type.
+ * @brief Seek and seek history signals of the core.
  */
 
 #include "Fixtures.h"
@@ -61,6 +57,9 @@ void TestSeekHistory::initTestCase()
     second = first + seekDistance;
 }
 
+/**
+ * @brief A seek emits seekChanged with the address and a new history entry.
+ */
 void TestSeekHistory::seekNotifiesNewWithAddress()
 {
     CutterCore *core = CutterTest::core();
@@ -76,6 +75,9 @@ void TestSeekHistory::seekNotifiesNewWithAddress()
     QCOMPARE(core->getOffset(), second);
 }
 
+/**
+ * @brief Going back and forward emits seekChanged as undo and redo.
+ */
 void TestSeekHistory::seekPrevNextNotifyUndoRedo()
 {
     CutterCore *core = CutterTest::core();
@@ -99,6 +101,9 @@ void TestSeekHistory::seekPrevNextNotifyUndoRedo()
     QCOMPARE(core->getOffset(), second);
 }
 
+/**
+ * @brief Seeking to the current address emits nothing.
+ */
 void TestSeekHistory::seekToCurrentAddressDoesNotNotify()
 {
     CutterCore *core = CutterTest::core();
@@ -111,6 +116,9 @@ void TestSeekHistory::seekToCurrentAddressDoesNotNotify()
     QCOMPARE(core->getOffset(), second);
 }
 
+/**
+ * @brief Seeking to RVA_INVALID neither moves nor emits.
+ */
 void TestSeekHistory::seekInvalidAddressIsIgnored()
 {
     CutterCore *core = CutterTest::core();
@@ -123,6 +131,9 @@ void TestSeekHistory::seekInvalidAddressIsIgnored()
     QCOMPARE(core->getOffset(), first);
 }
 
+/**
+ * @brief seekSilent moves without emitting seekChanged.
+ */
 void TestSeekHistory::seekSilentDoesNotNotify()
 {
     CutterCore *core = CutterTest::core();

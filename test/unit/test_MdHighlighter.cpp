@@ -1,3 +1,8 @@
+/**
+ * @file test_MdHighlighter.cpp
+ * @brief Markdown highlighting of the help text in the console and descriptions.
+ */
+
 #include "common/MdHighlighter.h"
 
 #include <QColor>
@@ -19,6 +24,9 @@ private slots:
     void testMultilineDocument();
 };
 
+/**
+ * @brief A header line is formatted as a header.
+ */
 void TestMdHighlighter::testHeaders()
 {
     QTextDocument doc;
@@ -37,6 +45,9 @@ void TestMdHighlighter::testHeaders()
     QCOMPARE(formats[0].format.fontWeight(), static_cast<int>(QFont::Bold));
 }
 
+/**
+ * @brief Bold and italic markers format the text between them.
+ */
 void TestMdHighlighter::testBoldAndItalics()
 {
     QTextDocument doc;
@@ -55,6 +66,9 @@ void TestMdHighlighter::testBoldAndItalics()
     QCOMPARE(formats[0].format.fontWeight(), static_cast<int>(QFont::Bold));
 }
 
+/**
+ * @brief A line starting with ';' is formatted as a comment.
+ */
 void TestMdHighlighter::testComments()
 {
     QTextDocument doc;
@@ -73,6 +87,9 @@ void TestMdHighlighter::testComments()
     QCOMPARE(formats[0].format.fontWeight(), static_cast<int>(QFont::Bold));
 }
 
+/**
+ * @brief Plain text gets no format.
+ */
 void TestMdHighlighter::testPlainText()
 {
     QTextDocument doc;
@@ -87,6 +104,9 @@ void TestMdHighlighter::testPlainText()
     QCOMPARE(formats.size(), 0);
 }
 
+/**
+ * @brief Each line of a document is formatted on its own.
+ */
 void TestMdHighlighter::testMultilineDocument()
 {
     QTextDocument doc;

@@ -1,11 +1,6 @@
 /**
  * @file test_CoreSignals.cpp
- * @brief Signal contract of the core's edit operations.
- *
- * Every view refreshes from these signals, so an edit that emits the wrong signal,
- * emits it twice, or carries the wrong address leaves views stale or refreshing
- * needlessly. The tests check the signal, its count and arguments, and that the
- * change is visible to listeners. They never check rizin's own results.
+ * @brief The signals the core's edit operations emit.
  */
 
 #include "Fixtures.h"
@@ -39,6 +34,9 @@ bool hasVariable(CutterCore *core, RVA function, const QString &name)
     return false;
 }
 
+/**
+ * @brief The name of the global variable at address, or an empty string.
+ */
 QString globalNameAt(CutterCore *core, RVA address)
 {
     const QList<GlobalDescription> globals = core->getAllGlobals();
@@ -110,6 +108,9 @@ void TestCoreSignals::initTestCase()
              "fixture needs at least three analyzed functions");
 }
 
+/**
+ * @brief Setting and deleting a comment each emit commentsChanged once with its address.
+ */
 void TestCoreSignals::commentEditsNotifyOnceWithAddress()
 {
     CutterCore *core = CutterTest::core();
@@ -133,6 +134,13 @@ void TestCoreSignals::commentEditsNotifyOnceWithAddress()
     QVERIFY(core->getCommentAt(freeAddress).isEmpty());
 }
 
+/**
+ * @brief Renaming a function emits functionRenamed once with the name rizin stored.
+ *
+ * To reproduce:
+ * 1. Right click a function in Functions → Rename, and enter "  myname".
+ * 2. Views updated from the signal showed "  myname"; the function is named "myname".
+ */
 void TestCoreSignals::renameFunctionNotifiesOnceWithNewName()
 {
     CutterCore *core = CutterTest::core();
@@ -151,6 +159,11 @@ void TestCoreSignals::renameFunctionNotifiesOnceWithNewName()
     QCOMPARE(QString::fromUtf8(function->name), newName);
 }
 
+/**
+ * @brief Renaming at an address without a function emits nothing.
+ *
+ * Every view used to refresh as if a function had been renamed.
+ */
 void TestCoreSignals::renameFunctionWithoutFunctionNotifiesNothing()
 {
     CutterCore *core = CutterTest::core();
@@ -163,6 +176,9 @@ void TestCoreSignals::renameFunctionWithoutFunctionNotifiesNothing()
     QCOMPARE(spy.count(), 0);
 }
 
+/**
+ * @brief Renaming a variable emits refreshCodeViews once.
+ */
 void TestCoreSignals::renameVariableNotifiesCodeViewsOnce()
 {
     CutterCore *core = CutterTest::core();
@@ -180,6 +196,9 @@ void TestCoreSignals::renameVariableNotifiesCodeViewsOnce()
     QVERIFY(!hasVariable(core, variableFunction, oldName));
 }
 
+/**
+ * @brief Adding, renaming and deleting a flag each emit flagsChanged once.
+ */
 void TestCoreSignals::flagEditsNotifyOnce()
 {
     CutterCore *core = CutterTest::core();
@@ -207,6 +226,13 @@ void TestCoreSignals::flagEditsNotifyOnce()
     QVERIFY(!hasFlag(core, freeAddress, renamed));
 }
 
+/**
+ * @brief Renaming a global variable keeps its type and emits globalVarsChanged once.
+ *
+ * To reproduce:
+ * 1. Windows → Info → Globals, right click a global → Edit.
+ * 2. Change only the name and press OK: a heap use after free under ASan.
+ */
 void TestCoreSignals::renameGlobalVariableKeepsTypeAndNotifiesOnce()
 {
     CutterCore *core = CutterTest::core();
@@ -226,6 +252,9 @@ void TestCoreSignals::renameGlobalVariableKeepsTypeAndNotifiesOnce()
     QCOMPARE(core->getGlobalVariableType(freeAddress), type);
 }
 
+/**
+ * @brief Editing bytes emits instructionChanged with the edited address.
+ */
 void TestCoreSignals::byteEditNotifiesInstructionChangedWithAddress()
 {
     CutterCore *core = CutterTest::core();
@@ -249,6 +278,9 @@ void TestCoreSignals::byteEditNotifiesInstructionChangedWithAddress()
     QCOMPARE(core->ioRead(freeAddress, 1), original);
 }
 
+/**
+ * @brief Undefining a function emits functionsChanged.
+ */
 void TestCoreSignals::undefineFunctionNotifiesFunctionsChanged()
 {
     CutterCore *core = CutterTest::core();
