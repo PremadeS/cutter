@@ -107,7 +107,10 @@ bool tasksSettled()
             && !CutterTest::core()->isDebugTaskInProgress();
 }
 
-/** Presses Continue while the debugger runs, which is Suspend then. */
+/**
+ * Ends a debug session by pressesing "Continue" while the debugger runs, which is "Suspend" by
+ * then.
+ */
 void suspendDebugging()
 {
     auto *debug = CutterTest::mainWindow()->findChild<DebugActions *>();
@@ -123,7 +126,7 @@ void suspendDebugging()
  */
 bool settle()
 {
-    QCoreApplication::processEvents();
+    QCoreApplication::processEvents(); // TODO: why two process event calls?
     QCoreApplication::processEvents();
     if (!QTest::qWaitFor([]() { return !CutterTest::core()->isDebugTaskInProgress(); },
                          debugRunMs)) {
@@ -138,7 +141,7 @@ bool isDenied(const QAction *action)
         return true;
     }
     auto *debug = CutterTest::mainWindow()->findChild<DebugActions *>();
-    // Emulation is started on purpose for the second pass.
+    // Emulation is started manually for the second pass.
     return debug && action == debug->actionStartEmul;
 }
 
@@ -341,6 +344,9 @@ bool openSubmenu(QMenu *menu, QAction *action)
                            menuTimeoutMs);
 }
 
+/**
+ * Returns the dock that owns the given object.
+ */
 CutterDockWidget *owningDock(QObject *object)
 {
     for (; object; object = object->parent()) {
@@ -351,7 +357,9 @@ CutterDockWidget *owningDock(QObject *object)
     return nullptr;
 }
 
-/** Where a user would right-click or double-click: the first row, or the middle. */
+/**
+ *  Where a user would right-click or double-click: the first row, or the middle.
+ */
 QPoint clickPoint(QWidget *viewport)
 {
     if (auto *view = qobject_cast<QAbstractItemView *>(viewport->parentWidget())) {
@@ -382,9 +390,9 @@ void closeOtherWindows(QWidget *main)
  * Cancel. Progress dialogs are left alone: they close when their task ends, and rejecting one
  * cancels the task.
  *
- * expectMenu() hands the next menu that opens to a callback, run inside that menu's event loop
- * as a user's clicks would be. Submenus opened while the callback navigates are left open.
- * menuWasHandled() is true once the callback has returned.
+ * expectMenu() hands the next menu that opens to a callback, clicks every action inside that menu.
+ * Submenus opened while the callback navigates are left open (meaning no actions inside submenus
+ * are clicked). menuWasHandled() is true once the callback has returned.
  */
 class Driver : public QObject
 {
@@ -397,7 +405,7 @@ public:
     void expectMenu(MenuCallback callback)
     {
         onMenu = std::move(callback);
-        menuHandled = false;
+        menuHandled = false; // TODO: never set to true??
         navigating = false;
     }
 
@@ -635,7 +643,7 @@ private:
 
 void TestUiSweep::initTestCase()
 {
-    previousHandler = qInstallMessageHandler(quietHandler);
+    previousHandler = qInstallMessageHandler(quietHandler); // TODO: is this needed?
     main = CutterTest::mainWindow();
     QVERIFY(main);
     main->show();
@@ -646,7 +654,7 @@ void TestUiSweep::initTestCase()
     QVERIFY2(!functions.isEmpty(), "the fixture has no functions");
     target = functions.first().offset;
     for (const FunctionDescription &function : functions) {
-        if (function.name == "main" || function.name == "sym.main") {
+        if (function.name == "main" || function.name == "sym.main") { // TODO: why?
             target = function.offset;
         }
     }
@@ -657,7 +665,7 @@ void TestUiSweep::init()
 {
     closeOtherWindows(main);
     driver->reset();
-    driver->takeSeen();
+    driver->takeSeen(); // TODO: why?
     if (CutterTest::core()->getOffset() != target) {
         CutterTest::core()->seek(target);
     }
@@ -935,6 +943,7 @@ void TestUiSweep::addRows(const QList<Step> &list)
  *
  * Sets skipped to why the step couldn't run; leaves it empty if it ran.
  */
+// TODO: let it return skipped? why take in as arg??
 void TestUiSweep::runStep(const Step &original, QString &skipped)
 {
     Step step = original;
@@ -957,12 +966,15 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
     QPointer<QAction> clicked;
     bool wasChecked = false;
     QSet<QString> docksBefore;
+
+    // TODO: why check this when we already have collected the docks and openedThem??
     for (const CutterDockWidget *dock : main->findChildren<CutterDockWidget *>()) {
         docksBefore << dock->objectName();
     }
+
     {
         const CutterTest::DeadlockWatchdog watchdog(QTest::currentDataTag(), hangTimeout);
-        // A crash kills the process before the row is reported; this names it.
+        // A crash kills the process before the row is reported; so print the name here.
         qInfo().noquote() << "running" << QTest::currentDataTag();
 
         if (opensMenu(step.kind)) {
@@ -1066,6 +1078,7 @@ void TestUiSweep::runStep(const Step &original, QString &skipped)
     }
     closeOtherWindows(main);
 
+    // TODO: put in inline func? updateSkippedOnOutcome()?
     switch (outcome) {
     case Outcome::NoMenu:
         skipped = step.kind == Step::ContextMenu ? "the view has no context menu"

@@ -17,6 +17,8 @@
 
 namespace CutterTest {
 
+// TODO: document all of these
+
 template<class Dock>
 Dock *findSynchronizedDock(MainWindow *main)
 {

@@ -60,6 +60,7 @@ void emitSignal(CutterCore *core, const QMetaMethod &signal, SignalArguments &ar
     QMetaObject::metacall(core, QMetaObject::InvokeMetaMethod, signal.methodIndex(), argv.data());
 }
 
+// TODO: is this not used in more places? why not put this in CutterTest itself??
 bool tasksSettled()
 {
     return !CutterTest::core()->getAsyncTaskManager()->getTasksRunning();
@@ -82,6 +83,7 @@ private:
 
 void TestSignalSweep::initTestCase()
 {
+    // TODO: put this is CutterTest aswell? maybe put all timeouts there?
     constexpr int settleTimeoutMs = 60000;
 
     MainWindow *main = CutterTest::mainWindow();
@@ -93,6 +95,7 @@ void TestSignalSweep::initTestCase()
     }
     QTRY_VERIFY_WITH_TIMEOUT(tasksSettled(), settleTimeoutMs);
 
+    // generic function to use as argument when emitting signals
     const QList<FunctionDescription> functions = CutterTest::core()->getAllFunctions();
     QVERIFY2(!functions.isEmpty(), "the fixture has no functions");
     arguments.address = functions.first().offset;
@@ -112,13 +115,17 @@ void TestSignalSweep::slotsDoNotDeadlockUnderLock_data()
     }
 }
 
+// TODO: how does this deadlock??
 void TestSignalSweep::slotsDoNotDeadlockUnderLock()
 {
     QFETCH(const int, methodIndex);
 
+    // TODO: same with this? put in CUtterTest?
     constexpr std::chrono::milliseconds deadlockTimeout { 20000 };
     constexpr int taskStartWaitMs = 100;
     constexpr int settleTimeoutMs = 60000;
+
+    // TODO: Then run these in emulation no?
     static const QSet<QByteArray> needDebugSession = {
         "toggleDebugView",      "debugTaskStateChanged", "attachedRemote",
         "debugProcessFinished", "switchedThread",        "switchedProcess"

@@ -35,11 +35,12 @@ void prepareEnvironment()
 
     initCutterResources();
 
+    // TODO: why is this needed??
     qRegisterMetaType<QList<StringDescription>>();
     qRegisterMetaType<QList<FunctionDescription>>();
 
     static QTemporaryDir settingsDir;
-    QCoreApplication::setOrganizationName("rizin-tests");
+    QCoreApplication::setOrganizationName("rizin");
     QCoreApplication::setApplicationName("cutter-tests");
     QSettings::setDefaultFormat(QSettings::IniFormat);
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, settingsDir.path());
@@ -58,7 +59,7 @@ bool waitForOpenedFile()
             && !CutterTest::core()->getAsyncTaskManager()->getTasksRunning()) {
             return true;
         }
-        QTest::qWait(50);
+        QTest::qWait(50); // TODO: blocks processor? can we not yield?
     }
     return false;
 }
@@ -99,16 +100,19 @@ MainWindow *mainWindow()
 
 bool openFile(const QString &path)
 {
+    // TODO: should have permission as param??
     return core()->loadFile(path, 0, 0, RZ_PERM_R, 1, true);
 }
 
 void analyze()
 {
+    // TODO: should take the analysis level
     core()->cmdRaw("aaa");
 }
 
 RVA addressWithoutComment(RVA start)
 {
+    // TODO: why is this in env? shouldn't this be in helpers?
     for (RVA candidate = start; candidate < start + commentSearchRange; ++candidate) {
         if (core()->getCommentAt(candidate).isEmpty()) {
             return candidate;
@@ -138,6 +142,9 @@ int runCoreTest(int argc, char **argv, const TestRunner &runner)
     return runner(argc, argv);
 }
 
+// TODO: should we register an enum for this fixture? so no chances of wrong thing. Although it will
+// log an error if the fixture name/path is incorrect
+// TODO: maybe better name? because it auto analyzes via -A flag
 int runAppTest(int argc, char **argv, const QString &fixture, const TestRunner &runner)
 {
     prepareEnvironment();

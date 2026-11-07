@@ -12,7 +12,7 @@ class MainWindow;
 
 namespace CutterTest {
 
-constexpr int skipReturnCode = 77;
+constexpr int skipReturnCode = 77; // TODO: wat dis
 inline constexpr char testbinsVariable[] = "CUTTER_TESTBINS_DIR";
 
 using TestRunner = std::function<int(int, char **)>;
