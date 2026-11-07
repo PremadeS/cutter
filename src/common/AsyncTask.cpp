@@ -3,6 +3,7 @@
 
 #include <QDeadlineTimer>
 
+#include <climits>
 #include <utility>
 
 AsyncTask::AsyncTask() : QObject(nullptr), QRunnable(), running(false)
@@ -28,7 +29,12 @@ bool AsyncTask::wait(int timeout)
     QMutexLocker locker(&stateMutex);
     const QDeadlineTimer deadline(timeout);
     while (active) {
-        if (!doneCondition.wait(&stateMutex, deadline)) {
+        // wait() taking QDeadlineTimer as argument requires Qt >= 5.12, so the "ms" approach is
+        // used here instead
+        const qint64 remaining = deadline.remainingTime();
+        const unsigned long waitMs =
+                remaining < 0 ? ULONG_MAX : static_cast<unsigned long>(remaining);
+        if (!doneCondition.wait(&stateMutex, waitMs)) {
             return !active;
         }
     }
