@@ -519,13 +519,13 @@ list(REMOVE_ITEM SOURCES Main.cpp)
 set(CUTTER_SOURCES ${UI_FILES} ${QRC_FILES} ${SOURCES} ${HEADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${CUTTER_SOURCES})
 
-add_library(cutter_gui_lib STATIC ${CUTTER_SOURCES} ${BINDINGS_SOURCE})
-set_target_properties(cutter_gui_lib PROPERTIES
+add_library(cutter_app STATIC ${CUTTER_SOURCES} ${BINDINGS_SOURCE})
+set_target_properties(cutter_app PROPERTIES
         POSITION_INDEPENDENT_CODE ON
         CXX_VISIBILITY_PRESET hidden)
 # PUBLIC: the Cutter executable and the tests compile against the same headers and link this
 # static library, so CUTTER_EXPORT must not turn into dllimport for them on Windows.
-target_compile_definitions(cutter_gui_lib PUBLIC CUTTER_SOURCE_BUILD)
+target_compile_definitions(cutter_app PUBLIC CUTTER_SOURCE_BUILD)
 
 # WIN32 and the icon resource belong to the executable: a library can't take WIN32, and the
 # linker drops a resource from a static library because nothing references it.
@@ -533,9 +533,9 @@ add_executable(Cutter ${OPTIONS} Main.cpp ${PLATFORM_RESOURCES})
 # Link every object of the library: plugins call into Cutter classes that Main.cpp alone may not
 # pull in, and the executable is what exports them.
 if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.24)
-    target_link_libraries(Cutter PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,cutter_gui_lib>")
+    target_link_libraries(Cutter PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,cutter_app>")
 else()
-    target_link_libraries(Cutter PRIVATE cutter_gui_lib)
+    target_link_libraries(Cutter PRIVATE cutter_app)
 endif()
 set_target_properties(Cutter PROPERTIES
         OUTPUT_NAME cutter
@@ -549,7 +549,7 @@ set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT Cutter)
 # Plugins link the exported Cutter::Cutter, not the library, so the executable carries the same
 # headers and public dependencies as an interface.
 foreach(_dir ${CUTTER_INCLUDE_DIRECTORIES})
-    target_include_directories(cutter_gui_lib PUBLIC
+    target_include_directories(cutter_app PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${_dir}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/cutter/${_dir}>
     )
@@ -560,27 +560,27 @@ foreach(_dir ${CUTTER_INCLUDE_DIRECTORIES})
 endforeach()
 
 if (TARGET Graphviz::GVC)
-    target_link_libraries(cutter_gui_lib PRIVATE Graphviz::GVC)
-    target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_ENABLE_GRAPHVIZ)
+    target_link_libraries(cutter_app PRIVATE Graphviz::GVC)
+    target_compile_definitions(cutter_app PRIVATE CUTTER_ENABLE_GRAPHVIZ)
 endif()
 
-target_link_libraries(cutter_gui_lib PUBLIC ${QT_PREFIX}::Core ${QT_PREFIX}::Widgets ${QT_PREFIX}::Gui PRIVATE  ${QT_PREFIX}::Svg ${QT_PREFIX}::Network)
+target_link_libraries(cutter_app PUBLIC ${QT_PREFIX}::Core ${QT_PREFIX}::Widgets ${QT_PREFIX}::Gui PRIVATE  ${QT_PREFIX}::Svg ${QT_PREFIX}::Network)
 target_link_libraries(Cutter INTERFACE ${QT_PREFIX}::Core ${QT_PREFIX}::Widgets ${QT_PREFIX}::Gui)
 if (CUTTER_QT EQUAL 6)
-    target_link_libraries(cutter_gui_lib PUBLIC Qt6::Core5Compat Qt6::SvgWidgets)
-    target_link_libraries(cutter_gui_lib PRIVATE Qt6::OpenGLWidgets)
+    target_link_libraries(cutter_app PUBLIC Qt6::Core5Compat Qt6::SvgWidgets)
+    target_link_libraries(cutter_app PRIVATE Qt6::OpenGLWidgets)
     target_link_libraries(Cutter INTERFACE Qt6::Core5Compat Qt6::SvgWidgets)
 endif()
 
-target_link_libraries(cutter_gui_lib PUBLIC ${RIZIN_TARGET})
+target_link_libraries(cutter_app PUBLIC ${RIZIN_TARGET})
 target_link_libraries(Cutter INTERFACE ${RIZIN_TARGET})
 if(CUTTER_ENABLE_PYTHON)
-    target_link_libraries(cutter_gui_lib PRIVATE Python3::Python)
+    target_link_libraries(cutter_app PRIVATE Python3::Python)
 
     if(CUTTER_ENABLE_PYTHON_BINDINGS)
-        target_link_libraries(cutter_gui_lib PRIVATE ${CUTTER_PYSIDE_LIBS})
+        target_link_libraries(cutter_app PRIVATE ${CUTTER_PYSIDE_LIBS})
 
-        get_target_property(RAW_BINDINGS_INCLUDE_DIRS cutter_gui_lib INCLUDE_DIRECTORIES)
+        get_target_property(RAW_BINDINGS_INCLUDE_DIRS cutter_app INCLUDE_DIRECTORIES)
         if(NOT CUTTER_USE_BUNDLED_RIZIN)
             get_target_property(RAW_RIZIN_INCLUDE_DIRS ${RIZIN_TARGET} INTERFACE_INCLUDE_DIRECTORIES)
             list(APPEND RAW_BINDINGS_INCLUDE_DIRS "${RAW_RIZIN_INCLUDE_DIRS}")
@@ -621,24 +621,24 @@ if(CUTTER_ENABLE_PYTHON)
 endif()
 
 if(TARGET KF${CUTTER_QT}::SyntaxHighlighting)
-    target_link_libraries(cutter_gui_lib PRIVATE KF${CUTTER_QT}::SyntaxHighlighting)
-    target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_ENABLE_KSYNTAXHIGHLIGHTING)
+    target_link_libraries(cutter_app PRIVATE KF${CUTTER_QT}::SyntaxHighlighting)
+    target_compile_definitions(cutter_app PRIVATE CUTTER_ENABLE_KSYNTAXHIGHLIGHTING)
 endif()
 
 if (CUTTER_APPIMAGE_BUILD)
-    target_compile_definitions(cutter_gui_lib PRIVATE APPIMAGE)
+    target_compile_definitions(cutter_app PRIVATE APPIMAGE)
 endif()
 
 if (CUTTER_PACKAGE_JSDEC)
-        target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_BUNDLE_JSDEC)
+        target_compile_definitions(cutter_app PRIVATE CUTTER_BUNDLE_JSDEC)
 endif()
 
 if(APPLE AND CUTTER_ENABLE_PACKAGING AND CUTTER_USE_BUNDLED_RIZIN)
-        target_compile_definitions(cutter_gui_lib PRIVATE MACOS_RZ_BUNDLED)
+        target_compile_definitions(cutter_app PRIVATE MACOS_RZ_BUNDLED)
 endif()
 
 if(CUTTER_ENABLE_PACKAGING)
-    target_compile_definitions(cutter_gui_lib PRIVATE CUTTER_ENABLE_PACKAGING)
+    target_compile_definitions(cutter_app PRIVATE CUTTER_ENABLE_PACKAGING)
 endif()
 
 if(CUTTER_ENABLE_TRANSLATIONS)
