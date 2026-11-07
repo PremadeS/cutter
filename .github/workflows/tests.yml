@@ -109,16 +109,16 @@ jobs:
     # One step per layer, so each shows on its own. They all run even if an earlier one fails.
     - name: Run Unit Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
-      run: ctest --test-dir build -L '^unit$' --output-on-failure
+      run: ctest --test-dir build -L '^unit$' --output-on-failure -j
     - name: Run Session Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
-      run: ctest --test-dir build -L '^session$' --output-on-failure
+      run: ctest --test-dir build -L '^session$' --output-on-failure -j
     - name: Run Dialog Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
-      run: ctest --test-dir build -L '^dialogs$' --output-on-failure
+      run: ctest --test-dir build -L '^dialogs$' --output-on-failure -j
     - name: Run Workflow Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
-      run: ctest --test-dir build -L '^workflows$' --output-on-failure
+      run: ctest --test-dir build -L '^workflows$' --output-on-failure -j
     - name: Run Sweep Tests
       if: ${{ !cancelled() && env.BUILT == '1' }}
-      run: ctest --test-dir build -L '^sweep$' --output-on-failure
+      run: ctest --test-dir build -L '^sweep$' --output-on-failure -j

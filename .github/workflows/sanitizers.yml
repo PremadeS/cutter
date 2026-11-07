@@ -78,7 +78,7 @@ jobs:
         common="log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
         export ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:log_path=$PWD/logs/asan:$common"
         export UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1:log_path=$PWD/logs/ubsan:$common"
-        ctest --test-dir build --output-on-failure -j"$(nproc)" || true
+        ctest --test-dir build --output-on-failure -j || true
 
     - name: Check for Sanitizer Errors
       run: python3 pr/scripts/sanitizer_report.py asan logs
@@ -132,7 +132,7 @@ jobs:
       run: |
         mkdir -p logs
         export LSAN_OPTIONS="exitcode=0:fast_unwind_on_malloc=0:malloc_context_size=40:log_path=$PWD/logs/lsan:log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
-        ctest --test-dir build --output-on-failure -j"$(nproc)" || true
+        ctest --test-dir build --output-on-failure -j || true
 
     - name: Collect Leaks
       run: |
@@ -195,7 +195,7 @@ jobs:
         fi
         mkdir -p logs-base
         export LSAN_OPTIONS="exitcode=0:fast_unwind_on_malloc=0:malloc_context_size=40:log_path=$PWD/logs-base/lsan:log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
-        ctest --test-dir build-base --output-on-failure -j"$(nproc)" || true
+        ctest --test-dir build-base --output-on-failure -j || true
         python3 pr/scripts/sanitizer_report.py lsan-extract logs-base baseline/leaks.json
 
     - name: Save Base Branch Leaks
