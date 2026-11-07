@@ -45,10 +45,6 @@ WelcomeDialog::WelcomeDialog(QWidget *parent) : QDialog(parent), ui(new Ui::Welc
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
             &WelcomeDialog::onLanguageCurrentIndexChanged);
 
-    connect(ui->languageComboBox,
-            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
-            &WelcomeDialog::onLanguageCurrentIndexChanged);
-
     connect(ui->themeComboBox,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
             &WelcomeDialog::onThemeComboBoxCurrentIndexChanged);

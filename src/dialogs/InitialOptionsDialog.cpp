@@ -229,13 +229,13 @@ void InitialOptionsDialog::loadOptions(const InitialOptions &options)
     if (!options.script.isEmpty()) {
         ui->scriptCheckBox->setChecked(true);
         ui->scriptLineEdit->setText(options.script);
-        analysisLevel = 0;
     } else {
         ui->scriptCheckBox->setChecked(false);
         ui->scriptLineEdit->setText("");
     }
 
     ui->analysisSlider->setValue(analysisLevel);
+    onAnalysisSliderValueChanged(ui->analysisSlider->value());
 
     shellcode = options.shellcode;
 
@@ -402,6 +402,8 @@ void InitialOptionsDialog::setupAndStartAnalysis()
     if (ui->debuginfodCheckBox->isChecked()) {
         Core()->setConfig("bin.dbginfo.debuginfod", true);
         Core()->setConfig("bin.dbginfo.debuginfod_urls", ui->debuginfodLineEdit->text());
+    } else {
+        Core()->setConfig("bin.dbginfo.debuginfod", false);
     }
 
     options.endian = getSelectedEndianness();

@@ -102,9 +102,17 @@ public:
 
     void paint(QPainter &p, QPoint offset, QRect area, qreal scale = 1.0, bool interactive = true);
 
-    void saveAsBitmap(const QString &path, const char *format = nullptr, double scaler = 1.0,
+    /**
+     * @brief Save the whole graph as an image.
+     * @return false if the image could not be created or written
+     */
+    bool saveAsBitmap(const QString &path, const char *format = nullptr, double scaler = 1.0,
                       bool transparent = false);
-    void saveAsSvg(const QString &path);
+    /**
+     * @brief Save the whole graph as SVG.
+     * @return false if the file could not be written
+     */
+    bool saveAsSvg(const QString &path);
 
     void computeGraphPlacement();
 
@@ -168,6 +176,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
     void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
     int width = 0;
     int height = 0;
@@ -175,7 +184,13 @@ protected:
 
     void clampViewOffset();
     void setViewOffsetInternal(QPoint pos, bool emitSignal = true);
-    void addViewOffset(QPoint move, bool emitSignal = true);
+    /**
+     * @brief Scroll by a distance in logical coordinates.
+     *
+     * When zoomed in, a mouse or key step is less than one logical unit. The fraction that
+     * doesn't fit in the integer offset is kept for the next step instead of being lost.
+     */
+    void addViewOffset(QPointF move, bool emitSignal = true);
 
 private:
     void centerX(bool emitSignal);
@@ -196,6 +211,8 @@ private:
 
     QPoint scrollBase;
     bool scrollMode = false;
+    /// Part of the scrolled distance that addViewOffset couldn't apply to the integer offset yet
+    QPointF scrollRemainder;
 
     bool useGL;
 
@@ -223,6 +240,7 @@ private:
     void beginMouseDrag(QMouseEvent *event);
 
 public:
+    const GraphLayout::Graph &getBlocks() const { return blocks; }
     QPoint getViewOffset() const { return offset; }
     void setViewOffset(QPoint offset);
     qreal getViewScale() const { return currentScale; }

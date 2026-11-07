@@ -243,12 +243,15 @@ void DisassemblerGraphView::loadCurrentGraph()
         }
         db.truePath = RVA_INVALID;
         db.falsePath = RVA_INVALID;
-        if (bbiFail) {
+        // rizin stores UT64_MAX for a missing jump or fail target, not 0
+        const bool hasFail = bbiFail != UT64_MAX;
+        const bool hasJump = bbiJump != UT64_MAX;
+        if (hasFail) {
             db.falsePath = bbiFail;
             gb.edges.emplace_back(bbiFail);
         }
-        if (bbiJump) {
-            if (bbiFail) {
+        if (hasJump) {
+            if (hasFail) {
                 db.truePath = bbiJump;
             }
             gb.edges.emplace_back(bbiJump);

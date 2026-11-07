@@ -49,7 +49,6 @@ class CUTTER_EXPORT Configuration : public QObject
 {
     Q_OBJECT
 private:
-    QPalette nativePalette;
     QSettings s;
     static Configuration *ptr;
 
@@ -66,6 +65,10 @@ private:
     void loadLightStylesheet();
     void loadDarkStylesheet();
     void loadMidnightStylesheet();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    void onSystemColorSchemeChanged(Qt::ColorScheme scheme);
+    static inline Qt::ColorScheme systemColorScheme = Qt::ColorScheme::Unknown;
+#endif
 
     // Asm Options
     void applySavedAsmOptions();

@@ -34,7 +34,7 @@ private:
 
     void setIsAvailable(bool isAvailable);
     void setUserOpened(bool userOpened);
-    void zoomTarget(int d);
+    void zoomTarget(double d);
 
 private slots:
     void showEvent(QShowEvent *event) override;

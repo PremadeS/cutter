@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPropertyAnimation>
+#include <QResizeEvent>
 #include <QSvgGenerator>
 
 #include <vector>
@@ -254,15 +255,26 @@ void GraphView::clampViewOffset()
 void GraphView::setViewOffsetInternal(QPoint pos, bool emitSignal)
 {
     offset = pos;
+    scrollRemainder = QPointF();
     clampViewOffset();
     if (emitSignal) {
         emit viewOffsetChanged(offset);
     }
 }
 
-void GraphView::addViewOffset(QPoint move, bool emitSignal)
+void GraphView::addViewOffset(QPointF move, bool emitSignal)
 {
-    setViewOffsetInternal(offset + move, emitSignal);
+    const QPointF total = move + scrollRemainder;
+    const QPoint whole = total.toPoint();
+    setViewOffsetInternal(offset + whole, emitSignal);
+    scrollRemainder = total - whole;
+}
+
+void GraphView::resizeEvent(QResizeEvent *event)
+{
+    QAbstractScrollArea::resizeEvent(event);
+    // An offset that was valid for a bigger view can leave the graph outside a smaller one
+    setViewOffsetInternal(offset);
 }
 
 void GraphView::paintGraphCache()
@@ -420,10 +432,14 @@ void GraphView::paint(QPainter &p, QPoint offset, QRect viewport, qreal scale, b
     }
 }
 
-void GraphView::saveAsBitmap(const QString &path, const char *format, double scaler,
+bool GraphView::saveAsBitmap(const QString &path, const char *format, double scaler,
                              bool transparent)
 {
     QImage image(width * scaler, height * scaler, QImage::Format_ARGB32);
+    if (image.isNull()) {
+        qWarning() << "Graph is too big for an image at this scale";
+        return false;
+    }
     if (transparent) {
         image.fill(qRgba(0, 0, 0, 0));
     } else {
@@ -435,10 +451,12 @@ void GraphView::saveAsBitmap(const QString &path, const char *format, double sca
     p.end();
     if (!image.save(path, format)) {
         qWarning() << "Could not save image";
+        return false;
     }
+    return true;
 }
 
-void GraphView::saveAsSvg(const QString &path)
+bool GraphView::saveAsSvg(const QString &path)
 {
     QSvgGenerator generator;
     generator.setFileName(path);
@@ -446,9 +464,11 @@ void GraphView::saveAsSvg(const QString &path)
     generator.setViewBox(QRect(0, 0, width, height));
     generator.setTitle(tr("Cutter graph export"));
     QPainter p;
-    p.begin(&generator);
+    if (!p.begin(&generator)) {
+        return false;
+    }
     paint(p, QPoint(0, 0), QRect(0, 0, width, height), 1.0, false);
-    p.end();
+    return p.end();
 }
 
 void GraphView::center()
@@ -692,7 +712,7 @@ void GraphView::mousePressEvent(QMouseEvent *event)
 void GraphView::mouseMoveEvent(QMouseEvent *event)
 {
     if (scrollMode) {
-        addViewOffset((scrollBase - event->pos()) / currentScale);
+        addViewOffset(QPointF(scrollBase - event->pos()) / currentScale);
         scrollBase = event->pos();
         viewport()->update();
     }
@@ -709,10 +729,10 @@ void GraphView::mouseDoubleClickEvent(QMouseEvent *event)
 void GraphView::keyPressEvent(QKeyEvent *event)
 {
     // for scrolling with arrow keys
-    const int delta = static_cast<int>(30.0 / currentScale);
+    const qreal delta = 30.0 / currentScale;
     // for scrolling with pgup/pgdown keys
-    const int delta2 = static_cast<int>(100.0 / currentScale);
-    int dx = 0, dy = 0;
+    const qreal delta2 = 100.0 / currentScale;
+    qreal dx = 0, dy = 0;
     switch (event->key()) {
     case Qt::Key_Up:
         dy = -delta;
@@ -736,7 +756,7 @@ void GraphView::keyPressEvent(QKeyEvent *event)
         QAbstractScrollArea::keyPressEvent(event);
         return;
     }
-    addViewOffset(QPoint(dx, dy));
+    addViewOffset(QPointF(dx, dy));
     viewport()->update();
     event->accept();
 }
@@ -756,9 +776,7 @@ void GraphView::wheelEvent(QWheelEvent *event)
         // That would result in unwanted scrolling while panning.
         return;
     }
-    QPoint delta = -event->angleDelta();
-    delta /= currentScale;
-    addViewOffset(delta);
+    addViewOffset(-QPointF(event->angleDelta()) / currentScale);
     viewport()->update();
     event->accept();
 }

@@ -218,7 +218,9 @@ QString ColorThemeWorker::importTheme(const QString &file) const
                   "Please make sure you have access to it and try again.")
                 .arg(file);
     } else if (!isTheme) {
-        return tr("File <b>%1</b> is not a Cutter color theme").arg(file);
+        return tr("File <b>%1</b> is not a color theme. A theme can only set colors "
+                  "(<code>ec</code> lines) and contain comments.")
+                .arg(file);
     }
 
     const QString name = src.fileName();
@@ -263,26 +265,39 @@ bool ColorThemeWorker::isFileTheme(const QString &filePath, bool *ok) const
         *ok = false;
         return false;
     }
+    *ok = true;
 
-    const QString colors = "black|red|white|green|magenta|yellow|cyan|blue|gray|none";
-    const QString options =
-            (Core()->getThemeKeys() << cutterSpecificOptions).join('|').replace(".", "\\.");
+    // A theme is a Rizin script: loading the theme runs every line as a Rizin command. Cutter
+    // only checks that each line is a color command with nothing that could run something else
+    // (`;`, `|`, `!`, backticks, `>`, `$`, `@` ...). Keys and colors are left to Rizin to parse.
+    static const QStringList colorCommands = { "ec", "ecd" };
+    static const QRegularExpression trailingComment("\\s#(\\s.*)?$");
+    static const QRegularExpression safeArguments("\\A[A-Za-z0-9_.:#\"\\s]*\\z");
+    static const QRegularExpression whitespace("\\s+");
+    constexpr int setColorTokens = 3; // ec <key> <color>
 
-    const QString pattern =
-            QString("((ec\\s+(%1)\\s+(((rgb:|#)[0-9a-fA-F]{3,8})|(%2))))\\s*").arg(options, colors);
-    // The below construct mimics the behaviour of QRegexP::exactMatch(), which was here before
-    const QRegularExpression regexp("\\A(?:" + pattern + ")\\z");
-
-    for (auto &line : QString(f.readAll()).split('\n', CUTTER_QT_SKIP_EMPTY_PARTS)) {
-        line.replace("#~", "ec ");
-        if (!line.isEmpty() && !regexp.match(line).hasMatch()) {
-            *ok = true;
+    bool setsAColor = false;
+    for (const QString &fileLine : QString(f.readAll()).split('\n')) {
+        QString line = fileLine.trimmed();
+        if (line.isEmpty()) {
+            continue;
+        }
+        if (line.startsWith("#~")) {
+            // A Cutter-specific color, written as a comment so that Rizin ignores it
+            line = "ec " + line.mid(2);
+        } else if (line.startsWith('#')) {
+            continue;
+        }
+        line.remove(trailingComment);
+        const QStringList tokens = line.split(whitespace, CUTTER_QT_SKIP_EMPTY_PARTS);
+        if (!colorCommands.contains(tokens.first()) || !safeArguments.match(line).hasMatch()) {
             return false;
         }
+        if (tokens.first() == "ec" && tokens.size() >= setColorTokens) {
+            setsAColor = true;
+        }
     }
-
-    *ok = true;
-    return true;
+    return setsAColor;
 }
 
 QStringList ColorThemeWorker::customThemes() const

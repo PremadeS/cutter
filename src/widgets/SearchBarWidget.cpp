@@ -69,15 +69,16 @@ SearchBarWidget::SearchBarWidget(QWidget *parent) : QWidget(parent), ui(new Ui::
     connect(ui->hideButton, &QToolButton::clicked, this, &SearchBarWidget::hideSearchBar);
 
     // shortcuts
-    const QShortcut *findNextShortcut =
-            Shortcuts()->makeQShortcut("Search.findNext", ui->searchEdit);
-    const QShortcut *findPrevShortcut =
-            Shortcuts()->makeQShortcut("Search.findPrev", ui->searchEdit);
-    const QShortcut *findLastShortcut =
-            Shortcuts()->makeQShortcut("Search.findLast", ui->searchEdit);
+    QShortcut *findNextShortcut = Shortcuts()->makeQShortcut("Search.findNext", ui->searchEdit);
+    QShortcut *findPrevShortcut = Shortcuts()->makeQShortcut("Search.findPrev", ui->searchEdit);
+    QShortcut *findLastShortcut = Shortcuts()->makeQShortcut("Search.findLast", ui->searchEdit);
     QShortcut *hideShortcut = Shortcuts()->makeQShortcut("Search.hide", this);
-    const QShortcut *optionsShortcut = Shortcuts()->makeQShortcut("Search.options", this);
+    QShortcut *optionsShortcut = Shortcuts()->makeQShortcut("Search.options", this);
+    findNextShortcut->setContext(Qt::WidgetShortcut);
+    findPrevShortcut->setContext(Qt::WidgetShortcut);
+    findLastShortcut->setContext(Qt::WidgetShortcut);
     hideShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    optionsShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     connect(findNextShortcut, &QShortcut::activated, this, &SearchBarWidget::findNextTriggered);
     connect(findPrevShortcut, &QShortcut::activated, this, &SearchBarWidget::findPrevTriggered);
     connect(findLastShortcut, &QShortcut::activated, this, &SearchBarWidget::findLastTriggered);

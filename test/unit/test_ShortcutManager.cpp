@@ -2,10 +2,10 @@
  * @file test_ShortcutManager.cpp
  * @brief Cutter's default shortcut table and how shortcuts are matched.
  *
- * Two shortcuts with the same key in the same context make Qt treat the key as
- * ambiguous, so neither fires. Shortcuts built from platform key bindings can end
- * up with no key at all on some OS. Widgets that handle keys themselves rely on
- * matchesKeySequence checking every key of a shortcut.
+ * Shortcuts built from platform key bindings can end up with no key at all on some OS.
+ * Widgets that handle keys themselves rely on matchesKeySequence checking every key of
+ * a shortcut. Whether two shortcuts clash depends on where they are active, which only
+ * the live widgets know, so that is checked in workflows/test_Shortcuts.cpp.
  */
 
 #include "shortcuts/ShortcutManager.h"
@@ -17,36 +17,9 @@ class TestShortcutManager : public QObject
     Q_OBJECT
 
 private slots:
-    void defaultShortcutsDoNotConflictWithinContext();
     void everyShortcutHasKeyOnThisPlatform();
     void matchesEveryKeyOfShortcut();
 };
-
-void TestShortcutManager::defaultShortcutsDoNotConflictWithinContext()
-{
-    const QHash<QString, Shortcut> shortcuts = Shortcuts()->getAllShortcuts();
-    QHash<QString, QString> owners;
-    QStringList conflicts;
-
-    for (auto it = shortcuts.cbegin(); it != shortcuts.cend(); ++it) {
-        for (const QKeySequence &sequence : it.value().keySequences) {
-            if (sequence.isEmpty()) {
-                continue;
-            }
-            const QString key = QString::fromLatin1(it.value().context) + '|'
-                    + sequence.toString(QKeySequence::PortableText);
-            const QString owner = owners.value(key);
-            if (!owner.isEmpty() && owner != it.key()) {
-                conflicts << QString("%1 and %2 share %3").arg(owner, it.key(), key);
-            } else {
-                owners.insert(key, it.key());
-            }
-        }
-    }
-
-    conflicts.sort();
-    QVERIFY2(conflicts.isEmpty(), qPrintable(conflicts.join("; ")));
-}
 
 void TestShortcutManager::everyShortcutHasKeyOnThisPlatform()
 {

@@ -46,6 +46,7 @@ CallGraphView::CallGraphView(CutterDockWidget *parent, MainWindow *main, bool gl
     connect(&refreshDeferrer, &RefreshDeferrer::refreshNow, this, &CallGraphView::refreshView);
     connect(Core(), &CutterCore::refreshAll, this, &SimpleTextGraphView::refreshView);
     connect(Core(), &CutterCore::functionRenamed, this, &CallGraphView::refreshView);
+    connect(Core(), &CutterCore::functionsChanged, this, &CallGraphView::refreshView);
 }
 
 void CallGraphView::showExportDialog()
@@ -63,7 +64,11 @@ void CallGraphView::showAddress(RVA address)
 {
     if (global) {
         selectBlockWithId(address);
-        showBlock(blocks[address]);
+        // blocks[] would add an empty block for a function the graph doesn't show
+        auto blockIt = blocks.find(address);
+        if (blockIt != blocks.end()) {
+            showBlock(blockIt->second);
+        }
     } else if (address != this->address) {
         this->address = address;
         refreshView();

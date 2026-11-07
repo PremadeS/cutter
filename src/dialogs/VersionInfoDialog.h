@@ -27,13 +27,11 @@ private slots:
     void clearSelectionOnClose();
 
 protected:
-    QMenu *contextMenu = nullptr;
     QAction *copyActionLeftTreewidget = nullptr;
     QAction *copyActionRightTreewidget = nullptr;
     QAction *selAllActionLeftTreewidget = nullptr;
     QAction *selAllActionRightTreewidget = nullptr;
 
-    void contextMenuEvent(QContextMenuEvent *event) override;
     void onButtonBoxRejected();
 
     /**

@@ -124,8 +124,9 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     connect(historyDownShortcut, &QShortcut::activated, this, &ConsoleWidget::historyNext);
     historyDownShortcut->setContext(Qt::WidgetShortcut);
 
-    const QShortcut *completionShortcut =
+    QShortcut *completionShortcut =
             Shortcuts()->makeQShortcut("Console.complete", ui->rzInputLineEdit);
+    completionShortcut->setContext(Qt::WidgetShortcut);
     connect(completionShortcut, &QShortcut::activated, this, &ConsoleWidget::triggerCompletion);
 
     connect(ui->rzInputLineEdit, &QLineEdit::editingFinished, this,

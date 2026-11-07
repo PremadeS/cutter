@@ -28,12 +28,6 @@ GraphWidget::GraphWidget(MainWindow *main)
     // Title needs to get set after graphView is defined
     updateWindowTitle();
 
-    // getting the name of the class is implementation defined, and cannot be
-    // used reliably across different compilers.
-    // QShortcut *toggle_shortcut = new QShortcut(widgetShortcuts[typeid(this).name()], main);
-    const QShortcut *toggleShortcut = Shortcuts()->makeQShortcut("Graph.toggle", main);
-    connect(toggleShortcut, &QShortcut::activated, this, [=, this]() { toggleDockWidget(true); });
-
     connect(graphView, &DisassemblerGraphView::nameChanged, this,
             &MemoryDockWidget::updateWindowTitle);
 

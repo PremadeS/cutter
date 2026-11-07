@@ -227,6 +227,7 @@ HexWidget::HexWidget(QWidget *parent)
             [this](Selection newSelection) { actionCopy->setEnabled(!newSelection.empty); });
 
     actionAddMark = Shortcuts()->makeAction("Hex.addMark", this);
+    actionAddMark->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     connect(actionAddMark, &QAction::triggered, this, &HexWidget::onActionAddMarkTriggered);
     addAction(actionAddMark);
 

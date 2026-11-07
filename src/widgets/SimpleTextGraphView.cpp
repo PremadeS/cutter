@@ -20,6 +20,7 @@
 #include <QToolTip>
 #include <QVBoxLayout>
 
+#include <algorithm>
 #include <cmath>
 
 SimpleTextGraphView::SimpleTextGraphView(QWidget *parent, MainWindow *mainWindow)
@@ -118,11 +119,15 @@ void SimpleTextGraphView::drawBlock(QPainter &p, GraphView::GraphBlock &block, b
     }
 
     p.setPen(palette().color(QPalette::WindowText));
-    // Render node text
+    // Render node text; drawText(QPoint) doesn't break lines, so draw them one by one
     const QFontMetrics fm = QFontMetrics(p.font());
-    auto x = block.x + padding / 2;
-    const int y = block.y + padding / 2 + fm.ascent();
-    p.drawText(QPoint(x, y), content.text);
+    const int x = block.x + padding / 2;
+    int y = block.y + padding / 2 + fm.ascent();
+    const QStringList lines = content.text.split('\n');
+    for (const QString &line : lines) {
+        p.drawText(QPoint(x, y), line);
+        y += charHeight;
+    }
 }
 
 GraphView::EdgeConfiguration SimpleTextGraphView::edgeConfiguration(GraphView::GraphBlock &from,
@@ -153,10 +158,13 @@ void SimpleTextGraphView::addBlock(GraphLayout::GraphBlock block, const QString 
     content.text = text;
     content.address = address;
 
-    const int height = 1;
-    const int width = mFontMetrics->width(text);
+    const QStringList lines = text.split('\n');
+    qreal width = 0;
+    for (const QString &line : lines) {
+        width = std::max(width, mFontMetrics->width(line));
+    }
     block.width = static_cast<int>(width + padding);
-    block.height = (height * charHeight) + padding;
+    block.height = static_cast<int>(lines.size()) * charHeight + padding;
     GraphView::addBlock(block);
 }
 

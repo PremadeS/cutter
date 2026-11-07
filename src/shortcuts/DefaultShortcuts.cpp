@@ -238,7 +238,7 @@ const QHash<QString, Shortcut> &getDefaultShortcuts()
 
         // Exports
         { "Exports.toggle",
-          { { Qt::SHIFT | Qt::Key_E },
+          { { Qt::CTRL | Qt::SHIFT | Qt::Key_E },
             QT_TRANSLATE_NOOP("ExportsWidget", "Toggle Exports Window"),
             "ExportsWidget" } },
 

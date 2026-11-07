@@ -17,9 +17,12 @@
 #include <QClipboard>
 #include <QInputDialog>
 #include <QJsonArray>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QShortcut>
 #include <QtCore>
+
+#include <cstring>
 
 DisassemblyContextMenu::DisassemblyContextMenu(QWidget *parent, MainWindow *mainWindow)
     : QMenu(parent),
@@ -344,6 +347,9 @@ QVector<DisassemblyContextMenu::ThingUsedHere> DisassemblyContextMenu::getThingU
     ThingUsedHere th;
     th.offset = p->offset;
     th.name = Config()->getConfigBool("asm.flags.real") && p->realname ? p->realname : p->name;
+    if (p->type == RZ_CORE_ANALYSIS_NAME_TYPE_FLAG) {
+        th.flagName = p->name;
+    }
     switch (p->type) {
     case RZ_CORE_ANALYSIS_NAME_TYPE_FLAG:
         th.type = ThingUsedHere::Type::Flag;
@@ -397,6 +403,7 @@ DisassemblyContextMenu::ThingUsedHere DisassemblyContextMenu::getThingAt(ut64 ad
     } else if (flag != nullptr) {
         // It is a flag
         tuh.type = ThingUsedHere::Type::Flag;
+        tuh.flagName = flag->name;
         if (Config()->getConfigBool("asm.flags.real") && flag->realname) {
             tuh.name = flag->realname;
         } else {
@@ -421,6 +428,7 @@ void DisassemblyContextMenu::buildRenameMenu(ThingUsedHere *tuh)
     }
 
     actionDeleteFlag.setVisible(false);
+    doRenameInfo.flagName = tuh->flagName;
     if (tuh->type == ThingUsedHere::Type::Address) {
         doRenameAction = RENAME_ADD_FLAG;
         doRenameInfo.name = rzAddressString(tuh->offset);
@@ -632,7 +640,12 @@ void DisassemblyContextMenu::aboutToShowSlot()
 
 void DisassemblyContextMenu::aboutToHideSlot()
 {
+    // A hidden action ignores its shortcut. These are hidden only where the menu was opened, so
+    // make them visible again for their shortcuts; their slots do nothing where they don't apply.
     actionXRefsForVariables.setVisible(true);
+    actionCopy.setVisible(true);
+    actionEditFunction.setVisible(true);
+    actionSetFunctionVarTypes.setVisible(true);
 }
 
 void DisassemblyContextMenu::editInstructionTriggered()
@@ -950,7 +963,10 @@ void DisassemblyContextMenu::deleteCommentTriggered() const
 
 void DisassemblyContextMenu::deleteFlagTriggered() const
 {
-    Core()->delFlag(offset);
+    // The flag the menu names, which can be at another address than the line (an operand)
+    if (!doRenameInfo.flagName.isEmpty()) {
+        Core()->delFlag(doRenameInfo.flagName);
+    }
 }
 
 void DisassemblyContextMenu::deleteFunctionTriggered() const
@@ -991,10 +1007,34 @@ void DisassemblyContextMenu::editFunctionTriggered()
         if (dialog.exec()) {
             const QString newName = dialog.getNameText();
             rz_core_analysis_function_rename(core, fcn->addr, newName.toStdString().c_str());
+
             const QString newStartAddr = dialog.getStartAddrText();
-            fcn->addr = Core()->math(newStartAddr);
+            const RVA oldStart = fcn->addr;
+            const RVA newStart = Core()->math(newStartAddr);
+            if (!Core()->isValidInputNumValue(newStartAddr)) {
+                QMessageBox::warning(parentForDialog(), tr("Edit function"),
+                                     tr("Invalid start address: %1").arg(newStartAddr));
+            } else if (!rz_analysis_function_relocate(fcn, newStart)) {
+                // Fails only when another function already starts there
+                QMessageBox::warning(parentForDialog(), tr("Edit function"),
+                                     tr("Another function already starts at %1.")
+                                             .arg(rzAddressString(newStart)));
+            } else if (newStart != oldStart) {
+                // Move the function's own flag with it, like rizin renames only that flag
+                RzFlagItem *flag = rz_flag_get(core->flags, fcn->name);
+                if (flag && flag->offset == oldStart && flag->space
+                    && !strcmp(flag->space->name, RZ_FLAGS_FS_FUNCTIONS)) {
+                    rz_flag_set(core->flags, flag->name, newStart, flag->size);
+                }
+            }
+
             const QString newStackSize = dialog.getStackSizeText();
-            fcn->stack = int(Core()->math(newStackSize));
+            if (Core()->isValidInputNumValue(newStackSize)) {
+                fcn->stack = int(Core()->math(newStackSize));
+            } else {
+                QMessageBox::warning(parentForDialog(), tr("Edit function"),
+                                     tr("Invalid stack size: %1").arg(newStackSize));
+            }
 
             const QByteArray newCC = dialog.getCallConSelected().toUtf8();
             if (!newCC.isEmpty()) {

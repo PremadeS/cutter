@@ -19,6 +19,7 @@
 #include <QtCore>
 
 #include <cmath>
+#include <iterator>
 
 namespace {
 template<typename TextEditType>
@@ -61,14 +62,30 @@ QString formatByteCount(ut64 bytecount)
         return "0";
     }
 
-    const int exp = log(bytecount) / log(1024);
-    constexpr char suffixes[] = { ' ', 'k', 'M', 'G', 'T', 'P', 'E' };
+    constexpr const char *units[] = { "B", "kB", "MB", "GB", "TB", "PB", "EB" };
+    constexpr int unitStep = 1024;
+    // Below this a value rounds to under 1024 and stays in its unit
+    constexpr double nextUnitThreshold = unitStep - 0.5;
 
-    QString str;
-    QTextStream stream(&str);
-    stream << qSetRealNumberPrecision(3) << bytecount / pow(1024, exp) << ' ' << suffixes[exp]
-           << 'B';
-    return stream.readAll();
+    double value = static_cast<double>(bytecount);
+    size_t unit = 0;
+    while (value >= nextUnitThreshold && unit + 1 < std::size(units)) {
+        value /= unitStep;
+        ++unit;
+    }
+
+    // Three significant digits, without e-notation and without trailing zeros
+    const int decimals = value < 10 ? 2 : (value < 100 ? 1 : 0);
+    QString number = QString::number(value, 'f', decimals);
+    if (number.contains(QLatin1Char('.'))) {
+        while (number.endsWith(QLatin1Char('0'))) {
+            number.chop(1);
+        }
+        if (number.endsWith(QLatin1Char('.'))) {
+            number.chop(1);
+        }
+    }
+    return number + QLatin1Char(' ') + QLatin1String(units[unit]);
 }
 
 void adjustColumns(QTreeView *tv, int columnCount, int padding)

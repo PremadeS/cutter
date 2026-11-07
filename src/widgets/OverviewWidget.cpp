@@ -5,6 +5,8 @@
 #include "core/MainWindow.h"
 #include "shortcuts/ShortcutManager.h"
 
+#include <QWheelEvent>
+
 OverviewWidget::OverviewWidget(MainWindow *main)
     : CutterDockWidget(main),
       graphView(new OverviewView(this)),
@@ -73,7 +75,7 @@ void OverviewWidget::setUserOpened(bool userOpened)
     emit userOpenedChanged(userOpened);
 }
 
-void OverviewWidget::zoomTarget(int d)
+void OverviewWidget::zoomTarget(double d)
 {
     if (!targetGraphWidget) {
         return;
@@ -117,7 +119,11 @@ void OverviewWidget::setTargetGraphWidget(GraphWidget *widget)
 
 void OverviewWidget::wheelEvent(QWheelEvent *event)
 {
-    zoomTarget(event->angleDelta().y() / 90);
+    const int angle = event->angleDelta().y();
+    if (angle != 0) {
+        // One wheel notch (120) is one zoom step, a fraction of a notch a fraction of a step
+        zoomTarget(angle / double(QWheelEvent::DefaultDeltasPerStep));
+    }
     graphView->centreRect();
 }
 
@@ -158,6 +164,8 @@ void OverviewWidget::updateGraphData()
         graphView->setData(0, 0, {}, {});
         graphView->setRangeRect(QRectF(0, 0, 0, 0));
     }
+    // setData rescales the overview, so the rectangle has to be placed again
+    updateRangeRect();
 }
 
 void OverviewWidget::updateRangeRect()

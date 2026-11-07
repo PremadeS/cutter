@@ -264,13 +264,17 @@ private:
 class DisassemblyLeftPanel : public QFrame
 {
 public:
-    DisassemblyLeftPanel(DisassemblyWidget *disas);
+    /**
+     * @param wheelTarget the disassembly scroll area's viewport, which handles wheel events
+     */
+    DisassemblyLeftPanel(DisassemblyWidget *disas, QWidget *wheelTarget);
     void paintEvent(QPaintEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void clearArrowFrom(RVA offset);
 
 private:
     DisassemblyWidget *disas;
+    QWidget *wheelTarget;
 
     struct Arrow
     {

@@ -5,7 +5,6 @@
 #include "ui_VersionInfoDialog.h"
 
 #include <QClipboard>
-#include <QContextMenuEvent>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -104,12 +103,6 @@ void VersionInfoDialog::copyTreeWidgetSelection(QTreeWidget *t)
 
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(vinfo.trimmed());
-}
-
-void VersionInfoDialog::contextMenuEvent(QContextMenuEvent *event)
-{
-    contextMenu->exec(event->globalPos());
-    event->accept();
 }
 
 void VersionInfoDialog::onButtonBoxRejected()

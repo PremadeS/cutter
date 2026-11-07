@@ -9,7 +9,8 @@
  * when horizontal), and a layout neither changes the graph nor depends on anything but
  * its input. A catalog of shapes (loops, switches, irreducible flow, unreachable code)
  * runs against every layout. Layouts expect a graph cleaned by GraphView::cleanupEdges,
- * which is tested on its own.
+ * which is tested on its own. The entry isn't always one of the graph's blocks (the call graph
+ * never sets one); Graphviz layouts used to hang then.
  */
 
 #include "widgets/GraphGridLayout.h"
@@ -568,6 +569,8 @@ private slots:
     void layoutKeepsDrawingRules();
     void layoutIsDeterministic_data();
     void layoutIsDeterministic();
+    void layoutWithoutEntryBlock_data();
+    void layoutWithoutEntryBlock();
     void veryLongChainKeepsOrder();
     void cleanupEdgesKeepsFirstEdgeToEachBlock_data();
     void cleanupEdgesKeepsFirstEdgeToEachBlock();
@@ -699,6 +702,35 @@ void TestGraphLayouts::layoutIsDeterministic()
             QVERIFY(b.edges[i].arrow == a.edges[i].arrow);
         }
     }
+}
+
+void TestGraphLayouts::layoutWithoutEntryBlock_data()
+{
+    addLayoutRows();
+}
+
+void TestGraphLayouts::layoutWithoutEntryBlock()
+{
+    constexpr ut64 missingEntry = 0xdead0;
+    QFETCH(const int, layoutIndex);
+    const LayoutKind kind = layouts().at(layoutIndex).kind;
+
+    GraphCase graphCase = ifElseDiamond();
+    graphCase.entry = missingEntry;
+    Graph graph = buildGraph(graphCase);
+    int width = 0;
+    int height = 0;
+    makeLayout(kind)->calculateLayout(graph, graphCase.entry, width, height);
+
+    checkStructureUnchanged(graphCase, graph);
+    if (QTest::currentTestFailed()) {
+        return;
+    }
+    checkInsideBounds(graph, width, height, kind);
+    if (QTest::currentTestFailed()) {
+        return;
+    }
+    checkNoOverlap(graph);
 }
 
 void TestGraphLayouts::veryLongChainKeepsOrder()

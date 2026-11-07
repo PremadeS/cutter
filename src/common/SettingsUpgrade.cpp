@@ -312,7 +312,9 @@ void Cutter::migrateThemes()
     QSettings settings;
     const int themeVersion = settings.value(THEME_VERSION_KEY, 0).toInt();
     if (themeVersion >= THEME_VERSION_CURRENT) {
-        qWarning() << "Themes have a higher version than current! Skipping migration.";
+        if (themeVersion > THEME_VERSION_CURRENT) {
+            qWarning() << "Themes have a higher version than current! Skipping migration.";
+        }
         return;
     }
     for (int v = themeVersion + 1; v <= THEME_VERSION_CURRENT; v++) {

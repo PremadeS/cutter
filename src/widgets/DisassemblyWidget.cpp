@@ -37,7 +37,7 @@ DisassemblyWidget::DisassemblyWidget(MainWindow *main)
       mCtxMenu(new DisassemblyContextMenu(this, main)),
       mDisasScrollArea(new DisassemblyScrollArea(this)),
       mDisasTextEdit(new DisassemblyTextEdit(this)),
-      leftPanel(new DisassemblyLeftPanel(this)),
+      leftPanel(new DisassemblyLeftPanel(this, mDisasScrollArea->viewport())),
       maxLines(0),
       cursorLineOffset(0),
       cursorCharOffset(0),
@@ -870,7 +870,8 @@ void DisassemblyWidget::copySelection()
                     break;
                 }
 
-                plainTextLines.append(QString(line.text).replace("&nbsp;", " "));
+                htmlStripper.setHtml(line.text);
+                plainTextLines.append(htmlStripper.toPlainText());
 
                 if (line.offset == endRVA) {
                     if (currentEndHit == endRVAIndex) {
@@ -1394,7 +1395,8 @@ void DisassemblyWidget::seekPrev()
  * Left panel
  *********************/
 
-DisassemblyLeftPanel::DisassemblyLeftPanel(DisassemblyWidget *disas) : disas(disas)
+DisassemblyLeftPanel::DisassemblyLeftPanel(DisassemblyWidget *disas, QWidget *wheelTarget)
+    : disas(disas), wheelTarget(wheelTarget)
 {
 
     arrows.reserve((arrowsSize * 3) / 2);
@@ -1402,12 +1404,8 @@ DisassemblyLeftPanel::DisassemblyLeftPanel(DisassemblyWidget *disas) : disas(dis
 
 void DisassemblyLeftPanel::wheelEvent(QWheelEvent *event)
 {
-
-    int count = -(event->angleDelta() / 15).y();
-    count -= (count > 0 ? 5 : -5);
-
-    this->disas->showTransientScrollBar();
-    this->disas->scrollInstructions(count);
+    // Scroll exactly like the text next to it, which adds up small (trackpad) deltas
+    QCoreApplication::sendEvent(wheelTarget, event);
 }
 
 void DisassemblyLeftPanel::paintEvent(QPaintEvent *event)

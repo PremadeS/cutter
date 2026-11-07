@@ -6,8 +6,10 @@
  * there brings a fresh NewFileDialog back without starting anything. Real bugs lived in this
  * loop: a second file rejected after cancelling, and an error that kept appearing after a
  * valid file was chosen. Every option chosen (architecture, bits, endianness, analysis
- * level) must reach the InitialOptions analysis runs with, or Cutter silently analyzes the
- * binary differently from what the user asked for.
+ * level, debuginfod) must reach the InitialOptions analysis runs with, or Cutter silently
+ * analyzes the binary differently from what the user asked for. A `<file>.rz` script next to the
+ * binary is offered before the options, and the options dialog shows the analysis level that
+ * will actually run, with or without a script.
  */
 
 #include "CutterApplication.h"
@@ -19,11 +21,14 @@
 #include "dialogs/InitialOptionsDialog.h"
 #include "dialogs/NewFileDialog.h"
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QPointer>
 #include <QSlider>
+#include <QTemporaryDir>
 #include <QTest>
 
 namespace {
@@ -50,6 +55,11 @@ private slots:
 
     void reselectAfterCancelingOptions();
     void errorClearedAfterValidSelection();
+    /** @brief Opening a binary with a `<binary>.rz` next to it offers to load that script. */
+    void scriptNextToTheFileIsOffered();
+    /** @brief The analysis checkbox and slider show the level that will run, script or not. */
+    void loadedOptionsShowTheAnalysisThatWillRun_data();
+    void loadedOptionsShowTheAnalysisThatWillRun();
     void chosenOptionsReachAnalysis();
 
 private:
@@ -116,8 +126,66 @@ void TestOpenFile::errorClearedAfterValidSelection()
     QCOMPARE(messageBoxes.seenTexts().size(), 1);
 }
 
+void TestOpenFile::scriptNextToTheFileIsOffered()
+{
+    const QTemporaryDir dir;
+    QVERIFY(dir.isValid());
+    const QString binary =
+            QDir::toNativeSeparators(QDir(dir.path()).filePath(QFileInfo(helloPath).fileName()));
+    QVERIFY(QFile::copy(helloPath, binary));
+    const QString script = binary + QStringLiteral(".rz");
+    QFile scriptFile(script);
+    QVERIFY(scriptFile.open(QIODevice::WriteOnly));
+    scriptFile.close();
+
+    CutterTest::MessageBoxWatcher messageBoxes;
+    QVERIFY(submitFile(CutterTest::findVisibleTopLevel<NewFileDialog>(), binary));
+
+    QTRY_VERIFY(CutterTest::findVisibleTopLevel<InitialOptionsDialog>());
+    QCOMPARE(messageBoxes.seenTexts().size(), 1);
+    QVERIFY(messageBoxes.seenTexts().first().contains(script));
+}
+
+void TestOpenFile::loadedOptionsShowTheAnalysisThatWillRun_data()
+{
+    QTest::addColumn<bool>("withScript");
+    QTest::addColumn<bool>("autoAnalysis");
+    QTest::addColumn<int>("expectedLevel");
+
+    QTest::newRow("script and auto analysis") << true << true << autoAnalysisLevel;
+    QTest::newRow("script without analysis") << true << false << 0;
+    QTest::newRow("no script, no analysis") << false << false << 0;
+}
+
+void TestOpenFile::loadedOptionsShowTheAnalysisThatWillRun()
+{
+    QFETCH(const bool, withScript);
+    QFETCH(const bool, autoAnalysis);
+    QFETCH(const int, expectedLevel);
+
+    InitialOptions options {};
+    if (withScript) {
+        options.script = QStringLiteral("script.rz");
+    }
+    if (!autoAnalysis) {
+        options.analysisCmd = {};
+    }
+
+    InitialOptionsDialog dialog(CutterTest::mainWindow());
+    dialog.loadOptions(options);
+
+    const auto *level = dialog.findChild<QSlider *>("analysisSlider");
+    const auto *enabled = dialog.findChild<QCheckBox *>("analysisCheckBox");
+    QVERIFY(level && enabled);
+    QCOMPARE(level->value(), expectedLevel);
+    QCOMPARE(enabled->isChecked(), expectedLevel > 0);
+}
+
 void TestOpenFile::chosenOptionsReachAnalysis()
 {
+    const QString debuginfod = QStringLiteral("bin.dbginfo.debuginfod");
+    CutterTest::core()->setConfig(debuginfod, true);
+
     QVERIFY(submitFile(CutterTest::findVisibleTopLevel<NewFileDialog>(), helloPath));
     InitialOptionsDialog *optionsDialog = nullptr;
     QTRY_VERIFY((optionsDialog = CutterTest::findVisibleTopLevel<InitialOptionsDialog>()));
@@ -126,7 +194,9 @@ void TestOpenFile::chosenOptionsReachAnalysis()
     auto *bits = optionsDialog->findChild<QComboBox *>("bitsComboBox");
     auto *endianness = optionsDialog->findChild<QComboBox *>("endiannessComboBox");
     auto *level = optionsDialog->findChild<QSlider *>("analysisSlider");
-    QVERIFY(arch && bits && endianness && level);
+    auto *debuginfodBox = optionsDialog->findChild<QCheckBox *>("debuginfodCheckBox");
+    QVERIFY(arch && bits && endianness && level && debuginfodBox);
+    QVERIFY(debuginfodBox->isChecked());
 
     const int x86 = arch->findData("x86");
     const int bits32 = bits->findText("32");
@@ -136,8 +206,10 @@ void TestOpenFile::chosenOptionsReachAnalysis()
     bits->setCurrentIndex(bits32);
     endianness->setCurrentIndex(1);
     level->setValue(autoAnalysisLevel);
+    debuginfodBox->setChecked(false);
 
     QVERIFY(CutterTest::clickButton(optionsDialog, "okButton"));
+    QVERIFY(!CutterTest::core()->getConfigb(debuginfod));
 
     auto *app = qobject_cast<CutterApplication *>(QCoreApplication::instance());
     QVERIFY(app);

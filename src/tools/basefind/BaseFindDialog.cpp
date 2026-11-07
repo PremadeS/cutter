@@ -6,6 +6,8 @@
 #include <core/Cutter.h>
 #include <rz_th.h>
 
+#include <QMessageBox>
+
 BaseFindDialog::BaseFindDialog(QWidget *parent) : QDialog(parent), ui(new Ui::BaseFindDialog)
 {
     ui->setupUi(this);
@@ -92,6 +94,13 @@ void BaseFindDialog::onButtonBoxAccepted()
     options.min_string_len = getMinStrLen();
     options.callback = nullptr;
     options.user = nullptr;
+
+    const QString error = Basefind::validateOptions(&options);
+    if (!error.isEmpty()) {
+        QMessageBox::warning(this, windowTitle(), error);
+        return;
+    }
+    accept();
 
     auto *bfs = new BaseFindSearchDialog(parentWidget());
     bfs->show(&options);

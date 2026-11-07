@@ -198,6 +198,7 @@ private:
     {
         ut64 addr;
         QString name;
+        QString flagName; ///< rizin's name of the flag, for a flag (name may be its real name)
     };
     DoRenameAction doRenameAction = RENAME_DO_NOTHING;
     DoRenameInfo doRenameInfo = {};
@@ -222,6 +223,7 @@ private:
     struct ThingUsedHere
     {
         QString name;
+        QString flagName; ///< rizin's name of the flag, for a flag
         RVA offset;
         enum class Type : ut8 { Var, Function, Flag, Address };
         Type type;

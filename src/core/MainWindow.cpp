@@ -83,6 +83,7 @@
 #include <QDockWidget>
 #include <QFile>
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFont>
 #include <QFontDialog>
 #include <QInputDialog>
@@ -151,8 +152,8 @@ void MainWindow::initUI()
     connect(ui->actionExtraDisassembly, &QAction::triggered, this,
             &MainWindow::addExtraDisassembly);
     connect(ui->actionExtraHexdump, &QAction::triggered, this, &MainWindow::addExtraHexdump);
-    connect(ui->actionCommitChanges, &QAction::triggered, this,
-            []() { Core()->commitWriteCache(); });
+    connect(ui->actionCommitChanges, &QAction::triggered, &ioModesController,
+            &IOModesController::commitChanges);
     ui->actionCommitChanges->setEnabled(false);
     connect(Core(), &CutterCore::ioCacheChanged, ui->actionCommitChanges, &QAction::setEnabled);
 
@@ -187,6 +188,10 @@ void MainWindow::initUI()
     const QShortcut *seekToFuncStartShortcut =
             Shortcuts()->makeQShortcut("General.seekToFunctionStart", this);
     connect(seekToFuncStartShortcut, &QShortcut::activated, this, &MainWindow::seekToFunctionStart);
+    // One for the window: a shortcut per Graph would make the key ambiguous once there are two
+    const QShortcut *graphShortcut = Shortcuts()->makeQShortcut("Graph.toggle", this);
+    connect(graphShortcut, &QShortcut::activated, this,
+            [this]() { showMemoryWidget(MemoryWidgetType::Graph); });
 
     Shortcuts()->setupAction(*ui->actionRefreshContents, "General.refreshContents");
 
@@ -394,6 +399,9 @@ void MainWindow::initToolBar()
             &MainWindow::onActionApplySigFromFileTriggered);
     connect(ui->actionCreateNewSig, &QAction::triggered, this,
             &MainWindow::onActionCreateNewSigTriggered);
+    connect(ui->actionRunScript, &QAction::triggered, this,
+            &MainWindow::onActionRunScriptTriggered);
+    connect(ui->actionAnalyze, &QAction::triggered, this, &MainWindow::onActionAnalyzeTriggered);
 
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onActionAboutTriggered);
     connect(ui->actionIssue, &QAction::triggered, this, &MainWindow::onActionIssueTriggered);
@@ -573,14 +581,34 @@ void MainWindow::addMenuFileAction(QAction *action)
     ui->menuFile->addAction(action);
 }
 
+/**
+ * @brief The `<file>.rz` script next to a local file (with or without the `file://` prefix), or an
+ * empty string when there is none.
+ */
+static QString scriptNextTo(const QString &filename)
+{
+    const QString fileScheme = QStringLiteral("file://");
+    QString path = filename;
+    if (path.startsWith(fileScheme)) {
+        path.remove(0, fileScheme.size());
+    } else if (path.contains(QStringLiteral("://"))) {
+        return {};
+    }
+    if (path.isEmpty()) {
+        return {};
+    }
+    const QString script = path + QStringLiteral(".rz");
+    return QFileInfo(script).isFile() ? script : QString();
+}
+
 void MainWindow::openNewFile(InitialOptions &options, bool skipOptionsDialog)
 {
     setFilename(options.filename);
 
     /* Prompt to load filename.rz script */
     if (options.script.isEmpty()) {
-        const QString script = QString("%1.rz").arg(this->filename);
-        if (rz_file_exists(script.toStdString().data())) {
+        const QString script = scriptNextTo(options.filename);
+        if (!script.isEmpty()) {
             QMessageBox mb(this);
             mb.setWindowTitle(tr("Script loading"));
             mb.setText(tr("Do you want to load the '%1' script?").arg(script));
@@ -1624,19 +1652,15 @@ void MainWindow::onActionSaveAsTriggered()
 
 void MainWindow::onActionRunScriptTriggered()
 {
-    QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setViewMode(QFileDialog::Detail);
-    dialog.setDirectory(QDir::home());
-
-    const QString &fileName =
-            QDir::toNativeSeparators(dialog.getOpenFileName(this, tr("Select Rizin script")));
+    const QString fileName = QDir::toNativeSeparators(
+            QFileDialog::getOpenFileName(this, tr("Select Rizin script"), QDir::homePath()));
     if (fileName.isEmpty()) { // Cancel was pressed
         return;
     }
 
     auto *runScriptTask = new RunScriptTask();
     runScriptTask->setFileName(fileName);
+    connect(runScriptTask, &AsyncTask::finished, this, &MainWindow::refreshAll);
 
     const AsyncTask::Ptr runScriptTaskPtr(runScriptTask);
 

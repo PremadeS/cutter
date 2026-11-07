@@ -52,6 +52,9 @@ static std::set<std::pair<ut64, ut64>> selectLoopEdges(const GraphLayout::Graph 
             auto edgeIndex = stack.top().second;
             auto blockIt = graph.find(v);
             if (blockIt == graph.end()) {
+                // The entry isn't always a block of the graph (the call graph never sets one)
+                stack.pop();
+                visited[v] = 2;
                 continue;
             }
             const auto &block = blockIt->second;

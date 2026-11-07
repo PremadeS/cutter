@@ -6,12 +6,16 @@
 #include "shortcuts/ShortcutManager.h"
 
 #include <QActionGroup>
+#include <QMessageBox>
 #include <QStandardPaths>
+#include <QWheelEvent>
 
 #include <cmath>
 
 namespace {
 const uint64_t bitmapExportWarningSize = 32 * 1024 * 1024;
+/// QWheelEvent::angleDelta of one notch of a standard mouse wheel
+constexpr int wheelNotch = QWheelEvent::DefaultDeltasPerStep;
 }
 
 #ifndef NDEBUG
@@ -125,7 +129,7 @@ void CutterGraphView::setZoom(QPointF mouseRelativePos, double scale)
     setViewScale(newScale);
 
     // Adjusting offset, so that zooming will be approaching to the cursor.
-    setViewOffset(globalMouse.toPoint() - mouseRelativePos.toPoint());
+    setViewOffset((globalMouse - mouseRelativePos).toPoint());
 
     viewport()->update();
     emit viewZoomed();
@@ -161,7 +165,7 @@ void CutterGraphView::updateColors()
     disassemblySelectionColor = ConfigColor("lineHighlight");
     pcSelectionColor = ConfigColor("highlightPC");
 
-    jmpColor = ConfigColor("graph.trufae");
+    jmpColor = ConfigColor("graph.ujump");
     brtrueColor = ConfigColor("graph.true");
     brfalseColor = ConfigColor("graph.false");
 
@@ -271,9 +275,11 @@ void CutterGraphView::wheelEvent(QWheelEvent *event)
 {
     // when CTRL is pressed, we zoom in/out with mouse wheel
     if (Qt::ControlModifier == event->modifiers()) {
-        const QPoint numDegrees = event->angleDelta() / 8;
-        if (!numDegrees.isNull()) {
-            const int numSteps = numDegrees.y() / 15;
+        // One wheel notch (120) is one zoom step. Trackpads and fine-step wheels send a
+        // fraction of a notch, which zooms by the same fraction of a step.
+        const int angle = event->angleDelta().y();
+        if (angle != 0) {
+            const double numSteps = angle / double(wheelNotch);
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
             QPointF relativeMousePos = event->pos();
@@ -320,15 +326,24 @@ void CutterGraphView::exportGraph(const QString &filePath, GraphExportType expor
 {
     const bool graphTransparent = Config()->getBitmapTransparentState();
     const double graphScaleFactor = Config()->getBitmapExportScaleFactor();
+    const auto warnIfFailed = [this, &filePath](bool saved) {
+        if (!saved) {
+            QMessageBox::warning(this, tr("Export failed"),
+                                 tr("Could not export the graph to %1. The file may not be "
+                                    "writable, or the image may be too big at the bitmap "
+                                    "export scale set in Preferences.")
+                                         .arg(filePath));
+        }
+    };
     switch (exportType) {
     case GraphExportType::Png:
-        this->saveAsBitmap(filePath, "png", graphScaleFactor, graphTransparent);
+        warnIfFailed(this->saveAsBitmap(filePath, "png", graphScaleFactor, graphTransparent));
         break;
     case GraphExportType::Jpeg:
-        this->saveAsBitmap(filePath, "jpg", graphScaleFactor, false);
+        warnIfFailed(this->saveAsBitmap(filePath, "jpg", graphScaleFactor, false));
         break;
     case GraphExportType::Svg:
-        this->saveAsSvg(filePath);
+        warnIfFailed(this->saveAsSvg(filePath));
         break;
 
     case GraphExportType::GVDot:

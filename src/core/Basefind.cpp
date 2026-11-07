@@ -38,21 +38,30 @@ bool Basefind::setOptions(const RzBaseFindOpt *opts)
     options.min_string_len = opts->min_string_len;
     mutex.unlock();
 
-    if (options.start_address >= options.end_address) {
-        qWarning() << tr("Start address is >= end address");
-        return false;
-    } else if (options.alignment < RZ_BASEFIND_BASE_ALIGNMENT) {
-        qWarning() << tr("Alignment must be at least ")
-                   << QString::asprintf("0x%x", RZ_BASEFIND_BASE_ALIGNMENT);
-        return false;
-    } else if (options.min_score < 1) {
-        qWarning() << tr("Min score must be at least 1");
-        return false;
-    } else if (options.min_string_len < 1) {
-        qWarning() << tr("Min string length must be at least 1");
+    const QString error = validateOptions(&options);
+    if (!error.isEmpty()) {
+        qWarning() << error;
         return false;
     }
     return true;
+}
+
+QString Basefind::validateOptions(const RzBaseFindOpt *opts)
+{
+    if (opts->start_address >= opts->end_address) {
+        return tr("The start address must be lower than the end address.");
+    }
+    if (opts->alignment < RZ_BASEFIND_BASE_ALIGNMENT) {
+        return tr("The alignment must be at least %1.")
+                .arg(QString::asprintf("0x%x", RZ_BASEFIND_BASE_ALIGNMENT));
+    }
+    if (opts->min_score < 1) {
+        return tr("The minimum score must be at least 1.");
+    }
+    if (opts->min_string_len < 1) {
+        return tr("The minimum string length must be at least 1.");
+    }
+    return {};
 }
 
 void Basefind::run()

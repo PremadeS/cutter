@@ -45,7 +45,9 @@ MultitypeFileSaveDialog::TypeDescription MultitypeFileSaveDialog::selectedType()
         QString currentSuffix = info.suffix();
         filterIt = std::find_if(types.begin(), types.end(),
                                 [&currentSuffix](const TypeDescription &v) {
-                                    return currentSuffix == v.extension;
+                                    return currentSuffix.compare(v.extension,
+                                                                 Qt::CaseInsensitive)
+                                            == 0;
                                 });
         if (filterIt != types.end()) {
             return *filterIt;
@@ -95,7 +97,7 @@ void MultitypeFileSaveDialog::onFilterSelected(const QString &filter)
         const QFileInfo info(currentSelection);
         if (!detectionSelected) {
             const QString currentSuffix = info.suffix();
-            if (currentSuffix != it->extension) {
+            if (currentSuffix.compare(it->extension, Qt::CaseInsensitive) != 0) {
                 selectFile(info.dir().filePath(info.completeBaseName() + "." + it->extension));
             }
         }

@@ -2343,7 +2343,10 @@ void CutterCore::stopDebug()
     if (currentlyEmulating) {
         rz_core_analysis_esil_init_mem_del(core, nullptr, UT64_MAX, UT32_MAX);
         rz_core_analysis_esil_deinit(core);
-        resetWriteCache();
+        // In cache mode the cache also holds the user's own patches.
+        if (!iocache) {
+            resetWriteCache();
+        }
         rz_core_debug_clear_register_flags(core);
         rz_core_analysis_esil_trace_stop(core);
         currentlyEmulating = false;
@@ -2357,7 +2360,7 @@ void CutterCore::stopDebug()
 
     syncAndSeekProgramCounter();
     setConfig("asm.flags", true);
-    setConfig("io.cache", false);
+    setConfig("io.cache", iocache);
     emit codeRebased();
     emit toggleDebugView();
     offsetPriorDebugging = getOffset();
@@ -2500,7 +2503,14 @@ void CutterCore::continueUntilCall()
     } else {
         if (!asyncTask(
                     [](RzCore *core) {
-                        rz_core_debug_step_one(core, 0);
+                        rz_interrupt_break_push(
+                                core->intr,
+                                [](void *x) { rz_debug_stop(reinterpret_cast<RzDebug *>(x)); },
+                                core->dbg);
+                        rz_reg_arena_swap(core->dbg->reg, true);
+                        rz_debug_continue_until_optype(core->dbg, RZ_ANALYSIS_OP_TYPE_CALL, 0);
+                        rz_interrupt_break_pop(core->intr);
+                        rz_core_dbg_follow_seek_register(core);
                         return nullptr;
                     },
                     debugTask)) {
@@ -3652,7 +3662,7 @@ QList<FlagDescription> CutterCore::getAllFlags(const QString &flagspace)
                 flag.offset = item->offset;
                 flag.size = item->size;
                 flag.name = item->name;
-                flag.realname = item->name;
+                flag.realname = item->realname ? item->realname : item->name;
                 reinterpret_cast<QList<FlagDescription> *>(user)->append(flag);
                 return true;
             },
@@ -4756,8 +4766,12 @@ QList<XrefDescription> CutterCore::getXRefs(RVA addr, bool to, bool whole_functi
     RzList *xrefs = nullptr;
     CORE_LOCK();
 
+    const RzAnalysisFunction *function =
+            !to && whole_function ? rz_analysis_get_function_at(core->analysis, addr) : nullptr;
     if (to) {
         xrefs = rz_analysis_xrefs_get_to(core->analysis, addr);
+    } else if (function) {
+        xrefs = rz_analysis_function_get_xrefs_from(function);
     } else {
         xrefs = rz_analysis_xrefs_get_from(core->analysis, addr);
     }
@@ -5343,7 +5357,7 @@ bool CutterCore::isIOCacheEnabled() const
     return iocache;
 }
 
-void CutterCore::commitWriteCache()
+bool CutterCore::commitWriteCache()
 {
     CORE_LOCK();
     // Temporarily disable cache mode
@@ -5355,12 +5369,16 @@ void CutterCore::commitWriteCache()
     const int fd = desc ? desc->fd : -1;
     if (reopen) {
         rz_core_io_file_reopen(core, fd, RZ_PERM_RW);
+        if (!isWriteModeEnabled()) {
+            return false;
+        }
     }
     rz_io_cache_commit(core->io, 0, UT64_MAX);
     rz_core_block_read(core);
     if (reopen) {
         rz_core_io_file_open(core, fd);
     }
+    return !hasUncommitedChanges();
 }
 
 void CutterCore::resetWriteCache()
@@ -5370,13 +5388,13 @@ void CutterCore::resetWriteCache()
 }
 
 // Enable or disable write-mode. Avoid unecessary changes if not need.
-void CutterCore::setWriteMode(bool enabled)
+bool CutterCore::setWriteMode(bool enabled)
 {
     const bool writeModeState = isWriteModeEnabled();
 
     if (writeModeState == enabled && !this->iocache) {
         // New mode is the same as current and IO Cache is disabled. Do nothing.
-        return;
+        return true;
     }
 
     CORE_LOCK();
@@ -5386,6 +5404,9 @@ void CutterCore::setWriteMode(bool enabled)
         if (enabled) {
             if (!writeModeState) {
                 rz_core_io_file_reopen(core, desc->fd, RZ_PERM_RW);
+                if (!isWriteModeEnabled()) {
+                    return false;
+                }
             }
         } else {
             // Change from write-mode to read-only
@@ -5399,6 +5420,7 @@ void CutterCore::setWriteMode(bool enabled)
     }
     emit writeModeChanged(enabled);
     emit ioModeChanged();
+    return true;
 }
 
 bool CutterCore::isWriteModeEnabled()
@@ -5424,10 +5446,10 @@ bool CutterCore::hasUncommitedChanges()
     CORE_LOCK();
     for (auto c : CutterPVector<RzIOCache>(&core->io->cache)) {
         if (!c->written) {
-            return false;
+            return true;
         }
     }
-    return true;
+    return false;
 }
 
 QStringList CutterCore::getDisassemblyPreview(RVA address, int num_of_lines)

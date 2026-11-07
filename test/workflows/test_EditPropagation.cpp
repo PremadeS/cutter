@@ -6,11 +6,14 @@
  * showing the old function name, comment or variable until something else forces a
  * refresh, which users see as edits that "didn't apply" in some views. The test is a
  * matrix: every kind of edit is checked in every view that shows it. A new view or a
- * new kind of edit is one entry in views() or edits().
+ * new kind of edit is one entry in views() or edits(). Edits made behind Cutter's back, by a
+ * script from File → Run Script or a flag added before Analysis → Analyze program, must show
+ * once that menu entry has finished.
  */
 
 #include "Fixtures.h"
 #include "TestEnv.h"
+#include "UiHelpers.h"
 #include "ViewHelpers.h"
 
 #include "widgets/CommentsWidget.h"
@@ -19,8 +22,12 @@
 #include "widgets/FunctionsWidget.h"
 #include "widgets/GlobalsWidget.h"
 
+#include <QAction>
+#include <QFile>
+#include <QFileDialog>
 #include <QPlainTextEdit>
 #include <QScopeGuard>
+#include <QTemporaryDir>
 #include <QTest>
 
 #include <functional>
@@ -80,6 +87,13 @@ bool listContains(QWidget *dock, const QString &text)
     return false;
 }
 
+void triggerMenuEntry(MainWindow *main, const char *actionName)
+{
+    if (auto *action = main->findChild<QAction *>(actionName)) {
+        action->trigger();
+    }
+}
+
 /** A view that can show edits: how to bring it up and how to look for text in it. */
 struct View
 {
@@ -122,10 +136,13 @@ private:
     RVA target = RVA_INVALID;
     RVA instruction = RVA_INVALID;
     QString variable;
+    QTemporaryDir scripts;
 };
 
 void TestEditPropagation::initTestCase()
 {
+    QCoreApplication::setAttribute(Qt::AA_DontUseNativeDialogs);
+    QVERIFY(scripts.isValid());
     main = CutterTest::mainWindow();
     QVERIFY(main);
     disassembly = CutterTest::findSynchronizedDock<DisassemblyWidget>(main);
@@ -215,6 +232,10 @@ QMap<QString, Edit> TestEditPropagation::edits()
     const QString comment = QStringLiteral("cutter_test_comment");
     const QString flag = QStringLiteral("cutter_test_flag");
     const QString global = QStringLiteral("cutter_test_global");
+    const QString scriptFunction = QStringLiteral("cutter_test_script_function");
+    const QString analyzedFlag = QStringLiteral("cutter_test_analyzed_flag");
+    const QString functionAddress = QStringLiteral("0x%1").arg(function, 0, 16);
+    const QString script = scripts.filePath(QStringLiteral("rename.rz"));
 
     return {
         { "renameFunction",
@@ -252,6 +273,36 @@ QMap<QString, Edit> TestEditPropagation::edits()
            },
             [=] { core->delGlobalVariable(address); },
             { globalsView } } },
+        { "renameFunctionFromScript",
+          { [=, this] {
+               QFile file(script);
+               if (file.open(QIODevice::WriteOnly)) {
+                   file.write(QStringLiteral("afn %1 @ %2\n")
+                                      .arg(scriptFunction, functionAddress)
+                                      .toUtf8());
+               }
+               file.close();
+               CutterTest::onceVisible<QFileDialog>(main, [script](QFileDialog *dialog) {
+                   auto *asDialog = static_cast<QDialog *>(dialog);
+                   CutterTest::setLineEditText(dialog, "fileNameEdit", script);
+                   asDialog->accept();
+                   if (asDialog->isVisible()) {
+                       asDialog->reject();
+                   }
+               });
+               triggerMenuEntry(main, "actionRunScript");
+               return scriptFunction;
+           },
+            [=] { core->renameFunction(function, oldFunction); },
+            { disassemblyView, graphView, functionsView } } },
+        { "flagThenAnalyze",
+          { [=, this] {
+               core->cmd(QStringLiteral("f %1 @ 0x%2").arg(analyzedFlag).arg(address, 0, 16));
+               triggerMenuEntry(main, "actionAnalyze");
+               return analyzedFlag;
+           },
+            [=] { core->delFlag(analyzedFlag); },
+            { disassemblyView, flagsView } } },
     };
 }
 

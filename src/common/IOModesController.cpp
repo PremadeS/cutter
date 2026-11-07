@@ -42,11 +42,29 @@ void IOModesController::setIOMode(IOModesController::Mode mode)
         Core()->setIOCache(true);
         break;
     case Mode::WRITE:
-        if (askCommitUnsavedChanges()) {
-            Core()->setWriteMode(true);
+        if (askCommitUnsavedChanges() && !Core()->setWriteMode(true)) {
+            showWriteModeError();
         }
         break;
     }
+}
+
+bool IOModesController::commitChanges()
+{
+    if (Core()->commitWriteCache()) {
+        return true;
+    }
+    QMessageBox::critical(parentWindow, QObject::tr("Write error"),
+                          QObject::tr("The changes couldn't be written to the file. Check that "
+                                      "you are allowed to write to it."));
+    return false;
+}
+
+void IOModesController::showWriteModeError()
+{
+    QMessageBox::critical(parentWindow, QObject::tr("Write error"),
+                          QObject::tr("The file couldn't be reopened in Write mode. Check that you "
+                                      "are allowed to write to it."));
 }
 
 bool IOModesController::prepareForWriting()
@@ -73,7 +91,10 @@ bool IOModesController::prepareForWriting()
     msgBox.exec();
 
     if (msgBox.clickedButton() == reopenButton) {
-        Core()->setWriteMode(true);
+        if (!Core()->setWriteMode(true)) {
+            showWriteModeError();
+            return false;
+        }
     } else if (msgBox.clickedButton() == iocacheButton) {
         Core()->setIOCache(true);
     } else {
@@ -85,7 +106,7 @@ bool IOModesController::prepareForWriting()
 bool IOModesController::askCommitUnsavedChanges()
 {
     // Check if there are uncommitted changes
-    if (!Core()->hasUncommitedChanges()) {
+    if (Core()->hasUncommitedChanges()) {
         const QMessageBox::StandardButton ret = QMessageBox::question(
                 parentWindow, QObject::tr("Uncommitted changes"),
                 QObject::tr("It seems that you have changes or patches that are not committed to "
@@ -94,7 +115,9 @@ bool IOModesController::askCommitUnsavedChanges()
                 (QMessageBox::StandardButtons)(QMessageBox::Save | QMessageBox::Discard
                                                | QMessageBox::Cancel));
         if (ret == QMessageBox::Save) {
-            Core()->commitWriteCache();
+            if (!commitChanges()) {
+                return false;
+            }
         } else if (ret == QMessageBox::Discard) {
             Core()->resetWriteCache();
             emit Core()->refreshCodeViews();

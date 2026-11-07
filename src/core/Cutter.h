@@ -949,8 +949,10 @@ public:
 
     /**
      * @brief Commit write cache to the file on disk.
+     * @return false if a change couldn't be written, for example because the file isn't writable.
+     * Changes that weren't written stay in the cache.
      */
-    void commitWriteCache();
+    bool commitWriteCache();
     /**
      * @brief Reset write cache.
      */
@@ -961,8 +963,9 @@ public:
      * will be immediately committed to the file on disk, thus modify the file. This function wrap
      * Rizin function which re-open the file with the desired permissions.
      * @param enabled
+     * @return false if the file couldn't be reopened for writing. The mode is then unchanged.
      */
-    void setWriteMode(bool enabled);
+    bool setWriteMode(bool enabled);
     /**
      * @brief Check if the file is opened in write mode.
      * @return true if write mode is enabled, otherwise return false.

@@ -239,8 +239,8 @@ void NewFileDialog::onActionRemoveProjectTriggered()
     if (item == nullptr) {
         return;
     }
-    const QString sitem = item->data(Qt::UserRole).toString();
-    const RecentFileEntry project = { "", sitem };
+    const QString path = item->data(Qt::UserRole).toStringList().value(1);
+    const RecentFileEntry project = { "", path };
     QList<RecentFileEntry> files = Config()->getRecentProjects();
     files.removeAll(project);
     Config()->setRecentProjects(files);
@@ -291,15 +291,14 @@ static QList<RecentFileEntry> fillFilesList(QListWidget *widget,
         const RecentFileEntry &file = it.next();
         const QString &path = QDir::toNativeSeparators(file.path);
         const QString &ioMode = file.ioMode;
-        const QString homepath = QDir::homePath();
-        const QString basename = path.section(QDir::separator(), -1);
-
-        QString filenameHome = path;
-        filenameHome.replace(homepath, "~");
-        filenameHome.replace(basename, "");
-        filenameHome.chop(1); // Remove last character that will be a path separator
-        // Get file info
+        const QString homepath = QDir::toNativeSeparators(QDir::homePath());
         const QFileInfo info(path);
+        const QString basename = info.fileName();
+
+        QString filenameHome = QDir::toNativeSeparators(info.path());
+        if (filenameHome == homepath || filenameHome.startsWith(homepath + QDir::separator())) {
+            filenameHome.replace(0, homepath.size(), "~");
+        }
         if (!info.exists()) {
             it.remove();
         } else {
@@ -372,7 +371,9 @@ void NewFileDialog::loadFile(const QString &filename)
     QString ioFile;
     if (!isFileless) {
         const QString &nativeFn = QDir::toNativeSeparators(filename);
-        if (ui->ioPlugin->currentIndex() == 0 && !Core()->tryFile(nativeFn, false)) {
+        const bool noFileChosen = nativeFn.trimmed().isEmpty();
+        if (noFileChosen
+            || (ui->ioPlugin->currentIndex() == 0 && !Core()->tryFile(nativeFn, false))) {
             QMessageBox msgBox(this);
             msgBox.setText(tr("Select a new program or a previous one before continuing."));
             msgBox.exec();

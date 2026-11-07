@@ -24,6 +24,11 @@ public:
 
     void run();
     bool setOptions(const RzBaseFindOpt *opts);
+
+    /**
+     * @brief Why basefind can't run with these options, or an empty string when it can.
+     */
+    static QString validateOptions(const RzBaseFindOpt *opts);
     QList<BasefindResultDescription> results();
 
 public slots:

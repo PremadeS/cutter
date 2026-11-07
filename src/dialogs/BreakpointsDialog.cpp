@@ -129,7 +129,9 @@ BreakpointDescription BreakpointsDialog::getDescription()
     }
     breakpoint.type = positionType;
 
-    breakpoint.size = Core()->num(ui->breakpointSize->currentText());
+    // A software breakpoint is the architecture's trap instruction, so rizin picks its size.
+    breakpoint.size =
+            ui->radioHardware->isChecked() ? Core()->num(ui->breakpointSize->currentText()) : 0;
     breakpoint.condition = ui->breakpointCondition->currentText().trimmed();
     breakpoint.command = ui->breakpointCommand->toPlainText().trimmed();
     if (ui->radioHardware->isChecked()) {

@@ -7,6 +7,7 @@
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QStyleHints>
 
 #include <utility>
 
@@ -158,9 +159,14 @@ static const QHash<QString, QVariant> asmOptions = { { "asm.esil", false },
                                                      { "esil.breakoninvalid", true },
                                                      { "dbg.trace_continue", true } };
 
-Configuration::Configuration() : QObject(), nativePalette(qApp->palette())
+Configuration::Configuration() : QObject()
 {
     ptr = this;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    systemColorScheme = QGuiApplication::styleHints()->colorScheme();
+    connect(QGuiApplication::styleHints(), &QStyleHints::colorSchemeChanged, this,
+            &Configuration::onSystemColorSchemeChanged);
+#endif
     if (!s.isWritable()) {
         QMessageBox::critical(
                 nullptr, tr("Critical Error!"),
@@ -294,6 +300,11 @@ bool Configuration::windowColorIsDark()
 
 bool Configuration::nativeWindowIsDark()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    if (systemColorScheme != Qt::ColorScheme::Unknown) {
+        return systemColorScheme == Qt::ColorScheme::Dark;
+    }
+#endif
     const QPalette &palette = qApp->palette();
     auto windowColor = palette.color(QPalette::Window).toRgb();
     return (windowColor.red() + windowColor.green() + windowColor.blue()) < 382;
@@ -319,15 +330,30 @@ void Configuration::loadNativeStylesheet()
         qApp->setStyleSheet(stylesheet);
     }
 
-    qApp->setPalette(nativePalette);
+    // An empty palette follows the platform's palette, also when the system switches between
+    // light and dark while Cutter runs
+    qApp->setPalette(QPalette());
     /* Some widgets does not change its palette when QApplication changes one
      * so this loop force all widgets do this, but all widgets take palette from
      * QApplication::palette() when they are created so line above is necessary too.
      */
     for (auto widget : qApp->allWidgets()) {
-        widget->setPalette(nativePalette);
+        widget->setPalette(QPalette());
     }
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+void Configuration::onSystemColorSchemeChanged(Qt::ColorScheme scheme)
+{
+    const bool wasDark = nativeWindowIsDark();
+    systemColorScheme = scheme;
+    if (getCurrentTheme()->name != QLatin1String("Native") || nativeWindowIsDark() == wasDark) {
+        return;
+    }
+    // Reloads the light or dark native stylesheet and switches to a color theme that fits
+    setInterfaceTheme(getInterfaceTheme());
+}
+#endif
 
 /**
  * @brief Loads the Light theme of Cutter and modify special theme colors
@@ -591,12 +617,12 @@ void Configuration::applySavedAsmOptions()
 
 const QList<CutterInterfaceTheme> &Configuration::cutterInterfaceThemesList()
 {
-    static const QList<CutterInterfaceTheme> list = {
-        { "Native", Configuration::nativeWindowIsDark() ? DarkFlag : LightFlag },
-        { "Dark", DarkFlag },
-        { "Midnight", DarkFlag },
-        { "Light", LightFlag }
-    };
+    static QList<CutterInterfaceTheme> list = { { "Native", LightFlag },
+                                                { "Dark", DarkFlag },
+                                                { "Midnight", DarkFlag },
+                                                { "Light", LightFlag } };
+    // The system can switch between light and dark while Cutter runs
+    list.first().flag = nativeWindowIsDark() ? DarkFlag : LightFlag;
     return list;
 }
 

@@ -110,7 +110,7 @@ void GenericRizinGraphView::loadCurrentGraph()
         const QString title = block["title"].toString();
         const QString body = block["body"].toString();
         if (!title.isEmpty() && !body.isEmpty()) {
-            content = title + "/n" + body;
+            content = title + "\n" + body;
         } else {
             content = title + body;
         }

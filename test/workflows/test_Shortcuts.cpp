@@ -4,35 +4,51 @@
  *
  * Many docks register the same key (Copy, Find) with a widget-local context. A wrong
  * context makes the key ambiguous so nothing happens, or lets another dock handle it.
- * The hexdump copy shortcut once did nothing at all. Every filter bar wires Find and
+ * The hexdump copy shortcut once did nothing at all, and the disassembly's Copy and Edit
+ * function stopped working by key after their context menu was opened where they don't apply. Every filter bar wires Find and
  * Esc itself; the Xrefs dialog once shipped with neither working. Filter bars in docks
  * and in the dialogs opened in initTestCase are found at runtime and all checked.
+ *
+ * Two shortcuts with the same key clash when some focus widget is inside both of their
+ * areas: a window-wide shortcut covers the whole main window, a widget-with-children one
+ * its widget and everything in it, a widget one only its widget. Qt then runs neither.
+ * Every enabled shortcut and action of the main window is checked that way, after adding
+ * a second view of each kind, since several views of a kind once each registered the same
+ * window-wide key.
  */
 
 #include "Fixtures.h"
 #include "TestEnv.h"
 #include "ViewHelpers.h"
-
 #include "dialogs/TypesVariablesDialog.h"
 #include "dialogs/XrefsDialog.h"
+#include "menus/DisassemblyContextMenu.h"
 #include "shortcuts/ShortcutManager.h"
 #include "widgets/AbstractFilterView.h"
 #include "widgets/CutterDockWidget.h"
 #include "widgets/HexdumpWidget.h"
 #include "widgets/QuickFilterView.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QClipboard>
+#include <QDockWidget>
 #include <QHash>
+#include <QMenu>
+#include <QMenuBar>
+#include <QPlainTextEdit>
 #include <QPointer>
 #include <QScopeGuard>
+#include <QShortcut>
 #include <QTest>
+#include <QTextBlock>
 
 #include <memory>
 
 namespace {
 
 constexpr int copiedBytes = 4;
+constexpr int copiedLines = 3;
 
 bool focusIsWithin(QWidget *widget)
 {
@@ -62,6 +78,115 @@ QAbstractItemView *pairedList(QWidget *filter)
     return nullptr;
 }
 
+/** One key of a shortcut or action, and the widget its context is relative to. */
+struct Binding
+{
+    const QObject *owner;
+    QString name;
+    QKeySequence key;
+    Qt::ShortcutContext context;
+    QWidget *scope;
+};
+
+QString widgetName(const QWidget *widget)
+{
+    const QString name = widget->objectName();
+    QString path = name.isEmpty() ? QString::fromLatin1(widget->metaObject()->className()) : name;
+    for (const QWidget *parent = widget->parentWidget(); parent; parent = parent->parentWidget()) {
+        if (qobject_cast<const QDockWidget *>(parent)) {
+            return parent->objectName() + '/' + path;
+        }
+    }
+    return path;
+}
+
+QString contextName(Qt::ShortcutContext context, const QWidget *scope)
+{
+    switch (context) {
+    case Qt::WidgetShortcut:
+        return " on " + widgetName(scope);
+    case Qt::WidgetWithChildrenShortcut:
+        return " in " + widgetName(scope);
+    default:
+        return " window-wide from " + widgetName(scope);
+    }
+}
+
+bool reachableFromMenuBar(const QMenu *menu)
+{
+    const QObjectList owners = menu->menuAction()->associatedObjects();
+    for (const QObject *owner : owners) {
+        if (qobject_cast<const QMenuBar *>(owner)) {
+            return true;
+        }
+        const auto *parentMenu = qobject_cast<const QMenu *>(owner);
+        if (parentMenu && parentMenu != menu && reachableFromMenuBar(parentMenu)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void addKeys(QList<Binding> &bindings, const QObject *owner, const QString &name,
+             const QList<QKeySequence> &keys, Qt::ShortcutContext context, QWidget *scope)
+{
+    for (const QKeySequence &key : keys) {
+        if (!key.isEmpty()) {
+            bindings.append({ owner, name, key, context, scope });
+        }
+    }
+}
+
+QList<Binding> windowBindings(QWidget *window)
+{
+    QList<Binding> bindings;
+    const QList<QShortcut *> shortcuts = window->findChildren<QShortcut *>();
+    for (const QShortcut *shortcut : shortcuts) {
+        auto *scope = qobject_cast<QWidget *>(shortcut->parent());
+        if (shortcut->isEnabled() && scope && scope->window() == window) {
+            addKeys(bindings, shortcut, "shortcut" + contextName(shortcut->context(), scope),
+                    shortcut->keys(), shortcut->context(), scope);
+        }
+    }
+
+    const QList<QAction *> actions = window->findChildren<QAction *>();
+    for (const QAction *action : actions) {
+        if (!action->isEnabled()) {
+            continue;
+        }
+        const QString name = "\"" + action->text().remove('&') + "\"";
+        const QObjectList owners = action->associatedObjects();
+        for (QObject *owner : owners) {
+            auto *scope = qobject_cast<QWidget *>(owner);
+            if (const auto *menu = qobject_cast<const QMenu *>(owner)) {
+                scope = reachableFromMenuBar(menu) ? window : nullptr;
+            }
+            if (scope && scope->window() == window) {
+                addKeys(bindings, action, name + contextName(action->shortcutContext(), scope),
+                        action->shortcuts(), action->shortcutContext(), scope);
+            }
+        }
+    }
+    return bindings;
+}
+
+bool isWindowWide(const Binding &binding)
+{
+    return binding.context == Qt::WindowShortcut || binding.context == Qt::ApplicationShortcut;
+}
+
+bool reaches(const Binding &binding, const QWidget *focus)
+{
+    return focus == binding.scope
+            || (binding.context == Qt::WidgetWithChildrenShortcut
+                && binding.scope->isAncestorOf(focus));
+}
+
+bool canBeActiveTogether(const Binding &a, const Binding &b)
+{
+    return isWindowWide(a) || isWindowWide(b) || reaches(a, b.scope) || reaches(b, a.scope);
+}
+
 } // namespace
 
 class TestShortcuts : public QObject
@@ -72,12 +197,14 @@ private slots:
     void initTestCase();
     void cleanup();
     void hexdumpCopyShortcutCopiesSelection();
+    void disassemblyShortcutsWorkAfterContextMenu();
     /**
      * @brief Every filter bar: Find shows and focuses it, Esc clears it, Esc again closes it
      * (if it can close), and Find brings it back. Other filter bars stay as they were.
      */
     void filterBarKeyboardCycle_data();
     void filterBarKeyboardCycle();
+    void noTwoShortcutsShareAKeyWhereBothWork();
 
 private:
     QString filterRowName(AbstractFilterView *filter) const;
@@ -139,6 +266,61 @@ void TestShortcuts::hexdumpCopyShortcutCopiesSelection()
 
     QTest::keySequence(QApplication::focusWidget(), keys.first());
     QTRY_COMPARE(QApplication::clipboard()->text(), expected);
+}
+
+void TestShortcuts::disassemblyShortcutsWorkAfterContextMenu()
+{
+    CutterCore *core = CutterTest::core();
+    auto *disassembly = CutterTest::findSynchronizedDock<DisassemblyWidget>(main);
+    QVERIFY(disassembly);
+    disassembly->raiseMemoryWidget();
+    auto *menu = disassembly->findChild<DisassemblyContextMenu *>();
+    QVERIFY(menu);
+    auto *edit = qobject_cast<QPlainTextEdit *>(disassembly->getTextWidget());
+    QVERIFY(edit);
+    QTRY_VERIFY(disassembly->getEndIndex() - disassembly->getStartIndex() >= copiedLines);
+
+    // Open and close the menu where Copy and Edit function don't apply: nothing selected, and
+    // an address outside any function
+    RVA outsideFunctions = RVA_INVALID;
+    const QList<SectionDescription> sections = core->getAllSections();
+    for (const SectionDescription &section : sections) {
+        if (section.vaddr && section.vsize && !core->functionIn(section.vaddr)) {
+            outsideFunctions = section.vaddr;
+            break;
+        }
+    }
+    QVERIFY2(outsideFunctions != RVA_INVALID, "no section outside the functions");
+    const auto restoreOffset = qScopeGuard([&]() { menu->setOffset(core->getOffset()); });
+    menu->setOffset(outsideFunctions);
+    menu->setCanCopy(false);
+    menu->popup(disassembly->mapToGlobal(QPoint()));
+    QTRY_VERIFY(menu->isVisible());
+    menu->hide();
+
+    const QList<QAction *> actions = menu->findChildren<QAction *>();
+    for (QAction *action : actions) {
+        if (!action->shortcut().isEmpty()) {
+            QVERIFY2(action->isVisible(),
+                     qPrintable(action->text() + " stays hidden, so its shortcut does nothing"));
+        }
+    }
+
+    // Select the first lines and copy them by key
+    disassembly->updateSelectionAnchor(QTextCursor(edit->document()));
+    QTextCursor end(edit->document()->findBlockByNumber(copiedLines - 1));
+    end.movePosition(QTextCursor::EndOfBlock);
+    disassembly->updateSelectionPos(end);
+    disassembly->refreshDisasm(RVA_INVALID, RefreshMode::None);
+
+    const QList<QKeySequence> keys = Shortcuts()->getKeySequences("Disassembly.copy");
+    QVERIFY(!keys.isEmpty());
+    QApplication::clipboard()->clear();
+    disassembly->setFocus(Qt::OtherFocusReason);
+    QTRY_VERIFY(focusIsWithin(disassembly));
+
+    QTest::keySequence(QApplication::focusWidget(), keys.first());
+    QTRY_COMPARE(QApplication::clipboard()->text().split('\n').size(), copiedLines);
 }
 
 QString TestShortcuts::filterRowName(AbstractFilterView *filter) const
@@ -237,6 +419,36 @@ void TestShortcuts::filterBarKeyboardCycle()
     QTest::keySequence(list, showKey);
     QTRY_VERIFY2(bar->isVisible() && QApplication::focusWidget() == bar->lineEdit(),
                  "the find shortcut did not bring a closed filter back");
+}
+
+void TestShortcuts::noTwoShortcutsShareAKeyWhereBothWork()
+{
+    const char *const addViewActions[] = { "actionExtraDisassembly", "actionExtraGraph",
+                                           "actionExtraHexdump", "actionExtraDecompiler" };
+    for (const char *actionName : addViewActions) {
+        auto *addView = main->findChild<QAction *>(actionName);
+        QVERIFY2(addView, actionName);
+        addView->trigger();
+    }
+    QCoreApplication::processEvents();
+
+    const QList<Binding> bindings = windowBindings(main);
+    QStringList clashes;
+    for (qsizetype i = 0; i < bindings.size(); ++i) {
+        for (qsizetype j = i + 1; j < bindings.size(); ++j) {
+            const Binding &a = bindings.at(i);
+            const Binding &b = bindings.at(j);
+            if (a.owner != b.owner && a.key == b.key && canBeActiveTogether(a, b)) {
+                clashes << QString("%1 and %2 share %3")
+                                   .arg(a.name, b.name,
+                                        a.key.toString(QKeySequence::PortableText));
+            }
+        }
+    }
+
+    clashes.removeDuplicates();
+    clashes.sort();
+    QVERIFY2(clashes.isEmpty(), qPrintable(clashes.join("\n")));
 }
 
 CUTTER_APP_TEST_MAIN_WITH_FILE(TestShortcuts, CutterTest::Fixtures::helloX64())

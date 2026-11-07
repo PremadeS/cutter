@@ -5,14 +5,18 @@
  * Cutter owns the rules here: cache and write mode are mutually exclusive, cache
  * mode must never touch the file on disk, and committing the cache or editing in
  * write mode must. A mistake either loses the user's edits or silently changes
- * their binary. Tests run on a temporary copy of the fixture.
+ * their binary. When the file can't be written, Cutter must say so and keep the user in
+ * Cache mode with their patches. Tests run on a temporary copy of the fixture.
  */
 
 #include "Fixtures.h"
 #include "TestEnv.h"
+#include "UiHelpers.h"
+#include "common/IOModesController.h"
 
 #include <QCryptographicHash>
 #include <QFile>
+#include <QScopeGuard>
 #include <QSignalSpy>
 #include <QTemporaryDir>
 #include <QTest>
@@ -44,9 +48,15 @@ private slots:
     void commitWriteCacheWritesFile();
     void writeModeEditPersists();
     void modeSwitchesKeepCacheAndWriteExclusive();
+    void cacheModeAndPatchesSurviveEmulation();
+    void writeModeOnUnwritableFileKeepsCachedPatches();
+    void unwritableFileShowsWriteErrors();
 
 private:
     QByteArray fileHash() const;
+    QByteArray patchInCacheMode() const;
+    bool makeFileUnwritable() const;
+    void makeFileWritable() const;
     void restoreFile() const;
     static bool inMode(bool cache, bool write);
 
@@ -83,6 +93,9 @@ void TestIOModes::init()
 void TestIOModes::cleanup()
 {
     CutterCore *core = CutterTest::core();
+    if (core->currentlyDebugging) {
+        core->stopDebug();
+    }
     core->resetWriteCache();
     core->setWriteMode(false);
     core->setIOCache(false);
@@ -106,6 +119,29 @@ QByteArray TestIOModes::fileHash() const
         return {};
     }
     return QCryptographicHash::hash(file.readAll(), QCryptographicHash::Sha256);
+}
+
+QByteArray TestIOModes::patchInCacheMode() const
+{
+    CutterCore *core = CutterTest::core();
+    core->setIOCache(true);
+    const QByteArray patched = flippedByte(core->ioRead(address, 1));
+    core->editBytes(address, hexOf(patched));
+    return patched;
+}
+
+bool TestIOModes::makeFileUnwritable() const
+{
+    if (!QFile::setPermissions(filePath, QFile::ReadOwner)) {
+        return false;
+    }
+    QFile probe(filePath);
+    return !probe.open(QIODevice::ReadWrite);
+}
+
+void TestIOModes::makeFileWritable() const
+{
+    QFile::setPermissions(filePath, QFile::ReadOwner | QFile::WriteOwner);
 }
 
 bool TestIOModes::inMode(bool cache, bool write)
@@ -187,6 +223,71 @@ void TestIOModes::modeSwitchesKeepCacheAndWriteExclusive()
     QCOMPARE(cacheSpy.last().at(0).toBool(), false);
 
     QCOMPARE(fileHash(), originalHash);
+}
+
+void TestIOModes::cacheModeAndPatchesSurviveEmulation()
+{
+    const int emulationStartTimeoutMs = 30000;
+    const int patchLength = 1;
+    const char *const ioCacheKey = "io.cache";
+    CutterCore *core = CutterTest::core();
+    core->setIOCache(true);
+
+    const QByteArray patched = flippedByte(core->ioRead(address, patchLength));
+    core->editBytes(address, hexOf(patched));
+
+    core->startEmulation();
+    QVERIFY(QTest::qWaitFor(
+            [core]() { return core->currentlyEmulating && !core->isDebugTaskInProgress(); },
+            emulationStartTimeoutMs));
+    core->stopDebug();
+
+    QVERIFY(inMode(true, false));
+    QCOMPARE(core->getConfigb(ioCacheKey), core->isIOCacheEnabled());
+    QCOMPARE(core->ioRead(address, patchLength), patched);
+    QCOMPARE(fileHash(), originalHash);
+}
+
+void TestIOModes::writeModeOnUnwritableFileKeepsCachedPatches()
+{
+    CutterCore *core = CutterTest::core();
+    const QByteArray patched = patchInCacheMode();
+    const auto writable = qScopeGuard([this]() { makeFileWritable(); });
+    if (!makeFileUnwritable()) {
+        QSKIP("this user can write to read-only files");
+    }
+
+    QVERIFY(!core->setWriteMode(true));
+    QVERIFY(inMode(true, false));
+    QCOMPARE(core->ioRead(address, patched.size()), patched);
+
+    QVERIFY(!core->commitWriteCache());
+    QVERIFY(core->hasUncommitedChanges());
+    QCOMPARE(core->ioRead(address, patched.size()), patched);
+    QCOMPARE(fileHash(), originalHash);
+}
+
+void TestIOModes::unwritableFileShowsWriteErrors()
+{
+    const int expectedErrors = 2;
+    CutterCore *core = CutterTest::core();
+    const QByteArray patched = patchInCacheMode();
+    const auto writable = qScopeGuard([this]() { makeFileWritable(); });
+    if (!makeFileUnwritable()) {
+        QSKIP("this user can write to read-only files");
+    }
+    IOModesController controller(nullptr);
+    CutterTest::MessageBoxWatcher messageBoxes;
+
+    controller.setIOMode(IOModesController::Mode::WRITE);
+    QVERIFY(inMode(true, false));
+    QVERIFY(!controller.commitChanges());
+    QVERIFY(core->hasUncommitedChanges());
+    QCOMPARE(core->ioRead(address, patched.size()), patched);
+
+    const QStringList errors =
+            messageBoxes.seenTexts().filter(QStringLiteral("allowed to write"));
+    QCOMPARE(errors.size(), expectedErrors);
 }
 
 CUTTER_CORE_TEST_MAIN(TestIOModes)

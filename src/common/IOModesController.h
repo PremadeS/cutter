@@ -24,8 +24,11 @@ public:
 
 public slots:
     bool askCommitUnsavedChanges();
+    bool commitChanges();
 
 private:
+    void showWriteModeError();
+
     QWidget *parentWindow;
 };
 

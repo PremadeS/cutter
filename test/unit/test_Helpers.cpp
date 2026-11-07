@@ -12,6 +12,8 @@ class TestHelpers : public QObject
 
 private slots:
     void testFormatByteCount();
+    void sizesAreShownWithoutENotation_data();
+    void sizesAreShownWithoutENotation();
     void testSetCheckedWithoutSignals();
     void testSelectIndexByData();
     void testApplyColorToSvg();
@@ -21,10 +23,33 @@ private slots:
 void TestHelpers::testFormatByteCount()
 {
     QCOMPARE(qhelpers::formatByteCount(0), QString("0"));
-    QCOMPARE(qhelpers::formatByteCount(512), QString("512  B")); // Two spaces for raw bytes
+    QCOMPARE(qhelpers::formatByteCount(512), QString("512 B"));
     QCOMPARE(qhelpers::formatByteCount(1024), QString("1 kB"));
     QCOMPARE(qhelpers::formatByteCount(1048576), QString("1 MB"));
     QCOMPARE(qhelpers::formatByteCount(1073741824), QString("1 GB"));
+}
+
+void TestHelpers::sizesAreShownWithoutENotation_data()
+{
+    constexpr ut64 kilobyte = 1024;
+    constexpr ut64 megabyte = kilobyte * kilobyte;
+    QTest::addColumn<ut64>("bytes");
+    QTest::addColumn<QString>("shown");
+
+    QTest::addRow("1000 bytes") << ut64(1000) << QString("1000 B");
+    QTest::addRow("1023 bytes") << ut64(1023) << QString("1023 B");
+    QTest::addRow("one and a half kB") << ut64(1536) << QString("1.5 kB");
+    QTest::addRow("1006 kB") << ut64(1030000) << QString("1006 kB");
+    QTest::addRow("one byte under a MB") << megabyte - 1 << QString("1 MB");
+    QTest::addRow("ten MB") << 10 * megabyte << QString("10 MB");
+}
+
+void TestHelpers::sizesAreShownWithoutENotation()
+{
+    QFETCH(const ut64, bytes);
+    QFETCH(const QString, shown);
+
+    QCOMPARE(qhelpers::formatByteCount(bytes), shown);
 }
 
 void TestHelpers::testSetCheckedWithoutSignals()
