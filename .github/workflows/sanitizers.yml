@@ -2,9 +2,9 @@ name: Sanitizers
 
 # Runs the test suite with Cutter built under sanitizers. Rizin is not instrumented.
 #   asan: AddressSanitizer + UndefinedBehaviorSanitizer; any error fails.
-#   lsan: LeakSanitizer; fails only on Cutter leaks the PR adds. The leaks of the base branch,
-#         built against the PR's Rizin commit, are the baseline. Pushes to dev save their leaks as
-#         the baseline for later PRs.
+#   lsan: LeakSanitizer; fails only on Cutter leaks the change adds. Every run also builds the
+#         commit it is compared with (the PR's base, or the previous commit of a push), against
+#         the same Rizin commit, and its leaks are the baseline. Nothing is saved between runs.
 # Linux only: LeakSanitizer is not supported on macOS or Windows.
 
 on:
@@ -23,8 +23,6 @@ concurrency:
 env:
   CC: gcc-12
   CXX: g++-12
-  # The bundled Rizin is built by meson, which takes its flags from the environment: frame pointers
-  # and debug info give complete stacks through it, but it gets no sanitizer.
   CFLAGS: -g -fno-omit-frame-pointer
   CXXFLAGS: -g -fno-omit-frame-pointer
   CMAKE_ARGS: >-
@@ -102,11 +100,10 @@ jobs:
         submodules: recursive
         persist-credentials: false
 
-    - name: Record Commits
+    - name: Record Base Commit
       id: commits
       run: |
-        echo "rizin=$(git -C pr rev-parse HEAD:rizin)" >> "$GITHUB_OUTPUT"
-        echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
+        echo "base=${{ github.event.pull_request.base.sha || github.event.before }}" >> "$GITHUB_OUTPUT"
 
     - name: Install Dependencies
       run: |
@@ -139,58 +136,32 @@ jobs:
         mkdir -p leaks
         python3 pr/scripts/sanitizer_report.py lsan-extract logs leaks/leaks.json
 
-    # On dev, this run is the baseline for the PRs based on this commit.
-    - name: List Leaks
-      if: github.event_name == 'push'
-      run: |
-        python3 pr/scripts/sanitizer_report.py lsan-compare - leaks/leaks.json pr/rizin/librz/include
-        mkdir -p baseline
-        cp leaks/leaks.json baseline/
-
-    # The path must match the restore step's, or the cache won't be found.
-    - name: Save Baseline
-      uses: actions/cache/save@v4
-      if: github.event_name == 'push'
-      with:
-        path: baseline
-        key: lsan-base-${{ github.sha }}-${{ steps.commits.outputs.rizin }}
-
-    - name: Restore Baseline
-      uses: actions/cache/restore@v4
-      if: github.event_name == 'pull_request'
-      id: baseline
-      with:
-        path: baseline
-        key: lsan-base-${{ steps.commits.outputs.base }}-${{ steps.commits.outputs.rizin }}
-
-    - name: Check Out Base Branch
+    - name: Check Out Base Commit
       uses: actions/checkout@v7
-      if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-hit != 'true'
       with:
         path: base
         ref: ${{ steps.commits.outputs.base }}
         persist-credentials: false
 
-    # The base branch is built against the PR's Rizin, so a Rizin update can't show up as new
-    # leaks. If it doesn't build with that Rizin or has no tests, there is no baseline and the
+    # The base commit is built against this commit's Rizin, so a Rizin update can't show up as
+    # new leaks. If it doesn't build with that Rizin or has no tests, there is no baseline and the
     # comparison only reports.
-    - name: Find Base Branch Leaks
-      if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-hit != 'true'
+    - name: Find Base Commit Leaks
       run: |
         mkdir -p baseline
         if [ ! -f base/test/CMakeLists.txt ]; then
-          echo "The base branch has no tests."
+          echo "The base commit has no tests."
           exit 0
         fi
         rm -rf base/rizin
         ln -s "$PWD/pr/rizin" base/rizin
-        # The base branch may predate CUTTER_ENABLE_LSAN, so it gets the flags directly.
+        # The base commit may predate CUTTER_ENABLE_LSAN, so it gets the flags directly.
         lsan=-fsanitize=leak
         if ! { cmake -S base -B build-base $CMAKE_ARGS \
                  -DCMAKE_C_FLAGS="$CFLAGS $lsan" -DCMAKE_CXX_FLAGS="$CXXFLAGS $lsan" \
                  -DCMAKE_EXE_LINKER_FLAGS=$lsan -DCMAKE_SHARED_LINKER_FLAGS=$lsan \
                && cmake --build build-base; }; then
-          echo "The base branch does not build with this Rizin commit."
+          echo "The base commit does not build with this Rizin commit."
           exit 0
         fi
         mkdir -p logs-base
@@ -198,15 +169,7 @@ jobs:
         ctest --test-dir build-base --output-on-failure -j || true
         python3 pr/scripts/sanitizer_report.py lsan-extract logs-base baseline/leaks.json
 
-    - name: Save Base Branch Leaks
-      uses: actions/cache/save@v4
-      if: github.event_name == 'pull_request' && steps.baseline.outputs.cache-hit != 'true' && hashFiles('baseline/leaks.json') != ''
-      with:
-        path: baseline
-        key: lsan-base-${{ steps.commits.outputs.base }}-${{ steps.commits.outputs.rizin }}
-
     - name: Check for New Leaks
-      if: github.event_name == 'pull_request'
       run: |
         base=baseline/leaks.json
         [ -f "$base" ] || base=-
