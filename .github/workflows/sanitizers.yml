@@ -21,10 +21,24 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  CCACHE_DIR: ${{ github.workspace }}/.ccache
-  CCACHE_BASEDIR: ${{ github.workspace }}
-  CCACHE_NOHASHDIR: "true"
-  CCACHE_MAXSIZE: 2G
+  CC: gcc-12
+  CXX: g++-12
+  # The bundled Rizin is built by meson, which takes its flags from the environment: frame pointers
+  # and debug info give complete stacks through it, but it gets no sanitizer.
+  CFLAGS: -g -fno-omit-frame-pointer
+  CXXFLAGS: -g -fno-omit-frame-pointer
+  CMAKE_ARGS: >-
+    -G Ninja
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DCMAKE_C_FLAGS_RELWITHDEBINFO=-O1
+    -DCMAKE_CXX_FLAGS_RELWITHDEBINFO=-O1
+    -DCUTTER_QT=6
+    -DCUTTER_USE_BUNDLED_RIZIN=ON
+    -DCUTTER_ENABLE_TEST=ON
+    -DCUTTER_ENABLE_PYTHON=OFF
+    -DCUTTER_ENABLE_GRAPHVIZ=OFF
+    -DCUTTER_ENABLE_KSYNTAXHIGHLIGHTING=OFF
+    -DCUTTER_ENABLE_TRANSLATIONS=OFF
 
 jobs:
   asan:
@@ -39,20 +53,32 @@ jobs:
         persist-credentials: false
 
     - name: Install Dependencies
-      run: bash pr/scripts/sanitizers.sh deps
-
-    - name: Restore ccache
-      uses: actions/cache@v4
-      with:
-        path: .ccache
-        key: ccache-asan-${{ github.sha }}
-        restore-keys: ccache-asan-
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config gcc-12 g++-12 llvm-12 \
+            qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+            libqt6svg6-dev libqt6svgwidgets6 libqt6core5compat6-dev libqt6opengl6-dev \
+            libgl1-mesa-dev mesa-common-dev libxkbcommon-dev libxkbcommon-x11-dev libpcre2-dev
+        python3 -m pip install --user meson
+        mkdir -p "$HOME/.local/bin"
+        ln -sf /usr/bin/llvm-symbolizer-12 "$HOME/.local/bin/llvm-symbolizer"
+        echo "$HOME/.local/bin" >>"$GITHUB_PATH"
 
     - name: Build Cutter with ASan and UBSan
-      run: bash pr/scripts/sanitizers.sh build pr build asan
+      run: |
+        cmake -S pr -B build $CMAKE_ARGS -DCUTTER_ENABLE_ASAN=ON
+        cmake --build build
 
+    # The test results don't decide the job, the sanitizer logs do: some tests are red on purpose
+    # until the bug they describe is fixed.
     - name: Run Tests
-      run: bash pr/scripts/sanitizers.sh test build asan logs
+      run: |
+        mkdir -p logs
+        common="log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
+        export ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:log_path=$PWD/logs/asan:$common"
+        export UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1:log_path=$PWD/logs/ubsan:$common"
+        ctest --test-dir build --output-on-failure -j"$(nproc)" || true
 
     - name: Check for Sanitizer Errors
       run: python3 pr/scripts/sanitizer_report.py asan logs
@@ -83,20 +109,30 @@ jobs:
         echo "base=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_OUTPUT"
 
     - name: Install Dependencies
-      run: bash pr/scripts/sanitizers.sh deps
-
-    - name: Restore ccache
-      uses: actions/cache@v4
-      with:
-        path: .ccache
-        key: ccache-lsan-${{ github.sha }}
-        restore-keys: ccache-lsan-
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config gcc-12 g++-12 llvm-12 \
+            qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+            libqt6svg6-dev libqt6svgwidgets6 libqt6core5compat6-dev libqt6opengl6-dev \
+            libgl1-mesa-dev mesa-common-dev libxkbcommon-dev libxkbcommon-x11-dev libpcre2-dev
+        python3 -m pip install --user meson
+        mkdir -p "$HOME/.local/bin"
+        ln -sf /usr/bin/llvm-symbolizer-12 "$HOME/.local/bin/llvm-symbolizer"
+        echo "$HOME/.local/bin" >>"$GITHUB_PATH"
 
     - name: Build Cutter with LSan
-      run: bash pr/scripts/sanitizers.sh build pr build lsan
+      run: |
+        cmake -S pr -B build $CMAKE_ARGS -DCUTTER_ENABLE_LSAN=ON
+        cmake --build build
 
+    # Full stacks through the uninstrumented Rizin need the slow unwinder. Leaks don't fail the
+    # tests; the comparison below decides.
     - name: Run Tests
-      run: bash pr/scripts/sanitizers.sh test build lsan logs
+      run: |
+        mkdir -p logs
+        export LSAN_OPTIONS="exitcode=0:fast_unwind_on_malloc=0:malloc_context_size=40:log_path=$PWD/logs/lsan:log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
+        ctest --test-dir build --output-on-failure -j"$(nproc)" || true
 
     - name: Collect Leaks
       run: |
@@ -148,11 +184,18 @@ jobs:
         fi
         rm -rf base/rizin
         ln -s "$PWD/pr/rizin" base/rizin
-        if ! bash pr/scripts/sanitizers.sh build base build-base lsan; then
+        # The base branch may predate CUTTER_ENABLE_LSAN, so it gets the flags directly.
+        lsan=-fsanitize=leak
+        if ! { cmake -S base -B build-base $CMAKE_ARGS \
+                 -DCMAKE_C_FLAGS="$CFLAGS $lsan" -DCMAKE_CXX_FLAGS="$CXXFLAGS $lsan" \
+                 -DCMAKE_EXE_LINKER_FLAGS=$lsan -DCMAKE_SHARED_LINKER_FLAGS=$lsan \
+               && cmake --build build-base; }; then
           echo "The base branch does not build with this Rizin commit."
           exit 0
         fi
-        bash pr/scripts/sanitizers.sh test build-base lsan logs-base
+        mkdir -p logs-base
+        export LSAN_OPTIONS="exitcode=0:fast_unwind_on_malloc=0:malloc_context_size=40:log_path=$PWD/logs-base/lsan:log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
+        ctest --test-dir build-base --output-on-failure -j"$(nproc)" || true
         python3 pr/scripts/sanitizer_report.py lsan-extract logs-base baseline/leaks.json
 
     - name: Save Base Branch Leaks
