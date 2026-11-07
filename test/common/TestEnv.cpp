@@ -65,12 +65,13 @@ bool waitForOpenedFile()
 }
 
 /**
- * @brief Runs the tests QtTest selected in qInit, then finishes QtTest's output.
+ * @brief Runs the tests QtTest selected in qInit, finishes QtTest's output and destroys the test.
  */
-int runTests()
+int runTests(std::unique_ptr<QObject> &test)
 {
     const int result = QTest::qRun();
     QTest::qCleanup();
+    test.reset();
     return result;
 }
 
@@ -131,33 +132,33 @@ RVA addressWithoutComment(RVA start)
     return RVA_INVALID;
 }
 
-int runWithoutCore(QObject *test, int &argc, char **argv)
+int runWithoutCore(std::unique_ptr<QObject> test, int &argc, char **argv)
 {
     prepareEnvironment();
-    QTest::qInit(test, argc, argv);
+    QTest::qInit(test.get(), argc, argv);
 
     const QApplication app(argc, argv);
 
-    return runTests();
+    return runTests(test);
 }
 
-int runCoreTest(QObject *test, int &argc, char **argv)
+int runCoreTest(std::unique_ptr<QObject> test, int &argc, char **argv)
 {
     prepareEnvironment();
-    QTest::qInit(test, argc, argv);
+    QTest::qInit(test.get(), argc, argv);
 
     const QApplication app(argc, argv);
     CutterCore cutterCore;
     cutterCore.initialize(false);
     cutterCore.setSettings();
 
-    return runTests();
+    return runTests(test);
 }
 
 // TODO: should we register an enum for this fixture? so no chances of wrong thing. Although it will
 // log an error if the fixture name/path is incorrect
 // TODO: maybe better name? because it auto analyzes via -A flag
-int runAppTest(QObject *test, int &argc, char **argv, const QString &fixture)
+int runAppTest(std::unique_ptr<QObject> test, int &argc, char **argv, const QString &fixture)
 {
     prepareEnvironment();
 
@@ -171,7 +172,7 @@ int runAppTest(QObject *test, int &argc, char **argv, const QString &fixture)
         }
     }
 
-    QTest::qInit(test, argc, argv);
+    QTest::qInit(test.get(), argc, argv);
 
     QByteArrayList cutterArgs = { QByteArray(argv[0]), "--no-output-redirect",
                                   "--no-cutter-plugins", "--no-rizin-plugins" };
@@ -190,10 +191,11 @@ int runAppTest(QObject *test, int &argc, char **argv, const QString &fixture)
     if (!file.isEmpty() && !waitForOpenedFile()) {
         std::fprintf(stderr, "FAIL: '%s' did not finish loading\n", qPrintable(file));
         QTest::qCleanup();
+        test.reset();
         return 1;
     }
 
-    return runTests();
+    return runTests(test);
 }
 
 } // namespace CutterTest

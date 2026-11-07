@@ -29,7 +29,7 @@ jobs:
           - name: linux
             os: ubuntu-22.04
           - name: macos
-            os: macos-14
+            os: macos-15
           - name: windows
             os: windows-2022
     defaults:
@@ -63,13 +63,8 @@ jobs:
         esac
         scripts/fetch_deps.sh
 
-    - name: Restore Test Fixtures
-      uses: actions/cache@v4
-      with:
-        path: build/test-fixtures
-        key: test-fixtures-${{ hashFiles('test/common/Fixtures.cmake') }}
-
     - name: Build Cutter
+      id: build
       if: runner.os != 'Windows'
       run: |
         source cutter-deps/env.sh
@@ -82,9 +77,9 @@ jobs:
             -DCUTTER_ENABLE_KSYNTAXHIGHLIGHTING=OFF \
             -DCUTTER_ENABLE_TRANSLATIONS=OFF
         cmake --build build
-        echo BUILT=1 >>"$GITHUB_ENV"
 
     - name: Build Cutter (Windows)
+      id: build-windows
       if: runner.os == 'Windows'
       shell: cmd
       run: |
@@ -104,21 +99,21 @@ jobs:
         rem The tests find the Qt and Rizin DLLs through PATH.
         echo %CD%\cutter-deps\qt\bin>>"%GITHUB_PATH%"
         echo %CD%\build>>"%GITHUB_PATH%"
-        echo BUILT=1>>"%GITHUB_ENV%"
 
-    # One step per layer, so each shows on its own. They all run even if an earlier one fails.
+    # One step per layer, so each shows on its own. They all run even if an earlier one fails, as
+    # long as the build worked.
     - name: Run Unit Tests
-      if: ${{ !cancelled() && env.BUILT == '1' }}
+      if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
       run: ctest --test-dir build -L '^unit$' --output-on-failure -j
     - name: Run Session Tests
-      if: ${{ !cancelled() && env.BUILT == '1' }}
+      if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
       run: ctest --test-dir build -L '^session$' --output-on-failure -j
     - name: Run Dialog Tests
-      if: ${{ !cancelled() && env.BUILT == '1' }}
+      if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
       run: ctest --test-dir build -L '^dialogs$' --output-on-failure -j
     - name: Run Workflow Tests
-      if: ${{ !cancelled() && env.BUILT == '1' }}
+      if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
       run: ctest --test-dir build -L '^workflows$' --output-on-failure -j
     - name: Run Sweep Tests
-      if: ${{ !cancelled() && env.BUILT == '1' }}
+      if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
       run: ctest --test-dir build -L '^sweep$' --output-on-failure -j
