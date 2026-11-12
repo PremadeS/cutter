@@ -1,7 +1,7 @@
 name: Tests
 
 # Builds Cutter with its tests and runs each test layer as its own step, on Linux, macOS and
-# Windows.
+# Windows. The sanitizer runs are in sanitizers.yml, since they take much longer.
 
 on:
   push:

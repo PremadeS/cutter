@@ -1,0 +1,188 @@
+name: Sanitizers
+
+# Runs the test suite with Cutter built under sanitizers. Rizin is not instrumented.
+#   asan: AddressSanitizer + UndefinedBehaviorSanitizer; any error fails.
+#   lsan: LeakSanitizer; fails only on Cutter leaks the change adds. Every run also builds the
+#         commit it is compared with (the PR's base, or the previous commit of a push), against
+#         the same Rizin commit, and its leaks are the baseline. Nothing is saved between runs.
+# Linux only: LeakSanitizer is not supported on macOS or Windows.
+
+on:
+  push:
+    branches:
+    - dev
+  pull_request:
+    branches:
+    - dev
+    - stable
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CC: gcc-12
+  CXX: g++-12
+  CFLAGS: -g -fno-omit-frame-pointer
+  CXXFLAGS: -g -fno-omit-frame-pointer
+  CMAKE_ARGS: >-
+    -G Ninja
+    -DCMAKE_BUILD_TYPE=RelWithDebInfo
+    -DCMAKE_C_FLAGS_RELWITHDEBINFO=-O1
+    -DCMAKE_CXX_FLAGS_RELWITHDEBINFO=-O1
+    -DCUTTER_QT=6
+    -DCUTTER_USE_BUNDLED_RIZIN=ON
+    -DCUTTER_ENABLE_TEST=ON
+    -DCUTTER_ENABLE_PYTHON=OFF
+    -DCUTTER_ENABLE_GRAPHVIZ=OFF
+    -DCUTTER_ENABLE_KSYNTAXHIGHLIGHTING=OFF
+    -DCUTTER_ENABLE_TRANSLATIONS=OFF
+
+jobs:
+  asan:
+    name: asan-ubsan
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Check Out Cutter
+      uses: actions/checkout@v7
+      with:
+        path: pr
+        submodules: recursive
+        persist-credentials: false
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config gcc-12 g++-12 llvm-12 \
+            qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+            libqt6svg6-dev libqt6svgwidgets6 libqt6core5compat6-dev libqt6opengl6-dev \
+            libgl1-mesa-dev mesa-common-dev libxkbcommon-dev libxkbcommon-x11-dev libpcre2-dev
+        python3 -m pip install --user meson
+        mkdir -p "$HOME/.local/bin"
+        ln -sf /usr/bin/llvm-symbolizer-12 "$HOME/.local/bin/llvm-symbolizer"
+        echo "$HOME/.local/bin" >>"$GITHUB_PATH"
+
+    - name: Build Cutter with ASan and UBSan
+      run: |
+        cmake -S pr -B build $CMAKE_ARGS -DCUTTER_ENABLE_ASAN=ON
+        cmake --build build
+
+    # The test results don't decide the job, the sanitizer logs do: some tests are red on purpose
+    # until the bug they describe is fixed.
+    - name: Run Tests
+      run: |
+        mkdir -p logs
+        common="log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
+        export ASAN_OPTIONS="detect_leaks=0:halt_on_error=1:log_path=$PWD/logs/asan:$common"
+        export UBSAN_OPTIONS="print_stacktrace=1:halt_on_error=1:log_path=$PWD/logs/ubsan:$common"
+        ctest --test-dir build --output-on-failure -j || true
+
+    - name: Check for Sanitizer Errors
+      run: python3 pr/scripts/sanitizer_report.py asan logs
+
+    - name: Upload Sanitizer Logs
+      uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: asan-logs
+        path: logs
+        if-no-files-found: ignore
+
+  lsan:
+    name: lsan
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Check Out Cutter
+      uses: actions/checkout@v7
+      with:
+        path: pr
+        submodules: recursive
+        persist-credentials: false
+
+    - name: Record Base Commit
+      id: commits
+      run: |
+        echo "base=${{ github.event.pull_request.base.sha || github.event.before }}" >> "$GITHUB_OUTPUT"
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+            ninja-build pkg-config gcc-12 g++-12 llvm-12 \
+            qt6-base-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+            libqt6svg6-dev libqt6svgwidgets6 libqt6core5compat6-dev libqt6opengl6-dev \
+            libgl1-mesa-dev mesa-common-dev libxkbcommon-dev libxkbcommon-x11-dev libpcre2-dev
+        python3 -m pip install --user meson
+        mkdir -p "$HOME/.local/bin"
+        ln -sf /usr/bin/llvm-symbolizer-12 "$HOME/.local/bin/llvm-symbolizer"
+        echo "$HOME/.local/bin" >>"$GITHUB_PATH"
+
+    - name: Build Cutter with LSan
+      run: |
+        cmake -S pr -B build $CMAKE_ARGS -DCUTTER_ENABLE_LSAN=ON
+        cmake --build build
+
+    # Full stacks through the uninstrumented Rizin need the slow unwinder. Leaks don't fail the
+    # tests; the comparison below decides.
+    - name: Run Tests
+      run: |
+        mkdir -p logs
+        export LSAN_OPTIONS="exitcode=0:fast_unwind_on_malloc=0:malloc_context_size=40:log_path=$PWD/logs/lsan:log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
+        ctest --test-dir build --output-on-failure -j || true
+
+    - name: Collect Leaks
+      run: |
+        mkdir -p leaks
+        python3 pr/scripts/sanitizer_report.py lsan-extract logs leaks/leaks.json
+
+    - name: Check Out Base Commit
+      uses: actions/checkout@v7
+      with:
+        path: base
+        ref: ${{ steps.commits.outputs.base }}
+        persist-credentials: false
+
+    # The base commit is built against this commit's Rizin, so a Rizin update can't show up as
+    # new leaks. If it doesn't build with that Rizin or has no tests, there is no baseline and the
+    # comparison only reports.
+    - name: Find Base Commit Leaks
+      run: |
+        mkdir -p baseline
+        if [ ! -f base/test/CMakeLists.txt ]; then
+          echo "The base commit has no tests."
+          exit 0
+        fi
+        rm -rf base/rizin
+        ln -s "$PWD/pr/rizin" base/rizin
+        # The base commit may predate CUTTER_ENABLE_LSAN, so it gets the flags directly.
+        lsan=-fsanitize=leak
+        if ! { cmake -S base -B build-base $CMAKE_ARGS \
+                 -DCMAKE_C_FLAGS="$CFLAGS $lsan" -DCMAKE_CXX_FLAGS="$CXXFLAGS $lsan" \
+                 -DCMAKE_EXE_LINKER_FLAGS=$lsan -DCMAKE_SHARED_LINKER_FLAGS=$lsan \
+               && cmake --build build-base; }; then
+          echo "The base commit does not build with this Rizin commit."
+          exit 0
+        fi
+        mkdir -p logs-base
+        export LSAN_OPTIONS="exitcode=0:fast_unwind_on_malloc=0:malloc_context_size=40:log_path=$PWD/logs-base/lsan:log_exe_name=1:external_symbolizer_path=$(command -v llvm-symbolizer)"
+        ctest --test-dir build-base --output-on-failure -j || true
+        python3 pr/scripts/sanitizer_report.py lsan-extract logs-base baseline/leaks.json
+
+    - name: Check for New Leaks
+      run: |
+        base=baseline/leaks.json
+        [ -f "$base" ] || base=-
+        python3 pr/scripts/sanitizer_report.py lsan-compare "$base" leaks/leaks.json pr/rizin/librz/include
+
+    - name: Upload Sanitizer Logs
+      uses: actions/upload-artifact@v7
+      if: always()
+      with:
+        name: lsan-logs
+        path: |
+          logs
+          logs-base
+          leaks
+          baseline
+        if-no-files-found: ignore
