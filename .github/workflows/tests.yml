@@ -114,3 +114,6 @@ jobs:
     - name: Run Workflow Tests
       if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
       run: ctest --test-dir build -L '^workflows$' --output-on-failure -j
+    - name: Run Sweep Tests
+      if: ${{ !cancelled() && (steps.build.outcome == 'success' || steps.build-windows.outcome == 'success') }}
+      run: ctest --test-dir build -L '^sweep$' --output-on-failure -j

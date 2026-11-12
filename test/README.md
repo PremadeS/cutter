@@ -33,13 +33,19 @@ Each directory is one layer of tests. Each `ctest` label matches its directory.
 - The whole app runs with a binary already loaded.
 - main is defined via `CUTTER_APP_TEST_MAIN_WITH_FILE`.
 
+### `sweep/`
+- Finds everything at run time and checks that it doesn't crash or hang.
+- It covers every core signal, dock, menu, toolbar, context menu entry and dock button.
+- The whole app runs with a binary already loaded.
+- main is defined via `CUTTER_APP_TEST_MAIN_WITH_FILE`.
+
 ### `common/`
 - Shared helpers for all layers.
 - It is the only code that creates the core or the app.
 
 ## Fixtures
 
-`session/`, `dialogs/` and `workflows/` load a few binaries from
+`session/`, `dialogs/`, `workflows/` and `sweep/` load a few binaries from
 [rizin-testbins](https://github.com/rizinorg/rizin-testbins). CMake downloads
 only those files, at the commit pinned in `common/Fixtures.cmake`, into
 `build/test-fixtures/` and checks each one's SHA-256. Nothing to set up.
